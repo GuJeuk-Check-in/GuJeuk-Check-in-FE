@@ -54,4 +54,6 @@ const Title = styled.p`
   font-weight: 500;
   color: #ffffff;
   margin-bottom: 50px;
+  font-family: 'Jua', sans-serif;
+  font-weight: 300;
 `;
