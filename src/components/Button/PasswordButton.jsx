@@ -2,7 +2,11 @@ import styled from '@emotion/styled';
 
 const PasswordButton = ({ content, onClick }) => {
   return (
-    <Container onClick={onClick}>
+    <Container
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+    >
       <Content>{content}</Content>
     </Container>
   );
