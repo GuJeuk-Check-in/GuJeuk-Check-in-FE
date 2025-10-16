@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { IoMdArrowDropup, IoMdArrowDropdown } from 'react-icons/io';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 
-const ToggleSelect = ({ label, options, value, onChange, width = '200px' }) => {
+const ToggleSelect = ({ label, options, value, onChange, icon }) => {
   const [open, setOpen] = useState(false);
 
   const handleSelect = (option) => {
@@ -13,13 +13,14 @@ const ToggleSelect = ({ label, options, value, onChange, width = '200px' }) => {
   return (
     <Container>
       {label && <Label>{label}</Label>}
-      <Box onClick={() => setOpen((prev) => !prev)} width={width}>
+      <Box onClick={() => setOpen((prev) => !prev)}>
+        <Icon>{icon}</Icon>
         <SelectedValue>{value || `${label} 선택`}</SelectedValue>
-        {open ? <IoMdArrowDropup size={20} /> : <IoMdArrowDropdown size={20} />}
+        {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
       </Box>
 
       {open && (
-        <OptionContainer width={width}>
+        <OptionContainer>
           {options.map((option) => (
             <Option
               key={option}
@@ -40,8 +41,12 @@ export default ToggleSelect;
 
 const Container = styled.div`
   display: flex;
+  width: 100%;
+  height: auto;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
+  position: relative;
+  box-sizing: border-box;
 `;
 
 const Label = styled.label`
@@ -55,12 +60,12 @@ const Box = styled.div`
   align-items: center;
   justify-content: space-between;
   border: 1px solid #2e2e32;
+  color: #6a6a6a;
   border-radius: 8px;
-  padding: 10px 15px;
-  width: ${({ width }) => width};
+  padding: 8px 15px;
+  width: calc(100% - 32px);
   height: 40px;
   cursor: pointer;
-  background-color: white;
 `;
 
 const SelectedValue = styled.span`
@@ -72,8 +77,12 @@ const OptionContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-top: 8px;
-  width: ${({ width }) => width};
+  top: calc(56px + 8px);
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 10;
+  padding-top: 30px;
 `;
 
 const Option = styled.div`
@@ -100,4 +109,15 @@ const Circle = styled.div`
   border: 2px solid #0f50a0;
   background-color: ${({ selected }) => (selected ? '#0f50a0' : 'transparent')};
   transition: 0.2s;
+  box-shadow: ${({ selected }) =>
+    selected ? 'inset 0 0 0 3px #FFFFFF' : 'none'};
+`;
+
+const Icon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  color: #6a6a6a;
+  font-size: 24px;
 `;
