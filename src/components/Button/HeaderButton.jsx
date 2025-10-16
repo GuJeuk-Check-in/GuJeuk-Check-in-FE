@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-const HeaderButton = ({ children }) => {
-  return <Button>{children}</Button>;
+const HeaderButton = ({ children, onClick }) => {
+  return <Button onClick={onClick}>{children}</Button>;
 };
 
 export default HeaderButton;
