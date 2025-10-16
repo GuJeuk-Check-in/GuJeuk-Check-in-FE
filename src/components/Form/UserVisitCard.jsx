@@ -1,21 +1,33 @@
 import styled from '@emotion/styled';
 import { IoClose } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
-const UserVisitCard = ({ name, male, female, date }) => {
+const UserVisitCard = ({ id, name, male, female, date, onDelete }) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/user-detail/${id}`);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    if (onDelete) onDelete();
+  };
+
   return (
-    <Container>
+    <Container onClick={handleCardClick}>
       <LeftSection>
         <Name>대표자: {name}</Name>
         <Info>
           <span>남 : {male}</span>
           <Divider />
-          <span>여: {female}</span>
+          <span>여 : {female}</span>
         </Info>
       </LeftSection>
 
       <RightSection>
         <Date>{date}</Date>
-        <CloseButton>
+        <CloseButton onClick={handleDeleteClick}>
           <IoClose size={24} />
         </CloseButton>
       </RightSection>
@@ -34,7 +46,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px 32px;
-  width: 95%;
+  width: 70%;
   height: 11vh;
   margin: 12px auto;
   cursor: pointer;
