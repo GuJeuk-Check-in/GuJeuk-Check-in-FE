@@ -33,12 +33,14 @@ const Container = styled.div`
   background-color: #ffffff;
 `;
 
-const Title = styled.h1`
+const Title = styled.p`
   font-size: 68px;
-  font-weight: bold;
   color: #2f68c2;
   text-align: center;
-  margin-bottom: 20px;
+  margin: 20px auto 20px auto;
+  line-height: 1.2;
+  font-family: 'Jua', sans-serif;
+  font-weight: 400;
 `;
 
 const HighTitle = styled.span`
@@ -53,6 +55,7 @@ const SubTitle = styled.p`
   text-align: center;
   margin-bottom: 30px;
   font-size: 0.95rem;
+  margin: 20px auto 20px auto;
 `;
 
 const List = styled.ul`
@@ -60,6 +63,7 @@ const List = styled.ul`
   padding-left: 20px;
   font-size: 1rem;
   color: #333;
+  margin: 20px 0 20px 50px;
 
   li {
     margin-bottom: 10px;
