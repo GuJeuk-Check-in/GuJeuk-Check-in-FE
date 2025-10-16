@@ -32,14 +32,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-sizing: border-box;
 `;
 
 const Label = styled.label`
   display: block;
   font-size: 20px;
   color: #2e2e32;
-  margin-bottom: 2px;
-  margin-top: 20px;
+  font-weight: 500;
 `;
 
 const InputContainer = styled.div`
@@ -47,7 +47,6 @@ const InputContainer = styled.div`
   align-items: center;
   gap: 12px;
   padding: 0 16px;
-
   height: 56px;
   border: 1px solid #404040;
   border-radius: 8px;

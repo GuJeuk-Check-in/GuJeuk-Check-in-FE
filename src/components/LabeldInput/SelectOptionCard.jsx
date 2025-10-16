@@ -1,5 +1,3 @@
-// SelectOptionCard.jsx
-
 import React from 'react';
 import styled from '@emotion/styled';
 
@@ -14,21 +12,16 @@ const SelectOptionCard = ({ label, isSelected, onClick }) => {
 
 export default SelectOptionCard;
 
-// --- 스타일 정의 ---
-
 const CardContainer = styled.div`
-  width: 100%; /* 부모 컨테이너가 너비를 결정합니다. */
+  width: 100%;
   height: 60px;
   padding: 0 15px;
   display: flex;
   align-items: center;
   gap: 12px;
-
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-
-  /* 🌟 선택 상태에 따라 파란색 테두리 적용 */
   border: 1px solid ${({ isSelected }) => (isSelected ? '#3F73B3' : '#D1D8E0')};
   background-color: #ffffff;
 `;
@@ -43,7 +36,6 @@ const Radio = styled.div`
   align-items: center;
   flex-shrink: 0;
 
-  /* 🌟 선택 시 파란색 동그라미 (내부 채우기) */
   &::after {
     content: '';
     display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
