@@ -1,43 +1,77 @@
-import TabButton from '../Button/TabButton';
 import VisitFormInput from '../LabeldInput/VisitFormInput';
 import ToggleSelect from '../LabeldInput/ToggleSelect';
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import GenderInput from '../LabeldInput/GenderInput';
-import { GoNumber } from 'react-icons/go';
+import CountVisitor from '../LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
-import { MdLocationOn } from 'react-icons/md';
-import { FaCalendarDays } from 'react-icons/fa6';
-import { IoIosArrowDown } from 'react-icons/io';
+import { FaLocationDot } from 'react-icons/fa6';
+import PasswordButton from '../Button/PasswordButton';
+import useVisitStore from '../../store/useVisitStore';
+import { useNavigate } from 'react-router-dom';
+import VisitDatePicker from '../LabeldInput/VisitDatePicker';
+import usePurposeStore from '../../store/PurposeStore';
 
 const VisitForm = () => {
-  const [activeTab, setActiveTab] = useState('대표자');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [number, setNumber] = useState('');
-  const [perpose, setPerpose] = useState('');
-  const [gender, setGender] = useState('');
+  const [purpose, setPurpose] = useState('');
+  const [male, setMale] = useState(0);
+  const [female, setFemale] = useState(0);
   const [date, setDate] = useState('');
   const [agreePersonal, setAgreePersonal] = useState(true);
 
+  const addVisit = useVisitStore((state) => state.addVisit);
+  const { purposes } = usePurposeStore();
+  const navigate = useNavigate();
+
+  const handleAdd = () => {
+    if (!name || !number || !purpose || !date) {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    if (male + female < 1) {
+      alert('최소 1명 이상의 방문객을 입력해주세요.');
+      return;
+    }
+
+    if (!agreePersonal) {
+      alert('개인정보 수집 및 이용에 동의해야 합니다.');
+      return;
+    }
+
+    const newVisit = {
+      id: Date.now(),
+      name,
+      male: male.toString(),
+      female: female.toString(),
+      date,
+      age,
+      number,
+      purpose,
+    };
+
+    addVisit(newVisit);
+
+    alert('시설 이용 신청이 추가되었습니다!');
+    navigate('/user-visit-list');
+
+    setName('');
+    setAge('');
+    setNumber('');
+    setPurpose('');
+    setDate('');
+    setAgreePersonal(true);
+  };
+
+  const purposeOptions = purposes.map((p) => p.label);
+
   return (
     <Container>
-      <TabWrapper>
-        <TabButton
-          label="대표자"
-          isActive={activeTab === '대표자'}
-          onClick={() => setActiveTab('대표자')}
-        />
-        <TabButton
-          label="동행인"
-          isActive={activeTab === '동행인'}
-          onClick={() => setActiveTab('동행인')}
-        />
-      </TabWrapper>
       <InputGroup>
         <InputRow>
           <VisitFormInput
-            width="430px"
             label="이름"
             placeholder="이름을 입력하세요"
             value={name}
@@ -55,45 +89,45 @@ const VisitForm = () => {
             ]}
             value={age}
             onChange={setAge}
-            width="400px"
           />
         </InputRow>
+
         <VisitFormInput
-          width="880px"
           label="연락처"
           placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
           icon={<IoIosCall size={24} />}
           value={number}
-          onChange={(e) => setNumber(e.target.value)}
+          onChange={(e) =>
+            setNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))
+          }
         />
-        <GenderInput
-          width="880px"
-          value={gender}
-          onChange={(selectedGender) => setGender(selectedGender)}
-        />
+
         <ToggleSelect
           label="방문 목적"
-          options={[
-            '게임',
-            '독서',
-            '동아리',
-            '댄스',
-            '노래방',
-            '미디어',
-            '기타',
-          ]}
-          value={perpose}
-          onChange={setPerpose}
-          width="850px"
+          options={purposeOptions.length > 0 ? purposeOptions : ['기타']}
+          placeholder="방문 목적을 선택해주세요"
+          value={purpose}
+          onChange={setPurpose}
+          icon={<FaLocationDot size={24} />}
         />
-        <VisitFormInput
-          width="880px"
-          label="방문 날짜"
-          placeholder="방문 날짜를 선택해주세요."
-          icon={<FaCalendarDays size={24} />}
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+
+        <CountVisiorWrapper>
+          <CountVisitor
+            label="방문 남성 수"
+            placeholder="성별을 선택해주세요"
+            value={male}
+            onChange={setMale}
+          />
+          <CountVisitor
+            label="방문 여성 수"
+            placeholder="성별을 선택해주세요"
+            value={female}
+            onChange={setFemale}
+          />
+        </CountVisiorWrapper>
+
+        <VisitDatePicker value={date} onChange={setDate} />
+
         <PrivacyConsentWrapper>
           <Checkbox
             type="checkbox"
@@ -103,6 +137,8 @@ const VisitForm = () => {
           <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
         </PrivacyConsentWrapper>
       </InputGroup>
+
+      <PasswordButton content="추가" onClick={handleAdd} />
     </Container>
   );
 };
@@ -110,8 +146,9 @@ const VisitForm = () => {
 export default VisitForm;
 
 const Container = styled.div`
-  width: 58.33vw;
-  height: 102.04vh;
+  width: 90%;
+  max-width: 950px;
+  height: auto;
   background-color: #ffffff;
   border-radius: 20px;
   padding: 40px;
@@ -119,35 +156,30 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-`;
-
-const TabWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 30px;
 `;
 
 const InputGroup = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 `;
 
 const InputRow = styled.div`
   display: flex;
   gap: 20px;
-  margin-bottom: 20px;
+  width: 100%;
+
+  & > * {
+    flex: 1;
+  }
 `;
 
 const PrivacyConsentWrapper = styled.label`
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 20px;
   cursor: pointer;
 `;
 
@@ -180,4 +212,12 @@ const Checkbox = styled.input`
 const ConsentText = styled.span`
   font-size: 16px;
   color: #6e7680;
+`;
+
+const CountVisiorWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
 `;
