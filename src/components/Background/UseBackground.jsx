@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import UserBackground from '../../assets/UssrBackground.png';
 
 const UseBackground = () => {
   return <Container></Container>;
@@ -13,5 +14,9 @@ const Container = styled.div`
   z-index: -1;
   width: 100%;
   height: 100%;
+  background-image: url(${UserBackground});
   background-color: #0f50a0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
