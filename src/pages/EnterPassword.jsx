@@ -5,28 +5,24 @@ import LabeledInput from '../components/Form/LabeledInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useEnterPassword from '../hooks/useEnterPassword';
 
 const EnterPassword = () => {
   const [currentPW, setCurrentPW] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
   const navigate = useNavigate();
 
-  const CORRECT_PASSWORD = '1234';
+  const { mutate: checkPasswordMutate, isLoading } =
+    useEnterPassword(setErrorMessage);
 
   const handleConfirm = () => {
     if (currentPW.trim() === '') {
       setErrorMessage('비밀번호를 입력해주세요.');
       return;
     }
-
-    if (currentPW === CORRECT_PASSWORD) {
-      setErrorMessage('');
-      navigate('/user-visit-list');
-    } else {
-      setErrorMessage('일치하지 않습니다.');
-    }
+    checkPasswordMutate(currentPW);
   };
+
   return (
     <>
       <PasswordBackground />
@@ -34,9 +30,10 @@ const EnterPassword = () => {
         <LeftPage />
         <RightPage
           title="관리자 비밀번호 입력"
-          buttonContent="확인"
+          buttonContent={isLoading ? '확인 중...' : '확인'}
           onClick={handleConfirm}
           buttonBottom="200px"
+          disableButton={isLoading}
         >
           <EmptyInputSpace />
           <InputAndErrorWrapper>
