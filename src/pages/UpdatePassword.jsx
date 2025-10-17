@@ -36,7 +36,6 @@ const UpdatePassword = () => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      // API 호출 등의 로직을 여기에 추가
       alert('비밀번호가 성공적으로 변경되었습니다!');
       navigate('/user-visit-list');
     }
