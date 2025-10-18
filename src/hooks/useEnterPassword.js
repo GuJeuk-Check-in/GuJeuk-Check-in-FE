@@ -11,14 +11,12 @@ const useEnterPassword = (setErrorMessage) => {
     mutationFn: EnterPassword,
 
     onSuccess: (data) => {
-      if (data.success) {
-        if (data.token) {
-          setAuthenticated(true, data.token);
-        }
+      if (data.token && typeof data.token === 'string') {
+        setAuthenticated(true, data.token);
         setErrorMessage('');
         navigate('/user-visit-list');
       } else {
-        setErrorMessage(data.message || '비밀번호가 일치하지 않습니다.');
+        setErrorMessage(data.message || '로그인 실패');
       }
     },
 
