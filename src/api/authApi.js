@@ -6,6 +6,11 @@ import { axiosInstance } from './axiosInstance';
  */
 
 export const EnterPassword = async (password) => {
-  const response = await axiosInstance.post('/admin/login', { password });
+  console.log('EnterPassword 실행됨:', password);
+
+  const response = await axiosInstance.post('/admin/login', {
+    passward: password,
+  });
   return response.data;
 };
+
