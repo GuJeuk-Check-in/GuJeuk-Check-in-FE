@@ -11,7 +11,9 @@ const useEnterPassword = (setErrorMessage) => {
     mutationFn: EnterPassword,
 
     onSuccess: (data) => {
-      if (data.token && typeof data.token === 'string') {
+      console.log('로그인 응답 데이터:', data);
+
+      if (data.success && data.token) {
         setAuthenticated(true, data.token);
         setErrorMessage('');
         navigate('/user-visit-list');
