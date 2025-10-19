@@ -5,28 +5,22 @@ import LabeledInput from '../components/Form/LabeledInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EnterPassword } from '../api/authApi';
+import useEnterPassword from '../hooks/useEnterPassword';
 
-const EnterPasswordPage = () => {
+const EnterPassword = () => {
   const [currentPW, setCurrentPW] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    console.log('버튼 눌림:', currentPW);
+  const { mutate: checkPasswordMutate, isLoading } =
+    useEnterPassword(setErrorMessage);
+
+  const handleConfirm = () => {
     if (currentPW.trim() === '') {
       setErrorMessage('비밀번호를 입력해주세요.');
       return;
     }
-
-    try {
-      const res = await EnterPassword(currentPW);
-      console.log('로그인 성공:', res);
-      navigate('/admin/dashboard');
-    } catch (err) {
-      console.error('로그인 실패:', err);
-      setErrorMessage('로그인 실패: 비밀번호를 확인하세요.');
-    }
+    checkPasswordMutate(currentPW);
   };
 
   return (
@@ -36,9 +30,10 @@ const EnterPasswordPage = () => {
         <LeftPage />
         <RightPage
           title="관리자 비밀번호 입력"
-          buttonContent="확인"
-          onClick={handleLogin}
+          buttonContent={isLoading ? '확인 중...' : '확인'}
+          onClick={handleConfirm}
           buttonBottom="200px"
+          disableButton={isLoading}
         >
           <EmptyInputSpace />
           <InputAndErrorWrapper>
@@ -66,7 +61,7 @@ const EnterPasswordPage = () => {
   );
 };
 
-export default EnterPasswordPage;
+export default EnterPassword;
 
 const MainWrapper = styled.div`
   min-height: 100vh;
