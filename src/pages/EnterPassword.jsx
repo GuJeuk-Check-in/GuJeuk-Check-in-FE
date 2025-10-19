@@ -1,23 +1,23 @@
-import PasswordBackground from '../components/Background/PasswordBackground';
-import LeftPage from '../components/Form/LeftPage';
-import RightPage from '../components/Form/RightPage';
-import LabeledInput from '../components/Form/LabeledInput';
-import styled from '@emotion/styled';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useEnterPassword from '../hooks/useEnterPassword';
+import PasswordBackground from "../components/Background/PasswordBackground";
+import LeftPage from "../components/Form/LeftPage";
+import RightPage from "../components/Form/RightPage";
+import LabeledInput from "../components/Form/LabeledInput";
+import styled from "@emotion/styled";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useEnterPassword from "../hooks/useEnterPassword";
 
 const EnterPassword = () => {
-  const [currentPW, setCurrentPW] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [currentPW, setCurrentPW] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const { mutate: checkPasswordMutate, isLoading } =
     useEnterPassword(setErrorMessage);
 
   const handleConfirm = () => {
-    if (currentPW.trim() === '') {
-      setErrorMessage('비밀번호를 입력해주세요.');
+    if (currentPW.trim() === "") {
+      setErrorMessage("비밀번호를 입력해주세요.");
       return;
     }
     checkPasswordMutate(currentPW);
@@ -30,7 +30,7 @@ const EnterPassword = () => {
         <LeftPage />
         <RightPage
           title="관리자 비밀번호 입력"
-          buttonContent={isLoading ? '확인 중...' : '확인'}
+          buttonContent={isLoading ? "확인 중..." : "확인"}
           onClick={handleConfirm}
           buttonBottom="200px"
           disableButton={isLoading}
@@ -44,14 +44,14 @@ const EnterPassword = () => {
               value={currentPW}
               onChange={(e) => {
                 setCurrentPW(e.target.value);
-                setErrorMessage('');
+                setErrorMessage("");
               }}
               isError={!!errorMessage}
             />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
           </InputAndErrorWrapper>
           <UpdatePasswordButtonFixer>
-            <UpdatePasswordButton onClick={() => navigate('/update-password')}>
+            <UpdatePasswordButton onClick={() => navigate("/update-password")}>
               비밀번호 변경하기
             </UpdatePasswordButton>
           </UpdatePasswordButtonFixer>
