@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '../store/authStore';
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://gujeuk-api.dsmhs.kr/',
+  baseURL: 'https://gujeuk-api.dsmhs.kr',
   headers: {
     'Content-Type': 'application/json',
   },
