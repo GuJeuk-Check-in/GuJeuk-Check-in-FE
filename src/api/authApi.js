@@ -39,13 +39,3 @@ export const UpdatePassword = async (
   });
   return response.data;
 };
-
-export const UserVisitList = async (page = 0) => {
-  const response = await axiosInstance.get(`/admin/list/all?page=${page}`);
-  return response.data;
-};
-
-export const DeleteUserVisit = async (id) => {
-  const response = await axiosInstance.delete(`/admin/delete/${id}`);
-  return response.data;
-};
