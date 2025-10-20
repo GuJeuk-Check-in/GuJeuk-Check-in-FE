@@ -11,6 +11,15 @@ import { axiosInstance } from './axiosInstance';
  * @param {string} checkNewPassword
  */
 
+/**
+ * @param {number} page
+ * @returns {Promise<object>}
+ */
+
+/**
+ * @param {number} id
+ */
+
 export const EnterPassword = async (password) => {
   console.log('EnterPassword 실행됨:', password);
 
@@ -19,14 +28,24 @@ export const EnterPassword = async (password) => {
 };
 
 export const UpdatePassword = async (
-  currentPassword,
+  oldPassword,
   newPassword,
-  checkNewPassword
+  confirmNewPassword
 ) => {
-  const response = await axiosInstance.patch(`${API_BASE_URL}/admin/change`, {
-    password: currentPassword,
-    'new-password': newPassword,
-    'check-new-password': checkNewPassword,
+  const response = await axiosInstance.patch('/admin/change', {
+    oldPassword: oldPassword,
+    newPassword: newPassword,
+    confirmNewPassword: confirmNewPassword,
   });
+  return response.data;
+};
+
+export const UserVisitList = async (page = 0) => {
+  const response = await axiosInstance.get(`/admin/list/all?page=${page}`);
+  return response.data;
+};
+
+export const DeleteUserVisit = async (id) => {
+  const response = await axiosInstance.delete(`/admin/delete/${id}`);
   return response.data;
 };
