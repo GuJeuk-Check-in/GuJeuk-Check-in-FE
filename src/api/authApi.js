@@ -23,7 +23,7 @@ export const UpdatePassword = async (
   newPassword,
   checkNewPassword
 ) => {
-  const response = await axiosInstance.patch('/admin/change', {
+  const response = await axiosInstance.patch(`${API_BASE_URL}/admin/change`, {
     password: currentPassword,
     'new-password': newPassword,
     'check-new-password': checkNewPassword,
