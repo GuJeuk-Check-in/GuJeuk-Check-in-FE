@@ -159,3 +159,11 @@ const ErrorMessage = styled.p`
   top: 105px;
   right: -50px;
 `;
+
+const ServerErrorMessage = styled.p`
+  color: #ff5a5a;
+  font-size: 20px;
+  width: 100%;
+  text-align: right;
+  padding-right: 100px;
+`;
