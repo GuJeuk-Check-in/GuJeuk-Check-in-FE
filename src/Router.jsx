@@ -11,7 +11,7 @@ const Router = () => {
   return (
     <Routes>
       <Route path="/admin/login" element={<EnterPassword />}></Route>
-      <Route path="/update-password" element={<UpdatePassword />}></Route>
+      <Route path="/admin/change" element={<UpdatePassword />}></Route>
       <Route path="/user-visit-list" element={<UserVisitList />}></Route>
       <Route path="/user-detail" element={<UserDetail />}></Route>
       <Route path="/user-detail/:id" element={<UserDetailView />} />
