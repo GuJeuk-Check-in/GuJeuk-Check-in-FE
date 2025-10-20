@@ -6,32 +6,36 @@ import CountVisitor from '../LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
 import PasswordButton from '../Button/PasswordButton';
-import useVisitStore from '../../store/useVisitStore';
-import { useNavigate } from 'react-router-dom';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
 import usePurposeStore from '../../store/PurposeStore';
 
-const VisitForm = () => {
+const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
+  const AGE_MAP = {
+    '0~8세': 'BABY',
+    '9~13세': 'AGE_9_13',
+    '14~16세': 'AGE_14_16',
+    '17~19세': 'AGE_17_19',
+    '20~24세': 'AGE_20_24',
+    성인: 'ADULT',
+  };
+
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [ageDisplay, setAgeDisplay] = useState('');
   const [number, setNumber] = useState('');
   const [purpose, setPurpose] = useState('');
-  const [male, setMale] = useState(0);
-  const [female, setFemale] = useState(0);
+  const [maleCount, setMaleCount] = useState(0);
+  const [femaleCount, setFemaleCount] = useState(0);
   const [date, setDate] = useState('');
   const [agreePersonal, setAgreePersonal] = useState(true);
-
-  const addVisit = useVisitStore((state) => state.addVisit);
   const { purposes } = usePurposeStore();
-  const navigate = useNavigate();
 
-  const handleAdd = () => {
-    if (!name || !number || !purpose || !date) {
-      alert('모든 필드를 입력해주세요.');
+  const handleSubmit = () => {
+    if (!name || !number || !purpose || !date || !ageDisplay) {
+      alert('모든 필수 필드를 입력해주세요.');
       return;
     }
 
-    if (male + female < 1) {
+    if (maleCount + femaleCount < 1) {
       alert('최소 1명 이상의 방문객을 입력해주세요.');
       return;
     }
@@ -41,31 +45,31 @@ const VisitForm = () => {
       return;
     }
 
-    const newVisit = {
-      id: Date.now(),
-      name,
-      male: male.toString(),
-      female: female.toString(),
-      date,
-      age,
-      number,
-      purpose,
+    const dataToSend = {
+      name: name,
+      age: AGE_MAP[ageDisplay],
+      phone: number,
+      maleCount: maleCount,
+      femaleCount: femaleCount,
+      purpose: purpose,
+      visitDate: date,
+      privacyAgreed: agreePersonal,
     };
 
-    addVisit(newVisit);
-
-    alert('시설 이용 신청이 추가되었습니다!');
-    navigate('/user-visit-list');
+    onSubmit(dataToSend);
 
     setName('');
-    setAge('');
+    setAgeDisplay('');
     setNumber('');
     setPurpose('');
+    setMaleCount(0);
+    setFemaleCount(0);
     setDate('');
     setAgreePersonal(true);
   };
 
   const purposeOptions = purposes.map((p) => p.label);
+  const ageOptions = Object.keys(AGE_MAP);
 
   return (
     <Container>
@@ -79,16 +83,9 @@ const VisitForm = () => {
           />
           <ToggleSelect
             label="연령"
-            options={[
-              '0~8세',
-              '9~13세',
-              '14~16세',
-              '17~19세',
-              '20~24세',
-              '성인',
-            ]}
-            value={age}
-            onChange={setAge}
+            options={ageOptions}
+            value={ageDisplay}
+            onChange={setAgeDisplay}
           />
         </InputRow>
 
@@ -115,14 +112,14 @@ const VisitForm = () => {
           <CountVisitor
             label="방문 남성 수"
             placeholder="성별을 선택해주세요"
-            value={male}
-            onChange={setMale}
+            value={maleCount}
+            onChange={setMaleCount}
           />
           <CountVisitor
             label="방문 여성 수"
             placeholder="성별을 선택해주세요"
-            value={female}
-            onChange={setFemale}
+            value={femaleCount}
+            onChange={setFemaleCount}
           />
         </CountVisiorWrapper>
 
@@ -133,12 +130,21 @@ const VisitForm = () => {
             type="checkbox"
             checked={agreePersonal}
             onChange={(e) => setAgreePersonal(e.target.checked)}
+            disabled={isLoading}
           />
           <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
         </PrivacyConsentWrapper>
       </InputGroup>
-
-      <PasswordButton content="추가" onClick={handleAdd} />
+      {isError && (
+        <ErrorMessage>
+          등록에 실패했습니다: {error?.message || '알 수 없는 서버 오류.'}
+        </ErrorMessage>
+      )}
+      <PasswordButton
+        content={isLoading ? '등록 중...' : '추가'}
+        onClick={handleSubmit}
+        disabled={isLoading}
+      />{' '}
     </Container>
   );
 };
@@ -220,4 +226,12 @@ const CountVisiorWrapper = styled.div`
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+`;
+
+const ErrorMessage = styled.div`
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: -10px;
+  text-align: center;
+  width: 100%;
 `;
