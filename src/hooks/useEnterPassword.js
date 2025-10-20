@@ -14,7 +14,7 @@ const useEnterPassword = (setErrorMessage) => {
       if (data.accessToken) {
         setAuth(data.accessToken);
         setErrorMessage('');
-        navigate('/user-visit-list', { replace: true });
+        navigate('/admin/list/all', { replace: true });
       } else {
         setErrorMessage('로그인에 실패했습니다.');
       }
