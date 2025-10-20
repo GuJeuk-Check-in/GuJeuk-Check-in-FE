@@ -12,13 +12,13 @@ const Header = ({ title }) => {
       <img
         src={Logo}
         alt="로고 이미지"
-        onClick={() => navigate('/user-visit-list')}
+        onClick={() => navigate('/admin/list/all')}
       />{' '}
-      <HeaderButton onClick={() => navigate('/user-visit-list')}>
+      <HeaderButton onClick={() => navigate('/admin/list/all')}>
         시설 이용 목록 조회
       </HeaderButton>
       <Diver />
-      <HeaderButton onClick={() => navigate('/user-detail')}>
+      <HeaderButton onClick={() => navigate('/admin/list/create')}>
         시설 이용 기록 추가
       </HeaderButton>
       <Diver />
