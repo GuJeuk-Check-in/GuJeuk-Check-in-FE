@@ -29,3 +29,26 @@ export const deleteUserVisit = async (id) => {
     throw error;
   }
 };
+
+/**
+ * @param {object} visitData
+ * @param {string} visitData.name
+ * @param {string} visitData.age
+ * @param {string} visitData.phone
+ * @param {number} visitData.maleCount
+ * @param {number} visitData.femaleCount
+ * @param {string} visitData.purpose
+ * @param {string} visitData.visitDate
+ * @param {boolean} visitData.privacyAgreed
+ * @returns {Promise<object>}
+ */
+
+export const createUserVisit = async (visitData) => {
+  try {
+    const response = await axiosInstance.post(`/admin/list/create`, visitData);
+    return response.data;
+  } catch (error) {
+    console.error('시설 이용 기록 추가 실패:', error);
+    throw error;
+  }
+};
