@@ -2,31 +2,52 @@ import Header from '../components/Form/Header';
 import VisitForm from '../components/Form/VisitForm';
 import UseBackground from '../components/Background/UseBackground';
 import styled from '@emotion/styled';
-import useVisitStore from '../store/useVisitStore';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useCreateUserVisit } from '../hooks/createUserVisitList';
 
 const UserDetail = () => {
-  const addVisit = useVisitStore((state) => state.addVisit);
   const navigate = useNavigate();
+
+  const createMutation = useCreateUserVisit(() => {
+    navigate('/admin/list/all');
+  });
 
   const [form, setForm] = useState({
     name: '',
-    male: '',
-    female: '',
-    date: '',
+    age: 'ADULT',
+    phone: '',
+    maleCount: 0,
+    femaleCount: 0,
+    purpose: '',
+    visitDate: '',
+    privacyAgreed: false,
   });
 
   const handleSubmit = () => {
-    addVisit(form);
-    navigate('/user-visit-list');
+    const dataToSend = {
+      ...form,
+      maleCount: Number(form.maleCount || 0),
+      femaleCount: Number(form.femaleCount || 0),
+    };
+    createMutation.mutate(dataToSend);
   };
+
   return (
     <Container>
       <UseBackground />
-      <Header title="시설 이용 기록 추가" />
+      <Header
+        title={createMutation.isLoading ? '등록 중...' : '시설 이용 기록 추가'}
+      />{' '}
       <ContentWrapper>
-        <VisitForm form={form} setForm={setForm} onSubmit={handleSubmit} />
+        <VisitForm
+          form={form}
+          setForm={setForm}
+          onSubmit={handleSubmit}
+          isLoading={createMutation.isLoading}
+          isError={createMutation.isError}
+          error={createMutation.error}
+        />{' '}
       </ContentWrapper>
     </Container>
   );
