@@ -4,24 +4,23 @@ import RightPage from '../components/Form/RightPage';
 import { useState } from 'react';
 import LabeledInput from '../components/Form/LabeledInput';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import useUpdatePassword from '../hooks/useUpdatePassoword';
 
 const UpdatePassword = () => {
   const [currentPW, setCurrentPW] = useState('');
   const [newPW, setNewPW] = useState('');
   const [confirmPW, setConfirmPW] = useState('');
   const [formErrors, setFormErrors] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const navigate = useNavigate();
-  const CORRECT_PASSWORD = '1234';
+  const { mutate, isLoading } = useUpdatePassword(setErrorMessage);
 
   const handleConfirm = () => {
     const errors = {};
+    setErrorMessage('');
 
     if (currentPW.trim() === '') {
       errors.currentPW = '기존 비밀번호를 입력해주세요.';
-    } else if (currentPW !== CORRECT_PASSWORD) {
-      errors.currentPW = '일치하지 않습니다.';
     }
 
     if (newPW.trim() === '') {
@@ -36,8 +35,11 @@ const UpdatePassword = () => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      alert('비밀번호가 성공적으로 변경되었습니다!');
-      navigate('/user-visit-list');
+      mutate({
+        currentPassword: currentPW,
+        newPassword: newPW,
+        checkNewPassword: confirmPW,
+      });
     }
   };
 
@@ -48,10 +50,14 @@ const UpdatePassword = () => {
         <LeftPage />
         <RightPage
           title="관리자 비밀번호 변경"
-          buttonContent="변경"
+          buttonContent={isLoading ? '변경 중...' : '변경하기'}
           onClick={handleConfirm}
           buttonBottom="60px"
+          disableButton={isLoading}
         >
+          {errorMessage && (
+            <ServerErrorMessage>{errorMessage}</ServerErrorMessage>
+          )}
           <InputGroupWrapper>
             <LabeledInput
               label="기존 비밀번호"
