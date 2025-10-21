@@ -22,7 +22,7 @@ export const fetchUserVisitList = async (page = 0) => {
 
 export const deleteUserVisit = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/admin/delete/${id}`);
+    const response = await axiosInstance.delete(`/admin/list/${id}`);
     return response.data;
   } catch (error) {
     console.error(`ID ${id} 이용 기록 삭제 실패:`, error);
@@ -49,6 +49,16 @@ export const createUserVisit = async (visitData) => {
     return response.data;
   } catch (error) {
     console.error('시설 이용 기록 추가 실패:', error);
+    throw error;
+  }
+};
+
+export const fetchUserVisitDetail = async (id) => {
+  try {
+    const response = await axiosInstance.get(`/admin/list/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(`ID ${id} 이용 기록 상세 조회 실패:`, error);
     throw error;
   }
 };
