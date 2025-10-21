@@ -18,6 +18,19 @@ export const createPurpose = async (purpose) => {
   return response.data;
 };
 
+export const updatePurpose = async (id, newPurpose) => {
+  const requestBody = {
+    purpose: newPurpose,
+  };
+  try {
+    const response = await axiosInstance.patch(`/purpose/${id}`, requestBody);
+    return response.data;
+  } catch (error) {
+    console.error(`ID ${id} 방문 목적 수정 실패:`, error);
+    throw error;
+  }
+};
+
 export const deletePurpose = async (id) => {
   try {
     const response = await axiosInstance.delete(`/purpose/${id}`);
