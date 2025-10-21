@@ -2,52 +2,74 @@ import styled from '@emotion/styled';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
 import usePurposeStore from '../../store/PurposeStore';
+import { useCreatePurpose } from '../../hooks/createPurpose';
 
 const PurposeAddBox = () => {
-  const { addPurpose } = usePurposeStore();
+  const { mutate: createMutate, isLoading: isCreating } = useCreatePurpose();
+
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
 
+  const isDisabled = isCreating;
+
   const handleAdd = () => {
-    if (newLabel.trim()) {
-      addPurpose(newLabel.trim());
-      setNewLabel('');
-      setIsAdding(false);
+    const trimmedLabel = newLabel.trim();
+
+    if (isDisabled) return;
+
+    if (trimmedLabel) {
+      createMutate(trimmedLabel, {
+        onSuccess: () => {
+          setNewLabel('');
+          setIsAdding(false);
+        },
+      });
     } else {
       alert('목적을 입력해주세요.');
     }
   };
 
+  const handleCancel = () => {
+    if (isDisabled) return;
+    setNewLabel('');
+    setIsAdding(false);
+  };
+
   if (!isAdding) {
     return (
-      <Container isAddButton onClick={() => setIsAdding(true)}>
-        <MdAdd size={48} color="#007bff" />
+      <Container
+        $isAddButton
+        onClick={isDisabled ? null : () => setIsAdding(true)}
+        $isDisabled={isDisabled}
+      >
+        <MdAdd size={48} color={isDisabled ? '#ccc' : '#007bff'} />
       </Container>
     );
   }
 
   return (
-    <Container>
+    <Container $isDisabled={isDisabled}>
       <AddInput
         type="text"
-        placeholder="새 목적 입력"
+        placeholder={isDisabled ? '추가 중...' : '새 목적 입력'}
         value={newLabel}
         onChange={(e) => setNewLabel(e.target.value)}
         onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
         autoFocus
+        disabled={isDisabled}
       />
       <IconSection>
         <MdCheck
           size={26}
-          color="#007bff"
-          style={{ cursor: 'pointer' }}
-          onClick={handleAdd}
-        />
+          color={isDisabled ? '#ccc' : '#007bff'}
+          style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+          onClick={isDisabled ? null : handleAdd}
+        />{' '}
         <MdClose
           size={26}
-          color="#dc3545"
-          style={{ cursor: 'pointer' }}
-          onClick={() => setIsAdding(false)}
+          color={isDisabled ? '#ccc' : '#dc3545'}
+          style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+          onClick={isDisabled ? null : handleCancel}
         />
       </IconSection>
     </Container>
@@ -63,20 +85,28 @@ const Container = styled.div`
   border-radius: 20px;
   display: flex;
   align-items: center;
-  justify-content: ${({ isAddButton }) =>
-    isAddButton ? 'center' : 'space-between'};
-  padding: ${({ isAddButton }) => (isAddButton ? '0' : '0 16px')};
+  justify-content: ${({ $isAddButton }) =>
+    $isAddButton ? 'center' : 'space-between'};
+  padding: ${({ $isAddButton }) => ($isAddButton ? '0' : '0 16px')};
   background-color: #ffffff;
-  border: ${({ isAddButton }) =>
-    isAddButton ? '2px dashed #6f95c4' : '1px solid #6f95c4'};
-  cursor: ${({ isAddButton }) => (isAddButton ? 'pointer' : 'default')};
+  border: ${({ $isAddButton }) =>
+    $isAddButton ? '2px dashed #6f95c4' : '1px solid #6f95c4'};
   box-sizing: border-box;
   margin: 0 auto 15px auto;
   transition: 0.2s ease;
+  opacity: ${(props) => (props.$isDisabled ? 0.6 : 1)};
+  cursor: ${(props) =>
+    props.$isDisabled
+      ? 'not-allowed'
+      : props.$isAddButton
+      ? 'pointer'
+      : 'default'};
+  pointer-events: ${(props) =>
+    props.$isDisabled && !props.$isAddButton && 'none'};
 
   &:hover {
-    background-color: ${({ isAddButton }) =>
-      isAddButton ? '#f9fbff' : '#ffffff'};
+    background-color: ${({ $isAddButton, $isDisabled }) =>
+      $isAddButton && !$isDisabled ? '#f9fbff' : '#ffffff'};
   }
 `;
 
@@ -89,6 +119,11 @@ const AddInput = styled.input`
   width: 70%;
   color: #2e2e32;
   font-weight: 500;
+
+  &:disabled {
+    cursor: progress;
+    background-color: #f0f0f0;
+  }
 `;
 
 const IconSection = styled.div`
