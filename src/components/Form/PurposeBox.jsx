@@ -2,14 +2,23 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
+import { useUpdatePurpose } from '../../hooks/updatePurpose';
 
 const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(purpose.purpose);
 
+  const { mutate: updateMutate, isLoading: isUpdating } = useUpdatePurpose();
+
   const handleUpdate = () => {
-    if (newLabel.trim()) {
+    const trimmedLabel = newLabel.trim();
+
+    if (trimmedLabel && trimmedLabel !== purpose.purpose) {
+      updateMutate({ id: purpose.id, newPurpose: trimmedLabel });
       setIsEditing(false);
+    } else {
+      setIsEditing(false);
+      setNewLabel(purpose.purpose);
     }
   };
 
@@ -22,13 +31,15 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
     setIsEditing(false);
   };
 
+  const isDisabled = isDeleting || isUpdating;
+
   return (
-    <Container>
+    <Container $isDisabled={isDisabled}>
       <DeleteIcon
-        onClick={isDeleting ? null : handleDelete}
-        $isDeleting={isDeleting}
+        onClick={isDisabled ? null : handleDelete}
+        $isDeleting={isDisabled}
       >
-        {isDeleting ? '...' : <IoClose size={20} />}
+        {isDisabled ? '...' : <IoClose size={20} />}
       </DeleteIcon>
 
       {isEditing ? (
@@ -42,11 +53,20 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
             if (e.key === 'Escape') handleCancel();
           }}
           autoFocus
+          disabled={isUpdating}
         />
       ) : (
         <Label>
           {purpose.purpose}{' '}
-          <MdEdit size={18} onClick={() => setIsEditing(true)} />
+          <MdEdit
+            size={18}
+            onClick={() => {
+              if (!isDisabled) {
+                setIsEditing(true);
+              }
+            }}
+            $isDisabled={isDisabled}
+          />
         </Label>
       )}
     </Container>
@@ -54,7 +74,6 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
 };
 
 export default PurposeBox;
-
 const Container = styled.div`
   width: 100%;
   max-width: 330px;
@@ -68,6 +87,7 @@ const Container = styled.div`
   font-size: 24px;
   font-weight: 500;
   color: #3a3a3a;
+  opacity: ${(props) => (props.$isDisabled ? 0.7 : 1)};
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 `;
 
