@@ -22,7 +22,7 @@ const Header = ({ title }) => {
         시설 이용 기록 추가
       </HeaderButton>
       <Diver />
-      <HeaderButton onClick={() => navigate('/purpose-custom')}>
+      <HeaderButton onClick={() => navigate('/purpose/all')}>
         방문 목적 커스텀
       </HeaderButton>
       <Diver />
