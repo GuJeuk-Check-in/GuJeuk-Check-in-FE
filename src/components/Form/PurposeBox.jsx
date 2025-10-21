@@ -2,30 +2,33 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
-import usePurposeStore from '../../store/PurposeStore';
 
-const PurposeBox = ({ purpose }) => {
-  const { updatePurpose, removePurpose } = usePurposeStore();
+const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [newLabel, setNewLabel] = useState(purpose.label);
+  const [newLabel, setNewLabel] = useState(purpose.purpose);
 
   const handleUpdate = () => {
     if (newLabel.trim()) {
-      updatePurpose(purpose.id, newLabel);
       setIsEditing(false);
     }
   };
 
   const handleDelete = () => {
-    if (window.confirm(`'${purpose.label}' 목적을 삭제하시겠습니까?`)) {
-      removePurpose(purpose.id);
-    }
+    onDelete(purpose.id);
+  };
+
+  const handleCancel = () => {
+    setNewLabel(purpose.purpose);
+    setIsEditing(false);
   };
 
   return (
     <Container>
-      <DeleteIcon onClick={handleDelete}>
-        <IoClose size={20} />
+      <DeleteIcon
+        onClick={isDeleting ? null : handleDelete}
+        $isDeleting={isDeleting}
+      >
+        {isDeleting ? '...' : <IoClose size={20} />}
       </DeleteIcon>
 
       {isEditing ? (
@@ -42,7 +45,7 @@ const PurposeBox = ({ purpose }) => {
         />
       ) : (
         <Label>
-          {purpose.label}{' '}
+          {purpose.purpose}{' '}
           <MdEdit size={18} onClick={() => setIsEditing(true)} />
         </Label>
       )}
@@ -72,11 +75,11 @@ const DeleteIcon = styled.div`
   position: absolute;
   top: 10px;
   right: 12px;
-  color: #dc7676;
-  cursor: pointer;
+  color: ${(props) => (props.$isDeleting ? '#aaaaaa' : '#dc7676')};
+  cursor: ${(props) => (props.$isDeleting ? 'not-allowed' : 'pointer')};
   transition: 0.2s ease;
   &:hover {
-    transform: scale(1.1);
+    transform: ${(props) => (props.$isDeleting ? 'none' : 'scale(1.1)')};
   }
 `;
 
