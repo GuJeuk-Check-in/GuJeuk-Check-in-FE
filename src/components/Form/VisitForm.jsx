@@ -7,7 +7,7 @@ import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
 import PasswordButton from '../Button/PasswordButton';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
-import usePurposeStore from '../../store/PurposeStore';
+import { usePurposeList } from '../../hooks/usePurposeList';
 
 const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
   const AGE_MAP = {
@@ -27,10 +27,18 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
   const [femaleCount, setFemaleCount] = useState(0);
   const [date, setDate] = useState('');
   const [agreePersonal, setAgreePersonal] = useState(true);
-  const { purposes } = usePurposeStore();
+  const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
   const handleSubmit = () => {
-    if (!name || !number || !purpose || !date || !ageDisplay) {
+    const trimmedPurpose = purpose.trim();
+    if (
+      !name ||
+      !number ||
+      !trimmedPurpose ||
+      !purpose ||
+      !date ||
+      !ageDisplay
+    ) {
       alert('모든 필수 필드를 입력해주세요.');
       return;
     }
@@ -51,7 +59,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
       phone: number,
       maleCount: maleCount,
       femaleCount: femaleCount,
-      purpose: purpose,
+      purpose: trimmedPurpose,
       visitDate: date,
       privacyAgreed: agreePersonal,
     };
@@ -68,7 +76,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
     setAgreePersonal(true);
   };
 
-  const purposeOptions = purposes.map((p) => p.label);
+  const purposeOptions = (purposes || []).map((p) => p.purpose);
   const ageOptions = Object.keys(AGE_MAP);
 
   return (
@@ -101,11 +109,18 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
 
         <ToggleSelect
           label="방문 목적"
-          options={purposeOptions.length > 0 ? purposeOptions : ['기타']}
+          options={
+            isPurposeLoading
+              ? ['불러오는 중...']
+              : purposeOptions.length > 0
+              ? purposeOptions
+              : ['기타']
+          }
           placeholder="방문 목적을 선택해주세요"
           value={purpose}
           onChange={setPurpose}
           icon={<FaLocationDot size={24} />}
+          disabled={isLoading || isPurposeLoading || !purposeOptions.length}
         />
 
         <CountVisiorWrapper>
@@ -143,8 +158,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
       <PasswordButton
         content={isLoading ? '등록 중...' : '추가'}
         onClick={handleSubmit}
-        disabled={isLoading}
-      />{' '}
+        disabled={isLoading || isPurposeLoading}
+      />
     </Container>
   );
 };
