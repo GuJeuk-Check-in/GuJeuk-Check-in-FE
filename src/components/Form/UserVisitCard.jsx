@@ -6,7 +6,7 @@ const UserVisitCard = ({ id, name, male, female, date, onDelete }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/user-detail/${id}`);
+    navigate(`/admin/list/${id}`);
   };
 
   const handleDeleteClick = (e) => {
