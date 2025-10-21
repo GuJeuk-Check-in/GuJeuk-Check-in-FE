@@ -6,16 +6,24 @@ import styled from '@emotion/styled';
 import { usePurposeList } from '../hooks/usePurposeList';
 import { useCreatePurpose } from '../hooks/createPurpose';
 import { useDeletePurposeList } from '../hooks/deletePurposeList';
+import { useUpdatePurpose } from '../hooks/updatePurpose';
 
 const PurposeCustom = () => {
   const { data: purposes, isLoading, isError, error } = usePurposeList();
   const deleteMutation = useDeletePurposeList();
+
+  const updateMutation = useUpdatePurpose();
 
   const handleDelete = (id) => {
     if (window.confirm('정말로 이 방문 목적을 삭제하시겠습니까?')) {
       deleteMutation.mutate(id);
     }
   };
+
+  const handleUpdate = ({ id, newPurpose }) => {
+    updateMutation.mutate({ id, newPurpose });
+  };
+
   if (isLoading) {
     return (
       <Container>
@@ -40,6 +48,8 @@ const PurposeCustom = () => {
   }
   console.log('가져온 목적 데이터:', purposes);
 
+  const isInteracting = deleteMutation.isLoading || updateMutation.isLoading;
+
   return (
     <Container>
       <UseBackground />
@@ -50,7 +60,8 @@ const PurposeCustom = () => {
             key={purpose.id}
             purpose={purpose}
             onDelete={handleDelete}
-            isDeleting={deleteMutation.isLoading}
+            isDeleting={isInteracting}
+            onUpdate={handleUpdate}
           />
         ))}
         <PurposeAddBox />
