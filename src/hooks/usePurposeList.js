@@ -3,8 +3,8 @@ import { purposeList } from '../api/purposeApi';
 
 export const usePurposeList = () => {
   return useQuery({
-    queryKey: ['purposes'],
+    queryKey: ['purposeList'],
     queryFn: purposeList,
-    staleTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 5,
   });
 };
