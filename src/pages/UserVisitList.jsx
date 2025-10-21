@@ -2,7 +2,6 @@ import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserVisitCard from '../components/Form/UserVisitCard';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import {
   useUserVisitList,
   useDeleteVisitMutation,
