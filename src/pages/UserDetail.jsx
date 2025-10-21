@@ -3,7 +3,6 @@ import VisitForm from '../components/Form/VisitForm';
 import UseBackground from '../components/Background/UseBackground';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import { useCreateUserVisit } from '../hooks/createUserVisitList';
 
 const UserDetail = () => {
@@ -13,23 +12,7 @@ const UserDetail = () => {
     navigate('/admin/list/all');
   });
 
-  const [form, setForm] = useState({
-    name: '',
-    age: 'ADULT',
-    phone: '',
-    maleCount: 0,
-    femaleCount: 0,
-    purpose: '',
-    visitDate: '',
-    privacyAgreed: false,
-  });
-
-  const handleSubmit = () => {
-    const dataToSend = {
-      ...form,
-      maleCount: Number(form.maleCount || 0),
-      femaleCount: Number(form.femaleCount || 0),
-    };
+  const handleSubmit = (dataToSend) => {
     createMutation.mutate(dataToSend);
   };
 
@@ -41,8 +24,6 @@ const UserDetail = () => {
       />{' '}
       <ContentWrapper>
         <VisitForm
-          form={form}
-          setForm={setForm}
           onSubmit={handleSubmit}
           isLoading={createMutation.isLoading}
           isError={createMutation.isError}
