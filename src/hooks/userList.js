@@ -1,11 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { userList, usersByResidence } from '../api/userApi';
 
-export const useUserList = (page, residence) => {
-  const queryKey = ['userList', { page, residence }];
+/**
+ * @param {{ page?: number, residence?: string | null, [key: string]: any }} filters
+ * @returns {import('@tanstack/react-query').UseQueryResult<any, Error>}
+ */
+export const useUserList = (filters = {}) => {
+  const { page = 0, residence = null, ...otherFilters } = filters;
+  const isResidenceFilterActive = !!residence && residence !== '전체 지역';
+  const queryKey = ['userList', filters];
 
-  const queryFn = () => {
-    if (residence) {
+  const queryFn = async () => {
+    if (isResidenceFilterActive) {
       return usersByResidence(residence);
     } else {
       return userList(page);
