@@ -1,10 +1,10 @@
-import axios from "axios";
-import useAuthStore from "../store/authStore";
+import axios from 'axios';
+import useAuthStore from '../store/authStore';
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
   withCredentials: true, // 쿠키 전송을 위해 추가
 });
@@ -49,20 +49,20 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         // 리프레시도 실패하면 로그아웃
         useAuthStore.getState().logout();
-        window.location.href = "/admin/login";
+        window.location.href = '/admin/login';
         return Promise.reject(refreshError);
       }
     }
 
     // 403 에러 (권한 없음)
     if (error.response?.status === 403) {
-      console.error("접근 권한이 없습니다");
+      console.error('접근 권한이 없습니다');
       // 필요시 권한 없음 페이지로 이동
     }
 
     // 500 에러 (서버 에러)
     if (error.response?.status >= 500) {
-      console.error("서버 에러가 발생했습니다");
+      console.error('서버 에러가 발생했습니다');
     }
 
     return Promise.reject(error);
