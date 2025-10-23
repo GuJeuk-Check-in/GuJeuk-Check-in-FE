@@ -5,6 +5,15 @@ import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
 import styled from '@emotion/styled';
 import { usefetchUserVisitDetail } from '../hooks/usefetchUserVisitDetail';
 
+const AGE_DISPLAY_MAP = {
+  BABY: '0~8세',
+  AGE_9_13: '9~13세',
+  AGE_14_16: '14~16세',
+  AGE_17_19: '17~19세',
+  AGE_20_24: '20~24세',
+  ADULT: '성인',
+};
+
 const UserDetailView = () => {
   const { id } = useParams();
 
@@ -14,6 +23,10 @@ const UserDetailView = () => {
     isError,
     error,
   } = usefetchUserVisitDetail(id);
+
+  const formatAgeDisplay = (ageEnum) => {
+    return AGE_DISPLAY_MAP[ageEnum] || ageEnum;
+  };
 
   if (isLoading) {
     return (
@@ -41,7 +54,7 @@ const UserDetailView = () => {
 
   if (!visit) return <p>기록을 찾을 수 없습니다.</p>;
 
-  const visitorCount = `남: ${visit.maleCount}명, 여: ${visit.femaleCount}명`;
+  const ageDisplayValue = formatAgeDisplay(visit.age);
 
   return (
     <Container>
@@ -50,14 +63,21 @@ const UserDetailView = () => {
       <Wrapper>
         <InputRow>
           <VisitDetailInput label="대표자 이름" value={visit.name} />
-          <VisitDetailInput label="연령" value={visit.age} />
+          <VisitDetailInput label="연령" value={ageDisplayValue} />
         </InputRow>
 
         <VisitDetailInput label="연락처" value={visit.phone} />
         <VisitDetailInput label="방문 목적" value={visit.purpose} />
         <VisitDetailInput label="방문 날짜" value={visit.visitDate} />
 
-        <VisitDetailInput label="총 방문객 수" value={visitorCount} />
+        <InputRow>
+          <VisitDetailInput label="방문 남성 수" value={visit.femaleCount} />
+          <VisitDetailInput label="방문 여성 수" value={visit.femaleCount} />
+        </InputRow>
+        <VisitDetailInput
+          label="개인 정보 수집 동의"
+          value={visit.privacyAgreed}
+        />
       </Wrapper>
     </Container>
   );
@@ -66,7 +86,7 @@ const UserDetailView = () => {
 export default UserDetailView;
 
 const Container = styled.div`
-  padding-top: 12.04vh;
+  padding-top: 9.5vh;
 `;
 
 const Wrapper = styled.div`
@@ -90,4 +110,16 @@ const InputRow = styled.div`
   & > * {
     flex: 1;
   }
+`;
+
+const LoadingText = styled.p`
+  text-align: center;
+  margin: 50px 0;
+  color: #777;
+  font-size: 1.1rem;
+`;
+
+const ErrorText = styled(LoadingText)`
+  color: #ff007b;
+  font-weight: bold;
 `;
