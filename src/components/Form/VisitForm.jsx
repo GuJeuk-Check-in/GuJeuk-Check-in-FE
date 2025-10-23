@@ -43,11 +43,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
       return;
     }
 
-    if (maleCount + femaleCount < 1) {
-      alert('최소 1명 이상의 방문객을 입력해주세요.');
-      return;
-    }
-
     if (!agreePersonal) {
       alert('개인정보 수집 및 이용에 동의해야 합니다.');
       return;
@@ -76,7 +71,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
     setAgreePersonal(true);
   };
 
-  const purposeOptions = (purposes || []).map((p) => p.purpose);
+  const purposeOptions = Array.isArray(purposes)
+    ? purposes.map((p) => p.purpose)
+    : [];
   const ageOptions = Object.keys(AGE_MAP);
 
   return (
@@ -99,7 +96,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
 
         <VisitFormInput
           label="연락처"
-          placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
+          placeholder="연락처를 입력해주세요 ex) 01012345678"
           icon={<IoIosCall size={24} />}
           value={number}
           onChange={(e) =>
