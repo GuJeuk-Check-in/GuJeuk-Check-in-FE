@@ -11,12 +11,11 @@ export const userList = async (page = 0) => {
 };
 
 export const usersByResidence = async (residence) => {
+  const residenceParam = residence === '기타 지역' ? '기타' : residence;
   const response = await axiosInstance.get('/admin/user', {
     params: {
-      residence: residence,
+      residence: residenceParam,
     },
-    s,
   });
-  const data = response.data;
-  return Array.isArray(data) ? data : [];
+  return response.data;
 };
