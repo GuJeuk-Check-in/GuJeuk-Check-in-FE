@@ -7,19 +7,31 @@ import { useUpdatePurpose } from '../../hooks/updatePurpose';
 const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(purpose.purpose);
+  const [isEnterHandled, setIsEnterHandled] = useState(false);
 
   const { mutate: updateMutate, isLoading: isUpdating } = useUpdatePurpose();
 
   const handleUpdate = () => {
     const trimmedLabel = newLabel.trim();
 
-    if (trimmedLabel && trimmedLabel !== purpose.purpose) {
-      updateMutate({ id: purpose.id, newPurpose: trimmedLabel });
-      setIsEditing(false);
-    } else {
-      setIsEditing(false);
-      setNewLabel(purpose.purpose);
+    if (!trimmedLabel) {
+      handleCancel();
+      return;
     }
+    if (trimmedLabel === purpose.purpose) {
+      setIsEditing(false);
+      return;
+    }
+    updateMutate({ id: purpose.id, newPurpose: trimmedLabel });
+    setIsEditing(false);
+  };
+
+  const handleBlur = () => {
+    if (isEnterHandled) {
+      setTimeout(() => setIsEnterHandled(false), 0);
+      return;
+    }
+    handleUpdate();
   };
 
   const handleDelete = () => {
@@ -47,9 +59,14 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
           type="text"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
-          onBlur={handleUpdate}
+          onBlur={handleBlur}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') handleUpdate();
+            if (isUpdating) return;
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              setIsEnterHandled(true);
+              handleUpdate();
+            }
             if (e.key === 'Escape') handleCancel();
           }}
           autoFocus
@@ -106,6 +123,7 @@ const DeleteIcon = styled.div`
 const Label = styled.span`
   display: flex;
   align-items: center;
+  font-size: 24px;
   gap: 6px;
   svg {
     cursor: pointer;
@@ -118,12 +136,13 @@ const Label = styled.span`
 `;
 
 const EditInput = styled.input`
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 500;
   text-align: center;
   border: none;
   border-bottom: 2px solid #1e3a8a;
   outline: none;
-  width: 70%;
+  width: 80%;
   color: #2e2e32;
+  padding: 0;
 `;

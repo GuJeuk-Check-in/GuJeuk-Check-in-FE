@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
-import usePurposeStore from '../../store/PurposeStore';
 import { useCreatePurpose } from '../../hooks/createPurpose';
 
 const PurposeAddBox = () => {
@@ -9,24 +8,27 @@ const PurposeAddBox = () => {
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isDisabled = isCreating;
 
   const handleAdd = () => {
     const trimmedLabel = newLabel.trim();
-
-    if (isDisabled) return;
-
-    if (trimmedLabel) {
-      createMutate(trimmedLabel, {
-        onSuccess: () => {
-          setNewLabel('');
-          setIsAdding(false);
-        },
-      });
-    } else {
+    if (!trimmedLabel) {
       alert('목적을 입력해주세요.');
+      return;
     }
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    createMutate(trimmedLabel, {
+      onSuccess: () => {
+        setNewLabel('');
+        setIsAdding(false);
+        setIsSubmitting(false);
+      },
+      onError: () => setIsSubmitting(false),
+    });
   };
 
   const handleCancel = () => {
@@ -51,20 +53,22 @@ const PurposeAddBox = () => {
     <Container $isDisabled={isDisabled}>
       <AddInput
         type="text"
-        placeholder={isDisabled ? '추가 중...' : '새 목적 입력'}
         value={newLabel}
         onChange={(e) => setNewLabel(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-        autoFocus
-        disabled={isDisabled}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAdd();
+          }
+        }}
       />
       <IconSection>
         <MdCheck
           size={26}
           color={isDisabled ? '#ccc' : '#007bff'}
           style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-          onClick={isDisabled ? null : handleAdd}
-        />{' '}
+          onClick={handleAdd}
+        />
         <MdClose
           size={26}
           color={isDisabled ? '#ccc' : '#dc3545'}
