@@ -6,11 +6,8 @@ export const usefetchUserVisitDetail = (id) => {
 
   return useQuery({
     queryKey: ['visitDetail', id],
-
     queryFn: () => fetchUserVisitDetail(id),
-
     enabled: enabled,
-
     staleTime: 1000 * 60 * 5,
   });
 };

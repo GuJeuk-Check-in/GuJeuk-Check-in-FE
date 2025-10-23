@@ -59,7 +59,7 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 600;
   color: #393939;
   margin-left: auto;

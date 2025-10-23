@@ -50,7 +50,7 @@ const UpdatePassword = () => {
         <LeftPage />
         <RightPage
           title="관리자 비밀번호 변경"
-          buttonContent={isLoading ? '변경 중...' : '변경하기'}
+          buttonContent={isLoading ? '변경 중...' : '변경'}
           onClick={handleConfirm}
           buttonBottom="60px"
           disableButton={isLoading}
