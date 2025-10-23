@@ -21,7 +21,7 @@ const ButtonContainer = styled.button`
   cursor: pointer;
   background-color: #ffffff;
   border-radius: 50px;
-  border: 2px solid #3f51b5;
+  border: 2px solid #0f50a0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   color: #333333;
   font-size: 1.1rem;

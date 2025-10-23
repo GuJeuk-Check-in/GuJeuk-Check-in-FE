@@ -14,21 +14,23 @@ const Header = ({ title }) => {
         alt="로고 이미지"
         onClick={() => navigate('/admin/list/all')}
       />{' '}
-      <HeaderButton onClick={() => navigate('/admin/list/all')}>
-        시설 이용 목록 조회
-      </HeaderButton>
-      <Diver />
-      <HeaderButton onClick={() => navigate('/admin/list/create')}>
-        시설 이용 기록 추가
-      </HeaderButton>
-      <Diver />
-      <HeaderButton onClick={() => navigate('/purpose/all')}>
-        방문 목적 커스텀
-      </HeaderButton>
-      <Diver />
-      <HeaderButton onClick={() => navigate('/user-information')}>
-        회원 목록 조회
-      </HeaderButton>
+      <ButtonWrapper>
+        <HeaderButton onClick={() => navigate('/admin/list/all')}>
+          시설 이용 목록 조회
+        </HeaderButton>
+        <Diver />
+        <HeaderButton onClick={() => navigate('/admin/list/create')}>
+          시설 이용 기록 추가
+        </HeaderButton>
+        <Diver />
+        <HeaderButton onClick={() => navigate('/purpose/all')}>
+          방문 목적 커스텀
+        </HeaderButton>
+        <Diver />
+        <HeaderButton onClick={() => navigate('/user-information')}>
+          회원 목록 조회
+        </HeaderButton>
+      </ButtonWrapper>
       <Title>{title}</Title>
     </Container>
   );
@@ -40,7 +42,7 @@ const Container = styled.div`
   background-color: #ffffff;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   width: 100%;
   height: 12.04vh;
   box-sizing: border-box;
@@ -56,6 +58,12 @@ const Container = styled.div`
     margin-left: 30px;
     cursor: pointer;
   }
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const Title = styled.h1`
