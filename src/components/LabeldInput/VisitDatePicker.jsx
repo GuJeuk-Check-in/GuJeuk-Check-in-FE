@@ -4,11 +4,19 @@ import styled from '@emotion/styled';
 import { FaCalendarDays } from 'react-icons/fa6';
 import 'react-calendar/dist/Calendar.css';
 
+const formatDateToISOString = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const VisitDatePicker = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDateSelect = (date) => {
-    onChange(date.toISOString());
+    const formattedDate = formatDateToISOString(date);
+    onChange(formattedDate);
     setIsOpen(false);
   };
 
@@ -17,8 +25,11 @@ const VisitDatePicker = ({ value, onChange }) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${year}년 ${month}월 ${day}일`;
+    return `${year}년${month}월${day}일`;
   };
+
+  const dateObject = value ? new Date(value) : null;
+
   return (
     <Container>
       <Label>방문 날짜</Label>
@@ -26,7 +37,7 @@ const VisitDatePicker = ({ value, onChange }) => {
         <FaCalendarDays size={24} color="#2e2e32" />
         <Input
           type="text"
-          value={value ? formatDate(new Date(value)) : ''}
+          value={dateObject ? formatDate(dateObject) : ''}
           placeholder="방문 날짜를 선택해주세요."
           readOnly
         />
@@ -35,7 +46,7 @@ const VisitDatePicker = ({ value, onChange }) => {
         <CalendarWrapper>
           <StyledCalendar
             onChange={handleDateSelect}
-            value={value ? new Date(value) : new Date()}
+            value={dateObject || new Date()}
             calendarType="gregory"
             locale="ko-KR"
             nextLabel="›"
