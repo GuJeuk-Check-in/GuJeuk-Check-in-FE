@@ -4,6 +4,7 @@ import UseBackground from '../components/Background/UseBackground';
 import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
 import styled from '@emotion/styled';
 import { usefetchUserVisitDetail } from '../hooks/usefetchUserVisitDetail';
+import { formatPhoneNumber } from '../utils/formatters';
 
 const AGE_DISPLAY_MAP = {
   BABY: '0~8세',
@@ -55,6 +56,8 @@ const UserDetailView = () => {
   if (!visit) return <p>기록을 찾을 수 없습니다.</p>;
 
   const ageDisplayValue = formatAgeDisplay(visit.age);
+  const formattedPhone = formatPhoneNumber(visit.phone);
+  const privacyAgreedDisplay = visit.privacyAgreed ? '동의 (O)' : '미동의 (X)';
 
   return (
     <Container>
@@ -65,18 +68,16 @@ const UserDetailView = () => {
           <VisitDetailInput label="대표자 이름" value={visit.name} />
           <VisitDetailInput label="연령" value={ageDisplayValue} />
         </InputRow>
-
-        <VisitDetailInput label="연락처" value={visit.phone} />
+        <VisitDetailInput label="연락처" value={formattedPhone} />
         <VisitDetailInput label="방문 목적" value={visit.purpose} />
         <VisitDetailInput label="방문 날짜" value={visit.visitDate} />
-
         <InputRow>
-          <VisitDetailInput label="방문 남성 수" value={visit.femaleCount} />
+          <VisitDetailInput label="방문 남성 수" value={visit.maleCount} />
           <VisitDetailInput label="방문 여성 수" value={visit.femaleCount} />
         </InputRow>
         <VisitDetailInput
           label="개인 정보 수집 동의"
-          value={visit.privacyAgreed}
+          value={privacyAgreedDisplay}
         />
       </Wrapper>
     </Container>
