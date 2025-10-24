@@ -4,7 +4,6 @@ import PurposeBox from '../components/Form/PurposeBox';
 import PurposeAddBox from '../components/Button/PurposeAddBox';
 import styled from '@emotion/styled';
 import { usePurposeList } from '../hooks/usePurposeList';
-import { useCreatePurpose } from '../hooks/createPurpose';
 import { useDeletePurposeList } from '../hooks/deletePurposeList';
 import { useUpdatePurpose } from '../hooks/updatePurpose';
 
