@@ -111,3 +111,32 @@ export const exportVisitListToExcel = async () => {
     throw new Error(errorMessage);
   }
 };
+
+export const updateVisitList = async (
+  id,
+  name,
+  age,
+  phone,
+  maleCount,
+  femaleCount,
+  purpose,
+  visitDate,
+  privacyAgreed
+) => {
+  if (!id) {
+    throw new Error('수정할 ID가 필요합니다.');
+  }
+
+  const response = await axiosInstance.patch(`/admin/list/${id}`, {
+    name,
+    age,
+    phone,
+    maleCount,
+    femaleCount,
+    purpose,
+    visitDate,
+    privacyAgreed,
+  });
+
+  return response.data;
+};
