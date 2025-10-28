@@ -94,6 +94,7 @@ const UserInformation = () => {
             gender={user.gender}
             birthday={user.birthYMD}
             phonNumber={user.phone}
+            count={user.count}
           />
         ))}
 
