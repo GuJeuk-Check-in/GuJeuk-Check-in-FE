@@ -5,18 +5,27 @@ import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
 import styled from '@emotion/styled';
 import { usefetchUserVisitDetail } from '../hooks/usefetchUserVisitDetail';
 import { formatPhoneNumber } from '../utils/formatters';
+import { useEffect, useState } from 'react';
+import { useUpdateAdminItem } from '../hooks/updateVisitList';
 
-const AGE_DISPLAY_MAP = {
-  BABY: '0~8세',
-  AGE_9_13: '9~13세',
-  AGE_14_16: '14~16세',
-  AGE_17_19: '17~19세',
-  AGE_20_24: '20~24세',
-  ADULT: '성인',
-};
+const AGE_OPTIONS = [
+  { value: 'BABY', label: '0~8세' },
+  { value: 'AGE_9_13', label: '9~13세' },
+  { value: 'AGE_14_16', label: '14~16세' },
+  { value: 'AGE_17_19', label: '17~19세' },
+  { value: 'AGE_20_24', label: '20~24세' },
+  { value: 'ADULT', label: '성인' },
+];
+
+const AGE_DISPLAY_MAP = AGE_OPTIONS.reduce((acc, option) => {
+  acc[option.value] = option.label;
+  return acc;
+}, {});
 
 const UserDetailView = () => {
   const { id } = useParams();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(null);
 
   const {
     data: visit,
@@ -25,8 +34,82 @@ const UserDetailView = () => {
     error,
   } = usefetchUserVisitDetail(id);
 
+  const updateMutation = useUpdateAdminItem();
+
+  useEffect(() => {
+    if (visit) {
+      setFormData({
+        id: visit.id || '',
+        name: visit.name || '',
+        age: visit.age || 'ADULT',
+        phone: visit.phone ? parsePhoneNumber(visit.phone) : '',
+        maleCount: visit.maleCount || 0,
+        femaleCount: visit.femaleCount || 0,
+        purpose: visit.purpose || '',
+        visitDate: visit.visitDate || '',
+        privacyAgreed: visit.privacyAgreed || false,
+      });
+    }
+  }, [visit]);
+
   const formatAgeDisplay = (ageEnum) => {
     return AGE_DISPLAY_MAP[ageEnum] || ageEnum;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handlesave = () => {
+    if (!formData) return;
+
+    updateMutation.mutate(
+      {
+        id: formData.id,
+        name: formData.name,
+        age: formData.age,
+        phone: formData.phone,
+        maleCount: Number(formData.maleCount),
+        femaleCount: Number(formData.femaleCount),
+        purpose: formData.purpose,
+        visitDate: formData.visitDate,
+        privacyAgreed: formData.privacyAgreed,
+      },
+      {
+        onSuccess: () => {
+          alert('수정이 완료되었습니다.');
+          setIsEditing(false);
+        },
+        onError: (err) => {
+          alert(`수정 실패: ${err.message}` || '알 수 없는 오류');
+        },
+      }
+    );
+  };
+
+  const handleCancel = () => {
+    if (visit) {
+      setFormData({
+        id: visit.id,
+        name: visit.name || '',
+        age: visit.age || 'ADULT',
+        phone: visit.phone ? parsePhoneNumber(visit.phone) : '',
+        maleCount: visit.maleCount || 0,
+        femaleCount: visit.femaleCount || 0,
+        purpose: visit.purpose || '',
+        visitDate: visit.visitDate || '',
+        privacyAgreed: visit.privacyAgreed || false,
+      });
+    }
+    setIsEditing(false);
   };
 
   if (isLoading) {
