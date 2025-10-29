@@ -6,7 +6,10 @@ const UserInformationCard = ({
   gender,
   birthday,
   phonNumber,
+  count,
 }) => {
+  const displayCount = count !== null && count !== undefined ? count : 0;
+
   return (
     <Container>
       <LeftSection>
@@ -20,6 +23,8 @@ const UserInformationCard = ({
         <Birthday>{birthday}</Birthday>
         <Diver />
         <PhoneNumber>{phonNumber}</PhoneNumber>
+        <Diver />
+        <Count title="누적 방문 횟수">{displayCount}회 방문</Count>
       </RightSection>
     </Container>
   );
@@ -86,6 +91,11 @@ const Birthday = styled.span`
 `;
 
 const PhoneNumber = styled.span`
+  font-size: 20px;
+  color: #2e2e32;
+`;
+
+const Count = styled.div`
   font-size: 20px;
   color: #2e2e32;
 `;
