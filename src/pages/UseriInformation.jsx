@@ -48,9 +48,12 @@ const UserInformation = () => {
     return (
       <>
         <Header title="회원 목록 조회" />
-        <p style={{ textAlign: 'center', marginTop: '20vh' }}>
-          데이터를 불러오는 중...
-        </p>
+        <LoadingOverlay>
+          <LoadingBox>
+            <p>데이터를 불러오는 중</p>
+            <p>잠시만 기다려주세요...</p>
+          </LoadingBox>
+        </LoadingOverlay>
       </>
     );
   }
@@ -136,4 +139,28 @@ const TotalCountText = styled.p`
   position: relative;
   z-index: 10;
   white-space: nowrap;
+`;
+
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingBox = styled.div`
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 30px 50px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
 `;
