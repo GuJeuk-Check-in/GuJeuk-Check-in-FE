@@ -112,7 +112,7 @@ export const exportVisitListToExcel = async () => {
   }
 };
 
-export const updateVisitList = async (
+export const updateVisitList = async ({
   id,
   name,
   age,
@@ -121,8 +121,8 @@ export const updateVisitList = async (
   femaleCount,
   purpose,
   visitDate,
-  privacyAgreed
-) => {
+  privacyAgreed,
+}) => {
   if (!id) {
     throw new Error('수정할 ID가 필요합니다.');
   }
