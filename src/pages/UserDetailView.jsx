@@ -8,6 +8,9 @@ import { formatPhoneNumber } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { useUpdateAdminItem } from '../hooks/updateVisitList';
 import PasswordButton from '../components/Button/PasswordButton';
+import ToggleSelect from '../components/LabeldInput/ToggleSelect';
+import CountVisitor from '../components/LabeldInput/CountVisitor';
+import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
 
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
@@ -65,35 +68,43 @@ const UserDetailView = () => {
     }));
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
+  const handleAgeChange = (ageLabel) => {
+    const ageEnum =
+      AGE_OPTIONS.find((opt) => opt.label === ageLabel)?.value || ageLabel;
+    setFormData((prev) => ({
+      ...prev,
+      age: ageEnum,
+    }));
   };
 
-  const handlesave = () => {
+  const handleEditToggle = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
     if (!formData) return;
 
-    updateMutation.mutate(
-      {
-        id: formData.id,
-        name: formData.name,
-        age: formData.age,
-        phone: formData.phone,
-        maleCount: Number(formData.maleCount),
-        femaleCount: Number(formData.femaleCount),
-        purpose: formData.purpose,
-        visitDate: formData.visitDate,
-        privacyAgreed: formData.privacyAgreed,
+    const dataToUpdate = {
+      id: formData.id,
+      name: formData.name,
+      age: formData.age || 'ADULT',
+      phone: formData.phone,
+      maleCount: Number(formData.maleCount),
+      femaleCount: Number(formData.femaleCount),
+      purpose: formData.purpose,
+      visitDate: formData.visitDate,
+      privacyAgreed: formData.privacyAgreed,
+    };
+
+    updateMutation.mutate(dataToUpdate, {
+      onSuccess: () => {
+        alert('수정이 완료되었습니다.');
+        setIsEditing(false);
       },
-      {
-        onSuccess: () => {
-          alert('수정이 완료되었습니다.');
-          setIsEditing(false);
-        },
-        onError: (err) => {
-          alert(`수정 실패: ${err.message}` || '알 수 없는 오류');
-        },
-      }
-    );
+      onError: (err) => {
+        alert(`수정 실패: ${err.message}` || '알 수 없는 오류가 발생했습니다.');
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -137,28 +148,124 @@ const UserDetailView = () => {
     );
   }
 
-  if (!visit) return <p>기록을 찾을 수 없습니다.</p>;
+  if (!visit || !formData)
+    return <p>기록을 찾을 수 없거나 데이터를 준비하는 중입니다.</p>;
 
-  const ageDisplayValue = formatAgeDisplay(visit.age);
+  const ageDisplayLabel = formatAgeDisplay(visit.age);
   const formattedPhone = formatPhoneNumber(visit.phone);
-  const privacyAgreedDisplay = visit.privacyAgreed ? '동의 (O)' : '미동의 (X)';
+
+  const privacyAgreedDisplay = (
+    isEditing ? formData.privacyAgreed : visit.privacyAgreed
+  )
+    ? '동의 (O)'
+    : '미동의 (X)';
 
   return (
     <Container>
       <UseBackground />
-      <Header title="시설 이용 상세 조회" />
+      <Header title={`시설 이용 ${isEditing ? '수정' : '상세 조회'}`} />
       <Wrapper>
         <InputRow>
-          <VisitDetailInput label="대표자 이름" value={visit.name} />
-          <VisitDetailInput label="연령" value={ageDisplayValue} />
+          <VisitDetailInput
+            label="대표자 이름"
+            name="name"
+            value={isEditing ? formData.name : visit.name}
+            onChange={isEditing ? handleChange : null}
+            isEditable={isEditing}
+          />
+          {isEditing ? (
+            <ToggleSelectWrapper>
+              <ToggleSelect
+                label="연령"
+                options={AGE_LABELS}
+                value={getAgeLabelFromEnum(formData.age)}
+                onChange={handleAgeChange}
+              />
+            </ToggleSelectWrapper>
+          ) : (
+            <VisitDetailInput
+              label="연령"
+              value={ageDisplayLabel}
+              isEditable={false}
+            />
+          )}
         </InputRow>
-        <VisitDetailInput label="연락처" value={formattedPhone} />
-        <VisitDetailInput label="방문 목적" value={visit.purpose} />
-        <VisitDetailInput label="방문 날짜" value={visit.visitDate} />
-        <InputRow>
-          <VisitDetailInput label="방문 남성 수" value={visit.maleCount} />
-          <VisitDetailInput label="방문 여성 수" value={visit.femaleCount} />
-        </InputRow>
+
+        {/* 2. 연락처 */}
+        <VisitDetailInput
+          label="연락처"
+          name="phone"
+          value={isEditing ? formData.phone : formattedPhone}
+          onChange={isEditing ? handleChange : null}
+          isEditable={isEditing}
+          type="tel"
+        />
+        {isEditing ? (
+          <ToggleSelect
+            label="방문 목적"
+            options={[]}
+            placeholder="방문 목적을 선택해주세요"
+            value={formData.purpose}
+            onChange={(value) =>
+              handleChange({ target: { name: 'purpose', value } })
+            }
+          />
+        ) : (
+          <VisitDetailInput
+            label="방문 목적"
+            value={visit.purpose}
+            isEditable={false}
+          />
+        )}
+        {isEditing ? (
+          <VisitDatePicker
+            value={formData.visitDate}
+            onChange={(value) =>
+              handleChange({ target: { name: 'visitDate', value } })
+            }
+          />
+        ) : (
+          <VisitDetailInput
+            label="방문 날짜"
+            value={visit.visitDate}
+            isEditable={false}
+          />
+        )}
+        <CountVisiorWrapper>
+          {isEditing ? (
+            <>
+              <CountVisitor
+                label="방문 남성 수"
+                value={formData.maleCount}
+                onChange={(value) =>
+                  handleChange({ target: { name: 'maleCount', value } })
+                }
+              />
+              <CountVisitor
+                label="방문 여성 수"
+                value={formData.femaleCount}
+                onChange={(value) =>
+                  handleChange({ target: { name: 'femaleCount', value } })
+                }
+              />
+            </>
+          ) : (
+            <>
+              <VisitDetailInput
+                label="방문 남성 수"
+                value={visit.maleCount}
+                isEditable={false}
+                width="50%"
+              />
+              <VisitDetailInput
+                label="방문 여성 수"
+                value={visit.femaleCount}
+                isEditable={false}
+                width="50%"
+              />
+            </>
+          )}
+        </CountVisiorWrapper>
         <VisitDetailInput
           label="개인 정보 수집 동의"
           name="privacyAgreed"
