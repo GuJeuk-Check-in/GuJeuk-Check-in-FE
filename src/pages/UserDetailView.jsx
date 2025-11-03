@@ -7,6 +7,7 @@ import { usefetchUserVisitDetail } from '../hooks/usefetchUserVisitDetail';
 import { formatPhoneNumber } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { useUpdateAdminItem } from '../hooks/updateVisitList';
+import PasswordButton from '../components/Button/PasswordButton';
 
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
@@ -160,8 +161,30 @@ const UserDetailView = () => {
         </InputRow>
         <VisitDetailInput
           label="개인 정보 수집 동의"
-          value={privacyAgreedDisplay}
+          name="privacyAgreed"
+          value={isEditing ? formData.privacyAgreed : visit.privacyAgreed}
+          onChange={isEditing ? handleChange : null}
+          isEditable={isEditing}
+          type="checkbox"
         />
+        <CustomButtonWrapper>
+          {isEditing ? (
+            <>
+              <ActionButton
+                content={updateMutation.isLoading ? '저장 중...' : '저장'}
+                onClick={handleSave}
+                disabled={updateMutation.isLoading}
+              />
+              <ActionButton
+                content="취소"
+                onClick={handleCancel}
+                disabled={updateMutation.isLoading}
+              />
+            </>
+          ) : (
+            <ActionButton content="수정" onClick={handleEditToggle} />
+          )}
+        </CustomButtonWrapper>
       </Wrapper>
     </Container>
   );
@@ -206,4 +229,25 @@ const LoadingText = styled.p`
 const ErrorText = styled(LoadingText)`
   color: #ff007b;
   font-weight: bold;
+`;
+
+const CustomButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const CountVisiorWrapper = styled.div`
+  display: flex;
+  gap: 20px;
+  width: 100%;
+
+  & > * {
+    flex: 1;
+  }
+`;
+
+const ToggleSelectWrapper = styled.div`
+  flex: 1;
 `;
