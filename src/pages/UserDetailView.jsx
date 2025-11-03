@@ -26,18 +26,22 @@ const AGE_DISPLAY_MAP = AGE_OPTIONS.reduce((acc, option) => {
   return acc;
 }, {});
 
+const AGE_LABELS = Object.keys(AGE_DISPLAY_MAP);
+
+const ActionButton = ({ content, onClick, disabled }) => (
+  <PasswordButton content={content} onClick={onClick} disabled={disabled} />
+);
+
 const UserDetailView = () => {
   const { id } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
-
   const {
     data: visit,
     isLoading,
     isError,
     error,
   } = usefetchUserVisitDetail(id);
-
   const updateMutation = useUpdateAdminItem();
 
   useEffect(() => {
@@ -46,7 +50,7 @@ const UserDetailView = () => {
         id: visit.id || '',
         name: visit.name || '',
         age: visit.age || 'ADULT',
-        phone: visit.phone ? parsePhoneNumber(visit.phone) : '',
+        phone: visit.phone || '',
         maleCount: visit.maleCount || 0,
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
@@ -58,6 +62,11 @@ const UserDetailView = () => {
 
   const formatAgeDisplay = (ageEnum) => {
     return AGE_DISPLAY_MAP[ageEnum] || ageEnum;
+  };
+
+  const getAgeLabelFromEnum = (ageEnum) => {
+    const option = AGE_OPTIONS.find((opt) => opt.value === ageEnum);
+    return option ? option.label : ageEnum;
   };
 
   const handleChange = (e) => {
@@ -113,7 +122,7 @@ const UserDetailView = () => {
         id: visit.id,
         name: visit.name || '',
         age: visit.age || 'ADULT',
-        phone: visit.phone ? parsePhoneNumber(visit.phone) : '',
+        phone: visit.phone || '',
         maleCount: visit.maleCount || 0,
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
