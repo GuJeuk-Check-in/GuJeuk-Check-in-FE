@@ -13,7 +13,7 @@ const VisitDetailInput = ({
 }) => {
   const renderInput = () => {
     if (!isEditable) {
-      if (type === 'checkbox') {
+      if (type === 'checkbox') {  
         const displayValue = value ? '동의 (O)' : '미동의 (X)';
         return (
           <InputContainer isEditable={false}>
