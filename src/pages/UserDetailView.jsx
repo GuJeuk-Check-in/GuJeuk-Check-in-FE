@@ -26,7 +26,7 @@ const AGE_DISPLAY_MAP = AGE_OPTIONS.reduce((acc, option) => {
   return acc;
 }, {});
 
-const AGE_LABELS = Object.keys(AGE_DISPLAY_MAP);
+const AGE_DISPLAY_LABELS = AGE_OPTIONS.map((opt) => opt.label);
 
 const ActionButton = ({ content, onClick, disabled }) => (
   <PasswordButton content={content} onClick={onClick} disabled={disabled} />
@@ -186,7 +186,7 @@ const UserDetailView = () => {
             <ToggleSelectWrapper>
               <ToggleSelect
                 label="연령"
-                options={AGE_LABELS}
+                options={AGE_DISPLAY_LABELS}
                 value={getAgeLabelFromEnum(formData.age)}
                 onChange={handleAgeChange}
               />
@@ -199,8 +199,6 @@ const UserDetailView = () => {
             />
           )}
         </InputRow>
-
-        {/* 2. 연락처 */}
         <VisitDetailInput
           label="연락처"
           name="phone"
