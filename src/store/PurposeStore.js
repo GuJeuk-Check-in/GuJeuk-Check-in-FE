@@ -1,15 +1,7 @@
 import { create } from 'zustand';
 
 const usePurposeStore = create((set) => ({
-  purposes: [
-    { id: 1, label: '게임' },
-    { id: 2, label: '독서' },
-    { id: 3, label: '동아리' },
-    { id: 4, label: '댄스' },
-    { id: 5, label: '노래방' },
-    { id: 6, label: '미디어' },
-    { id: 7, label: '기타' },
-  ],
+  purposes: [],
 
   addPurpose: (label) =>
     set((state) => ({
