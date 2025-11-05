@@ -1,24 +1,32 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const usePurposeStore = create((set) => ({
-  purposes: [],
+const usePurposeStore = create(
+  persist(
+    (set) => ({
+      purposes: [],
 
-  addPurpose: (label) =>
-    set((state) => ({
-      purposes: [...state.purposes, { id: Date.now(), label: label }],
-    })),
+      addPurpose: (label) =>
+        set((state) => ({
+          purposes: [...state.purposes, { id: Date.now(), label: label }],
+        })),
 
-  removePurpose: (id) =>
-    set((state) => ({
-      purposes: state.purposes.filter((p) => p.id !== id),
-    })),
+      removePurpose: (id) =>
+        set((state) => ({
+          purposes: state.purposes.filter((p) => p.id !== id),
+        })),
 
-  updatePurpose: (id, newLabel) =>
-    set((state) => ({
-      purposes: state.purposes.map((p) =>
-        p.id === id ? { ...p, label: newLabel } : p
-      ),
-    })),
-}));
+      updatePurpose: (id, newLabel) =>
+        set((state) => ({
+          purposes: state.purposes.map((p) =>
+            p.id === id ? { ...p, label: newLabel } : p
+          ),
+        })),
+    }),
+    {
+      name: 'purpose-storage',
+    }
+  )
+);
 
 export default usePurposeStore;
