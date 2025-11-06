@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserVisitCard from '../components/Form/UserVisitCard';
@@ -8,8 +9,10 @@ import {
   useUserVisitList,
   useDeleteVisitMutation,
 } from '../hooks/userVisitList';
+import DateExportModal from '../components/Modal/DateExportModal';
 
 const UserVisitList = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isLoading, error } = useUserVisitList(0);
   const { mutate: deleteMutate, isLoading: isDeleting } =
     useDeleteVisitMutation();
@@ -26,6 +29,15 @@ const UserVisitList = () => {
     }
   };
 
+  const handleExcelExportClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleExportConfirmed = (year, month) => {
+    excelMutate({ year, month });
+    setIsModalOpen(false);
+  };
+
   const handleExcelExport = () => {
     excelMutate();
   };
@@ -35,10 +47,11 @@ const UserVisitList = () => {
       <Header title="시설 이용 목록 조회" />
 
       <ExportButtonWrapper>
-        <ExcelButton onClick={handleExcelExport} disabled={isExporting} />
+        <ExcelButton onClick={handleExcelExportClick} disabled={isExporting} />
         {isExporting && (
           <ExportLoadingMessage>
-            엑셀 파일을 준비 중입니다...
+            엑셀 파일을 준비 중입니다... (기간: {new Date().getFullYear()}년{' '}
+            {new Date().getMonth() + 1}월)
           </ExportLoadingMessage>
         )}
       </ExportButtonWrapper>
@@ -71,6 +84,11 @@ const UserVisitList = () => {
           />
         ))}
       </ContentWrapper>
+      <DateExportModal
+        isVisible={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onExport={handleExportConfirmed}
+      />
     </Container>
   );
 };
