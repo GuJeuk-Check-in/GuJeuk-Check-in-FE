@@ -79,22 +79,22 @@ export default PurposeCustom;
 const PurposeList = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 1rem;
   justify-items: center;
   width: 90%;
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 40px 0;
+  padding: 2.5rem 0;
 `;
 
 const Container = styled.div`
-  padding-top: 12.04vh;
+  padding-top: 8.125rem;
 `;
 
 const LoadingText = styled.div`
   text-align: center;
   font-size: 1.2rem;
-  margin-top: 50px;
+  margin-top: 3.125rem;
 `;
 
 const ErrorText = styled(LoadingText)`
@@ -118,9 +118,9 @@ const LoadingOverlay = styled.div`
 const LoadingBox = styled.div`
   background-color: rgba(255, 255, 255, 0.3);
   color: #fff;
-  padding: 30px 50px;
-  border-radius: 10px;
+  padding: 1.875rem 3.125rem;
+  border-radius: 0.625rem;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0.5rem);
 `;

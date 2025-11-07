@@ -72,22 +72,22 @@ const ModalOverlay = styled.div`
 `;
 
 const Container = styled.div`
-  width: 420px;
+  width: 26.25rem;
   max-width: 90%;
   background-color: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  padding: 1.875rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 `;
 
 const Title = styled.h2`
-  font-size: 36px;
+  font-size: 2.25rem;
   font-weight: bold;
   color: #404040;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
   text-align: center;
 `;
 
@@ -95,20 +95,20 @@ const DateSelectorWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 `;
 
 const Label = styled.span`
-  margin: 0 5px 0 20px;
+  margin: 0 0.3125rem 0 1.25rem;
   font-size: 1rem;
   font-weight: 500;
   color: #404040;
 `;
 
 const SelectBase = styled.select`
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.375rem;
   font-size: 1rem;
   color: #404040;
   background-color: white;
@@ -117,31 +117,31 @@ const SelectBase = styled.select`
   transition: border-color 0.2s;
   text-align-last: center;
   background-repeat: no-repeat;
-  background-position: right 8px top 50%;
-  background-size: 16px;
+  background-position: right 0.5rem top 50%;
+  background-size: 1rem;
 `;
 
 const YearSelect = styled(SelectBase)`
-  width: 90px;
+  width: 5.625rem;
 `;
 
 const MonthSelect = styled(SelectBase)`
-  width: 70px;
+  width: 4.375rem;
 `;
 
 const ExportButton = styled.button`
   width: 80%;
-  max-width: 180px;
-  padding: 12px 20px;
+  max-width: 11.25rem;
+  padding: 0.75rem 1.25rem;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
-  margin-top: 30px;
+  margin-top: 1.875rem;
 
   &:hover {
     background-color: #0056b3;

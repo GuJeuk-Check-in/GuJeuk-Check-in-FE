@@ -84,19 +84,19 @@ export default PurposeAddBox;
 
 const Container = styled.div`
   width: 100%;
-  max-width: 330px;
-  height: 150px;
-  border-radius: 20px;
+  max-width: 20.625rem;
+  height: 9.375rem;
+  border-radius: 1.25rem;
   display: flex;
   align-items: center;
   justify-content: ${({ $isAddButton }) =>
     $isAddButton ? 'center' : 'space-between'};
-  padding: ${({ $isAddButton }) => ($isAddButton ? '0' : '0 16px')};
+  padding: ${({ $isAddButton }) => ($isAddButton ? '0' : '0 1rem')};
   background-color: #ffffff;
   border: ${({ $isAddButton }) =>
-    $isAddButton ? '2px dashed #6f95c4' : '1px solid #6f95c4'};
+    $isAddButton ? '0.125rem dashed #6f95c4' : '0.0625rem solid #6f95c4'};
   box-sizing: border-box;
-  margin: 0 auto 15px auto;
+  margin: 0 auto 0.9375rem auto;
   transition: 0.2s ease;
   opacity: ${(props) => (props.$isDisabled ? 0.6 : 1)};
   cursor: ${(props) =>
@@ -115,11 +115,11 @@ const Container = styled.div`
 `;
 
 const AddInput = styled.input`
-  font-size: 22px;
+  font-size: 1.375rem;
   border: none;
-  border-bottom: 2px solid #007bff;
+  border-bottom: 0.125rem solid #007bff;
   outline: none;
-  padding: 4px 0;
+  padding: 0.25rem 0;
   width: 70%;
   color: #2e2e32;
   font-weight: 500;
@@ -132,5 +132,5 @@ const AddInput = styled.input`
 
 const IconSection = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 0.9375rem;
 `;

@@ -165,28 +165,28 @@ export default VisitForm;
 
 const Container = styled.div`
   width: 90%;
-  max-width: 950px;
+  max-width: 59.375rem;
   height: auto;
   background-color: #ffffff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 1.25rem;
+  padding: 2.5rem;
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 1.875rem;
 `;
 
 const InputGroup = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 `;
 
 const InputRow = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 1.25rem;
   width: 100%;
 
   & > * {
@@ -197,16 +197,16 @@ const InputRow = styled.div`
 const PrivacyConsentWrapper = styled.label`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   cursor: pointer;
 `;
 
 const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   appearance: none;
-  border: 2px solid #d1d8e0;
-  border-radius: 4px;
+  border: 0.125rem solid #d1d8e0;
+  border-radius: 0.25rem;
   background-color: #f8f9fa;
   position: relative;
   cursor: pointer;
@@ -223,18 +223,18 @@ const Checkbox = styled.input`
     left: 50%;
     transform: translate(-50%, -50%);
     color: #ffffff;
-    font-size: 16px;
+    font-size: 1rem;
   }
 `;
 
 const ConsentText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
   color: #6e7680;
 `;
 
 const CountVisiorWrapper = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 1rem;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -242,8 +242,8 @@ const CountVisiorWrapper = styled.div`
 
 const ErrorMessage = styled.div`
   color: #d32f2f;
-  font-size: 14px;
-  margin-top: -10px;
+  font-size: 0.875rem;
+  margin-top: -0.625rem;
   text-align: center;
   width: 100%;
 `;

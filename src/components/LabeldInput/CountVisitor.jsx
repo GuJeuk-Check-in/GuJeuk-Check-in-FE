@@ -34,40 +34,40 @@ export default CountVisitor;
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   width: 49%;
   height: auto;
   box-sizing: border-box;
 `;
 
 const Label = styled.label`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
   font-weight: 500;
 `;
 
 const Counter = styled.div`
-  height: 56px;
-  font-size: 20px;
+  height: 3.5rem;
+  font-size: 1.25rem;
   color: #2e2e32;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  border: 1px solid #404040;
-  border-radius: 8px;
+  padding: 0 1rem;
+  border: 0.0625rem solid #404040;
+  border-radius: 0.5rem;
 `;
 
 const Button = styled.button`
   border: none;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background-color: white;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #404040;
   cursor: pointer;
 `;
 
 const Value = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   text-align: center;
 `;

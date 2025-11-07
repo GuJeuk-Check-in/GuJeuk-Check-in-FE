@@ -124,15 +124,15 @@ const UpdatePassword = () => {
 export default UpdatePassword;
 
 const MainWrapper = styled.div`
-  min-height: 100vh;
-  width: 100vw;
+  min-height: 100dvh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const InputGroupSpacer = styled.div`
-  height: 62px;
+  height: 3.875rem;
   width: 100%;
 `;
 
@@ -150,20 +150,20 @@ const ErrorSpace = styled.div`
 
 const ErrorMessage = styled.p`
   color: #ff5a5a;
-  font-size: 20px;
+  font-size: 1.25rem;
   width: 100%;
   text-align: right;
-  padding-right: 100px;
+  padding-right: 6.25rem;
   margin: 0;
   position: absolute;
-  top: 105px;
-  right: -50px;
+  top: 6.5625rem;
+  right: -3.125rem;
 `;
 
 const ServerErrorMessage = styled.p`
   color: #ff5a5a;
-  font-size: 20px;
+  font-size: 1.25rem;
   width: 100%;
   text-align: right;
-  padding-right: 100px;
+  padding-right: 6.25rem;
 `;

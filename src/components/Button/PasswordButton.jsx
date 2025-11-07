@@ -15,16 +15,18 @@ const PasswordButton = ({ content, onClick }) => {
 export default PasswordButton;
 
 const Container = styled.div`
-  width: 172px;
-  height: 67px;
-  border-radius: 50px;
-  border: 2px solid #ffffff;
+  width: 10.75rem;
+  height: 4.1875rem;
+  border-radius: 3.125rem;
+  border: 0.125rem solid #ffffff;
+
   background-color: #3d72b3;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+
   transition: 0.3s;
 
   &:hover {
@@ -34,6 +36,7 @@ const Container = styled.div`
 
 const Content = styled.span`
   color: #ffffff;
-  font-size: 24px;
+  font-size: 1.5rem;
+
   margin: 0;
 `;

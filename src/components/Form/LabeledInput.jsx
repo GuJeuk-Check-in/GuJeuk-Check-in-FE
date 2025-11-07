@@ -33,15 +33,15 @@ const LabeledInput = ({ label, placeholder, value, onChange }) => {
 export default LabeledInput;
 
 const Container = styled.div`
-  width: 454px;
-  height: 64px;
+  width: 28.375rem;
+  height: 4rem;
 `;
 
 const Label = styled.label`
   display: block;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #ffffff;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 `;
 
 const InputWrapper = styled.div`
@@ -51,37 +51,37 @@ const InputWrapper = styled.div`
 `;
 
 const Input = styled.input`
-  width: 454px;
-  height: 48px;
-  border-radius: 40px;
+  width: 28.375rem;
+  height: 3rem;
+  border-radius: 2.5rem;
   border: none;
   color: #000000;
-  font-size: 20px;
-  padding: 12px 45px 12px 70px;
+  font-size: 1.25rem;
+  padding: 0.75rem 2.8125rem 0.75rem 4.375rem;
 `;
 
 const LeftIcon = styled.div`
   position: absolute;
-  left: 15px;
+  left: 0.9375rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 32px;
+  gap: 0.625rem;
+  font-size: 2rem;
   color: #444;
 `;
 
 const Divider = styled.div`
-  width: 1px;
-  height: 40px;
+  width: 0.0625rem;
+  height: 2.5rem;
   background-color: #404040;
 `;
 
 const IconButton = styled.button`
   position: absolute;
-  right: 15px;
+  right: 0.9375rem;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 1.5rem;
   color: #666;
 `;

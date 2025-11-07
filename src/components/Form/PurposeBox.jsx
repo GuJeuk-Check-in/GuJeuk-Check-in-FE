@@ -51,7 +51,7 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
         onClick={isDisabled ? null : handleDelete}
         $isDeleting={isDisabled}
       >
-        {isDisabled ? '...' : <IoClose size={20} />}
+        {isDisabled ? '...' : <IoClose size="1.25rem" />}{' '}
       </DeleteIcon>
 
       {isEditing ? (
@@ -93,25 +93,25 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
 export default PurposeBox;
 const Container = styled.div`
   width: 100%;
-  max-width: 330px;
-  height: 150px;
+  max-width: 20.625rem;
+  height: 9.375rem;
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 500;
   color: #3a3a3a;
   opacity: ${(props) => (props.$isDisabled ? 0.7 : 1)};
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
 `;
 
 const DeleteIcon = styled.div`
   position: absolute;
-  top: 10px;
-  right: 12px;
+  top: 0.625rem;
+  right: 0.75rem;
   color: ${(props) => (props.$isDeleting ? '#aaaaaa' : '#dc7676')};
   cursor: ${(props) => (props.$isDeleting ? 'not-allowed' : 'pointer')};
   transition: 0.2s ease;
@@ -123,8 +123,8 @@ const DeleteIcon = styled.div`
 const Label = styled.span`
   display: flex;
   align-items: center;
-  font-size: 24px;
-  gap: 6px;
+  font-size: 1.5rem;
+  gap: 0.375rem;
   svg {
     cursor: pointer;
     color: #5a5a5a;
@@ -136,11 +136,11 @@ const Label = styled.span`
 `;
 
 const EditInput = styled.input`
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 500;
   text-align: center;
   border: none;
-  border-bottom: 2px solid #1e3a8a;
+  border-bottom: 0.125rem solid #1e3a8a;
   outline: none;
   width: 80%;
   color: #2e2e32;

@@ -60,7 +60,7 @@ const Wrapper = styled.div`
 const OptionContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(${({ cols }) => cols}, 1fr);
-  gap: 15px;
-  margin-top: 10px;
-  padding: 10px 0;
+  gap: 0.9375rem;
+  margin-top: 0.625rem;
+  padding: 0.625rem 0;
 `;

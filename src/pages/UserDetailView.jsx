@@ -226,7 +226,7 @@ const UserDetailView = () => {
         )}
         {isEditing ? (
           <VisitDatePicker
-            value={formData.visitDate}
+            value={formData.visitDate ? new Date(formData.visitDate) : null}
             onChange={(value) =>
               handleChange({ target: { name: 'visitDate', value } })
             }
@@ -307,25 +307,35 @@ const UserDetailView = () => {
 export default UserDetailView;
 
 const Container = styled.div`
-  padding-top: 9.5vh;
+  padding-top: 6.375rem;
 `;
 
 const Wrapper = styled.div`
   width: 90%;
-  max-width: 950px;
-  margin: 40px auto;
+  max-width: 59.375rem;
+  margin: 2.5rem auto;
   background-color: #ffffff;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 1.25rem;
+  padding: 2.5rem;
+  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 `;
 
 const InputRow = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 1.25rem;
+  width: 100%;
+
+  & > * {
+    flex: 1;
+  }
+`;
+
+const CountVisiorWrapper = styled.div`
+  display: flex;
+  gap: 1.25rem;
   width: 100%;
 
   & > * {
@@ -335,7 +345,7 @@ const InputRow = styled.div`
 
 const LoadingText = styled.p`
   text-align: center;
-  margin: 50px 0;
+  margin: 3.125rem 0;
   color: #777;
   font-size: 1.1rem;
 `;
@@ -348,18 +358,8 @@ const ErrorText = styled(LoadingText)`
 const CustomButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-`;
-
-const CountVisiorWrapper = styled.div`
-  display: flex;
-  gap: 20px;
-  width: 100%;
-
-  & > * {
-    flex: 1;
-  }
+  gap: 0.625rem;
+  margin-top: 1.25rem;
 `;
 
 const ToggleSelectWrapper = styled.div`

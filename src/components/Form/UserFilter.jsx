@@ -64,20 +64,22 @@ const Container = styled.div`
   position: relative;
   justify-content: flex-end;
   box-sizing: border-box;
-  padding: 10px 10px;
+  padding: 0.625rem 0.625rem;
   z-index: 100;
 `;
 
 const LocationHeader = styled.div`
-  width: 20%;
-  height: 56px;
-  border: 1px solid #404040;
-  border-radius: 8px;
+  min-width: 12.5rem;
+  max-width: 15rem;
+  width: 25%;
+  height: 3.5rem;
+  border: 0.0625rem solid #404040;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
-  font-size: 18px;
+  padding: 0 1rem;
+  font-size: 1.125rem;
   color: #2e2e32;
   cursor: pointer;
   background-color: #fff;
@@ -86,23 +88,27 @@ const LocationHeader = styled.div`
 const DropdownIcon = styled.div`
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: ${({ isOpen }) => (isOpen ? 'none' : '6px solid #2e2e32')};
-  border-bottom: ${({ isOpen }) => (isOpen ? '6px solid #2e2e32' : 'none')};
+  border-left: 0.375rem solid transparent;
+  border-right: 0.375rem solid transparent;
+  border-top: ${({ isOpen }) => (isOpen ? 'none' : '0.375rem solid #2e2e32')};
+  border-bottom: ${({ isOpen }) =>
+    isOpen ? '0.375rem solid #2e2e32' : 'none'};
 `;
 
 const LocationList = styled.div`
   position: absolute;
-  top: 60px;
-  width: 22%;
-  max-height: 220px;
+  top: 3.75rem;
+  width: 25%;
+  min-width: 12.5rem;
+  max-width: 15rem;
+  max-height: 13.75rem;
   overflow-y: auto;
   background-color: #ffffff;
-  border: 1px solid #404040;
-  border-radius: 8px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  border: 0.0625rem solid #404040;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.375rem 0.625rem rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  right: 0.625rem;
 `;
 
 const LocationItem = styled.div`

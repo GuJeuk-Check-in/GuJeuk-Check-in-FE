@@ -66,11 +66,11 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
 `;
 
 const Label = styled.label`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
   font-weight: 500;
 `;
@@ -78,12 +78,12 @@ const Label = styled.label`
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  height: 56px;
-  border: 1px solid #404040;
-  border-radius: 8px;
-  font-size: 20px;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  height: 3.5rem;
+  border: 0.0625rem solid #404040;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
   color: #2e2e32;
   background-color: #ffffff;
   cursor: pointer;
@@ -93,7 +93,7 @@ const Input = styled.input`
   flex-grow: 1;
   border: none;
   outline: none;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
   background: transparent;
 `;
@@ -102,16 +102,15 @@ const CalendarWrapper = styled.div`
   position: absolute;
   top: 100%;
   left: 0;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   width: 100%;
   background: white;
-  border: 1px solid #dcdcdc;
-  border-radius: 12px;
+  border: 0.0625rem solid #dcdcdc;
+  border-radius: 0.75rem;
   z-index: 10;
-  padding: 20px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.25rem;
+  box-shadow: 0rem 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
 `;
-
 const StyledCalendar = styled(Calendar)`
   border: none;
   width: 100%;
@@ -121,13 +120,13 @@ const StyledCalendar = styled(Calendar)`
     justify-content: center;
     align-items: center;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
 
   .react-calendar__navigation button {
     color: #000000;
-    font-size: 18px;
-    min-width: 44px;
+    font-size: 1.125rem;
+    min-width: 2.75rem;
     background: none;
     border: none;
     cursor: pointer;
@@ -136,27 +135,27 @@ const StyledCalendar = styled(Calendar)`
   .react-calendar__month-view__weekdays {
     text-align: center;
     font-weight: 500;
-    margin-bottom: 6px;
+    margin-bottom: 0.375rem;
   }
 
   .react-calendar__tile {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     border-radius: 50%;
-    font-size: 18px;
+    font-size: 1.125rem;
     background: none;
     border: none;
-    margin-bottom: 4px;
+    margin-bottom: 0.25rem;
     cursor: pointer;
   }
 
   .react-calendar__tile--active {
-    width: 40px !important;
-    height: 40px !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
     display: block;
     background: #2762aa;
     color: white;

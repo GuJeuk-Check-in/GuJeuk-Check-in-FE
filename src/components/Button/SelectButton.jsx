@@ -18,13 +18,11 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-
-  width: 220px;
-  height: 80px;
-
-  border-radius: 16px;
-  border: 2px solid ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};
+  gap: 0.75rem;
+  width: 13.75rem;
+  height: 5rem;
+  border-radius: 1rem;
+  border: 0.125rem solid ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};
   background-color: white;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -35,9 +33,10 @@ const Button = styled.button`
 `;
 
 const RadioOuter = styled.div`
-  width: 28px;
-  height: 28px;
-  border: 3px solid ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0.1875rem solid
+    ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -45,14 +44,14 @@ const RadioOuter = styled.div`
 `;
 
 const RadioInner = styled.div`
-  width: 14px;
-  height: 14px;
+  width: 0.875rem;
+  height: 0.875rem;
   background-color: #0f50a0;
   border-radius: 50%;
 `;
 
 const LabelText = styled.span`
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 500;
   color: ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};
 `;

@@ -4,7 +4,7 @@ import { PiExportBold } from 'react-icons/pi';
 const ExcelButton = ({ onClick, disabled }) => {
   return (
     <ButtonContainer onClick={onClick} disabled={disabled}>
-      <PiExportBold size={20} />
+      <PiExportBold size="1.25rem" />
       <ButtonText>엑셀 파일로 내보내기</ButtonText>
     </ButtonContainer>
   );
@@ -16,21 +16,23 @@ const ButtonContainer = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   cursor: pointer;
   background-color: #ffffff;
-  border-radius: 50px;
-  border: 2px solid #0f50a0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 3.125rem;
+  border: 0.125rem solid #0f50a0;
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
   color: #333333;
   font-size: 1.1rem;
   font-weight: 600;
   transition: background-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  top: 0.5rem;
 
   &:hover {
     background-color: #f0f0f0;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.15);
   }
 
   &:disabled {

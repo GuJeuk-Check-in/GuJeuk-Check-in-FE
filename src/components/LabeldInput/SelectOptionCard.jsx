@@ -14,23 +14,25 @@ export default SelectOptionCard;
 
 const CardContainer = styled.div`
   width: 100%;
-  height: 60px;
-  padding: 0 15px;
+  height: 3.75rem;
+  padding: 0 0.9375rem;
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-radius: 8px;
+  gap: 0.75rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid ${({ isSelected }) => (isSelected ? '#3F73B3' : '#D1D8E0')};
+  border: 0.0625rem solid
+    ${({ isSelected }) => (isSelected ? '#3F73B3' : '#D1D8E0')};
   background-color: #ffffff;
 `;
 
 const Radio = styled.div`
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 50%;
-  border: 2px solid ${({ isSelected }) => (isSelected ? '#3F73B3' : '#9299A4')};
+  border: 0.125rem solid
+    ${({ isSelected }) => (isSelected ? '#3F73B3' : '#9299A4')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,15 +41,15 @@ const Radio = styled.div`
   &::after {
     content: '';
     display: ${({ isSelected }) => (isSelected ? 'block' : 'none')};
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: 50%;
     background-color: #3f73b3;
   }
 `;
 
 const LabelText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   color: #2e2e32;
 `;

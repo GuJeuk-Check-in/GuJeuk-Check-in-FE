@@ -9,7 +9,7 @@ export default HeaderButton;
 const Button = styled.button`
   border: none;
   background: none;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #565656;
   cursor: pointer;
 `;

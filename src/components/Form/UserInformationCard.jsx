@@ -35,67 +35,64 @@ export default UserInformationCard;
 const Container = styled.div`
   position: relative;
   background-color: #ffffff;
-  border: 1px solid #6f95c4;
-  border-radius: 36px;
+  border: 0.0625rem solid #6f95c4;
+  border-radius: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 32px;
+  padding: 1.25rem 2rem;
   width: 70%;
-  height: 11vh;
-  margin: 12px auto;
+  height: 7.5rem;
+  margin: 0.75rem auto;
   cursor: pointer;
 `;
-
 const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
-  margin-left: 20px;
+  gap: 0.5rem;
+  margin-left: 1.25rem;
 `;
 const Location = styled.h2`
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 400;
   color: #969698;
   margin: 0;
 `;
 
 const Name = styled.h2`
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 600;
   color: #2e2e32;
   margin: 0;
 `;
-
 const Diver = styled.div`
-  width: 1.5px;
-  height: 20px;
+  width: 0.09375rem;
+  height: 1.25rem;
   background-color: #aaa;
 `;
 
 const RightSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 `;
 
 const Gender = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
 `;
-
 const Birthday = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
 `;
 
 const PhoneNumber = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
 `;
 
 const Count = styled.div`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
 `;

@@ -42,9 +42,9 @@ const Container = styled.div`
   background-color: #ffffff;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
   width: 100%;
-  height: 12.04vh;
+  height: 8.125rem;
   box-sizing: border-box;
   position: fixed;
   top: 0;
@@ -52,10 +52,10 @@ const Container = styled.div`
   z-index: 1000;
 
   img {
-    width: 256px;
-    height: 98px;
+    width: 16rem;
+    height: 6.125rem;
     object-fit: contain;
-    margin-left: 30px;
+    margin-left: 1.875rem;
     cursor: pointer;
   }
 `;
@@ -63,19 +63,20 @@ const Container = styled.div`
 const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  /* 기존: gap: 8px; -> rem */
+  gap: 0.5rem;
 `;
 
 const Title = styled.h1`
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: 600;
   color: #393939;
   margin-left: auto;
-  margin-right: 20px;
+  margin-right: 1.25rem;
 `;
 
 const Diver = styled.div`
-  width: 1.5px;
-  height: 20px;
+  width: 0.09375rem;
+  height: 1.25rem;
   background-color: #aaa;
 `;

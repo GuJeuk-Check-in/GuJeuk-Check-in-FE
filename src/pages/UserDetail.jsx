@@ -37,13 +37,13 @@ const UserDetail = () => {
 export default UserDetail;
 
 const Container = styled.div`
-  padding-top: 12.04vh;
+  padding-top: 8.125rem;
 `;
 
 const ContentWrapper = styled.div`
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
 `;

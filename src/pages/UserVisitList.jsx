@@ -96,18 +96,18 @@ const UserVisitList = () => {
 export default UserVisitList;
 
 const Container = styled.div`
-  padding-top: 12.04vh;
+  padding-top: 8.125rem;
 `;
 
 const ContentWrapper = styled.div`
   margin: 0 auto;
-  padding-bottom: 50px;
+  padding-bottom: 3.125rem;
   margin-top: 0;
 `;
 
 const ExportButtonWrapper = styled.div`
   position: fixed;
-  top: 3vh;
+  top: 2rem;
   right: 16%;
   z-index: 1000;
   display: flex;
@@ -116,14 +116,14 @@ const ExportButtonWrapper = styled.div`
 `;
 
 const ExportLoadingMessage = styled.p`
-  margin-left: 10px;
+  margin-left: 0.625rem;
   color: #3f51b5;
   white-space: nowrap;
 `;
 
 const EmptyMessage = styled.p`
   text-align: center;
-  margin-top: 50px;
+  margin-top: 3.125rem;
   color: #666;
 `;
 
@@ -144,9 +144,9 @@ const LoadingOverlay = styled.div`
 const LoadingBox = styled.div`
   background-color: rgba(255, 255, 255, 0.3);
   color: #fff;
-  padding: 30px 50px;
-  border-radius: 10px;
+  padding: 1.875rem 3.125rem;
+  border-radius: 0.625rem;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0.5rem);
 `;

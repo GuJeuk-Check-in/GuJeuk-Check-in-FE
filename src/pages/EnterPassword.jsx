@@ -32,7 +32,7 @@ const EnterPassword = () => {
           title="관리자 비밀번호 입력"
           buttonContent={isLoading ? '확인 중...' : '확인'}
           onClick={handleConfirm}
-          buttonBottom="200px"
+          buttonBottom="12.5rem"
           disableButton={isLoading}
         >
           <EmptyInputSpace />
@@ -64,8 +64,8 @@ const EnterPassword = () => {
 export default EnterPassword;
 
 const MainWrapper = styled.div`
-  min-height: 100vh;
-  width: 100vw;
+  min-height: 100dvh;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,14 +73,14 @@ const MainWrapper = styled.div`
 
 const ErrorMessage = styled.p`
   color: #ff5a5a;
-  font-size: 20px;
+  font-size: 1.25rem;
   width: 100%;
   text-align: right;
-  padding-right: 100px;
+  padding-right: 6.25rem;
 `;
 
 const EmptyInputSpace = styled.div`
-  height: 80px;
+  height: 5rem;
 `;
 
 const InputAndErrorWrapper = styled.div`
@@ -94,15 +94,15 @@ const UpdatePasswordButton = styled.button`
   border: none;
   background: none;
   color: #a4dfff;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
 `;
 
 const UpdatePasswordButtonFixer = styled.div`
   position: absolute;
-  bottom: 130px;
+  bottom: 8.125rem;
   left: 82%;
   transform: translateX(-50%);
-  width: calc(100% - 80px);
+  width: calc(100% - 5rem);
   text-align: left;
 `;

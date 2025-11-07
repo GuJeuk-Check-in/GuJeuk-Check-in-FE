@@ -28,7 +28,7 @@ const UserVisitCard = ({ id, name, male, female, date, onDelete }) => {
       <RightSection>
         <Date>{date}</Date>
         <CloseButton onClick={handleDeleteClick}>
-          <IoClose size={24} />
+          <IoClose size="1.5rem" />
         </CloseButton>
       </RightSection>
     </Container>
@@ -40,26 +40,26 @@ export default UserVisitCard;
 const Container = styled.div`
   position: relative;
   background-color: #ffffff;
-  border: 1px solid #6f95c4;
-  border-radius: 36px;
+  border: 0.0625rem solid #6f95c4;
+  border-radius: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 32px;
+  padding: 1.25rem 2rem;
   width: 70%;
-  height: 11vh;
-  margin: 12px auto;
+  height: 7.5rem;
+  margin: 0.75rem auto;
   cursor: pointer;
 `;
 
 const LeftSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 3.75rem;
 `;
 
 const Name = styled.h2`
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 600;
   color: #2e2e32;
   margin: 0;
@@ -68,32 +68,31 @@ const Name = styled.h2`
 const Info = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 24px;
+  gap: 0.5rem;
+  font-size: 1.5rem;
   color: #2e2e32;
 `;
-
 const Divider = styled.div`
-  width: 1px;
-  height: 20px;
+  width: 0.0625rem;
+  height: 1.25rem;
   background-color: #aaa;
 `;
 
 const RightSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.75rem;
 `;
 
 const Date = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #969698;
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 0.75rem;
+  right: 0.75rem;
   background: none;
   border: none;
   cursor: pointer;

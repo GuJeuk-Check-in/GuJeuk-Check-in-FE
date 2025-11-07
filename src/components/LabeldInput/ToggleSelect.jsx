@@ -44,13 +44,13 @@ const Container = styled.div`
   width: 100%;
   height: auto;
   flex-direction: column;
-  gap: 8px;
+  gap: 0.5rem;
   position: relative;
   box-sizing: border-box;
 `;
 
 const Label = styled.label`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
   font-weight: 500;
 `;
@@ -59,40 +59,48 @@ const Box = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #2e2e32;
+  border: 0.0625rem solid #2e2e32;
   color: #6a6a6a;
-  border-radius: 8px;
-  padding: 8px 15px;
-  width: calc(100% - 32px);
-  height: 40px;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9375rem;
+  width: calc(100% - 2rem);
+  height: 2.5rem;
   cursor: pointer;
+
+  & > svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `;
 
 const SelectedValue = styled.span`
-  font-size: 20px;
+  font-size: 1.25rem;
   color: #2e2e32;
 `;
 
 const OptionContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  top: calc(56px + 8px);
+  gap: 0.5rem;
+  top: calc(3.5rem + 2.5rem);
   width: 100%;
   box-sizing: border-box;
   position: absolute;
   z-index: 10;
-  padding-top: 30px;
+  padding-top: 1.875rem;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
 `;
 
 const Option = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid #2e2e32;
-  border-radius: 8px;
-  padding: 10px 15px;
-  height: 40px;
+  gap: 0.5rem;
+  border: 0.0625rem solid #2e2e32;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.9375rem;
+  height: 2.5rem;
   cursor: pointer;
   transition: 0.2s;
   background-color: ${({ selected }) => (selected ? '#E9F0FF' : 'white')};
@@ -103,21 +111,21 @@ const Option = styled.div`
 `;
 
 const Circle = styled.div`
-  width: 18px;
-  height: 18px;
+  width: 1.125rem;
+  height: 1.125rem;
   border-radius: 50%;
-  border: 2px solid #0f50a0;
+  border: 0.125rem solid #0f50a0;
   background-color: ${({ selected }) => (selected ? '#0f50a0' : 'transparent')};
   transition: 0.2s;
   box-shadow: ${({ selected }) =>
-    selected ? 'inset 0 0 0 3px #FFFFFF' : 'none'};
+    selected ? 'inset 0 0 0 0.1875rem #FFFFFF' : 'none'};
 `;
 
 const Icon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
-  color: #6a6a6a;
-  font-size: 24px;
+  margin-right: 0.5rem;
+  color: #2e2e2e;
+  font-size: 1.5rem;
 `;
