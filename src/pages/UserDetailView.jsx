@@ -11,6 +11,7 @@ import PasswordButton from '../components/Button/PasswordButton';
 import ToggleSelect from '../components/LabeldInput/ToggleSelect';
 import CountVisitor from '../components/LabeldInput/CountVisitor';
 import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
+import { usePurposeList } from '../hooks/usePurposeList';
 
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
@@ -36,13 +37,24 @@ const UserDetailView = () => {
   const { id } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
+
   const {
     data: visit,
-    isLoading,
-    isError,
+    isLoading: isVisitLoading,
+    isError: isVisitError,
     error,
   } = usefetchUserVisitDetail(id);
   const updateMutation = useUpdateAdminItem();
+
+  const {
+    data: purposes = [],
+    isLoading: isPurposesLoading,
+    isError: isPurposesError,
+  } = usePurposeList();
+
+  const purposeOptions = Array.isArray(purposes)
+    ? purposes.map((p) => p.purpose)
+    : [];
 
   useEffect(() => {
     if (visit) {
@@ -77,6 +89,13 @@ const UserDetailView = () => {
     }));
   };
 
+  const handleDateChange = (isoString) => {
+    setFormData((prev) => ({
+      ...prev,
+      visitDate: isoString,
+    }));
+  };
+
   const handleAgeChange = (ageLabel) => {
     const ageEnum =
       AGE_OPTIONS.find((opt) => opt.label === ageLabel)?.value || ageLabel;
@@ -87,11 +106,22 @@ const UserDetailView = () => {
   };
 
   const handleEditToggle = () => {
+    if (isPurposesLoading) return;
     setIsEditing(true);
   };
 
   const handleSave = () => {
     if (!formData) return;
+
+    if (
+      !formData.name ||
+      !formData.phone ||
+      !formData.purpose.trim() ||
+      !formData.visitDate
+    ) {
+      console.error('필수 필드를 모두 입력해야 합니다.');
+      return;
+    }
 
     const dataToUpdate = {
       id: formData.id,
@@ -111,7 +141,9 @@ const UserDetailView = () => {
         setIsEditing(false);
       },
       onError: (err) => {
-        alert(`수정 실패: ${err.message}` || '알 수 없는 오류가 발생했습니다.');
+        console.error(
+          `수정 실패: ${err.message}` || '알 수 없는 오류가 발생했습니다.'
+        );
       },
     });
   };
@@ -133,25 +165,32 @@ const UserDetailView = () => {
     setIsEditing(false);
   };
 
-  if (isLoading) {
+  if (isVisitLoading || isPurposesLoading) {
     return (
       <Container>
         <UseBackground />
         <Header title="시설 이용 상세 조회" />
         <Wrapper>
-          <LoadingText>상세 기록을 불러오는 중...</LoadingText>
+          <LoadingText>
+            {isPurposesLoading
+              ? '목적 목록을 불러오는 중...'
+              : '상세 기록을 불러오는 중...'}
+          </LoadingText>
         </Wrapper>
       </Container>
     );
   }
 
-  if (isError) {
+  if (isVisitError || isPurposesError) {
     return (
       <Container>
         <UseBackground />
         <Header title="시설 이용 상세 조회" />
         <Wrapper>
-          <ErrorText>기록 조회에 실패했습니다: {error.message}</ErrorText>
+          <ErrorText>
+            기록 조회에 실패했습니다:{' '}
+            {error?.message || '방문 목적 목록을 불러오는 데 실패했습니다.'}
+          </ErrorText>
         </Wrapper>
       </Container>
     );
@@ -162,12 +201,6 @@ const UserDetailView = () => {
 
   const ageDisplayLabel = formatAgeDisplay(visit.age);
   const formattedPhone = formatPhoneNumber(visit.phone);
-
-  const privacyAgreedDisplay = (
-    isEditing ? formData.privacyAgreed : visit.privacyAgreed
-  )
-    ? '동의 (O)'
-    : '미동의 (X)';
 
   return (
     <Container>
@@ -210,12 +243,19 @@ const UserDetailView = () => {
         {isEditing ? (
           <ToggleSelect
             label="방문 목적"
-            options={[]}
+            options={
+              isPurposesLoading
+                ? ['목록 불러오는 중...']
+                : purposeOptions.length > 0
+                ? purposeOptions
+                : ['관리자 설정 목록 없음']
+            }
             placeholder="방문 목적을 선택해주세요"
             value={formData.purpose}
             onChange={(value) =>
               handleChange({ target: { name: 'purpose', value } })
             }
+            disabled={isPurposesLoading}
           />
         ) : (
           <VisitDetailInput
@@ -226,10 +266,8 @@ const UserDetailView = () => {
         )}
         {isEditing ? (
           <VisitDatePicker
-            value={formData.visitDate ? new Date(formData.visitDate) : null}
-            onChange={(value) =>
-              handleChange({ target: { name: 'visitDate', value } })
-            }
+            value={formData.visitDate}
+            onChange={handleDateChange}
           />
         ) : (
           <VisitDetailInput
@@ -287,7 +325,7 @@ const UserDetailView = () => {
               <ActionButton
                 content={updateMutation.isLoading ? '저장 중...' : '저장'}
                 onClick={handleSave}
-                disabled={updateMutation.isLoading}
+                disabled={updateMutation.isLoading || isPurposesLoading}
               />
               <ActionButton
                 content="취소"
@@ -296,7 +334,11 @@ const UserDetailView = () => {
               />
             </>
           ) : (
-            <ActionButton content="수정" onClick={handleEditToggle} />
+            <ActionButton
+              content="수정"
+              onClick={handleEditToggle}
+              disabled={isPurposesLoading}
+            />
           )}
         </CustomButtonWrapper>
       </Wrapper>
