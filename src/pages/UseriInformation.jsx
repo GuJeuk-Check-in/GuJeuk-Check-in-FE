@@ -114,27 +114,26 @@ const UserInformation = () => {
 };
 
 export default UserInformation;
-
-const HeaderHeight = '8.125rem';
-
 const Container = styled.div`
-  padding-top: ${HeaderHeight};
+  padding-top: 12.04vh;
 `;
 
+const HeaderHeight = '12.04vh';
+
 const ContentWrapper = styled.div`
-  min-height: calc(100dvh - ${HeaderHeight});
+  min-height: calc(100vh - ${HeaderHeight});
 `;
 
 const FilterWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.875rem 0 0.625rem 0;
+  padding: 30px 0 10px 0;
 `;
 
 const TotalCountText = styled.p`
   color: #ffffff;
-  font-size: 1.25rem;
+  font-size: 20px;
   margin: 0;
   margin-left: 12.5%;
   position: relative;
@@ -159,9 +158,9 @@ const LoadingOverlay = styled.div`
 const LoadingBox = styled.div`
   background-color: rgba(255, 255, 255, 0.3);
   color: #fff;
-  padding: 1.875rem 3.125rem;
-  border-radius: 0.625rem;
+  padding: 30px 50px;
+  border-radius: 10px;
   text-align: center;
-  box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(0.5rem);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
 `;

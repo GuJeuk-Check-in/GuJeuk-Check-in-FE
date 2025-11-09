@@ -33,24 +33,26 @@ const UserFilter = ({ selectedLocation, setSelectedLocation }) => {
 
   return (
     <Container>
-      <LocationHeader onClick={toggleDropdown}>
-        {selectedLocation}
-        <DropdownIcon isOpen={isOpen} />
-      </LocationHeader>
+      <DropdownWrapper>
+        <LocationHeader onClick={toggleDropdown}>
+          {selectedLocation}
+          <DropdownIcon isOpen={isOpen} />
+        </LocationHeader>
 
-      {isOpen && (
-        <LocationList>
-          {LocationData.map((location) => (
-            <LocationItem
-              key={location}
-              onClick={() => handleLocationSelect(location)}
-              isSelected={location === selectedLocation}
-            >
-              {location}
-            </LocationItem>
-          ))}
-        </LocationList>
-      )}
+        {isOpen && (
+          <LocationList>
+            {LocationData.map((location) => (
+              <LocationItem
+                key={location}
+                onClick={() => handleLocationSelect(location)}
+                isSelected={location === selectedLocation}
+              >
+                {location}
+              </LocationItem>
+            ))}
+          </LocationList>
+        )}
+      </DropdownWrapper>
     </Container>
   );
 };
@@ -64,14 +66,17 @@ const Container = styled.div`
   position: relative;
   justify-content: flex-end;
   box-sizing: border-box;
-  padding: 0.625rem 0.625rem;
+  padding: 0.625rem 3rem;
   z-index: 100;
 `;
 
-const LocationHeader = styled.div`
+const DropdownWrapper = styled.div`
+  position: relative;
   min-width: 12.5rem;
-  max-width: 15rem;
-  width: 25%;
+`;
+
+const LocationHeader = styled.div`
+  width: 100%;
   height: 3.5rem;
   border: 0.0625rem solid #404040;
   border-radius: 0.5rem;
@@ -98,9 +103,7 @@ const DropdownIcon = styled.div`
 const LocationList = styled.div`
   position: absolute;
   top: 3.75rem;
-  width: 25%;
-  min-width: 12.5rem;
-  max-width: 15rem;
+  width: 100%;
   max-height: 13.75rem;
   overflow-y: auto;
   background-color: #ffffff;
@@ -108,7 +111,7 @@ const LocationList = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0 0.375rem 0.625rem rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  right: 0.625rem;
+  width: calc(100% + 2rem);
 `;
 
 const LocationItem = styled.div`

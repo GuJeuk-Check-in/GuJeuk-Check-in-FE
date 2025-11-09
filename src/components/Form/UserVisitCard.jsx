@@ -28,7 +28,7 @@ const UserVisitCard = ({ id, name, male, female, date, onDelete }) => {
       <RightSection>
         <Date>{date}</Date>
         <CloseButton onClick={handleDeleteClick}>
-          <IoClose size="1.5rem" />
+          <IoClose size="1.8rem" />
         </CloseButton>
       </RightSection>
     </Container>
@@ -41,7 +41,7 @@ const Container = styled.div`
   position: relative;
   background-color: #ffffff;
   border: 0.0625rem solid #6f95c4;
-  border-radius: 2.25rem;
+  border-radius: 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
