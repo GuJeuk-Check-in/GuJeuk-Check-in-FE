@@ -11,6 +11,25 @@ const formatDateToISOString = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const safeDateConvert = (dateString) => {
+  if (!dateString) return null;
+
+  let standardDateString = dateString;
+  if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
+    standardDateString = dateString.replace(
+      /(\d{4})(\d{2})(\d{2})/,
+      '$1-$2-$3'
+    );
+  }
+
+  const date = new Date(standardDateString);
+  if (isNaN(date.getTime())) {
+    console.error('Invalid date string provided:', dateString);
+    return null;
+  }
+  return date;
+};
+
 const VisitDatePicker = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,10 +44,10 @@ const VisitDatePicker = ({ value, onChange }) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
-    return `${year}년${month}월${day}일`;
+    return `${year}년 ${month}월 ${day}일`;
   };
 
-  const dateObject = value ? new Date(value) : null;
+  const dateObject = safeDateConvert(value);
 
   return (
     <Container>
