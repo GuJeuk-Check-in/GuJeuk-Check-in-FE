@@ -4,7 +4,7 @@ import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
 
-const LabeledInput = ({ label, placeholder, value, onChange }) => {
+const LabeledInput = ({ label, placeholder, value, onChange, ...props }) => {
   const [showPW, setShowPW] = useState(false);
   const id = useId();
   return (
@@ -21,6 +21,7 @@ const LabeledInput = ({ label, placeholder, value, onChange }) => {
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          {...props}
         ></Input>
         <IconButton type="button" onClick={() => setShowPW(!showPW)}>
           {showPW ? <IoEyeSharp /> : <FaEyeSlash />}
