@@ -23,6 +23,12 @@ const EnterPassword = () => {
     checkPasswordMutate(currentPW);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleConfirm();
+    }
+  };
+
   return (
     <>
       <PasswordBackground />
@@ -47,6 +53,7 @@ const EnterPassword = () => {
                 setErrorMessage('');
               }}
               isError={!!errorMessage}
+              onKeyDown={handleKeyDown}
             />
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
           </InputAndErrorWrapper>
