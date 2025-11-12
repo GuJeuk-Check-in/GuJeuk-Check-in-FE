@@ -43,6 +43,12 @@ const UpdatePassword = () => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleConfirm();
+    }
+  };
+
   return (
     <>
       <PasswordBackground />
@@ -68,6 +74,7 @@ const UpdatePassword = () => {
                 setFormErrors({});
               }}
               isError={!!formErrors.currentPW}
+              onKeyDown={handleKeyDown}
             />
             <ErrorSpace>
               {formErrors.currentPW && (
@@ -88,6 +95,7 @@ const UpdatePassword = () => {
                 setFormErrors({});
               }}
               isError={!!formErrors.newPW}
+              onKeyDown={handleKeyDown}
             />
             <ErrorSpace>
               {formErrors.newPW && (
@@ -108,6 +116,7 @@ const UpdatePassword = () => {
                 setFormErrors({});
               }}
               isError={!!formErrors.confirmPW}
+              onKeyDown={handleKeyDown}
             />
             <ErrorSpace>
               {formErrors.confirmPW && (
