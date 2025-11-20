@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const response = await axios.patch(
-          `${import.meta.env.VITE_API_BASE_URL}/admin/re-issue`,
+          `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
           {},
           { withCredentials: true }
         );
