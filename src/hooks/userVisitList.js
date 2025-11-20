@@ -1,11 +1,23 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useInfiniteQuery,
+} from '@tanstack/react-query';
 import { fetchUserVisitList, deleteUserVisit } from '../api/visitApi';
 
-export const useUserVisitList = (page) => {
-  return useQuery({
-    queryKey: ['visits', page],
-    queryFn: () => fetchUserVisitList(page),
+export const useInfiniteUserVisitList = () => {
+  return useInfiniteQuery({
+    queryKey: ['visits'],
+    queryFn: ({ pageParam = 0 }) => fetchUserVisitList(pageParam),
     staleTime: 5 * 60 * 1000,
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.last) {
+        return undefined;
+      }
+      return allPages.length;
+    },
+
+    initialPageParam: 0,
   });
 };
 
