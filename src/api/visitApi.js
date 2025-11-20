@@ -1,6 +1,5 @@
+import Month from 'react-calendar/dist/YearView/Month.js';
 import axiosInstance from './axiosInstance';
-import useAuthStore from '../store/authStore';
-import axios from 'axios';
 
 /**
  * @param {number} page
@@ -100,11 +99,33 @@ export const exportVisitListToExcel = async () => {
 
     return '엑셀 파일 다운로드 성공';
   } catch (error) {
-    console.error('엑셀 파일 다운로드 실패 (인터셉터 우회 후):', error);
+    console.error('엑셀 파일 다운로드 실패:', error);
 
     let errorMessage = '엑셀 내보내기 중 알 수 없는 오류가 발생했습니다.';
+
     if (error.response?.status) {
-      errorMessage = `엑셀 내보내기 실패: ${error.response.status} 오류`;
+      const status = error.response.status;
+      errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
+
+      if (error.response.data) {
+        let errorBodyText = '';
+
+        if (error.response.data instanceof Blob) {
+          errorBodyText = await error.response.data.text();
+        } else if (typeof error.response.data === 'string') {
+          errorBodyText = error.response.data;
+        }
+
+        if (errorBodyText) {
+          console.error(`서버 응답 상세 (HTTP ${status}):`, errorBodyText);
+
+          const preview =
+            errorBodyText.length > 50
+              ? errorBodyText.slice(0, 50) + '...'
+              : errorBodyText;
+          errorMessage += ` (서버 메시지: ${preview})`;
+        }
+      }
     } else if (error.message) {
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
     }
