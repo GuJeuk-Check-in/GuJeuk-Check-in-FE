@@ -11,7 +11,7 @@ export const useExportExcel = () => {
 
     onError: (error) => {
       console.error('엑셀 내보내기 실패:', error);
-      alert('엑셀 파일 내보내기에 실패했습니다. 다시 시도해 주세요.');
+      alert(`엑셀 파일 내보내기에 실패했습니다: ${error.message}`);
     },
   });
 };
