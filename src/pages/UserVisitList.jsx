@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserVisitCard from '../components/Form/UserVisitCard';
@@ -6,24 +6,58 @@ import styled from '@emotion/styled';
 import ExcelButton from '../components/Button/ExcelButton';
 import { useExportExcel } from '../hooks/useExportExcel';
 import {
-  useUserVisitList,
+  useInfiniteUserVisitList,
   useDeleteVisitMutation,
 } from '../hooks/userVisitList';
 import DateExportModal from '../components/Modal/DateExportModal';
 
 const UserVisitList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data, isLoading, error } = useUserVisitList(0);
+  const [exportingDate, setExportingDate] = useState('');
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteUserVisitList();
+
   const { mutate: deleteMutate, isLoading: isDeleting } =
     useDeleteVisitMutation();
 
   const { mutate: excelMutate, isLoading: isExporting } = useExportExcel();
 
-  const visits = data?.content || [];
+  const visits = data?.pages.flatMap((page) => page.content) || [];
+
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleDelete = (id, name) => {
     if (isDeleting) return;
-
     if (window.confirm(`${name}님의 기록을 삭제하시겠습니까?`)) {
       deleteMutate(id);
     }
@@ -33,14 +67,30 @@ const UserVisitList = () => {
     setIsModalOpen(true);
   };
 
-  const handleExportConfirmed = (year, month) => {
-    excelMutate({ year, month });
+  const handleExportConfirmedWithDate = (year, month) => {
+    const formattedMonth = String(month).padStart(2, '0');
+    const dataString = `${year}-${formattedMonth}`;
+    setExportingDate(dataString);
+    excelMutate(
+      { year, month: formattedMonth },
+      {
+        onSettled: () => {
+          setExportingDate('');
+        },
+      }
+    );
     setIsModalOpen(false);
   };
 
-  const handleExcelExport = () => {
-    excelMutate();
+  const getExportingPeriodMessage = (dateString) => {
+    if (!dateString) return '전체 기간';
+    const parts = dateString.split('-');
+    if (parts.length === 2) {
+      return `기간: ${parts[0]}년 ${parts[1]}월`;
+    }
+    return dateString;
   };
+
   return (
     <Container>
       <UseBackground />
@@ -50,8 +100,8 @@ const UserVisitList = () => {
         <ExcelButton onClick={handleExcelExportClick} disabled={isExporting} />
         {isExporting && (
           <ExportLoadingMessage>
-            엑셀 파일을 준비 중입니다... (기간: {new Date().getFullYear()}년{' '}
-            {new Date().getMonth() + 1}월)
+            엑셀 파일을 준비 중입니다... (
+            {getExportingPeriodMessage(exportingDate)})
           </ExportLoadingMessage>
         )}
       </ExportButtonWrapper>
@@ -66,7 +116,7 @@ const UserVisitList = () => {
           </LoadingOverlay>
         )}
 
-        {error && <p>오류 발생: {error.message}</p>}
+        {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
 
         {!isLoading && !error && visits.length === 0 && (
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
@@ -83,11 +133,21 @@ const UserVisitList = () => {
             onDelete={() => handleDelete(visit.id, visit.name)}
           />
         ))}
+
+        <ObserverTarget ref={observerTarget} />
+
+        {isFetchingNextPage && (
+          <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
+        )}
+        {!hasNextPage && visits.length > 0 && (
+          <InfoMessage>모든 기록을 불러왔습니다.</InfoMessage>
+        )}
       </ContentWrapper>
+
       <DateExportModal
         isVisible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onExport={handleExportConfirmed}
+        onExport={handleExportConfirmedWithDate}
       />
     </Container>
   );
@@ -149,4 +209,20 @@ const LoadingBox = styled.div`
   text-align: center;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(0.5rem);
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  text-align: center;
+  margin-top: 2rem;
+`;
+
+const InfoMessage = styled.p`
+  text-align: center;
+  margin: 20px 0;
+  color: #ffffff;
+`;
+
+const ObserverTarget = styled.div`
+  height: 10px;
 `;
