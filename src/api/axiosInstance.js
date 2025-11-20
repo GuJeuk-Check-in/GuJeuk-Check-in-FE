@@ -56,8 +56,7 @@ axiosInstance.interceptors.response.use(
 
     // 403 에러 (권한 없음)
     if (error.response?.status === 403) {
-      console.error('접근 권한이 없습니다');
-      // 필요시 권한 없음 페이지로 이동
+      console.error('접근 권한이 없습니다:', originalRequest.url);
     }
 
     // 500 에러 (서버 에러)
