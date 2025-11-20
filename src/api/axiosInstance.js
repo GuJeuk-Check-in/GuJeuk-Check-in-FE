@@ -33,8 +33,8 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/auth/reissue`,
+        const response = await axios.patch(
+          `${import.meta.env.VITE_API_BASE_URL}/admin/re-issue`,
           {},
           { withCredentials: true }
         );
