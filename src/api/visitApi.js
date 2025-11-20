@@ -64,38 +64,22 @@ export const fetchUserVisitDetail = async (id) => {
   }
 };
 
-export const exportVisitListToExcel = async () => {
-  const { token } = useAuthStore.getState();
-
-  const excelAxios = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    withCredentials: true,
-  });
-
+export const exportVisitListToExcel = async ({ year, month }) => {
   try {
-    const response = await excelAxios.get('/admin/excel', {
+    // const formattedMonth = month.toString().padStart(2, '0');
+    const response = await axiosInstance.get(`/admin/excel/${year}-${month}`, {
       responseType: 'blob',
-      transformResponse: [(data) => data],
+      // transformResponse: [(data) => data], TODO: 무슨 인자인지 알아보기
     });
-
     console.log('서버로부터 받은 응답 Blob 크기:', response.data.size, 'bytes');
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-
-    const date = new Date().toISOString().slice(0, 10);
-    link.setAttribute('download', `시설이용목록_${date}.xlsx`);
-
+    link.setAttribute('download', `시설이용목록_${year}-${month}.xlsx`);
     document.body.appendChild(link);
     link.click();
-
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    link.remove();
 
     return '엑셀 파일 다운로드 성공';
   } catch (error) {
