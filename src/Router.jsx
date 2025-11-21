@@ -15,7 +15,7 @@ const Router = () => {
       <Route path="/admin/list/all" element={<UserVisitList />}></Route>
       <Route path="/admin/list/create" element={<UserDetail />}></Route>
       <Route path="/admin/list/:id" element={<UserDetailView />} />
-      <Route path="/user-information" element={<UserInformation />} />
+      <Route path="/admin/user/all" element={<UserInformation />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
     </Routes>
   );

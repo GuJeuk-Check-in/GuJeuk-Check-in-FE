@@ -27,7 +27,7 @@ const Header = ({ title }) => {
           방문 목적 커스텀
         </HeaderButton>
         <Diver />
-        <HeaderButton onClick={() => navigate('/user-information')}>
+        <HeaderButton onClick={() => navigate('/admin/user/all')}>
           회원 목록 조회
         </HeaderButton>
       </ButtonWrapper>

@@ -33,21 +33,24 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
+        const { refreshToken } = useAuthStore.getState();
+
+        if (!refreshToken) {
+          throw new Error('No refresh token available');
+        }
+
         const response = await axios.patch(
           `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
-          {},
+          { token: refreshToken },
           { withCredentials: true }
         );
 
-        const { token } = response.data;
+        const { accessToken, refreshToken: newRefreshToken } = response.data;
+        useAuthStore.getState().setAuth(accessToken, newRefreshToken);
 
-        useAuthStore.getState().setToken(token);
-
-        // 원래 요청 재시도
-        originalRequest.headers.Authorization = `Bearer ${token}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // 리프레시도 실패하면 로그아웃
         useAuthStore.getState().logout();
         window.location.href = '/admin/login';
         return Promise.reject(refreshError);

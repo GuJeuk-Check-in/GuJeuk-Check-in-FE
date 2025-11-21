@@ -17,7 +17,7 @@ const LabeledInput = ({ label, placeholder, value, onChange, ...props }) => {
         </LeftIcon>
         <Input
           id={id}
-          type={showPW ? 'text' : 'password'}
+          type={props.type || (showPW ? 'text' : 'password')}
           placeholder={placeholder}
           value={value}
           onChange={onChange}

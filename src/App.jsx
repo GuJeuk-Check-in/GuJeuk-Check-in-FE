@@ -13,7 +13,7 @@ const App = () => {
       try {
         const response = await axios.patch(
           `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
-          {},
+          { token: refreshToken },
           { withCredentials: true }
         );
 
