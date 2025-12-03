@@ -63,7 +63,6 @@ const Container = styled.div`
 const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
-  /* 기존: gap: 8px; -> rem */
   gap: 0.5rem;
 `;
 

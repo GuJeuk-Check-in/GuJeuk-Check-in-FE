@@ -4,9 +4,21 @@ import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
 
-const LabeledInput = ({ label, placeholder, value, onChange, ...props }) => {
+const LabeledInput = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  type,
+  ...props
+}) => {
   const [showPW, setShowPW] = useState(false);
   const id = useId();
+  const handleType = () => {
+    if (type === 'password' && showPW) return 'text';
+    return type || 'text';
+  };
+
   return (
     <Container>
       <Label htmlFor={id}>{label}</Label>
@@ -17,15 +29,17 @@ const LabeledInput = ({ label, placeholder, value, onChange, ...props }) => {
         </LeftIcon>
         <Input
           id={id}
-          type={props.type || (showPW ? 'text' : 'password')}
+          type={handleType()}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
           {...props}
-        ></Input>
-        <IconButton type="button" onClick={() => setShowPW(!showPW)}>
-          {showPW ? <IoEyeSharp /> : <FaEyeSlash />}
-        </IconButton>
+        />
+        {type === 'password' && (
+          <IconButton type="button" onClick={() => setShowPW(!showPW)}>
+            {showPW ? <IoEyeSharp /> : <FaEyeSlash />}
+          </IconButton>
+        )}
       </InputWrapper>
     </Container>
   );
@@ -34,8 +48,15 @@ const LabeledInput = ({ label, placeholder, value, onChange, ...props }) => {
 export default LabeledInput;
 
 const Container = styled.div`
-  width: 28.375rem;
-  height: 4rem;
+  width: 100%;
+  max-width: 28.375rem;
+  margin-bottom: 0;
+
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+  }
 `;
 
 const Label = styled.label`
@@ -43,46 +64,89 @@ const Label = styled.label`
   font-size: 1.25rem;
   color: #ffffff;
   margin-bottom: 0.5rem;
+  font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
 `;
 
 const InputWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 `;
 
 const Input = styled.input`
-  width: 28.375rem;
-  height: 3rem;
-  border-radius: 2.5rem;
+  width: 100%;
+  height: 4.5rem;
+  border-radius: 2.2rem;
   border: none;
   color: #000000;
   font-size: 1.25rem;
   padding: 0.75rem 2.8125rem 0.75rem 4.375rem;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: 2px solid #c2d5ec;
+  }
+
+  @media (max-width: 768px) {
+    height: 3.5rem;
+    font-size: 1rem;
+    padding-left: 3.5rem;
+    padding-right: 2.5rem;
+  }
 `;
 
 const LeftIcon = styled.div`
   position: absolute;
-  left: 0.9375rem;
+  left: 1rem;
   display: flex;
   align-items: center;
   gap: 0.625rem;
   font-size: 2rem;
   color: #444;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    left: 0.8rem;
+    gap: 0.4rem;
+  }
 `;
 
 const Divider = styled.div`
-  width: 0.0625rem;
+  width: 1px;
   height: 2.5rem;
+
   background-color: #404040;
+
+  @media (max-width: 768px) {
+    height: 2rem;
+  }
 `;
 
 const IconButton = styled.button`
   position: absolute;
-  right: 0.9375rem;
+  right: 1rem;
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1.5rem;
   color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #333;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    right: 0.8rem;
+  }
 `;

@@ -27,16 +27,42 @@ const Container = styled.div`
   cursor: pointer;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
 
-  transition: 0.3s;
+  transition: all 0.2s ease-in-out;
 
   &:hover {
     background-color: #c2d5ec;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 280px;
+    height: 3.5rem;
+
+    &:hover {
+      background-color: #3d72b3;
+      transform: none;
+    }
+
+    &:active {
+      background-color: #c2d5ec;
+    }
   }
 `;
 
 const Content = styled.span`
   color: #ffffff;
   font-size: 1.5rem;
-
+  font-weight: 500;
   margin: 0;
+  user-select: none;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
 `;

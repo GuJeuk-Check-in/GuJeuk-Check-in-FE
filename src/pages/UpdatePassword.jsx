@@ -58,72 +58,61 @@ const UpdatePassword = () => {
           title="관리자 비밀번호 변경"
           buttonContent={isLoading ? '변경 중...' : '변경'}
           onClick={handleConfirm}
-          buttonBottom="60px"
+          buttonBottom="3rem"
           disableButton={isLoading}
         >
-          {errorMessage && (
-            <ServerErrorMessage>{errorMessage}</ServerErrorMessage>
-          )}
-          <InputGroupWrapper>
-            <LabeledInput
-              label="기존 비밀번호"
-              placeholder="비밀번호를 입력해주세요."
-              value={currentPW}
-              onChange={(e) => {
-                setCurrentPW(e.target.value);
-                setFormErrors({});
-              }}
-              isError={!!formErrors.currentPW}
-              onKeyDown={handleKeyDown}
-            />
-            <ErrorSpace>
-              {formErrors.currentPW && (
-                <ErrorMessage>{formErrors.currentPW}</ErrorMessage>
-              )}
-            </ErrorSpace>
-          </InputGroupWrapper>
+          <FormContainer>
+            <InputGroup>
+              <LabeledInput
+                label="기존 비밀번호"
+                placeholder="비밀번호를 입력해주세요."
+                value={currentPW}
+                onChange={(e) => {
+                  setCurrentPW(e.target.value);
+                  setFormErrors({});
+                }}
+                isError={!!formErrors.currentPW}
+                onKeyDown={handleKeyDown}
+              />
+              <ErrorMessage visible={!!formErrors.currentPW}>
+                {formErrors.currentPW}
+              </ErrorMessage>
+            </InputGroup>
 
-          <InputGroupSpacer />
+            <InputGroup>
+              <LabeledInput
+                label="새 비밀번호"
+                placeholder="새 비밀번호를 입력해주세요."
+                value={newPW}
+                onChange={(e) => {
+                  setNewPW(e.target.value);
+                  setFormErrors({});
+                }}
+                isError={!!formErrors.newPW}
+                onKeyDown={handleKeyDown}
+              />
+              <ErrorMessage visible={!!formErrors.newPW}>
+                {formErrors.newPW}
+              </ErrorMessage>
+            </InputGroup>
 
-          <InputGroupWrapper>
-            <LabeledInput
-              label="새 비밀번호"
-              placeholder="새 비밀번호를 입력해주세요."
-              value={newPW}
-              onChange={(e) => {
-                setNewPW(e.target.value);
-                setFormErrors({});
-              }}
-              isError={!!formErrors.newPW}
-              onKeyDown={handleKeyDown}
-            />
-            <ErrorSpace>
-              {formErrors.newPW && (
-                <ErrorMessage>{formErrors.newPW}</ErrorMessage>
-              )}
-            </ErrorSpace>
-          </InputGroupWrapper>
-
-          <InputGroupSpacer />
-
-          <InputGroupWrapper>
-            <LabeledInput
-              label="비밀번호 확인"
-              placeholder="비밀번호를 다시 입력해주세요."
-              value={confirmPW}
-              onChange={(e) => {
-                setConfirmPW(e.target.value);
-                setFormErrors({});
-              }}
-              isError={!!formErrors.confirmPW}
-              onKeyDown={handleKeyDown}
-            />
-            <ErrorSpace>
-              {formErrors.confirmPW && (
-                <ErrorMessage>{formErrors.confirmPW}</ErrorMessage>
-              )}
-            </ErrorSpace>
-          </InputGroupWrapper>
+            <InputGroup>
+              <LabeledInput
+                label="비밀번호 확인"
+                placeholder="비밀번호를 다시 입력해주세요."
+                value={confirmPW}
+                onChange={(e) => {
+                  setConfirmPW(e.target.value);
+                  setFormErrors({});
+                }}
+                isError={!!formErrors.confirmPW}
+                onKeyDown={handleKeyDown}
+              />
+              <ErrorMessage visible={!!formErrors.confirmPW}>
+                {formErrors.confirmPW}
+              </ErrorMessage>
+            </InputGroup>
+          </FormContainer>
         </RightPage>
       </MainWrapper>
     </>
@@ -140,39 +129,30 @@ const MainWrapper = styled.div`
   align-items: center;
 `;
 
-const InputGroupSpacer = styled.div`
-  height: 3.875rem;
-  width: 100%;
-`;
-
-const InputGroupWrapper = styled.div`
+const FormContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  gap: 1rem;
+  margin: 0;
 `;
 
-const ErrorSpace = styled.div`
+const InputGroup = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ErrorMessage = styled.p`
   color: #ff5a5a;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   width: 100%;
+  max-width: 28.375rem;
   text-align: right;
-  padding-right: 6.25rem;
-  margin: 0;
-  position: absolute;
-  top: 6.5625rem;
-  right: -3.125rem;
-`;
-
-const ServerErrorMessage = styled.p`
-  color: #ff5a5a;
-  font-size: 1.25rem;
-  width: 100%;
-  text-align: right;
-  padding-right: 6.25rem;
+  margin: 0.3rem 0 0 0.5rem;
+  min-height: 1.2rem;
+  position: static;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
 `;

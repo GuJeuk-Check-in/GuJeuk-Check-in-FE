@@ -2,6 +2,7 @@ import PasswordBackground from '../components/Background/PasswordBackground';
 import LeftPage from '../components/Form/LeftPage';
 import RightPage from '../components/Form/RightPage';
 import LabeledInput from '../components/Form/LabeledInput';
+import PasswordButton from '../components/Button/PasswordButton';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -33,36 +34,38 @@ const EnterPassword = () => {
     <>
       <PasswordBackground />
       <MainWrapper>
-        <LeftPage />
-        <RightPage
-          title="관리자 비밀번호 입력"
-          buttonContent={isLoading ? '확인 중...' : '확인'}
-          onClick={handleConfirm}
-          buttonBottom="12.5rem"
-          disableButton={isLoading}
-        >
-          <EmptyInputSpace />
-          <InputAndErrorWrapper>
-            <LabeledInput
-              label=""
-              placeholder="비밀번호를 입력해주세요."
-              type="password"
-              value={currentPW}
-              onChange={(e) => {
-                setCurrentPW(e.target.value);
-                setErrorMessage('');
-              }}
-              isError={!!errorMessage}
-              onKeyDown={handleKeyDown}
-            />
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-          </InputAndErrorWrapper>
-          <UpdatePasswordButtonFixer>
-            <UpdatePasswordButton onClick={() => navigate('/admin/change')}>
-              비밀번호 변경하기
-            </UpdatePasswordButton>
-          </UpdatePasswordButtonFixer>
-        </RightPage>
+        <PageContainer>
+          <LeftPage />
+
+          <RightPage title="관리자 비밀번호 입력">
+            <LoginContentGroup>
+              <LabeledInput
+                label=""
+                placeholder="비밀번호를 입력해주세요."
+                type="password"
+                value={currentPW}
+                onChange={(e) => {
+                  setCurrentPW(e.target.value);
+                  setErrorMessage('');
+                }}
+                isError={!!errorMessage}
+                onKeyDown={handleKeyDown}
+              />
+              <ErrorMessage visible={!!errorMessage}>
+                {errorMessage}
+              </ErrorMessage>
+              <ButtonWrapper>
+                <PasswordButton
+                  content={isLoading ? '확인 중...' : '확인'}
+                  onClick={handleConfirm}
+                />
+              </ButtonWrapper>
+              <LinkButton onClick={() => navigate('/admin/change')}>
+                비밀번호 변경하기
+              </LinkButton>
+            </LoginContentGroup>
+          </RightPage>
+        </PageContainer>
       </MainWrapper>
     </>
   );
@@ -78,38 +81,52 @@ const MainWrapper = styled.div`
   align-items: center;
 `;
 
-const ErrorMessage = styled.p`
-  color: #ff5a5a;
-  font-size: 1.25rem;
-  width: 100%;
-  text-align: right;
-  padding-right: 6.25rem;
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
 `;
 
-const EmptyInputSpace = styled.div`
-  height: 5rem;
-`;
-
-const InputAndErrorWrapper = styled.div`
+const LoginContentGroup = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
 `;
 
-const UpdatePasswordButton = styled.button`
+const ErrorMessage = styled.p`
+  color: #ff5a5a;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 28.375rem;
+  text-align: left;
+  margin: 0 0 10px 10px;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+`;
+
+const ButtonWrapper = styled.div`
+  margin-top: 10px;
+  margin-bottom: 10px;
+`;
+
+const LinkButton = styled.button`
   border: none;
   background: none;
   color: #a4dfff;
-  font-size: 1.125rem;
+  font-size: 0.95rem;
   cursor: pointer;
-`;
+  padding: 5px;
+  margin-top: 5px;
 
-const UpdatePasswordButtonFixer = styled.div`
-  position: absolute;
-  bottom: 8.125rem;
-  left: 82%;
-  transform: translateX(-50%);
-  width: calc(100% - 5rem);
-  text-align: left;
+  &:hover {
+    text-decoration: underline;
+    color: #bee8ff;
+  }
 `;

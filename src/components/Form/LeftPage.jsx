@@ -4,7 +4,7 @@ import Logo from '../../assets/Logo.png';
 const LeftPage = () => {
   return (
     <Container>
-      <img src={Logo} alt="로고 이미지" />
+      <LogoImage src={Logo} alt="로고 이미지" />
       <Title>
         나의 <HighTitle>미래</HighTitle>는<br /> 내가 만드는 거야
       </Title>
@@ -24,27 +24,58 @@ export default LeftPage;
 
 const Container = styled.div`
   width: 35.89vw;
+  min-width: 400px;
   height: 74.63vh;
   padding: 40px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   border-radius: 20px 0 0 20px;
   background-color: #ffffff;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    min-height: 50vh;
+    border-radius: 20px 20px 0 0;
+    padding: 30px 20px;
+  }
+`;
+
+const LogoImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+
+  @media (max-width: 768px) {
+    max-width: 150px;
+  }
 `;
 
 const Title = styled.p`
-  font-size: 68px;
+  font-size: 4rem;
   color: #2f68c2;
   text-align: center;
-  margin: 20px auto 20px auto;
+  margin: 20px auto;
   line-height: 1.2;
   font-family: 'Jua', sans-serif;
   font-weight: 400;
+  word-break: keep-all;
+
+  @media (max-width: 1200px) {
+    font-size: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+    margin: 10px auto;
+  }
 `;
 
 const HighTitle = styled.span`
-  font-size: 80px;
+  font-size: 1.2em;
   color: #f86879;
 `;
 
@@ -53,9 +84,16 @@ const SubTitle = styled.p`
   color: #ffffff;
   padding: 10px 20px;
   text-align: center;
-  margin-bottom: 30px;
   font-size: 0.95rem;
-  margin: 20px auto 20px auto;
+  margin: 20px auto;
+  line-height: 1.5;
+  word-break: keep-all;
+
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+    padding: 8px 15px;
+    width: 90%;
+  }
 `;
 
 const List = styled.ul`
@@ -63,9 +101,15 @@ const List = styled.ul`
   padding-left: 20px;
   font-size: 1rem;
   color: #333;
-  margin: 20px 0 20px 50px;
+  display: inline-block;
+  text-align: left;
 
   li {
     margin-bottom: 10px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin: 10px 0;
   }
 `;
