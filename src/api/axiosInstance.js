@@ -6,15 +6,19 @@ export const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // 쿠키 전송을 위해 추가
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
     const { token } = useAuthStore.getState();
+
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
+    } else if (config.url.includes('/admin/re-issue')) {
+      config.headers['Authorization'] = 'Bearer expired_or_null';
     }
+
     return config;
   },
   (error) => {
@@ -29,44 +33,43 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (originalRequest.url.includes('/admin/re-issue')) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        const { refreshToken } = useAuthStore.getState();
-
-        if (!refreshToken) {
-          throw new Error('No refresh token available');
-        }
+        const { token } = useAuthStore.getState();
 
         const response = await axios.patch(
           `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
-          { token: refreshToken },
-          { withCredentials: true }
+          {},
+          {
+            headers: {
+              Authorization: token
+                ? `Bearer ${token}`
+                : 'Bearer expired_or_null',
+            },
+            withCredentials: true,
+          }
         );
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-        useAuthStore.getState().setAuth(accessToken, newRefreshToken);
+        const { accessToken } = response.data;
+
+        useAuthStore.getState().setAuth(accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.error('Refresh failed. Logging out:', refreshError);
         useAuthStore.getState().logout();
         window.location.href = '/admin/login';
         return Promise.reject(refreshError);
       }
     }
-
-    // 403 에러 (권한 없음)
-    if (error.response?.status === 403) {
-      console.error('접근 권한이 없습니다:', originalRequest.url);
-    }
-
-    // 500 에러 (서버 에러)
-    if (error.response?.status >= 500) {
-      console.error('서버 에러가 발생했습니다');
-    }
-
     return Promise.reject(error);
   }
 );
