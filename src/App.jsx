@@ -1,50 +1,44 @@
+import { useEffect, useState } from 'react';
 import { Global, css } from '@emotion/react';
 import Router from './Router';
-import axios from 'axios';
-import { useEffect } from 'react';
 import useAuthStore from './store/authStore';
+import { axiosInstance } from './api/axiosInstance';
 
 const App = () => {
-  const { setAuth, logout, isInitializing, finishInitialization } =
-    useAuthStore();
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  const token = useAuthStore((state) => state.token);
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   useEffect(() => {
-    const checkLoginStatus = async () => {
+    const silentRefresh = async () => {
+      if (token) {
+        setIsInitializing(false);
+        return;
+      }
+
       try {
-        const response = await axios.patch(
-          `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
-          { token: refreshToken },
-          { withCredentials: true }
-        );
+        const response = await axiosInstance.patch('/admin/re-issue');
+        const authHeader = response.headers['authorization'];
+        const accessToken =
+          authHeader && authHeader.startsWith('Bearer ')
+            ? authHeader.slice(7)
+            : authHeader;
 
-        const { token } = response.data;
-
-        setAuth(token);
+        if (accessToken) {
+          setAuth(accessToken);
+          console.log('로그인 유지 성공');
+        }
       } catch (error) {
-        console.log('비로그인 상태 또는 세션 만료');
-        logout();
-        finishInitialization();
+      } finally {
+        setIsInitializing(false);
       }
     };
 
-    checkLoginStatus();
-  }, [setAuth, logout, finishInitialization]);
+    silentRefresh();
+  }, [token, setAuth]);
 
-  if (isInitializing) {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          fontSize: '1.5rem',
-        }}
-      >
-        로그인 확인 중...
-      </div>
-    );
-  }
+  if (isInitializing) return null;
 
   return (
     <>
