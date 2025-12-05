@@ -18,12 +18,9 @@ axiosInstance.interceptors.request.use(
     } else if (config.url.includes('/admin/re-issue')) {
       config.headers['Authorization'] = 'Bearer expired_or_null';
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 axiosInstance.interceptors.response.use(
@@ -32,7 +29,6 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-
     if (originalRequest.url.includes('/admin/re-issue')) {
       return Promise.reject(error);
     }
@@ -56,15 +52,20 @@ axiosInstance.interceptors.response.use(
           }
         );
 
-        const { accessToken } = response.data;
+        const authHeader = response.headers['authorization'];
+        if (!authHeader) {
+          throw new Error('Authorization header is missing');
+        }
+
+        const accessToken = authHeader.startsWith('Bearer ')
+          ? authHeader.slice(7)
+          : authHeader;
 
         useAuthStore.getState().setAuth(accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.error('Refresh failed. Logging out:', refreshError);
         useAuthStore.getState().logout();
         window.location.href = '/admin/login';
         return Promise.reject(refreshError);
