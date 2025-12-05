@@ -22,7 +22,7 @@ import { axiosInstance } from './axiosInstance';
 
 export const EnterPassword = async (password) => {
   const response = await axiosInstance.post('/admin/login', { password });
-  return response.data;
+  return response;
 };
 
 export const UpdatePassword = async (

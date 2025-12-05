@@ -8,18 +8,31 @@ const formatDateToISOString = (date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return `${year}년${month}월${day}일`;
 };
 
 const safeDateConvert = (dateString) => {
   if (!dateString) return null;
 
+  if (dateString instanceof Date) return dateString;
+
   let standardDateString = dateString;
-  if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
-    standardDateString = dateString.replace(
-      /(\d{4})(\d{2})(\d{2})/,
-      '$1-$2-$3'
-    );
+
+  if (typeof dateString === 'string') {
+    const numbersOnly = dateString.replace(/[^\d]/g, '');
+
+    if (numbersOnly.length === 8) {
+      standardDateString = numbersOnly.replace(
+        /(\d{4})(\d{2})(\d{2})/,
+        '$1-$2-$3'
+      );
+    } else {
+      standardDateString = dateString
+        .replace('년', '-')
+        .replace('월', '-')
+        .replace('일', '')
+        .replace(/\s/g, '');
+    }
   }
 
   const date = new Date(standardDateString);
