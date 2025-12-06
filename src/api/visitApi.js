@@ -1,4 +1,3 @@
-import Month from 'react-calendar/dist/YearView/Month.js';
 import axiosInstance from './axiosInstance';
 
 /**
@@ -9,6 +8,11 @@ import axiosInstance from './axiosInstance';
 export const fetchUserVisitList = async (page = 0) => {
   try {
     const response = await axiosInstance.get(`/admin/list/all?page=${page}`);
+
+    if (response.data?.message && response.data?.description) {
+      throw new Error(response.data.message);
+    }
+
     return response.data;
   } catch (error) {
     console.error('이용 기록 목록 조회 실패:', error);
@@ -66,10 +70,8 @@ export const fetchUserVisitDetail = async (id) => {
 
 export const exportVisitListToExcel = async ({ year, month }) => {
   try {
-    // const formattedMonth = month.toString().padStart(2, '0');
     const response = await axiosInstance.get(`/admin/excel/${year}-${month}`, {
       responseType: 'blob',
-      // transformResponse: [(data) => data], TODO: 무슨 인자인지 알아보기
     });
     console.log('서버로부터 받은 응답 Blob 크기:', response.data.size, 'bytes');
 
