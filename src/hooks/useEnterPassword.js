@@ -10,19 +10,33 @@ const useEnterPassword = (setErrorMessage) => {
   return useMutation({
     mutationFn: EnterPassword,
 
-    onSuccess: (data) => {
-      if (data.accessToken) {
-        setAuth(data.accessToken);
+    onSuccess: (response) => {
+      const rawToken =
+        response.headers['authorization'] || response.headers['Authorization'];
+
+      if (rawToken && typeof rawToken === 'string') {
+        const accessToken = rawToken.startsWith('Bearer ')
+          ? rawToken.slice(7)
+          : rawToken;
+
+        if (
+          !accessToken ||
+          accessToken === 'undefined' ||
+          accessToken === 'null'
+        ) {
+          setErrorMessage('로그인 응답 토큰이 유효하지 않습니다.');
+          return;
+        }
+
+        setAuth(accessToken);
         setErrorMessage('');
         navigate('/admin/list/all', { replace: true });
       } else {
-        setErrorMessage('로그인에 실패했습니다.');
+        setErrorMessage('서버 응답에서 인증 정보를 찾을 수 없습니다.');
       }
     },
 
     onError: (error) => {
-      console.error('비밀번호 확인 에러:', error);
-
       if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message);
       } else if (error.response?.status === 401) {
@@ -30,7 +44,7 @@ const useEnterPassword = (setErrorMessage) => {
       } else if (error.response?.status === 400) {
         setErrorMessage('잘못된 요청입니다.');
       } else {
-        setErrorMessage('비밀번호 확인 중 오류가 발생했습니다.');
+        setErrorMessage('로그인 처리 중 문제가 발생했습니다.');
       }
     },
   });
