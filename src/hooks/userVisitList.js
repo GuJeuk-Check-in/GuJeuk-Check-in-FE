@@ -11,9 +11,16 @@ export const useInfiniteUserVisitList = () => {
     queryFn: ({ pageParam = 0 }) => fetchUserVisitList(pageParam),
     staleTime: 5 * 60 * 1000,
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.last) {
+      if (!lastPage) return undefined;
+
+      if (lastPage.last === true) {
         return undefined;
       }
+
+      if (!lastPage.content || lastPage.content.length === 0) {
+        return undefined;
+      }
+
       return allPages.length;
     },
 
