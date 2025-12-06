@@ -29,29 +29,31 @@ const UserVisitList = () => {
 
   const { mutate: excelMutate, isLoading: isExporting } = useExportExcel();
 
-  const visits = data?.pages.flatMap((page) => page.content) || [];
-
+  const visits =
+    data?.pages.flatMap((page) => page?.data?.content || page?.content || []) ||
+    [];
   const observerTarget = useRef(null);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || !hasNextPage || isFetchingNextPage) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        if (entries[0].isIntersecting) {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
 
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
   }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -122,19 +124,23 @@ const UserVisitList = () => {
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
 
-        {visits.map((visit) => (
-          <UserVisitCard
-            key={visit.id}
-            id={visit.id}
-            name={visit.name}
-            male={visit.maleCount}
-            female={visit.femaleCount}
-            date={visit.visitDate}
-            onDelete={() => handleDelete(visit.id, visit.name)}
-          />
-        ))}
+        {visits.map((visit, index) => {
+          if (!visit) return null;
 
-        <ObserverTarget ref={observerTarget} />
+          return (
+            <UserVisitCard
+              key={visit.id || index}
+              id={visit?.id}
+              name={visit?.name}
+              male={visit?.maleCount}
+              female={visit?.femaleCount}
+              date={visit?.visitDate}
+              onDelete={() => handleDelete(visit?.id, visit?.name)}
+            />
+          );
+        })}
+
+        {hasNextPage && <ObserverTarget ref={observerTarget} />}
 
         {isFetchingNextPage && (
           <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
