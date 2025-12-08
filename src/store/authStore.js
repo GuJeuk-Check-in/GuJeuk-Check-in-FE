@@ -6,18 +6,23 @@ const useAuthStore = create((set) => ({
   isAuthenticated: !!Cookies.get('accessToken'),
   user: null,
 
-  setAuth: (token) => {
-    Cookies.set('accessToken', token, { secure: true, sameSite: 'Strict' });
-
+  setAuth: (accessToken) => {
+    Cookies.set('accessToken', accessToken, {
+      secure: true,
+      sameSite: 'Strict',
+    });
     set({
-      token: token,
+      token: accessToken,
       isAuthenticated: true,
     });
   },
 
+  setUser: (user) => {
+    set({ user });
+  },
+
   logout: () => {
     Cookies.remove('accessToken');
-
     set({
       token: null,
       isAuthenticated: false,
