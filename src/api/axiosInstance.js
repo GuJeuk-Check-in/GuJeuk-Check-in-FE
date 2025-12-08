@@ -31,8 +31,30 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const errorMsg = error.response?.data?.message;
+    const status = error.response?.status;
+
+    if (
+      status === 401 &&
+      errorMsg === '만료된 토큰입니다.' &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token) => {
+              originalRequest.headers['Authorization'] = `Bearer ${token}`;
+              resolve(axiosInstance(originalRequest));
+            },
+            reject: (err) => {
+              reject(err);
+            },
+          });
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const { token } = useAuthStore.getState();
@@ -43,7 +65,7 @@ axiosInstance.interceptors.response.use(
           {
             withCredentials: true,
             headers: {
-              Authorization: token ? `Bearer ${token}` : 'Bearer a.b.c',
+              Authorization: token ? `Bearer ${token}` : undefined,
             },
           }
         );
@@ -56,20 +78,25 @@ axiosInstance.interceptors.response.use(
           throw new Error('Authorization header is missing');
         }
 
-        const accessToken = authHeader.startsWith('Bearer ')
+        const newAccessToken = authHeader.startsWith('Bearer ')
           ? authHeader.slice(7)
           : authHeader;
 
-        useAuthStore.getState().setAuth(accessToken);
+        useAuthStore.getState().setAuth(newAccessToken);
 
-        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        processQueue(refreshError, null);
+
         useAuthStore.getState().logout();
         window.location.href = '/admin/login';
-
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
