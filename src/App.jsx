@@ -2,41 +2,15 @@ import { useEffect, useState } from 'react';
 import { Global, css } from '@emotion/react';
 import Router from './Router';
 import useAuthStore from './store/authStore';
-import { axiosInstance } from './api/axiosInstance';
 
 const App = () => {
+  const token = useAuthStore((state) => state.token);
+
   const [isInitializing, setIsInitializing] = useState(true);
 
-  const token = useAuthStore((state) => state.token);
-  const setAuth = useAuthStore((state) => state.setAuth);
-
   useEffect(() => {
-    const silentRefresh = async () => {
-      if (token) {
-        setIsInitializing(false);
-        return;
-      }
-
-      try {
-        const response = await axiosInstance.patch('/admin/re-issue');
-        const authHeader = response.headers['authorization'];
-        const accessToken =
-          authHeader && authHeader.startsWith('Bearer ')
-            ? authHeader.slice(7)
-            : authHeader;
-
-        if (accessToken) {
-          setAuth(accessToken);
-          console.log('로그인 유지 성공');
-        }
-      } catch (error) {
-      } finally {
-        setIsInitializing(false);
-      }
-    };
-
-    silentRefresh();
-  }, [token, setAuth]);
+    setIsInitializing(false);
+  }, [token]);
 
   if (isInitializing) return null;
 
