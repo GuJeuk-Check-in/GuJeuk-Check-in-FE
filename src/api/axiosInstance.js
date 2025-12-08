@@ -9,14 +9,26 @@ export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const { token } = useAuthStore.getState();
-
-    if (token && typeof token === 'string' && token.length > 0) {
+    if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)
