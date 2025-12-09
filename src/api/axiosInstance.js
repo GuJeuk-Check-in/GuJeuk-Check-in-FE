@@ -77,7 +77,7 @@ axiosInstance.interceptors.response.use(
           {
             withCredentials: true,
             headers: {
-              Authorization: token ? `Bearer ${token}` : undefined,
+              Authorization: token ? `${token}` : undefined,
             },
           }
         );
