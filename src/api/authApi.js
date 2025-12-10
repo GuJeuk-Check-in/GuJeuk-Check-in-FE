@@ -1,5 +1,4 @@
-import { axiosInstance } from './axiosInstance';
-
+import axiosInstance from './axiosInstance';
 /**
  * @param {string} password
  * @returns {Promise<object>}
