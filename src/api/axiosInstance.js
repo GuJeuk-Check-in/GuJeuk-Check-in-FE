@@ -38,17 +38,21 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
-    if (originalRequest.url.includes('/admin/re-issue')) {
-      return Promise.reject(error);
-    }
-
-    const errorMsg = error.response?.data?.message;
     const status = error.response?.status;
+    const errorData = error.response?.data;
+    const errorMsg = errorData?.message || error.message || '알 수 없는 오류';
+
+    if (!error.response) {
+      return Promise.reject(
+        new Error(
+          '서버와 연결할 수 없습니다. 네트워크 혹은 CORS 설정을 확인하세요.'
+        )
+      );
+    }
 
     if (
       status === 401 &&
-      errorMsg === '만료된 토큰입니다.' &&
+      errorMsg.includes('만료된 토큰') &&
       !originalRequest._retry
     ) {
       if (isRefreshing) {
@@ -58,9 +62,7 @@ axiosInstance.interceptors.response.use(
               originalRequest.headers['Authorization'] = `Bearer ${token}`;
               resolve(axiosInstance(originalRequest));
             },
-            reject: (err) => {
-              reject(err);
-            },
+            reject: (err) => reject(err),
           });
         });
       }
@@ -70,50 +72,44 @@ axiosInstance.interceptors.response.use(
 
       try {
         const { token } = useAuthStore.getState();
-
         const response = await axios.patch(
           `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
           {},
           {
             withCredentials: true,
-            headers: {
-              Authorization: token ? `${token}` : undefined,
-            },
+            headers: { Authorization: token ? `${token}` : undefined },
           }
         );
 
         const authHeader =
           response.headers['authorization'] ||
           response.headers['Authorization'];
-
-        if (!authHeader) {
-          throw new Error('Authorization header is missing');
-        }
-
-        const newAccessToken = authHeader.startsWith('Bearer ')
+        const newAccessToken = authHeader?.startsWith('Bearer ')
           ? authHeader.slice(7)
           : authHeader;
 
-        useAuthStore.getState().setAuth(newAccessToken);
+        if (!newAccessToken) throw new Error('새 토큰을 받지 못했습니다.');
 
+        useAuthStore.getState().setAuth(newAccessToken);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
         processQueue(null, newAccessToken);
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-
         useAuthStore.getState().logout();
-        window.location.href = '/admin/login';
-        return Promise.reject(refreshError);
+        window.location.href = '/admin/login?error=expired';
+        return Promise.reject(
+          new Error('세션이 만료되어 다시 로그인해야 합니다.')
+        );
       } finally {
         isRefreshing = false;
       }
     }
 
-    return Promise.reject(error);
+    const customError = new Error(errorMsg);
+    customError.status = status;
+    return Promise.reject(customError);
   }
 );
-
 export default axiosInstance;
