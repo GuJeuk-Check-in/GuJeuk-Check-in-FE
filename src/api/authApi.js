@@ -21,7 +21,7 @@ import axiosInstance from './axiosInstance';
 
 export const EnterPassword = async (password) => {
   const response = await axiosInstance.post('/admin/login', { password });
-  return response;
+  return response.data;
 };
 
 export const UpdatePassword = async (
@@ -34,5 +34,5 @@ export const UpdatePassword = async (
     newPassword: newPassword,
     confirmNewPassword: confirmNewPassword,
   });
-  return response;
+  return response.data;
 };
