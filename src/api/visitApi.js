@@ -30,7 +30,7 @@ export const deleteUserVisit = async (id) => {
     const response = await axiosInstance.delete(`/admin/list/${id}`);
     return response.data;
   } catch (error) {
-    console.error(`ID ${id} 이용 기록 삭제 실패:`, error);
+    console.error(`ID ${id} 이용 기록 삭제 실패:`, error.message);
     throw error;
   }
 };
