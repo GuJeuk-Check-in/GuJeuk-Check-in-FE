@@ -1,34 +1,46 @@
 import { create } from 'zustand';
-import Cookies from 'js-cookie';
+import { persist } from 'zustand/middleware';
 
-const useAuthStore = create((set) => ({
-  token: Cookies.get('accessToken') || null,
-  isAuthenticated: !!Cookies.get('accessToken'),
-  user: null,
-
-  setAuth: (accessToken) => {
-    Cookies.set('accessToken', accessToken, {
-      secure: true,
-      sameSite: 'Strict',
-    });
-    set({
-      token: accessToken,
-      isAuthenticated: true,
-    });
-  },
-
-  setUser: (user) => {
-    set({ user });
-  },
-
-  logout: () => {
-    Cookies.remove('accessToken');
-    set({
-      token: null,
+const useAuthStore = create(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
       isAuthenticated: false,
       user: null,
-    });
-  },
-}));
+
+      setAuth: (accessToken, refreshToken) => {
+        set({
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
+      },
+
+      setUser: (user) => {
+        set({ user });
+      },
+
+      logout: () => {
+        set({
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+          user: null,
+        });
+      },
+    }),
+    {
+      name: 'auth-storage',
+      getStorage: () => localStorage,
+
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.isAuthenticated = !!state.accessToken;
+        }
+      },
+    }
+  )
+);
 
 export default useAuthStore;
