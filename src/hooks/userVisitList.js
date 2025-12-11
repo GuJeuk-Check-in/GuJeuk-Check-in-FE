@@ -11,19 +11,10 @@ export const useInfiniteUserVisitList = () => {
     queryFn: ({ pageParam = 0 }) => fetchUserVisitList(pageParam),
     staleTime: 5 * 60 * 1000,
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage) return undefined;
-
-      if (lastPage.last === true) {
-        return undefined;
-      }
-
-      if (!lastPage.content || lastPage.content.length === 0) {
-        return undefined;
-      }
-
+      if (!lastPage || lastPage.last === true) return undefined;
+      if (!lastPage.content || lastPage.content.length === 0) return undefined;
       return allPages.length;
     },
-
     initialPageParam: 0,
   });
 };
@@ -38,6 +29,7 @@ export const useDeleteVisitMutation = () => {
       alert('이용 기록이 성공적으로 삭제되었습니다.');
     },
     onError: (error) => {
+      console.error('삭제 실패:', error);
       alert(`삭제 실패: ${error.message}`);
     },
   });
