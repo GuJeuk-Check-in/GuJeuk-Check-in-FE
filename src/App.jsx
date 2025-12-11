@@ -1,7 +1,8 @@
 import { Global, css } from '@emotion/react';
 import Router from './Router';
-
+import useTokenRefresher from './hooks/useTokenRefresher';
 const App = () => {
+  useTokenRefresher();
   return (
     <>
       <Global
