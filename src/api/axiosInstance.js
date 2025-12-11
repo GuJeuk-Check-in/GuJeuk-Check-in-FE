@@ -18,8 +18,10 @@ const processQueue = (error, token = null) => {
 };
 
 axiosInstance.interceptors.request.use((config) => {
-  const { token } = useAuthStore.getState();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const { accessToken } = useAuthStore.getState();
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
   return config;
 });
 
@@ -56,37 +58,55 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { token } = useAuthStore.getState();
+        const { accessToken } = useAuthStore.getState();
+
         const res = await axios.patch(
           `${import.meta.env.VITE_API_BASE_URL}admin/re-issue`,
           {},
           {
             withCredentials: true,
-            headers: { Authorization: token || '' },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
           }
         );
 
-        const authHeader =
-          res.headers.authorization || res.headers.Authorization;
-        const newAccessToken = authHeader?.replace('Bearer ', '');
+        console.log('Reissue 응답:', res.data); // 디버깅용
 
-        if (!newAccessToken) throw new Error('갱신 실패');
+        const newAccessToken = res.data?.accessToken;
+        const newRefreshToken = res.data?.refreshToken;
 
-        useAuthStore.getState().setAuth(newAccessToken);
+        if (!newAccessToken || !newRefreshToken) {
+          console.error('서버 응답:', res.data);
+          throw new Error('서버 응답에서 인증 정보를 찾을 수 없습니다.');
+        }
+
+        useAuthStore.getState().setAuth(newAccessToken, newRefreshToken);
+
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         processQueue(null, newAccessToken);
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
         useAuthStore.getState().logout();
+
         window.location.href = '/admin/login?error=expired';
+
         return Promise.reject(
           new Error('로그인 정보가 만료되었습니다. 다시 로그인해 주세요.')
         );
       } finally {
         isRefreshing = false;
       }
+    }
+
+    if (status === 401) {
+      useAuthStore.getState().logout();
+      window.location.href = '/admin/login?error=expired';
+      return Promise.reject(new Error('다시 로그인을 진행해주세요.'));
     }
 
     const customError = new Error(errorMsg);
