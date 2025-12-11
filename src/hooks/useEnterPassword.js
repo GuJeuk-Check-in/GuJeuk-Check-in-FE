@@ -11,29 +11,30 @@ const useEnterPassword = (setErrorMessage) => {
     mutationFn: EnterPassword,
 
     onSuccess: (response) => {
-      const rawToken =
-        response.headers['authorization'] || response.headers['Authorization'];
+      const accessToken = response?.accessToken;
+      const refreshToken = response?.refreshToken;
 
-      if (rawToken && typeof rawToken === 'string') {
-        const accessToken = rawToken.startsWith('Bearer ')
-          ? rawToken.slice(7)
-          : rawToken;
-
-        if (
-          !accessToken ||
-          accessToken === 'undefined' ||
-          accessToken === 'null'
-        ) {
-          setErrorMessage('로그인 응답 토큰이 유효하지 않습니다.');
-          return;
-        }
-
-        setAuth(accessToken);
-        setErrorMessage('');
-        navigate('/admin/list/all', { replace: true });
-      } else {
-        setErrorMessage('서버 응답에서 인증 정보를 찾을 수 없습니다.');
+      if (
+        !accessToken ||
+        accessToken === 'undefined' ||
+        accessToken === 'null'
+      ) {
+        setErrorMessage('로그인 응답에서 accessToken을 찾을 수 없습니다.');
+        return;
       }
+
+      if (
+        !refreshToken ||
+        refreshToken === 'undefined' ||
+        refreshToken === 'null'
+      ) {
+        setErrorMessage('로그인 응답에서 refreshToken을 찾을 수 없습니다.');
+        return;
+      }
+
+      setAuth(accessToken, refreshToken);
+      setErrorMessage('');
+      navigate('/admin/list/all', { replace: true });
     },
 
     onError: (error) => {
