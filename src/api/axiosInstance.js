@@ -35,6 +35,17 @@ axiosInstance.interceptors.response.use(
         new Error('인터넷 연결이 원활하지 않거나 서버 점검 중입니다.')
       );
     }
+    if (
+      originalRequest.url.includes('re-issue') ||
+      originalRequest.url.includes('admin/re-issue')
+    ) {
+      useAuthStore.getState().logout();
+      localStorage.removeItem('auth-storage');
+      window.location.href = '/admin/login?error=expired';
+      return Promise.reject(
+        new Error('세션이 만료되었습니다. 다시 로그인해주세요.')
+      );
+    }
 
     const status = response.status;
     let errorMsg = response.data?.message || error.message || '알 수 없는 오류';
@@ -76,10 +87,6 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = res.data?.accessToken;
         const newRefreshToken = res.data?.refreshToken;
 
-        if (!newAccessToken) {
-          throw new Error('토큰 갱신 실패');
-        }
-
         useAuthStore.getState().setAuth(newAccessToken, newRefreshToken);
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -102,7 +109,9 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(new Error('다시 로그인을 진행해주세요.'));
     }
 
-    return Promise.reject(error);
+    const customError = new Error(errorMsg);
+    customError.status = status;
+    return Promise.reject(customError);
   }
 );
 
