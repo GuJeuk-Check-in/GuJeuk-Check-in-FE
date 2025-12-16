@@ -8,10 +8,9 @@ const useTokenRefresher = () => {
   useEffect(() => {
     if (!accessToken) return;
 
-    const refreshCycle = 1000 * 20;
+    const refreshCycle = 1000 * 3300;
 
     const timer = setInterval(async () => {
-      console.log('50초 경과');
       try {
         const res = await axiosInstance.patch('admin/re-issue');
 
