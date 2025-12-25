@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
 
+const GENDER_MAP = {
+  MAN: '남성',
+  WOMAN: '여성',
+};
+
 const UserInformationCard = ({
   name,
   location,
@@ -18,7 +23,7 @@ const UserInformationCard = ({
       </LeftSection>
 
       <RightSection>
-        <Gender>{gender}</Gender>
+        <Gender>{GENDER_MAP[gender] || gender}</Gender>
         <Diver />
         <Birthday>{birthday}</Birthday>
         <Diver />
