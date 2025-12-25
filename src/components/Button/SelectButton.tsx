@@ -1,7 +1,13 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-const SelectButton = ({ label, isSelected, onClick }) => {
+interface SelectButtonProps {
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const SelectButton = ({ label, isSelected, onClick }: SelectButtonProps) => {
   return (
     <Button selected={isSelected} onClick={onClick}>
       <RadioOuter selected={isSelected}>
@@ -14,7 +20,11 @@ const SelectButton = ({ label, isSelected, onClick }) => {
 
 export default SelectButton;
 
-const Button = styled.button`
+interface ButtonProps {
+  selected: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -32,7 +42,7 @@ const Button = styled.button`
   }
 `;
 
-const RadioOuter = styled.div`
+const RadioOuter = styled.div<ButtonProps>`
   width: 1.75rem;
   height: 1.75rem;
   border: 0.1875rem solid
@@ -50,7 +60,7 @@ const RadioInner = styled.div`
   border-radius: 50%;
 `;
 
-const LabelText = styled.span`
+const LabelText = styled.span<ButtonProps>`
   font-size: 1.5rem;
   font-weight: 500;
   color: ${({ selected }) => (selected ? '#0F50A0' : '#3B3B3B')};

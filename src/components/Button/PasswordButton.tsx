@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
 
-const PasswordButton = ({ content, onClick }) => {
+interface PasswordButtonProps {
+  content: string;
+  onClick: () => void;
+}
+
+const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
   return (
     <Container
       tabIndex={0}
