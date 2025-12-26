@@ -38,12 +38,10 @@ const useEnterPassword = (setErrorMessage) => {
     },
 
     onError: (error) => {
-      if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-      } else if (error.response?.status === 401) {
-        setErrorMessage('비밀번호가 일치하지 않습니다.');
-      } else if (error.response?.status === 400) {
-        setErrorMessage('잘못된 요청입니다.');
+      const message = error.message || error.response?.data?.message;
+
+      if (message) {
+        setErrorMessage(message);
       } else {
         setErrorMessage('로그인 처리 중 문제가 발생했습니다.');
       }
