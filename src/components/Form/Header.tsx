@@ -3,7 +3,11 @@ import HeaderButton from '../Button/HeaderButton';
 import Logo from '../../assets/Logo.png';
 import styled from '@emotion/styled';
 
-const Header = ({ title }) => {
+interface HeaderProps {
+  title: string;
+}
+
+const Header = ({ title }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (

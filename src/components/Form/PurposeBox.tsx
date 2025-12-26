@@ -4,12 +4,24 @@ import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
 import { useUpdatePurpose } from '../../hooks/updatePurpose';
 
-const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
+interface Purpose {
+  id: number;
+  purpose: string;
+}
+
+interface PurposeProps {
+  purpose: Purpose;
+  onDelete: (id: number) => void;
+  isDeleting: boolean;
+}
+
+const PurposeBox = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(purpose.purpose);
   const [isEnterHandled, setIsEnterHandled] = useState(false);
 
-  const { mutate: updateMutate, isLoading: isUpdating } = useUpdatePurpose();
+  const { mutate: updateMutate, isLoading: isUpdating } =
+    useUpdatePurpose() as any;
 
   const handleUpdate = () => {
     const trimmedLabel = newLabel.trim();
@@ -48,7 +60,7 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
   return (
     <Container $isDisabled={isDisabled}>
       <DeleteIcon
-        onClick={isDisabled ? null : handleDelete}
+        onClick={isDisabled ? undefined : handleDelete}
         $isDeleting={isDisabled}
       >
         {isDisabled ? '...' : <IoClose size="1.25rem" />}{' '}
@@ -74,8 +86,8 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
         />
       ) : (
         <Label>
-          {purpose.purpose}{' '}
-          <MdEdit
+          {purpose.purpose}
+          <StyledEditIcon
             size={18}
             onClick={() => {
               if (!isDisabled) {
@@ -91,7 +103,12 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }) => {
 };
 
 export default PurposeBox;
-const Container = styled.div`
+
+interface ContainerProps {
+  $isDisabled: boolean;
+}
+
+const Container = styled.div<ContainerProps>`
   width: 100%;
   max-width: 20.625rem;
   height: 9.375rem;
@@ -108,7 +125,7 @@ const Container = styled.div`
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
 `;
 
-const DeleteIcon = styled.div`
+const DeleteIcon = styled.div<{ $isDeleting: boolean }>`
   position: absolute;
   top: 0.625rem;
   right: 0.75rem;
@@ -145,4 +162,14 @@ const EditInput = styled.input`
   width: 80%;
   color: #2e2e32;
   padding: 0;
+`;
+
+const StyledEditIcon = styled(MdEdit)<{ $isDisabled: boolean }>`
+  cursor: ${(props) => (props.$isDisabled ? 'not-allowed' : 'pointer')};
+  color: ${(props) => (props.$isDisabled ? '#ccc' : '#666')};
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${(props) => (props.$isDisabled ? '#ccc' : '#333')};
+  }
 `;

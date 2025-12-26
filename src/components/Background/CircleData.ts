@@ -1,3 +1,11 @@
+interface CircleData {
+  id: number;
+  coloer: string;
+  size: string;
+  top: string;
+  left: string;
+}
+
 const CircleData = [
   { id: 1, color: '#0F50A0', size: '38.3vw', top: '-27.5vh', left: '-16.8vw' },
   { id: 2, color: '#2ABFEC', size: '10.7vw', top: '-7.8vh', left: '20.1vw' },

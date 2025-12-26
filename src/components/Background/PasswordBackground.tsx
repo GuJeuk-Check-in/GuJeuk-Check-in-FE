@@ -19,6 +19,13 @@ const PasswordBackground = () => {
 
 export default PasswordBackground;
 
+interface CircleProps {
+  $color: string;
+  $size: string;
+  $top?: string;
+  $left?: string;
+}
+
 const Container = styled.div`
   position: absolute;
   top: 0;
@@ -30,7 +37,7 @@ const Container = styled.div`
   pointer-events: none;
 `;
 
-const Circle = styled.div`
+const Circle = styled.div<CircleProps>`
   position: absolute;
   border-radius: 50%;
   opacity: 1;

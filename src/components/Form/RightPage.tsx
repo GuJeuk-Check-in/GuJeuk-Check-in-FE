@@ -1,7 +1,19 @@
 import PasswordButton from '../Button/PasswordButton';
 import styled from '@emotion/styled';
 
-const RightPage = ({ title, children, buttonContent, onClick }) => {
+interface RightPageProps {
+  title?: string;
+  children?: React.ReactNode;
+  buttonContent?: string;
+  onClick?: () => void;
+}
+
+const RightPage = ({
+  title,
+  children,
+  buttonContent,
+  onClick,
+}: RightPageProps) => {
   return (
     <Container>
       {title && <Title>{title}</Title>}
