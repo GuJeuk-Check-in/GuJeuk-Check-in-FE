@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useCreatePurpose } from '../../hooks/createPurpose';
 
 const PurposeAddBox = () => {
-  const { mutate: createMutate, isLoading: isCreating } = useCreatePurpose();
+  const { mutate: createMutate, isLoading: isCreating } =
+    useCreatePurpose() as any;
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
@@ -37,11 +38,22 @@ const PurposeAddBox = () => {
     setIsAdding(false);
   };
 
+  const handlekeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAdd();
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewLabel(e.target.value);
+  };
+
   if (!isAdding) {
     return (
       <Container
-        $isAddButton
-        onClick={isDisabled ? null : () => setIsAdding(true)}
+        $isAddButton={true}
+        onClick={isDisabled ? undefined : () => setIsAdding(true)}
         $isDisabled={isDisabled}
       >
         <MdAdd size={48} color={isDisabled ? '#ccc' : '#007bff'} />
@@ -73,7 +85,7 @@ const PurposeAddBox = () => {
           size={26}
           color={isDisabled ? '#ccc' : '#dc3545'}
           style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-          onClick={isDisabled ? null : handleCancel}
+          onClick={isDisabled ? undefined : handleCancel}
         />
       </IconSection>
     </Container>
@@ -82,7 +94,12 @@ const PurposeAddBox = () => {
 
 export default PurposeAddBox;
 
-const Container = styled.div`
+interface ContainerProps {
+  $isAddButton?: boolean;
+  $isDisabled?: boolean;
+}
+
+const Container = styled.div<ContainerProps>`
   width: 100%;
   max-width: 20.625rem;
   height: 9.375rem;
