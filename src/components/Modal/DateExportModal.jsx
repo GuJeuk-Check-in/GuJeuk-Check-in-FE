@@ -133,7 +133,7 @@ const ExportButton = styled.button`
   width: 80%;
   max-width: 11.25rem;
   padding: 0.75rem 1.25rem;
-  background-color: #007bff;
+  background-color: #0f50a0;
   color: white;
   border: none;
   border-radius: 0.375rem;
@@ -144,7 +144,7 @@ const ExportButton = styled.button`
   margin-top: 1.875rem;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #0f5db0;
   }
 
   &:active {
