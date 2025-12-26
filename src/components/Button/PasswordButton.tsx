@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 interface PasswordButtonProps {
   content: string;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
@@ -10,7 +10,7 @@ const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
     <Container
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
     >
       <Content>{content}</Content>
     </Container>
