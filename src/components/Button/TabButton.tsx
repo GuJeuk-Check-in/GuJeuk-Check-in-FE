@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
 
-const TabButton = ({ label, isActive, onClick }) => {
+interface TabButtonProps {
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+const TabButton = ({ label, isActive, onClick }: TabButtonProps) => {
   return (
     <Button active={isActive} onClick={onClick}>
       {label}
@@ -10,7 +16,11 @@ const TabButton = ({ label, isActive, onClick }) => {
 
 export default TabButton;
 
-const Button = styled.button`
+interface ButtonProps {
+  active: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   width: 300px;
   height: 70px;
   border-radius: 50px;

@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
 
-const HeaderButton = ({ children, onClick }) => {
+interface HeaderButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+}
+
+const HeaderButton = ({ children, onClick }: HeaderButtonProps) => {
   return <Button onClick={onClick}>{children}</Button>;
 };
 
