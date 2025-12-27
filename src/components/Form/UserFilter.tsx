@@ -1,7 +1,15 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
-const UserFilter = ({ selectedLocation, setSelectedLocation }) => {
+interface UserFilterProps {
+  selectedLocation: string;
+  setSelectedLocation: (location: string) => void;
+}
+
+const UserFilter = ({
+  selectedLocation,
+  setSelectedLocation,
+}: UserFilterProps) => {
   const LocationData = [
     '전체 지역',
     '관평동',
@@ -26,7 +34,7 @@ const UserFilter = ({ selectedLocation, setSelectedLocation }) => {
     setIsOpen((prev) => !prev);
   };
 
-  const handleLocationSelect = (location) => {
+  const handleLocationSelect = (location: string) => {
     setSelectedLocation(location);
     setIsOpen(false);
   };
@@ -59,6 +67,10 @@ const UserFilter = ({ selectedLocation, setSelectedLocation }) => {
 
 export default UserFilter;
 
+interface DropdownIconProps {
+  isOpen: boolean;
+}
+
 const Container = styled.div`
   width: 100%;
   display: flex;
@@ -90,7 +102,7 @@ const LocationHeader = styled.div`
   background-color: #fff;
 `;
 
-const DropdownIcon = styled.div`
+const DropdownIcon = styled.div<DropdownIconProps>`
   width: 0;
   height: 0;
   border-left: 0.375rem solid transparent;
@@ -114,7 +126,7 @@ const LocationList = styled.div`
   width: calc(100% + 2rem);
 `;
 
-const LocationItem = styled.div`
+const LocationItem = styled.div<{ isSelected: boolean }>`
   padding: 12px 16px;
   font-size: 16px;
   color: ${({ isSelected }) => (isSelected ? '#ffffff' : '#2e2e32')};
