@@ -1,6 +1,17 @@
 import styled from '@emotion/styled';
 
-const GENDER_MAP = {
+interface UserInformationCardProps {
+  name: string;
+  location: string;
+  gender: GenderType;
+  birthday: string;
+  phonNumber: string;
+  count?: number | null;
+}
+
+type GenderType = 'MAN' | 'WOMAN';
+
+const GENDER_MAP: Record<GenderType, string> = {
   MAN: '남성',
   WOMAN: '여성',
 };
@@ -12,7 +23,7 @@ const UserInformationCard = ({
   birthday,
   phonNumber,
   count,
-}) => {
+}: UserInformationCardProps) => {
   const displayCount = count !== null && count !== undefined ? count : 0;
 
   return (
