@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import VisitFormInput from '../LabeldInput/VisitFormInput';
-import SelectOptionCard from '../LabeldInput/SelectOptionCard';
+import VisitFormInput from './VisitFormInput';
+import SelectOptionCard from './SelectOptionCard';
+
+interface SelectInputProps {
+  label: string;
+  placeholder?: string;
+  icon: React.ReactNode;
+  value: string;
+  onChange: (e: { target: { value: string } }) => void;
+  options: { label: string; value: string }[];
+  cols?: number;
+}
 
 const SelectInput = ({
   label,
@@ -11,13 +21,13 @@ const SelectInput = ({
   onChange,
   options,
   cols = 4,
-}) => {
+}: SelectInputProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedLabel =
-    options.find((opt) => opt.value === value)?.label || placeholder;
+    options.find((opt) => opt.value === value)?.label || placeholder || '';
 
-  const handleSelect = (optionValue) => {
+  const handleSelect = (optionValue: string) => {
     onChange({ target: { value: optionValue } });
     setIsOpen(false);
   };
@@ -57,7 +67,7 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const OptionContainer = styled.div`
+const OptionContainer = styled.div<{ cols: number }>`
   display: grid;
   grid-template-columns: repeat(${({ cols }) => cols}, 1fr);
   gap: 0.9375rem;

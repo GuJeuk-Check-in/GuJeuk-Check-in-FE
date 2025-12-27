@@ -1,6 +1,19 @@
 import styled from '@emotion/styled';
 import { IoMdPerson } from 'react-icons/io';
 
+interface VisitFormInputProps {
+  label: string;
+  placeholder?: string;
+  icon?: React.ReactNode;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  width?: string;
+  isSelectable?: boolean;
+  isOpen?: boolean;
+  onClick?: () => void;
+  readOnly?: boolean;
+}
+
 const VisitFormInput = ({
   label,
   placeholder,
@@ -8,9 +21,11 @@ const VisitFormInput = ({
   value,
   onChange,
   width = '100%',
-}) => {
+  onClick,
+  readOnly = false,
+}: VisitFormInputProps) => {
   return (
-    <Container width={width}>
+    <Container width={width} onClick={onClick}>
       <Label>{label}</Label>{' '}
       <InputContainer>
         {icon}
@@ -19,6 +34,7 @@ const VisitFormInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          style={{ cursor: onClick ? 'pointer' : 'text' }}
         />
       </InputContainer>
     </Container>
@@ -27,7 +43,11 @@ const VisitFormInput = ({
 
 export default VisitFormInput;
 
-const Container = styled.div`
+interface ContainerProps {
+  width: string;
+}
+
+const Container = styled.div<ContainerProps>`
   width: ${({ width }) => width};
   display: flex;
   flex-direction: column;
