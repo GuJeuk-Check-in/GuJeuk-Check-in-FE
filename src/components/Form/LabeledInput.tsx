@@ -4,6 +4,15 @@ import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
 
+interface LabeledInputProps {
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  [key: string]: any;
+}
+
 const LabeledInput = ({
   label,
   placeholder,
@@ -11,7 +20,7 @@ const LabeledInput = ({
   onChange,
   type,
   ...props
-}) => {
+}: LabeledInputProps) => {
   const [showPW, setShowPW] = useState(false);
   const id = useId();
   const handleType = () => {

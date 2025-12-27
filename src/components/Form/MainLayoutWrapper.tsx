@@ -1,6 +1,10 @@
 import styled from '@emotion/styled';
 
-const MainLayoutWrapper = ({ children }) => {
+interface MainLayoutWrapperProps {
+  children: React.ReactNode;
+}
+
+const MainLayoutWrapper = ({ children }: MainLayoutWrapperProps) => {
   return <LayoutWrapper>{children}</LayoutWrapper>;
 };
 
