@@ -2,7 +2,13 @@ import styled from '@emotion/styled';
 import { FaMinus } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa6';
 
-const CountVisitor = ({ label, value, onChange }) => {
+interface CountVisitorProps {
+  label: string;
+  value: number;
+  onChange: (newValue: number) => void;
+}
+
+const CountVisitor = ({ label, value, onChange }: CountVisitorProps) => {
   const handleIncrement = () => {
     onChange(value + 1);
   };
