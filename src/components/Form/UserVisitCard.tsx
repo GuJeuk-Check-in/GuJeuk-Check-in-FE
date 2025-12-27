@@ -2,14 +2,30 @@ import styled from '@emotion/styled';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-const UserVisitCard = ({ id, name, male, female, date, onDelete }) => {
+interface UserVisitCardProps {
+  id: number;
+  name: string;
+  male: number;
+  female: number;
+  date: string;
+  onDelete?: () => void;
+}
+
+const UserVisitCard = ({
+  id,
+  name,
+  male,
+  female,
+  date,
+  onDelete,
+}: UserVisitCardProps) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     navigate(`/admin/list/${id}`);
   };
 
-  const handleDeleteClick = (e) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onDelete) onDelete();
   };
