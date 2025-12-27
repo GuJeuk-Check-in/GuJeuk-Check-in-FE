@@ -2,24 +2,48 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 
-const ToggleSelect = ({ label, options, value, onChange, icon }) => {
+interface ToggleSelectProps {
+  label: string;
+  options: string[];
+  value: string;
+  onChange: (option: string) => void;
+  icon: React.ReactNode;
+  placeholder?: string;
+  disable?: boolean;
+}
+
+const ToggleSelect = ({
+  label,
+  options,
+  value,
+  onChange,
+  icon,
+  placeholder,
+  disable,
+}: ToggleSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleSelect = (option) => {
+  const handleSelect = (option: any) => {
     onChange(option);
     setOpen(false);
+  };
+
+  const handleToggle = () => {
+    if (!disable) {
+      setOpen((prev) => !prev);
+    }
   };
 
   return (
     <Container>
       {label && <Label>{label}</Label>}
-      <Box onClick={() => setOpen((prev) => !prev)}>
+      <Box onClick={handleToggle} isDisable={disable}>
         <Icon>{icon}</Icon>
-        <SelectedValue>{value || `${label} 선택`}</SelectedValue>
+        <SelectedValue>{value || placeholder || `${label} 선택`}</SelectedValue>
         {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
       </Box>
 
-      {open && (
+      {open && !disable && (
         <OptionContainer>
           {options.map((option) => (
             <Option
@@ -39,6 +63,14 @@ const ToggleSelect = ({ label, options, value, onChange, icon }) => {
 
 export default ToggleSelect;
 
+interface OptionProps {
+  selected: boolean;
+}
+
+interface BoxProps {
+  isDisable?: boolean;
+}
+
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -55,7 +87,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const Box = styled.div`
+const Box = styled.div<BoxProps>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +97,11 @@ const Box = styled.div`
   padding: 0.5rem 0.9375rem;
   width: calc(100% - 2rem);
   height: 2.5rem;
-  cursor: pointer;
+
+  cursor: ${({ isDisable }) => (isDisable ? 'not-allowed' : 'pointer')};
+  background-color: ${({ isDisable }) => (isDisable ? '#f5f5f5' : 'white')};
+  opacity: ${({ isDisable }) => (isDisable ? 0.6 : 1)};
+  pointer-events: ${({ isDisable }) => (isDisable ? 'none' : 'auto')};
 
   & > svg {
     width: 1.25rem;
@@ -93,7 +129,7 @@ const OptionContainer = styled.div`
   padding: 0;
 `;
 
-const Option = styled.div`
+const Option = styled.div<OptionProps>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -110,7 +146,7 @@ const Option = styled.div`
   }
 `;
 
-const Circle = styled.div`
+const Circle = styled.div<OptionProps>`
   width: 1.125rem;
   height: 1.125rem;
   border-radius: 50%;
