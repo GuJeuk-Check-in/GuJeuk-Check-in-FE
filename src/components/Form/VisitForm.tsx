@@ -8,8 +8,25 @@ import { FaLocationDot } from 'react-icons/fa6';
 import PasswordButton from '../Button/PasswordButton';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
 import { usePurposeList } from '../../hooks/usePurposeList';
+import { PiStudentBold } from 'react-icons/pi';
 
-const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
+interface VisitFormProps {
+  onSubmit: (data: {
+    name: string;
+    age: string;
+    phone: string;
+    maleCount: number;
+    femaleCount: number;
+    purpose: string;
+    visitDate: string;
+    privacyAgreed: boolean;
+  }) => void;
+  isLoading: boolean;
+  isError: boolean;
+  error: any;
+  onChange?: () => void;
+}
+const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const AGE_MAP = {
     '0~8세': 'BABY',
     '9~13세': 'AGE_9_13',
@@ -18,6 +35,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
     '20~24세': 'AGE_20_24',
     성인: 'ADULT',
   };
+
+  type AgeDisplayType = keyof typeof AGE_MAP;
 
   const [name, setName] = useState('');
   const [ageDisplay, setAgeDisplay] = useState('');
@@ -50,7 +69,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
 
     const dataToSend = {
       name: name,
-      age: AGE_MAP[ageDisplay],
+      age: AGE_MAP[ageDisplay as AgeDisplayType],
       phone: number,
       maleCount: maleCount,
       femaleCount: femaleCount,
@@ -84,13 +103,16 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
             label="이름"
             placeholder="이름을 입력하세요"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setName(e.target.value)
+            }
           />
           <ToggleSelect
             label="연령"
             options={ageOptions}
             value={ageDisplay}
             onChange={setAgeDisplay}
+            icon={<PiStudentBold size={24} />}
           />
         </InputRow>
 
@@ -99,7 +121,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
           placeholder="연락처를 입력해주세요 ex) 01012345678"
           icon={<IoIosCall size={24} />}
           value={number}
-          onChange={(e) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))
           }
         />
@@ -117,19 +139,17 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
           value={purpose}
           onChange={setPurpose}
           icon={<FaLocationDot size={24} />}
-          disabled={isLoading || isPurposeLoading || !purposeOptions.length}
+          disable={isLoading || isPurposeLoading || !purposeOptions.length}
         />
 
         <CountVisiorWrapper>
           <CountVisitor
             label="방문 남성 수"
-            placeholder="성별을 선택해주세요"
             value={maleCount}
             onChange={setMaleCount}
           />
           <CountVisitor
             label="방문 여성 수"
-            placeholder="성별을 선택해주세요"
             value={femaleCount}
             onChange={setFemaleCount}
           />
@@ -155,7 +175,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }) => {
       <PasswordButton
         content={isLoading ? '등록 중...' : '추가'}
         onClick={handleSubmit}
-        disabled={isLoading || isPurposeLoading}
+        disable={isLoading || isPurposeLoading}
       />
     </Container>
   );

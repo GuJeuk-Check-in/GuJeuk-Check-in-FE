@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 interface PasswordButtonProps {
   content: string;
   onClick?: () => void;
+  disable?: boolean;
 }
 
 const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
