@@ -13,6 +13,7 @@ import { useInput } from '../../hooks/useInput';
 import { sanitizePhoneNumber } from '../../utils/formatters';
 import { useCheck } from '../../hooks/useCheck';
 import { useCounter } from '../../hooks/useCounter';
+import React from 'react';
 
 interface VisitFormProps {
   onSubmit: (data: {

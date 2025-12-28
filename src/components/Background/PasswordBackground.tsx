@@ -1,5 +1,6 @@
 import CircleData from './CircleData';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const PasswordBackground = () => {
   return (
