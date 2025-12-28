@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 interface UserVisitCardProps {
   id: number;

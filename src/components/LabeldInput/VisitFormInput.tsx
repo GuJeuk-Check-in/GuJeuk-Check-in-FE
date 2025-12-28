@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { IoMdPerson } from 'react-icons/io';
+import React from 'react';
 
 interface VisitFormInputProps {
   label: string;
