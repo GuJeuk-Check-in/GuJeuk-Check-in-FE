@@ -10,7 +10,7 @@ interface ExcelButtonProps {
 const ExcelButton = ({ onClick, disabled }: ExcelButtonProps) => {
   return (
     <ButtonContainer onClick={onClick} disabled={disabled}>
-      <PiExportBold size="1.25rem" />
+      <PiExportBold size="1.25rem" style={{ flexShrink: 0 }} />
       <ButtonText>엑셀 파일로 내보내기</ButtonText>
     </ButtonContainer>
   );
@@ -35,6 +35,9 @@ const ButtonContainer = styled.button`
   transition: background-color 0.2s, box-shadow 0.2s;
   position: relative;
   top: 0.5rem;
+  white-space: normal;
+  text-align: center;
+  min-width: 120px;
 
   &:hover {
     background-color: #f0f0f0;
