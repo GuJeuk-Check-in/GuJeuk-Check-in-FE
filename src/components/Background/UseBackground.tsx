@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import UserBackground from '../../assets/UssrBackground.png';
+import React from 'react';
 
 const UseBackground = () => {
   return <Container></Container>;

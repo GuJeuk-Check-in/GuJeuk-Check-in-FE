@@ -3,6 +3,7 @@ import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
 import { useUpdatePurpose } from '../../hooks/updatePurpose';
+import React from 'react';
 
 interface Purpose {
   id: number;
