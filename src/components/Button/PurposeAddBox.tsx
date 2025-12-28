@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
-import { useCreatePurpose } from '../../hooks/createPurpose';
+import { useCreatePurpose } from '../../api/hooks/useCreatePurpose';
 
 const PurposeAddBox = () => {
   const { mutate: createMutate, isLoading: isCreating } =

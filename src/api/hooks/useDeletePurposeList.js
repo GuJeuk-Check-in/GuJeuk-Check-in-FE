@@ -1,4 +1,4 @@
-import { deletePurpose } from '../api/purposeApi';
+import { deletePurpose } from '../purposeApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeletePurposeList = () => {

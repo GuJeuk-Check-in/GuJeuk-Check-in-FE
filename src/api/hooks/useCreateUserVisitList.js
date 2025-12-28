@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createUserVisit } from '../api/visitApi';
+import { createUserVisit } from '../visitApi';
 
 export const useCreateUserVisit = (onSuccessCallback) => {
   const queryClient = useQueryClient();

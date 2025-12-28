@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { exportVisitListToExcel } from '../api/visitApi';
+import { exportVisitListToExcel } from '../visitApi';
 
 export const useExportExcel = () => {
   return useMutation({

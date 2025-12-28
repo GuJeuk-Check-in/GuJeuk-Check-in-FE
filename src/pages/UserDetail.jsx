@@ -3,7 +3,7 @@ import VisitForm from '../components/Form/VisitForm';
 import UseBackground from '../components/Background/UseBackground';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useCreateUserVisit } from '../hooks/createUserVisitList';
+import { useCreateUserVisit } from '../api/hooks/useCreateUserVisitList';
 
 const UserDetail = () => {
   const navigate = useNavigate();

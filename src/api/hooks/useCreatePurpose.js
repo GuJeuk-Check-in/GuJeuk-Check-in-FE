@@ -1,4 +1,4 @@
-import { createPurpose } from '../api/purposeApi';
+import { createPurpose } from '../purposeApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**

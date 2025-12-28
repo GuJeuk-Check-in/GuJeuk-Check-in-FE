@@ -4,11 +4,11 @@ import Header from '../components/Form/Header';
 import UserVisitCard from '../components/Form/UserVisitCard';
 import styled from '@emotion/styled';
 import ExcelButton from '../components/Button/ExcelButton';
-import { useExportExcel } from '../hooks/useExportExcel';
+import { useExportExcel } from '../api/hooks/useExportExcel';
 import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,
-} from '../hooks/userVisitList';
+} from '../api/hooks/userVisitList';
 import DateExportModal from '../components/Modal/DateExportModal';
 
 const UserVisitList = () => {

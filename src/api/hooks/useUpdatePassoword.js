@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { UpdatePassword } from '../api/authApi';
-import useAuthStore from '../store/authStore';
+import { UpdatePassword } from '../authApi';
+import useAuthStore from '../../store/authStore';
 
 const useUpdatePassword = (setErrorMessage) => {
   const navigate = useNavigate();

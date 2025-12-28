@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { userList, usersByResidence } from '../api/userApi';
+import { userList, usersByResidence } from '../userApi';
 
 /**
  * @param {{ page?: number, residence?: string | null, [key: string]: any }} filters

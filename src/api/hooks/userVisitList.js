@@ -3,7 +3,7 @@ import {
   useQueryClient,
   useInfiniteQuery,
 } from '@tanstack/react-query';
-import { fetchUserVisitList, deleteUserVisit } from '../api/visitApi';
+import { fetchUserVisitList, deleteUserVisit } from '../visitApi';
 
 export const useInfiniteUserVisitList = () => {
   return useInfiniteQuery({
