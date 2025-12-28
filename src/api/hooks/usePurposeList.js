@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { purposeList } from '../api/purposeApi';
+import { purposeList } from '../purposeApi';
 
 export const usePurposeList = () => {
   return useQuery({

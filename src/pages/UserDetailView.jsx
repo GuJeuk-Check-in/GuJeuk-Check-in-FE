@@ -3,16 +3,15 @@ import Header from '../components/Form/Header';
 import UseBackground from '../components/Background/UseBackground';
 import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
 import styled from '@emotion/styled';
-import { usefetchUserVisitDetail } from '../hooks/usefetchUserVisitDetail';
 import { formatPhoneNumber } from '../utils/formatters';
 import { useEffect, useState } from 'react';
-import { useUpdateAdminItem } from '../hooks/updateVisitList';
+import { useUpdateAdminItem } from '../api/hooks/useUpdateVisitList';
 import PasswordButton from '../components/Button/PasswordButton';
 import ToggleSelect from '../components/LabeldInput/ToggleSelect';
 import CountVisitor from '../components/LabeldInput/CountVisitor';
 import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
-import { usePurposeList } from '../hooks/usePurposeList';
-
+import { usePurposeList } from '../api/hooks/usePurposeList';
+import { useFetchUserVisitDetail } from '../api/hooks/useFetchUserVisitDetail';
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
   { value: 'AGE_9_13', label: '9~13세' },
@@ -43,7 +42,7 @@ const UserDetailView = () => {
     isLoading: isVisitLoading,
     isError: isVisitError,
     error,
-  } = usefetchUserVisitDetail(id);
+  } = useFetchUserVisitDetail(id);
   const updateMutation = useUpdateAdminItem();
 
   const {

@@ -1,4 +1,4 @@
-import { updateVisitList } from '../api/visitApi';
+import { updateVisitList } from '../visitApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateAdminItem = () => {

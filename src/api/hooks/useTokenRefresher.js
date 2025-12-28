@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import useAuthStore from '../store/authStore';
-import axiosInstance from '../api/axiosInstance';
+import useAuthStore from '../../store/authStore';
+import axiosInstance from '../axiosInstance';
 
 const useTokenRefresher = () => {
   const { accessToken, setAuth, logout } = useAuthStore();

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
-import { useUpdatePurpose } from '../../hooks/updatePurpose';
+import { useUpdatePurpose } from '../../api/hooks/useUpdatePurpose';
 
 interface Purpose {
   id: number;
