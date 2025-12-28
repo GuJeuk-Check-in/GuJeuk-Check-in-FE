@@ -1,5 +1,6 @@
 import PasswordButton from '../Button/PasswordButton';
 import styled from '@emotion/styled';
+import React from 'react';
 
 interface RightPageProps {
   title?: string;

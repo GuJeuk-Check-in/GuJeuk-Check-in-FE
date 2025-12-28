@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { FaMinus } from 'react-icons/fa6';
 import { FaPlus } from 'react-icons/fa6';
+import React from 'react';
 
 interface CountVisitorProps {
   label: string;

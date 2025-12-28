@@ -3,6 +3,7 @@ import { FaEyeSlash } from 'react-icons/fa';
 import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
+import React from 'react';
 
 interface LabeledInputProps {
   label: string;

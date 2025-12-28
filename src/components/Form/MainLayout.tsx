@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import LeftPage from './LeftPage';
 import RightPage from './RightPage';
+import React from 'react';
 
 const MainLayout = () => {
   return (
