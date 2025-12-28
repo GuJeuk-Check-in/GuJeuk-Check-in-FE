@@ -9,6 +9,13 @@ import PasswordButton from '../Button/PasswordButton';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
 import { usePurposeList } from '../../api/hooks/usePurposeList';
 import { PiStudentBold } from 'react-icons/pi';
+<<<<<<< HEAD
+=======
+import { useInput } from '../../hooks/useInput';
+import { sanitizePhoneNumber } from '../../utils/formatters';
+import { useCheck } from '../../hooks/useCheck';
+import { useCounter } from '../../hooks/useCounter';
+>>>>>>> refactor/custom-hooks
 import React from 'react';
 
 interface VisitFormProps {
