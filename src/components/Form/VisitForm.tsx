@@ -9,10 +9,6 @@ import PasswordButton from '../Button/PasswordButton';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
 import { usePurposeList } from '../../api/hooks/usePurposeList';
 import { PiStudentBold } from 'react-icons/pi';
-import { useInput } from '../../hooks/useInput';
-import { sanitizePhoneNumber } from '../../utils/formatters';
-import { useCheck } from '../../hooks/useCheck';
-import { useCounter } from '../../hooks/useCounter';
 import React from 'react';
 
 interface VisitFormProps {
@@ -43,21 +39,21 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
   type AgeDisplayType = keyof typeof AGE_MAP;
 
-  const nameInput = useInput('');
-  const phoneInput = useInput('', sanitizePhoneNumber);
+  const [name, setName] = useState('');
   const [ageDisplay, setAgeDisplay] = useState('');
+  const [number, setNumber] = useState('');
   const [purpose, setPurpose] = useState('');
-  const maleCounter = useCounter(0);
-  const femaleCounter = useCounter(0);
+  const [maleCount, setMaleCount] = useState(0);
+  const [femaleCount, setFemaleCount] = useState(0);
   const [date, setDate] = useState('');
-  const privacyCheck = useCheck(true);
+  const [agreePersonal, setAgreePersonal] = useState(true);
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
   const handleSubmit = () => {
     const trimmedPurpose = purpose.trim();
     if (
-      !nameInput.value ||
-      !phoneInput.value ||
+      !name ||
+      !number ||
       !trimmedPurpose ||
       !purpose ||
       !date ||
@@ -67,32 +63,32 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       return;
     }
 
-    if (!privacyCheck.checked) {
+    if (!agreePersonal) {
       alert('개인정보 수집 및 이용에 동의해야 합니다.');
       return;
     }
 
     const dataToSend = {
-      name: nameInput.value,
+      name: name,
       age: AGE_MAP[ageDisplay as AgeDisplayType],
-      phone: phoneInput.value,
-      maleCount: maleCounter.count,
-      femaleCount: femaleCounter.count,
+      phone: number,
+      maleCount: maleCount,
+      femaleCount: femaleCount,
       purpose: trimmedPurpose,
       visitDate: date,
-      privacyAgreed: privacyCheck.checked,
+      privacyAgreed: agreePersonal,
     };
 
     onSubmit(dataToSend);
 
-    nameInput.reset();
+    setName('');
     setAgeDisplay('');
-    phoneInput.reset();
+    setNumber('');
     setPurpose('');
-    maleCounter.reset();
-    femaleCounter.reset();
+    setMaleCount(0);
+    setFemaleCount(0);
     setDate('');
-    privacyCheck.setChecked(true);
+    setAgreePersonal(true);
   };
 
   const purposeOptions = Array.isArray(purposes)
@@ -107,7 +103,10 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           <VisitFormInput
             label="이름"
             placeholder="이름을 입력하세요"
-            {...nameInput}
+            value={name}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setName(e.target.value)
+            }
           />
           <ToggleSelect
             label="연령"
@@ -122,7 +121,10 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           label="연락처"
           placeholder="연락처를 입력해주세요 ex) 01012345678"
           icon={<IoIosCall size={24} />}
-          {...phoneInput}
+          value={number}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setNumber(e.target.value.replace(/[^0-9]/g, '').slice(0, 11))
+          }
         />
 
         <ToggleSelect
@@ -144,13 +146,13 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
         <CountVisiorWrapper>
           <CountVisitor
             label="방문 남성 수"
-            value={maleCounter.count}
-            onChange={maleCounter.setCount}
+            value={maleCount}
+            onChange={setMaleCount}
           />
           <CountVisitor
             label="방문 여성 수"
-            value={femaleCounter.count}
-            onChange={femaleCounter.setCount}
+            value={femaleCount}
+            onChange={setFemaleCount}
           />
         </CountVisiorWrapper>
 
@@ -159,8 +161,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
         <PrivacyConsentWrapper>
           <Checkbox
             type="checkbox"
-            checked={privacyCheck.checked}
-            onChange={privacyCheck.onChange}
+            checked={agreePersonal}
+            onChange={(e) => setAgreePersonal(e.target.checked)}
             disabled={isLoading}
           />
           <ConsentText>개인정보 수집 및 이용 동의</ConsentText>

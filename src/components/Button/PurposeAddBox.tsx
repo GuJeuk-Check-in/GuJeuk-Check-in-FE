@@ -1,11 +1,7 @@
 import styled from '@emotion/styled';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
-<<<<<<< HEAD
 import { useCreatePurpose } from '../../api/hooks/useCreatePurpose';
-=======
-import { useCreatePurpose } from '../../hooks/createPurpose';
->>>>>>> refactor/typescript
 import React from 'react';
 
 const PurposeAddBox = () => {

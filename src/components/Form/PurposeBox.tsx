@@ -2,11 +2,7 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
-<<<<<<< HEAD
 import { useUpdatePurpose } from '../../api/hooks/useUpdatePurpose';
-=======
-import { useUpdatePurpose } from '../../hooks/updatePurpose';
->>>>>>> refactor/typescript
 import React from 'react';
 
 interface Purpose {
