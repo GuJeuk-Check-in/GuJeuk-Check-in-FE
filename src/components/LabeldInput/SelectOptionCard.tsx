@@ -1,7 +1,17 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const SelectOptionCard = ({ label, isSelected, onClick }) => {
+interface SelectOptionCardProps {
+  label: string;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+const SelectOptionCard = ({
+  label,
+  isSelected,
+  onClick,
+}: SelectOptionCardProps) => {
   return (
     <CardContainer isSelected={isSelected} onClick={onClick}>
       <Radio isSelected={isSelected} />
@@ -12,7 +22,11 @@ const SelectOptionCard = ({ label, isSelected, onClick }) => {
 
 export default SelectOptionCard;
 
-const CardContainer = styled.div`
+interface styleProps {
+  isSelected: boolean;
+}
+
+const CardContainer = styled.div<styleProps>`
   width: 100%;
   height: 3.75rem;
   padding: 0 0.9375rem;
@@ -27,7 +41,7 @@ const CardContainer = styled.div`
   background-color: #ffffff;
 `;
 
-const Radio = styled.div`
+const Radio = styled.div<styleProps>`
   width: 1.25rem;
   height: 1.25rem;
   border-radius: 50%;

@@ -3,8 +3,16 @@ import Calendar from 'react-calendar';
 import styled from '@emotion/styled';
 import { FaCalendarDays } from 'react-icons/fa6';
 import 'react-calendar/dist/Calendar.css';
+import React from 'react';
 
-const formatDateToISOString = (date) => {
+type CalendarValue = Date | null | [Date | null, Date | null];
+
+interface VisitDatePickerProps {
+  value: string | Date | null;
+  onChange: (date: string) => void;
+}
+
+const formatDateToISOString = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -44,15 +52,17 @@ const safeDateConvert = (dateString) => {
 };
 
 const VisitDatePicker = ({ value, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleDateSelect = (date) => {
-    const formattedDate = formatDateToISOString(date);
-    onChange(formattedDate);
-    setIsOpen(false);
+  const handleDateSelect = (value: CalendarValue) => {
+    if (value instanceof Date) {
+      const formattedDate = formatDateToISOString(value);
+      onChange(formattedDate);
+      setIsOpen(false);
+    }
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date: Date | null): string => {
     if (!date) return '';
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -83,7 +93,9 @@ const VisitDatePicker = ({ value, onChange }) => {
             locale="ko-KR"
             nextLabel="›"
             prevLabel="‹"
-            formatDay={(locale, date) => date.getDate()}
+            formatDay={(locale: string | undefined, date: Date) =>
+              date.getDate().toString()
+            }
           />
         </CalendarWrapper>
       )}
