@@ -26,7 +26,6 @@ export const useDeleteVisitMutation = () => {
     mutationFn: deleteUserVisit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visits'] });
-      alert('이용 기록이 성공적으로 삭제되었습니다.');
     },
     onError: (error) => {
       console.error('삭제 실패:', error);

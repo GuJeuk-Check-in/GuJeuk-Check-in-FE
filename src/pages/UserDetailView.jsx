@@ -1,17 +1,21 @@
 import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '../components/Form/Header';
 import UseBackground from '../components/Background/UseBackground';
 import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
-import styled from '@emotion/styled';
-import { formatPhoneNumber } from '../utils/formatters';
-import { useEffect, useState } from 'react';
-import { useUpdateAdminItem } from '../api/hooks/useUpdateVisitList';
 import PasswordButton from '../components/Button/PasswordButton';
 import ToggleSelect from '../components/LabeldInput/ToggleSelect';
 import CountVisitor from '../components/LabeldInput/CountVisitor';
 import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
+import { Modal } from '../components/Modal/Modal';
+import { formatPhoneNumber } from '../utils/formatters';
+import { useUpdateAdminItem } from '../api/hooks/useUpdateVisitList';
 import { usePurposeList } from '../api/hooks/usePurposeList';
 import { useFetchUserVisitDetail } from '../api/hooks/useFetchUserVisitDetail';
+import { useModal } from '../hooks/useModal';
+
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
   { value: 'AGE_9_13', label: '9~13세' },
@@ -37,12 +41,15 @@ const UserDetailView = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
 
+  const modal = useModal();
+
   const {
     data: visit,
     isLoading: isVisitLoading,
     isError: isVisitError,
     error,
   } = useFetchUserVisitDetail(id);
+
   const updateMutation = useUpdateAdminItem();
 
   const {
@@ -118,7 +125,13 @@ const UserDetailView = () => {
       !formData.purpose.trim() ||
       !formData.visitDate
     ) {
-      console.error('필수 필드를 모두 입력해야 합니다.');
+      modal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '입력 확인',
+        subtitle: '필수 필드를 모두 입력해주세요.',
+        theme: 'warning',
+        buttons: [{ label: '확인', onClick: modal.closeModal }],
+      });
       return;
     }
 
@@ -136,13 +149,32 @@ const UserDetailView = () => {
 
     updateMutation.mutate(dataToUpdate, {
       onSuccess: () => {
-        alert('수정이 완료되었습니다.');
-        window.location.reload();
+        modal.openModal({
+          icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
+          title: '수정 완료',
+          subtitle: '시설 이용 정보가 성공적으로 수정되었습니다.',
+          theme: 'info',
+          buttons: [
+            {
+              label: '확인',
+              variant: 'primary',
+              bgColor: '#0F50A0',
+              onClick: () => {
+                modal.closeModal();
+                window.location.reload();
+              },
+            },
+          ],
+        });
       },
       onError: (err) => {
-        console.error(
-          `수정 실패: ${err.message}` || '알 수 없는 오류가 발생했습니다.'
-        );
+        modal.openModal({
+          icon: <FaExclamationTriangle size={48} color="#D88282" />,
+          title: '수정 실패',
+          subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
+          theme: 'warning',
+          buttons: [{ label: '닫기', onClick: modal.closeModal }],
+        });
       },
     });
   };
@@ -195,8 +227,19 @@ const UserDetailView = () => {
     );
   }
 
-  if (!visit || !formData)
-    return <p>기록을 찾을 수 없거나 데이터를 준비하는 중입니다.</p>;
+  if (!visit) {
+    return (
+      <Container>
+        <UseBackground />
+        <Header title="시설 이용 상세 조회" />
+        <Wrapper>
+          <LoadingText>기록을 찾을 수 없습니다.</LoadingText>
+        </Wrapper>
+      </Container>
+    );
+  }
+
+  const currentData = isEditing && formData ? formData : visit;
 
   const ageDisplayLabel = formatAgeDisplay(visit.age);
   const formattedPhone = formatPhoneNumber(visit.phone);
@@ -210,11 +253,11 @@ const UserDetailView = () => {
           <VisitDetailInput
             label="대표자 이름"
             name="name"
-            value={isEditing ? formData.name : visit.name}
+            value={isEditing && formData ? formData.name : visit.name}
             onChange={isEditing ? handleChange : null}
             isEditable={isEditing}
           />
-          {isEditing ? (
+          {isEditing && formData ? (
             <ToggleSelectWrapper>
               <ToggleSelect
                 label="연령"
@@ -234,12 +277,12 @@ const UserDetailView = () => {
         <VisitDetailInput
           label="연락처"
           name="phone"
-          value={isEditing ? formData.phone : formattedPhone}
+          value={isEditing && formData ? formData.phone : formattedPhone}
           onChange={isEditing ? handleChange : null}
           isEditable={isEditing}
           type="tel"
         />
-        {isEditing ? (
+        {isEditing && formData ? (
           <ToggleSelect
             label="방문 목적"
             options={
@@ -263,7 +306,7 @@ const UserDetailView = () => {
             isEditable={false}
           />
         )}
-        {isEditing ? (
+        {isEditing && formData ? (
           <VisitDatePicker
             value={formData.visitDate}
             onChange={handleDateChange}
@@ -276,7 +319,7 @@ const UserDetailView = () => {
           />
         )}
         <CountVisiorWrapper>
-          {isEditing ? (
+          {isEditing && formData ? (
             <>
               <CountVisitor
                 label="방문 남성 수"
@@ -313,7 +356,9 @@ const UserDetailView = () => {
         <VisitDetailInput
           label="개인 정보 수집 동의"
           name="privacyAgreed"
-          value={isEditing ? formData.privacyAgreed : visit.privacyAgreed}
+          value={
+            isEditing && formData ? formData.privacyAgreed : visit.privacyAgreed
+          }
           onChange={isEditing ? handleChange : null}
           isEditable={isEditing}
           type="checkbox"
@@ -341,6 +386,12 @@ const UserDetailView = () => {
           )}
         </CustomButtonWrapper>
       </Wrapper>
+
+      <Modal
+        isOpen={modal.isOpen}
+        config={modal.config}
+        onClose={modal.closeModal}
+      />
     </Container>
   );
 };

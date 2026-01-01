@@ -1,19 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
+import styled from '@emotion/styled';
+import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserVisitCard from '../components/Form/UserVisitCard';
-import styled from '@emotion/styled';
 import ExcelButton from '../components/Button/ExcelButton';
+import DateExportModal from '../components/Modal/DateExportModal';
+import { Modal } from '../components/Modal/Modal';
 import { useExportExcel } from '../api/hooks/useExportExcel';
 import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,
 } from '../api/hooks/userVisitList';
-import DateExportModal from '../components/Modal/DateExportModal';
+import { useModal } from '../hooks/useModal';
 
 const UserVisitList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exportingDate, setExportingDate] = useState('');
+  const modal = useModal();
 
   const {
     data,
@@ -60,9 +64,47 @@ const UserVisitList = () => {
 
   const handleDelete = (id, name) => {
     if (isDeleting) return;
-    if (window.confirm(`${name}님의 기록을 삭제하시겠습니까?`)) {
-      deleteMutate(id);
-    }
+
+    modal.openModal({
+      icon: <FaExclamationTriangle size={48} color="#D88282" />,
+      title: `정말 ${name}님의 기록을 삭제하시겠나요?`,
+      subtitle: '한 번 삭제한 기록은 복구할 수 없습니다',
+      theme: 'warning',
+      buttons: [
+        {
+          label: '아니요',
+          variant: 'secondary',
+          onClick: modal.closeModal,
+        },
+        {
+          label: '네, 삭제합니다',
+          variant: 'primary',
+          bgColor: '#D88282',
+          onClick: () => {
+            deleteMutate(id, {
+              onSuccess: () => {
+                modal.openModal({
+                  icon: <FaCheckCircle size={48} color="#0F50A0" />,
+                  title: '삭제되었습니다',
+                  subtitle: '목록을 갱신합니다.',
+                  theme: 'info',
+                  buttons: [
+                    {
+                      label: '확인',
+                      onClick: modal.closeModal,
+                    },
+                  ],
+                });
+              },
+              onError: () => {
+                modal.closeModal();
+                alert('삭제 중 오류가 발생했습니다.');
+              },
+            });
+          },
+        },
+      ],
+    });
   };
 
   const handleExcelExportClick = () => {
@@ -154,6 +196,12 @@ const UserVisitList = () => {
         isVisible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onExport={handleExportConfirmedWithDate}
+      />
+
+      <Modal
+        isOpen={modal.isOpen}
+        config={modal.config}
+        onClose={modal.closeModal}
       />
     </Container>
   );

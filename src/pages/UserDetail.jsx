@@ -1,35 +1,42 @@
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Form/Header';
 import VisitForm from '../components/Form/VisitForm';
 import UseBackground from '../components/Background/UseBackground';
-import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { Modal } from '../components/Modal/Modal';
 import { useCreateUserVisit } from '../api/hooks/useCreateUserVisitList';
 
 const UserDetail = () => {
   const navigate = useNavigate();
-
-  const createMutation = useCreateUserVisit(() => {
-    navigate('/admin/list/all');
-  });
+  const { mutate, isLoading, isError, error, modal } = useCreateUserVisit(
+    () => {
+      navigate('/admin/list/all');
+    }
+  );
 
   const handleSubmit = (dataToSend) => {
-    createMutation.mutate(dataToSend);
+    mutate(dataToSend);
   };
 
   return (
     <Container>
       <UseBackground />
-      <Header
-        title={createMutation.isLoading ? '등록 중...' : '시설 이용 기록 추가'}
-      />{' '}
+      <Header title={isLoading ? '등록 중...' : '시설 이용 기록 추가'} />
+
       <ContentWrapper>
         <VisitForm
           onSubmit={handleSubmit}
-          isLoading={createMutation.isLoading}
-          isError={createMutation.isError}
-          error={createMutation.error}
-        />{' '}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+        />
       </ContentWrapper>
+
+      <Modal
+        isOpen={modal.isOpen}
+        config={modal.config}
+        onClose={modal.closeModal}
+      />
     </Container>
   );
 };
