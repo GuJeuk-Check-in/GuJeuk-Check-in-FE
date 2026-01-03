@@ -22,7 +22,7 @@ export const useCreateUserVisit = (onSuccessCallback) => {
           {
             label: '확인',
             variant: 'primary',
-            bgColor: '#3b82f6',
+            bgColor: '#0F50A0',
             onClick: () => {
               modal.closeModal();
               if (onSuccessCallback) {
