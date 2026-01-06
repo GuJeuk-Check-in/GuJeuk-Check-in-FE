@@ -63,7 +63,7 @@ const Container = styled.div`
 `;
 
 const LogoImage = styled.img`
-  max-width: 90%;
+  max-width: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
