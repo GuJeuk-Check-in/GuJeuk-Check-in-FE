@@ -66,6 +66,7 @@ const UpdatePassword = () => {
               <LabeledInput
                 label="기존 비밀번호"
                 placeholder="비밀번호를 입력해주세요."
+                type="password"
                 value={currentPW}
                 onChange={(e) => {
                   setCurrentPW(e.target.value);
@@ -83,6 +84,7 @@ const UpdatePassword = () => {
               <LabeledInput
                 label="새 비밀번호"
                 placeholder="새 비밀번호를 입력해주세요."
+                type="password"
                 value={newPW}
                 onChange={(e) => {
                   setNewPW(e.target.value);
@@ -100,6 +102,7 @@ const UpdatePassword = () => {
               <LabeledInput
                 label="비밀번호 확인"
                 placeholder="비밀번호를 다시 입력해주세요."
+                type="password"
                 value={confirmPW}
                 onChange={(e) => {
                   setConfirmPW(e.target.value);
@@ -134,8 +137,12 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   margin: 0;
+
+  @media (max-width: 768px) {
+    gap: 0.3rem;
+  }
 `;
 
 const InputGroup = styled.div`
@@ -143,6 +150,7 @@ const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: -0.5rem;
 `;
 
 const ErrorMessage = styled.p`
