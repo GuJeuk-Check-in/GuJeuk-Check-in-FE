@@ -7,7 +7,6 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEnterPassword from '../api/hooks/useEnterPassword';
-import Snowfall from 'react-snowfall';
 
 const EnterPassword = () => {
   const [currentPW, setCurrentPW] = useState('');
@@ -34,7 +33,6 @@ const EnterPassword = () => {
   return (
     <>
       <PasswordBackground />
-      <Snowfall />
       <MainWrapper>
         <PageContainer>
           <LeftPage />
