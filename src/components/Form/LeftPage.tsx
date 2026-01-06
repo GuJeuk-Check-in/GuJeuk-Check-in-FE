@@ -123,7 +123,6 @@ const SubTitle = styled.p`
   line-height: 1.4;
   word-break: keep-all;
   font-family: 'Jua', sans-serif;
-  border-radius: 10px;
   flex-shrink: 0;
   max-width: 100%;
   width: 100%;
