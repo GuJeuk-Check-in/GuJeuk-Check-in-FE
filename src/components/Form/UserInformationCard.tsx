@@ -62,7 +62,9 @@ const Container = styled.div`
   height: 7.5rem;
   margin: 0.75rem auto;
   cursor: pointer;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
 `;
+
 const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -70,6 +72,7 @@ const LeftSection = styled.div`
   gap: 0.5rem;
   margin-left: 1.25rem;
 `;
+
 const Location = styled.h2`
   font-size: 1.5rem;
   font-weight: 400;
@@ -83,6 +86,7 @@ const Name = styled.h2`
   color: #2e2e32;
   margin: 0;
 `;
+
 const Diver = styled.div`
   width: 0.09375rem;
   height: 1.25rem;
@@ -99,6 +103,7 @@ const Gender = styled.span`
   font-size: 1.25rem;
   color: #2e2e32;
 `;
+
 const Birthday = styled.span`
   font-size: 1.25rem;
   color: #2e2e32;

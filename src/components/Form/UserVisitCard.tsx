@@ -66,6 +66,7 @@ const Container = styled.div`
   width: 70%;
   height: 7.5rem;
   margin: 0.75rem auto;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
   cursor: pointer;
 `;
 

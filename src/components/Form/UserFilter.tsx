@@ -79,7 +79,8 @@ const Container = styled.div`
   position: relative;
   justify-content: flex-end;
   box-sizing: border-box;
-  padding: 0.625rem 3rem;
+  padding: 0.625rem 0;
+  margin-right: 15.2%;
   z-index: 100;
 `;
 
