@@ -26,15 +26,14 @@ const Container = styled.div`
   height: 4.1875rem;
   border-radius: 3.125rem;
   border: 0.125rem solid #ffffff;
-
   background-color: #3d72b3;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   box-shadow: 0 0.25rem 0.375rem rgba(0, 0, 0, 0.1);
-
   transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
 
   &:hover {
     background-color: #c2d5ec;
@@ -60,6 +59,11 @@ const Container = styled.div`
       background-color: #c2d5ec;
     }
   }
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+    height: 3rem;
+  }
 `;
 
 const Content = styled.span`
@@ -71,5 +75,9 @@ const Content = styled.span`
 
   @media (max-width: 768px) {
     font-size: 1.2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1rem;
   }
 `;
