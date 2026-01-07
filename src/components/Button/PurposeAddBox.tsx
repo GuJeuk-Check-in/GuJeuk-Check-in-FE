@@ -1,17 +1,14 @@
 import styled from '@emotion/styled';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
-import { useCreatePurpose } from '../../api/hooks/useCreatePurpose';
+import { useCreatePurpose } from '../../api/purpose/hooks/useCreatePurpose';
 import React from 'react';
 
 const PurposeAddBox = () => {
-  const { mutate: createMutate, isLoading: isCreating } =
-    useCreatePurpose() as any;
+  const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const isDisabled = isCreating;
 
   const handleAdd = () => {
@@ -20,17 +17,18 @@ const PurposeAddBox = () => {
       alert('목적을 입력해주세요.');
       return;
     }
-    if (isSubmitting) return;
-    setIsSubmitting(true);
 
-    createMutate(trimmedLabel, {
-      onSuccess: () => {
-        setNewLabel('');
-        setIsAdding(false);
-        setIsSubmitting(false);
-      },
-      onError: () => setIsSubmitting(false),
-    });
+    if (isDisabled) return;
+
+    createMutate(
+      { purpose: trimmedLabel },
+      {
+        onSuccess: () => {
+          setNewLabel('');
+          setIsAdding(false);
+        },
+      }
+    );
   };
 
   const handleCancel = () => {
@@ -39,8 +37,8 @@ const PurposeAddBox = () => {
     setIsAdding(false);
   };
 
-  const handlekeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleAdd();
     }
@@ -67,13 +65,11 @@ const PurposeAddBox = () => {
       <AddInput
         type="text"
         value={newLabel}
-        onChange={(e) => setNewLabel(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            handleAdd();
-          }
-        }}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        disabled={isDisabled}
+        autoFocus
+        placeholder="목적을 입력하세요"
       />
       <IconSection>
         <MdCheck
