@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchUserVisitDetail } from '../visitApi';
+import { fetchUserVisitDetail } from '../api';
 
 export const useFetchUserVisitDetail = (id) => {
   const enabled = !!id && id !== 'new';

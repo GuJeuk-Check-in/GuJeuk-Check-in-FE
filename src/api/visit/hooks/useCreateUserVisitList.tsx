@@ -1,14 +1,37 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createUserVisit } from '../visitApi';
-import { useModal } from '../../hooks/useModal';
+import {
+  useMutation,
+  UseMutationResult,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { createUserVisit } from '../api';
+import { useModal } from '../../../hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { CreateUserVisitRequest, UserVisitDetailResponse } from '../types';
+import { AxiosError } from 'axios';
 
-export const useCreateUserVisit = (onSuccessCallback) => {
+interface UseCreateUserVisitProps {
+  onSuccessCallback?: () => void;
+}
+
+type UseCreateUserVisitReturn = UseMutationResult<
+  UserVisitDetailResponse,
+  AxiosError,
+  CreateUserVisitRequest
+> & {
+  modal: ReturnType<typeof useModal>;
+};
+
+export const useCreateUserVisit = ({
+  onSuccessCallback,
+}: UseCreateUserVisitProps = {}): UseCreateUserVisitReturn => {
   const queryClient = useQueryClient();
-
   const modal = useModal();
 
-  const mutation = useMutation({
+  const mutation = useMutation<
+    UserVisitDetailResponse,
+    AxiosError<{ message?: string }>,
+    CreateUserVisitRequest
+  >({
     mutationFn: createUserVisit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visits'] });
@@ -25,9 +48,7 @@ export const useCreateUserVisit = (onSuccessCallback) => {
             bgColor: '#0F50A0',
             onClick: () => {
               modal.closeModal();
-              if (onSuccessCallback) {
-                onSuccessCallback();
-              }
+              onSuccessCallback?.();
             },
           },
         ],
@@ -39,7 +60,10 @@ export const useCreateUserVisit = (onSuccessCallback) => {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
         title: '등록 실패',
-        subtitle: error.message || '알 수 없는 오류가 발생했습니다.',
+        subtitle:
+          error.response?.data?.message ||
+          error.message ||
+          '알 수 없는 오류가 발생했습니다.',
         theme: 'warning',
         buttons: [
           {
