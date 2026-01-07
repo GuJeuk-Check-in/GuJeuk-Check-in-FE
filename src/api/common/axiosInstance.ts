@@ -1,5 +1,26 @@
-import axios from 'axios';
-import useAuthStore from '../store/authStore';
+import axios, {
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
+import useAuthStore from '../../store/authStore';
+
+interface FailedQueueItem {
+  resolve: (token: string | null) => void;
+  reject: (error: unknown) => void;
+}
+
+interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean;
+}
+
+interface ServerErrorResponse {
+  message?: string;
+}
+
+interface CustomError extends Error {
+  status?: number;
+}
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -8,36 +29,43 @@ const axiosInstance = axios.create({
 });
 
 let isRefreshing = false;
-let failedQueue = [];
+let failedQueue: FailedQueueItem[] = [];
 
-const processQueue = (error, token = null) => {
-  failedQueue.forEach((prom) =>
-    error ? prom.reject(error) : prom.resolve(token)
-  );
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    error ? reject(error) : resolve(token);
+  });
   failedQueue = [];
 };
 
-axiosInstance.interceptors.request.use((config) => {
-  const { accessToken } = useAuthStore.getState();
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
+axiosInstance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    console.log('request config before send:', config); // 여기로 이동
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const { config: originalRequest, response } = error;
+  (response: AxiosResponse) => response,
+  async (error: AxiosError<ServerErrorResponse>) => {
+    const response = error.response;
+    const originalRequest = error.config as CustomAxiosRequestConfig;
 
     if (!response) {
       return Promise.reject(
         new Error('인터넷 연결이 원활하지 않거나 서버 점검 중입니다.')
       );
     }
+
     if (
-      originalRequest.url.includes('re-issue') ||
-      originalRequest.url.includes('admin/re-issue')
+      originalRequest.url?.includes('re-issue') ||
+      originalRequest.url?.includes('admin/re-issue')
     ) {
       useAuthStore.getState().logout();
       localStorage.removeItem('auth-storage');
@@ -59,9 +87,7 @@ axiosInstance.interceptors.response.use(
         const text = await response.data.text();
         const errorJson = JSON.parse(text);
         errorMsg = errorJson.message || errorMsg;
-      } catch (e) {
-        console.error('Blob 에러 파싱 실패:', e);
-      }
+      } catch {}
     }
 
     if (
@@ -70,10 +96,12 @@ axiosInstance.interceptors.response.use(
       !originalRequest._retry
     ) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
+        return new Promise<string | null>((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         }).then((newToken) => {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          if (newToken && originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          }
           return axiosInstance(originalRequest);
         });
       }
@@ -82,16 +110,19 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const res = await axiosInstance.patch('admin/re-issue');
+        const res = await axiosInstance.patch<{
+          accessToken: string;
+          refreshToken: string;
+        }>('admin/re-issue');
 
-        const newAccessToken = res.data?.accessToken;
-        const newRefreshToken = res.data?.refreshToken;
+        const { accessToken, refreshToken } = res.data;
+        useAuthStore.getState().setAuth(accessToken, refreshToken);
 
-        useAuthStore.getState().setAuth(newAccessToken, newRefreshToken);
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        processQueue(null, newAccessToken);
-
+        processQueue(null, accessToken);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
@@ -109,8 +140,9 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(new Error('다시 로그인을 진행해주세요.'));
     }
 
-    const customError = new Error(errorMsg);
+    const customError: CustomError = new Error(errorMsg);
     customError.status = status;
+
     return Promise.reject(customError);
   }
 );
