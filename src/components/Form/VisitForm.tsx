@@ -7,7 +7,7 @@ import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
 import PasswordButton from '../Button/PasswordButton';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
-import { usePurposeList } from '../../api/hooks/usePurposeList';
+import { usePurposeList } from '../../api/purpose/hooks/usePurposeList';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '../../hooks/useInput';
 import { sanitizePhoneNumber } from '../../utils/formatters';

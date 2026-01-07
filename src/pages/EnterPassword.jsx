@@ -6,22 +6,22 @@ import PasswordButton from '../components/Button/PasswordButton';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useEnterPassword from '../api/hooks/useEnterPassword';
+import useEnterPassword from '../api/auth/hooks/useEnterPassword';
 
 const EnterPassword = () => {
   const [currentPW, setCurrentPW] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const { mutate: checkPasswordMutate, isLoading } =
-    useEnterPassword(setErrorMessage);
-
+  const { mutate: checkPasswordMutate, isLoading } = useEnterPassword({
+    setErrorMessage,
+  });
   const handleConfirm = () => {
     if (currentPW.trim() === '') {
       setErrorMessage('비밀번호를 입력해주세요.');
       return;
     }
-    checkPasswordMutate(currentPW);
+    checkPasswordMutate({ password: currentPW });
   };
 
   const handleKeyDown = (e) => {

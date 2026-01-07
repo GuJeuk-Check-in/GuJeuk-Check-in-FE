@@ -11,9 +11,9 @@ import CountVisitor from '../components/LabeldInput/CountVisitor';
 import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
 import { Modal } from '../components/Modal/Modal';
 import { formatPhoneNumber } from '../utils/formatters';
-import { useUpdateAdminItem } from '../api/hooks/useUpdateVisitList';
-import { usePurposeList } from '../api/hooks/usePurposeList';
-import { useFetchUserVisitDetail } from '../api/hooks/useFetchUserVisitDetail';
+import { useUpdateAdminItem } from '../api/visit/hooks/useUpdateVisitList';
+import { usePurposeList } from '../api/purpose/hooks/usePurposeList';
+import { useFetchUserVisitDetail } from '../api/visit/hooks/useFetchUserVisitDetail';
 import { useModal } from '../hooks/useModal';
 
 const AGE_OPTIONS = [

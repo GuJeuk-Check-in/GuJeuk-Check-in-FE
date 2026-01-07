@@ -3,9 +3,9 @@ import Header from '../components/Form/Header';
 import PurposeBox from '../components/Form/PurposeBox';
 import PurposeAddBox from '../components/Button/PurposeAddBox';
 import styled from '@emotion/styled';
-import { usePurposeList } from '../api/hooks/usePurposeList';
-import { useDeletePurposeList } from '../api/hooks/useDeletePurposeList';
-import { useUpdatePurpose } from '../api/hooks/useUpdatePurpose';
+import { usePurposeList } from '../api/purpose/hooks/usePurposeList';
+import { useDeletePurposeList } from '../api/purpose/hooks/useDeletePurposeList';
+import { useUpdatePurpose } from '../api/purpose/hooks/useUpdatePurpose';
 
 const PurposeCustom = () => {
   const { data: purposes, isLoading, isError, error } = usePurposeList();
@@ -20,7 +20,7 @@ const PurposeCustom = () => {
   };
 
   const handleUpdate = ({ id, newPurpose }) => {
-    updateMutation.mutate({ id, newPurpose });
+    updateMutation.mutate({ id, purpose: newPurpose });
   };
 
   if (isLoading) {

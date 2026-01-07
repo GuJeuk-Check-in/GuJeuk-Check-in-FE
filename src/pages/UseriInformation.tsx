@@ -1,48 +1,21 @@
 import styled from '@emotion/styled';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserFilter from '../components/Form/UserFilter';
 import UserInformationCard from '../components/Form/UserInformationCard';
-import { useUserList } from '../api/hooks/userList';
+import { useUserList } from '../api/user/hooks/userList';
 
 const UserInformation = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{
+    residence: string | null;
+    page: number;
+  }>({
     residence: null,
     page: 0,
   });
 
   const { data, isLoading, isError, error } = useUserList(filters);
-  const { residence } = filters;
-  const displayUsers = useMemo(() => {
-    if (!data) return [];
-    if (data?.users && Array.isArray(data.users)) {
-      return data.users;
-    }
-
-    const userContent = data?.slice?.content;
-    if (userContent && Array.isArray(userContent)) {
-      return userContent;
-    }
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    return [];
-  }, [data]);
-
-  const totalUsersCount = useMemo(() => {
-    if (!data) return 0;
-
-    if (typeof data.totalCount === 'number') {
-      return data.totalCount;
-    }
-    if (typeof data.totalElements === 'number') {
-      return data.totalElements;
-    }
-
-    return displayUsers.length;
-  }, [data, displayUsers.length]);
 
   if (isLoading) {
     return (
@@ -62,34 +35,38 @@ const UserInformation = () => {
     return (
       <>
         <Header title="회원 목록 조회" />
-        <p style={{ textAlign: 'center', marginTop: '20vh', color: 'red' }}>
+        <ErrorText>
           회원 목록을 불러오는 데 실패했습니다:{' '}
-          {error?.message || '알 수 없는 오류'}
-        </p>
+          {error instanceof Error ? error.message : '알 수 없는 오류'}
+        </ErrorText>
       </>
     );
   }
+
+  const users = data?.users || data?.slice?.content || [];
+  const totalUsersCount = data?.totalCount || 0;
 
   return (
     <Container>
       <UseBackground />
       <Header title="회원 목록 조회" />
+
       <ContentWrapper>
         <FilterWrapper>
           <TotalCountText>총 {totalUsersCount} 명</TotalCountText>
+
           <UserFilter
-            selectedLocation={residence === null ? '전체 지역' : residence}
-            setSelectedLocation={(location) => {
-              setFilters((prev) => ({
-                ...prev,
+            selectedLocation={filters.residence ?? '전체 지역'}
+            setSelectedLocation={(location) =>
+              setFilters({
                 residence: location === '전체 지역' ? null : location,
                 page: 0,
-              }));
-            }}
+              })
+            }
           />
         </FilterWrapper>
 
-        {displayUsers.map((user) => (
+        {users.map((user) => (
           <UserInformationCard
             key={user.id}
             location={user.residence}
@@ -101,12 +78,12 @@ const UserInformation = () => {
           />
         ))}
 
-        {displayUsers.length === 0 && (
-          <p style={{ textAlign: 'center', marginTop: '50px', color: '#888' }}>
-            {residence === null
-              ? '등록된 회원이 없습니다.'
-              : `${residence}에 등록된 회원이 없습니다.`}
-          </p>
+        {users.length === 0 && (
+          <EmptyText>
+            {filters.residence
+              ? `${filters.residence}에 등록된 회원이 없습니다.`
+              : '등록된 회원이 없습니다.'}
+          </EmptyText>
         )}
       </ContentWrapper>
     </Container>
@@ -114,14 +91,13 @@ const UserInformation = () => {
 };
 
 export default UserInformation;
+
 const Container = styled.div`
   padding-top: 12.04vh;
 `;
 
-const HeaderHeight = '12.04vh';
-
 const ContentWrapper = styled.div`
-  min-height: calc(100vh - ${HeaderHeight});
+  min-height: calc(100vh - 12.04vh);
 `;
 
 const FilterWrapper = styled.div`
@@ -134,33 +110,34 @@ const FilterWrapper = styled.div`
 const TotalCountText = styled.p`
   color: #ffffff;
   font-size: 20px;
-  margin: 0;
   margin-left: 12.5%;
-  position: relative;
-  z-index: 10;
-  white-space: nowrap;
 `;
 
 const LoadingOverlay = styled.div`
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
   z-index: 9999;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
 
 const LoadingBox = styled.div`
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.3);
   padding: 30px 50px;
   border-radius: 10px;
+  color: #fff;
+`;
+
+const ErrorText = styled.p`
+  margin-top: 20vh;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(8px);
+  color: red;
+`;
+
+const EmptyText = styled.p`
+  margin-top: 50px;
+  text-align: center;
+  color: #888;
 `;

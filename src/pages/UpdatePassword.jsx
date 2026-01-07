@@ -4,7 +4,7 @@ import RightPage from '../components/Form/RightPage';
 import { useState } from 'react';
 import LabeledInput from '../components/Form/LabeledInput';
 import styled from '@emotion/styled';
-import useUpdatePassword from '../api/hooks/useUpdatePassoword';
+import useUpdatePassword from '../api/auth/hooks/useUpdatePassoword';
 
 const UpdatePassword = () => {
   const [currentPW, setCurrentPW] = useState('');

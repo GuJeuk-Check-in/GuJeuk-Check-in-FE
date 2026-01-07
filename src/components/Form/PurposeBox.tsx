@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
-import { useUpdatePurpose } from '../../api/hooks/useUpdatePurpose';
+import { useUpdatePurpose } from '../../api/purpose/hooks/useUpdatePurpose';
 import React from 'react';
 
 interface Purpose {
@@ -35,7 +35,7 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
       setIsEditing(false);
       return;
     }
-    updateMutate({ id: purpose.id, newPurpose: trimmedLabel });
+    updateMutate({ id: purpose.id, purpose: trimmedLabel });
     setIsEditing(false);
   };
 
