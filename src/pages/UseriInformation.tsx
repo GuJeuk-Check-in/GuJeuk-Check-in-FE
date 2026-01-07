@@ -108,6 +108,7 @@ const FilterWrapper = styled.div`
 `;
 
 const TotalCountText = styled.p`
+  width: 200px;
   color: #ffffff;
   font-size: 20px;
   margin-left: 12.5%;
