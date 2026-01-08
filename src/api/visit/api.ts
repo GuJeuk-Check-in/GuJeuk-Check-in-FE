@@ -16,7 +16,7 @@ export const fetchUserVisitList = async (page = 0) => {
 export const deleteUserVisit = async (
   id: number
 ): Promise<DeleteUserVisitResponse> => {
-  const response = await axiosInstance.delete(`/admin/list/${id}`);
+  const response = await axiosInstance.delete(`/log/${id}`);
   return response.data;
 };
 
@@ -29,7 +29,7 @@ export const fetchUserVisitDetail = async (
   id: number
 ): Promise<UserVisitDetailResponse> => {
   try {
-    const response = await axiosInstance.get(`/admin/list/${id}`);
+    const response = await axiosInstance.get(`/log/${id}`);
     return response.data;
   } catch (error) {
     console.error(`ID ${id} 이용 기록 상세 조회 실패:`, error);
@@ -45,7 +45,7 @@ export const updateVisitList = async ({
     throw new Error('수정할 ID가 필요합니다.');
   }
 
-  const response = await axiosInstance.patch(`/admin/list/${id}`, payload);
+  const response = await axiosInstance.patch(`/log/${id}`, payload);
 
   return response.data;
 };

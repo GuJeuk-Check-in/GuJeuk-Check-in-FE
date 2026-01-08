@@ -23,7 +23,7 @@ const UserVisitCard = ({
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/admin/list/${id}`);
+    navigate(`/log/${id}`);
   };
 
   const handleDeleteClick = (e: React.MouseEvent) => {

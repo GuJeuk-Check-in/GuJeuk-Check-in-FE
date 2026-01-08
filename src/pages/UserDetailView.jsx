@@ -37,7 +37,7 @@ const ActionButton = ({ content, onClick, disabled }) => (
 );
 
 const UserDetailView = () => {
-  const { id } = useParams();
+  const { logId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(null);
 
@@ -48,7 +48,7 @@ const UserDetailView = () => {
     isLoading: isVisitLoading,
     isError: isVisitError,
     error,
-  } = useFetchUserVisitDetail(id);
+  } = useFetchUserVisitDetail(logId);
 
   const updateMutation = useUpdateAdminItem();
 
