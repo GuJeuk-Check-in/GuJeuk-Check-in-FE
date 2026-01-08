@@ -3,6 +3,7 @@ import {
   UseMutationResult,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { createUserVisit } from '../api';
 import { useModal } from '../../../hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -26,6 +27,7 @@ export const useCreateUserVisit = ({
 }: UseCreateUserVisitProps = {}): UseCreateUserVisitReturn => {
   const queryClient = useQueryClient();
   const modal = useModal();
+  const navigate = useNavigate();
 
   const mutation = useMutation<
     UserVisitDetailResponse,
@@ -49,6 +51,7 @@ export const useCreateUserVisit = ({
             onClick: () => {
               modal.closeModal();
               onSuccessCallback?.();
+              navigate('/admin/list/all');
             },
           },
         ],
