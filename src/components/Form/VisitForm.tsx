@@ -25,12 +25,12 @@ interface VisitFormProps {
     purpose: string;
     visitDate: string;
     privacyAgreed: boolean;
-  }) => void;
+  }) => Promise<void>;
   isLoading: boolean;
   isError: boolean;
   error: any;
-  onChange?: () => void;
 }
+
 const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const AGE_MAP = {
     '0~8세': 'BABY',
@@ -51,15 +51,27 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const femaleCounter = useCounter(0);
   const [date, setDate] = useState('');
   const privacyCheck = useCheck(true);
+
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
-  const handleSubmit = () => {
+  const resetForm = () => {
+    nameInput.reset();
+    phoneInput.reset();
+    maleCounter.reset();
+    femaleCounter.reset();
+    setAgeDisplay('');
+    setPurpose('');
+    setDate('');
+    privacyCheck.setChecked(true);
+  };
+
+  const handleSubmit = async () => {
     const trimmedPurpose = purpose.trim();
+
     if (
       !nameInput.value ||
       !phoneInput.value ||
       !trimmedPurpose ||
-      !purpose ||
       !date ||
       !ageDisplay
     ) {
@@ -83,12 +95,16 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       privacyAgreed: privacyCheck.checked,
     };
 
-    onSubmit(dataToSend);
+    try {
+      await onSubmit(dataToSend);
+      resetForm();
+    } catch {}
   };
 
   const purposeOptions = Array.isArray(purposes)
     ? purposes.map((p) => p.purpose)
     : [];
+
   const ageOptions = Object.keys(AGE_MAP);
 
   return (
@@ -157,11 +173,13 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
         </PrivacyConsentWrapper>
       </InputGroup>
+
       {isError && (
         <ErrorMessage>
           등록에 실패했습니다: {error?.message || '알 수 없는 서버 오류.'}
         </ErrorMessage>
       )}
+
       <PasswordButton
         content={isLoading ? '등록 중...' : '추가'}
         onClick={handleSubmit}
