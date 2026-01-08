@@ -17,14 +17,14 @@ const Header = ({ title, children }: HeaderProps) => {
       <LogoImage
         src={Logo}
         alt="로고 이미지"
-        onClick={() => navigate('/admin/list/all')}
+        onClick={() => navigate('/log')}
       />
       <ButtonWrapper>
-        <HeaderButton onClick={() => navigate('/admin/list/all')}>
+        <HeaderButton onClick={() => navigate('/log')}>
           시설 이용 목록 조회
         </HeaderButton>
         <Diver />
-        <HeaderButton onClick={() => navigate('/admin/list/create')}>
+        <HeaderButton onClick={() => navigate('/log/create')}>
           시설 이용 기록 추가
         </HeaderButton>
         <Diver />

@@ -8,11 +8,11 @@ import { useCreateUserVisit } from '../api/visit/hooks/useCreateUserVisitList';
 
 const UserDetail = () => {
   const navigate = useNavigate();
-  const { mutate, isLoading, isError, error, modal } = useCreateUserVisit(
-    () => {
-      navigate('/admin/list/all');
-    }
-  );
+  const { mutate, isLoading, isError, error, modal } = useCreateUserVisit({
+    onSuccessCallback: () => {
+      navigate('/log');
+    },
+  });
 
   const handleSubmit = (dataToSend) => {
     mutate(dataToSend);

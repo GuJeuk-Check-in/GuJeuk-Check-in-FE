@@ -28,7 +28,7 @@ const useEnterPassword = ({ setErrorMessage }: UseEnterPasswordParams) => {
 
       setAuth(accessToken, refreshToken);
       setErrorMessage('');
-      navigate('/admin/list/all', { replace: true });
+      navigate('/log', { replace: true });
     },
 
     onError: (error) => {

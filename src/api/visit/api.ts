@@ -8,10 +8,8 @@ import {
   UpdateUserVisitRequest,
 } from './types';
 
-export const fetchUserVisitList = async (
-  page = 0
-): Promise<UserVisitListResponse> => {
-  const response = await axiosInstance.get(`/admin/list/all?page=${page}`);
+export const fetchUserVisitList = async (page = 0) => {
+  const response = await axiosInstance.get(`/log?page=${page}`);
   return response.data;
 };
 
@@ -22,16 +20,9 @@ export const deleteUserVisit = async (
   return response.data;
 };
 
-export const createUserVisit = async (
-  visitData: CreateUserVisitRequest
-): Promise<UserVisitDetailResponse> => {
-  try {
-    const response = await axiosInstance.post(`/admin/list/create`, visitData);
-    return response.data;
-  } catch (error) {
-    console.error('시설 이용 기록 추가 실패:', error);
-    throw error;
-  }
+export const createUserVisit = async (visitData) => {
+  const response = await axiosInstance.post(`/log`, visitData);
+  return response.data;
 };
 
 export const fetchUserVisitDetail = async (

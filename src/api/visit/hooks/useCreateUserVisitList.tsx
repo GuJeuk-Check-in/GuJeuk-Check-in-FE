@@ -51,7 +51,7 @@ export const useCreateUserVisit = ({
             onClick: () => {
               modal.closeModal();
               onSuccessCallback?.();
-              navigate('/admin/list/all');
+              navigate('/log');
             },
           },
         ],
