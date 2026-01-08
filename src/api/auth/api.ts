@@ -7,7 +7,6 @@ import {
 } from './types';
 
 export const enterPassword = async (payload: EnterPasswordRequest) => {
-  console.log('payload:', payload);
   const response = await axiosInstance.post<EnterPasswordResponse>(
     '/admin/login',
     payload
