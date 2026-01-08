@@ -44,8 +44,6 @@ axiosInstance.interceptors.request.use(
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
-    console.log('request config before send:', config); // 여기로 이동
     return config;
   },
   (error) => Promise.reject(error)
