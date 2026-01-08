@@ -50,7 +50,6 @@ const PurposeCustom = () => {
       </Container>
     );
   }
-  console.log('가져온 목적 데이터:', purposes);
 
   const isInteracting = deleteMutation.isLoading || updateMutation.isLoading;
 
