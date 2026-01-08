@@ -36,7 +36,10 @@ export const useDeleteVisitMutation = () => {
 
   return useMutation<string, AxiosError<ServerError>, number>({
     mutationFn: (id: number) => deleteUserVisit(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['visitList'] }),
+    onSuccess: () =>
+      queryClient.removeQueries({
+        queryKey: ['visitList'],
+      }),
     onError: (error) =>
       alert(error.response?.data?.message || error.message || '삭제 실패'),
   });
