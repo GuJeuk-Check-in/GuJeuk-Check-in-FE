@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import UseBackground from '../components/Background/UseBackground';
@@ -33,9 +33,14 @@ const UserVisitList = () => {
 
   const { mutate: excelMutate, isLoading: isExporting } = useExportExcel();
 
-  const visits =
-    data?.pages.flatMap((page) => page?.data?.content || page?.content || []) ||
-    [];
+  const visits = useMemo(() => {
+    if (!data?.pages) return [];
+
+    return data.pages.flatMap((page) => {
+      return page?.content || [];
+    });
+  }, [data]);
+
   const observerTarget = useRef(null);
 
   useEffect(() => {
@@ -65,9 +70,11 @@ const UserVisitList = () => {
   const handleDelete = (id, name) => {
     if (isDeleting) return;
 
+    const displayName = name || '방문자';
+
     modal.openModal({
       icon: <FaExclamationTriangle size={48} color="#D88282" />,
-      title: `정말 ${name}님의 기록을 삭제하시겠나요?`,
+      title: `정말 ${displayName}님의 기록을 삭제하시겠나요?`,
       subtitle: '한 번 삭제한 기록은 복구할 수 없습니다',
       theme: 'warning',
       buttons: [
@@ -112,11 +119,10 @@ const UserVisitList = () => {
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
-    const formattedMonth = String(month).padStart(2, '0');
-    const dataString = `${year}-${formattedMonth}`;
+    const dataString = `${year}-${month}`;
     setExportingDate(dataString);
     excelMutate(
-      { year, month: formattedMonth },
+      { year, month },
       {
         onSettled: () => {
           setExportingDate('');
@@ -166,18 +172,18 @@ const UserVisitList = () => {
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
 
-        {visits.map((visit, index) => {
+        {visits.map((visit) => {
           if (!visit) return null;
 
           return (
             <UserVisitCard
-              key={visit.id || index}
-              id={visit?.id}
-              name={visit?.name}
-              male={visit?.maleCount}
-              female={visit?.femaleCount}
-              date={visit?.visitDate}
-              onDelete={() => handleDelete(visit?.id, visit?.name)}
+              key={visit.id}
+              id={visit.id}
+              name={visit.name}
+              male={visit.maleCount}
+              female={visit.femaleCount}
+              date={visit.visitDate}
+              onDelete={() => handleDelete(visit.id, visit.name)}
             />
           );
         })}
