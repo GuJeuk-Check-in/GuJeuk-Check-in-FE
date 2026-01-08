@@ -84,15 +84,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
     };
 
     onSubmit(dataToSend);
-
-    nameInput.reset();
-    setAgeDisplay('');
-    phoneInput.reset();
-    setPurpose('');
-    maleCounter.reset();
-    femaleCounter.reset();
-    setDate('');
-    privacyCheck.setChecked(true);
   };
 
   const purposeOptions = Array.isArray(purposes)

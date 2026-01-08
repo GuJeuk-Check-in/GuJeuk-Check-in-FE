@@ -13,12 +13,7 @@ export const useUpdatePurpose = () => {
     AxiosError<{ message?: string }>,
     UpdatePurposeRequest
   >({
-    // 👇 여기에 로그를 추가해보세요
     mutationFn: (variables) => {
-      console.log('=== API 호출 데이터 확인 ===');
-      console.log('id:', variables.id);
-      console.log('purpose:', variables.purpose); // 여기가 undefined나 빈 값인지 확인!
-
       return updatePurpose(variables.id, { purpose: variables.purpose });
     },
     onSuccess: (_, variables) => {
