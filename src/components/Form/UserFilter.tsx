@@ -13,8 +13,8 @@ const UserFilter = ({
 }: UserFilterProps) => {
   const LocationData = [
     '전체 지역',
-    '관평동',
     '구즉동',
+    '관평동',
     '노은1동',
     '노은2동',
     '노은3동',
