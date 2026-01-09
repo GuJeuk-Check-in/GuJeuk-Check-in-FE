@@ -55,14 +55,22 @@ export const exportVisitListToExcel = async ({
   month,
 }: ExportVisitListRequest): Promise<string> => {
   try {
-    const response = await axiosInstance.get(`/admin/excel/${year}-${month}`, {
-      responseType: 'blob',
-    });
+    const formattedMonth = String(month).padStart(2, '0');
+
+    const response = await axiosInstance.get(
+      `/admin/excel/${year}-${formattedMonth}`,
+      {
+        responseType: 'blob',
+      }
+    );
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `시설이용목록_${year}-${month}.xlsx`);
+    link.setAttribute(
+      'download',
+      `시설이용목록_${year}-${formattedMonth}.xlsx`
+    );
     document.body.appendChild(link);
     link.click();
     link.remove();
