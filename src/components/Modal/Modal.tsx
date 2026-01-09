@@ -17,7 +17,6 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
     if (onClick) {
       onClick();
     }
-    onClose();
   };
 
   return (
