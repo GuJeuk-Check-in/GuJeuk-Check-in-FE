@@ -28,12 +28,16 @@ export const useModal = (): UseModalReturn => {
 
   const openModal = (modalConfig: ModalConfig) => {
     setConfig(modalConfig);
-    setIsOpen(true);
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 0);
   };
 
   const closeModal = () => {
     setIsOpen(false);
-    setConfig(null);
+    setTimeout(() => {
+      setConfig(null);
+    }, 300);
   };
 
   return { isOpen, config, openModal, closeModal };
