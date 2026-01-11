@@ -51,7 +51,7 @@ export const UpdatePasswordForm = () => {
             buttons: [
               {
                 label: '로그인 화면으로',
-                variant: 'primary',
+                variant: 'secondary',
                 onClick: () => {
                   closeModal();
                   logout();
