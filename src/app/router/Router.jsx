@@ -1,14 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
-import EnterPassword from '../pages/EnterPassword';
-import UpdatePassword from '../pages/UpdatePassword';
-import UserVisitList from '../pages/UserVisitList';
-import UserDetail from '../pages/UserDetail';
-import UserDetailView from '../pages/UserDetailView';
-import UserInformation from '../pages/UseriInformation';
-import PurposeCustom from '../pages/PurposeCustom';
-// import UserInformationDetail from '../pages/UserInformationDetail';
+import EnterPassword from '@pages/EnterPassword';
+import UpdatePassword from '@pages/UpdatePassword';
+import UserVisitList from '@pages/UserVisitList';
+import UserDetail from '@pages/UserDetail';
+import UserDetailView from '@pages/UserDetailView';
+import UserInformation from '@pages/UseriInformation';
+import PurposeCustom from '@pages/PurposeCustom';
+// import UserInformationDetail from '@pages/UserInformationDetail';
 
-const Router = () => {
+export const Router = () => {
   return (
     <Routes>
       <Route path="/admin/login" element={<EnterPassword />}></Route>
@@ -22,5 +22,3 @@ const Router = () => {
     </Routes>
   );
 };
-
-export default Router;
