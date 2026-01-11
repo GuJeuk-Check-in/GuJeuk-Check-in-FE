@@ -1,8 +1,8 @@
 import axiosInstance from '@shared/api/axiosInstance';
 import {
   CreatePurposeRequset,
-  UpdatePurposeRequest,
   PurposeResponse,
+  UpdatePurposeMovementRequest,
 } from './types';
 
 export const purposeList = async (): Promise<PurposeResponse[]> => {
@@ -22,6 +22,13 @@ export const updatePurpose = async (
   payload: { purpose: string }
 ): Promise<void> => {
   await axiosInstance.patch(`/purpose/${id}`, payload);
+};
+
+export const updatePurposeMovement = async (
+  data: UpdatePurposeMovementRequest
+) => {
+  const response = await axiosInstance.patch('/purpose/move', data);
+  return response.data;
 };
 
 export const deletePurpose = async (id: number): Promise<void> => {

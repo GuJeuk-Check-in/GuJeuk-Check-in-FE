@@ -40,3 +40,13 @@ export interface UserListResponse {
   slice?: UserSlice;
   users?: User[];
 }
+
+export interface UserInformation {
+  name: string;
+  userId: string;
+  phone: string;
+  gender: 'MALE' | 'FEMALE';
+  birthYMD: string;
+  residence: string;
+  privacyAgreed: boolean;
+}

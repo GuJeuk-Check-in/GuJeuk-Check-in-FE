@@ -1,5 +1,5 @@
 import axiosInstance from '@shared/api/axiosInstance';
-import { UserListResponse } from './types';
+import { UserListResponse, UserInformation } from './types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(
@@ -8,7 +8,20 @@ export const userList = async (page = 0): Promise<UserListResponse> => {
       params: { page },
     }
   );
+  return response.data;
+};
 
+export const fetchUserInformation = async (
+  userId: string
+): Promise<UserInformation> => {
+  const response = await axiosInstance.get(`/admin/user/${userId}`);
+  return response.data;
+};
+
+export const updateUserInformation = async (
+  data: UserInformation
+): Promise<UserInformation> => {
+  const response = await axiosInstance.put(`/admin/user/${data.userId}`, data);
   return response.data;
 };
 
