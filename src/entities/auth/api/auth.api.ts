@@ -1,4 +1,4 @@
-import axiosInstance from '../../../api/common/axiosInstance';
+import axiosInstance from '@shared/api/axiosInstance';
 import {
   EnterPasswordRequest,
   EnterPasswordResponse,

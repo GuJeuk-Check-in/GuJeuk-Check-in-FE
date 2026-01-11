@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createUserVisit } from '../api';
-import { useModal } from '../../../hooks/useModal';
+import { useModal } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { CreateUserVisitRequest, UserVisitDetailResponse } from '../types';
 import { AxiosError } from 'axios';

@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
-import UseBackground from '../components/Background/UseBackground';
-import Header from '../components/Form/Header';
-import UserVisitCard from '../components/Form/UserVisitCard';
-import ExcelButton from '../components/Button/ExcelButton';
+import UseBackground from '@shared/ui/Background/UseBackground';
+import Header from '@shared/ui/Form/Header';
+import UserVisitCard from '@shared/ui/Form/UserVisitCard';
+import ExcelButton from '@shared/ui/Button/ExcelButton';
 import DateExportModal from '../components/Modal/DateExportModal';
 import { Modal } from '../components/Modal/Modal';
 import { useExportExcel } from '../api/visit/hooks/useExportExcel';
@@ -12,7 +12,7 @@ import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,
 } from '../api/visit/hooks/userVisitList';
-import { useModal } from '../hooks/useModal';
+import { useModal } from '@shared/hooks/useModal';
 
 const UserVisitList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -1,6 +1,6 @@
-import PasswordBackground from '../components/Background/PasswordBackground';
-import LeftPage from '../components/Form/LeftPage';
-import RightPage from '../components/Form/RightPage';
+import PasswordBackground from '@shared/ui/Background/PasswordBackground';
+import LeftPage from '@shared/ui/Form/LeftPage';
+import RightPage from '@shared/ui/Form/RightPage';
 import styled from '@emotion/styled';
 import { UpdatePasswordForm } from '@features/auth/update-password/ui/UpdatePasswordForm';
 

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import UseBackground from '../components/Background/UseBackground';
-import Header from '../components/Form/Header';
-import UserFilter from '../components/Form/UserFilter';
-import UserInformationCard from '../components/Form/UserInformationCard';
+import UseBackground from '@shared/ui/Background/UseBackground';
+import Header from '@shared/ui/Form/Header';
+import UserFilter from '@shared/ui/Form/UserFilter';
+import UserInformationCard from '@shared/ui/Form/UserInformationCard';
 import { useUserList } from '../api/user/hooks/userList';
 
 const UserInformation = () => {

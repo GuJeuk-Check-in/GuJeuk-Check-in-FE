@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useLogin } from '../model/useLogin';
-import { useModal } from '../../../../hooks/useModal';
-import LabeledInput from '../../../../components/Form/LabeledInput';
-import PasswordButton from '../../../../components/Button/PasswordButton';
+import { useModal } from '@shared/hooks/useModal';
+import LabeledInput from '@shared/ui/Form/LabeledInput';
+import PasswordButton from '@shared/ui/Button/PasswordButton';
 import { Modal } from '../../../../components/Modal/Modal';
 
 export const LoginForm = () => {
