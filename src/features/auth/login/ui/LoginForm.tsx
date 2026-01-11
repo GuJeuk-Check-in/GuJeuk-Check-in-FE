@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useLogin } from '../model/useLogin';
-import { useModal } from 'src/hooks/useModal';
-import LabeledInput from 'src/components/Form/LabeledInput';
-import PasswordButton from 'src/components/Button/PasswordButton';
-import { Modal } from 'src/components/Modal/Modal';
+import { useModal } from '../../../../hooks/useModal';
+import LabeledInput from '../../../../components/Form/LabeledInput';
+import PasswordButton from '../../../../components/Button/PasswordButton';
+import { Modal } from '../../../../components/Modal/Modal';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ export const LoginForm = () => {
             buttons: [
               {
                 label: '이동하기',
-                variant: 'primary',
+                variant: 'secondary',
                 onClick: () => {
                   closeModal();
                   navigate('/log', { replace: true });
