@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updatePurpose } from '../api';
 import { AxiosError } from 'axios';
 import { UpdatePurposeRequest } from '../types';
-import usePurposeStore from '../../../store/PurposeStore';
+import usePurposeStore from '@entities/purpose/model/purposeStore';
 
 export const useUpdatePurpose = () => {
   const queryClient = useQueryClient();

@@ -1,16 +1,7 @@
 import { create } from 'zustand';
+import { PurposeStore } from './types';
 
-interface Purpose {
-  id: number;
-  purpose: string;
-}
-
-interface PurposeStore {
-  purposes: Purpose[];
-  updatePurpose: (id: number, newPurpose: string) => void;
-}
-
-const usePurposeStore = create<PurposeStore>((set) => ({
+export const usePurposeStore = create<PurposeStore>((set) => ({
   purposes: [],
 
   updatePurpose: (id, newPurpose) =>
