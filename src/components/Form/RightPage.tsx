@@ -42,7 +42,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   gap: 20px;
-  box-shadow: 0 4px 10px rgb(187, 209, 236);
+  box-shadow: 0 6px 10px rgb(207, 220, 235);
 
   @media (max-width: 1024px) {
     width: 50%;

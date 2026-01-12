@@ -36,7 +36,7 @@ const Container = styled.div`
   border-radius: 20px 0 0 20px;
   background-color: #ffffff;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgb(187, 209, 236);
+  box-shadow: 0 6px 10px rgb(207, 220, 235);
   overflow: hidden;
 
   @media (max-width: 1024px) {
