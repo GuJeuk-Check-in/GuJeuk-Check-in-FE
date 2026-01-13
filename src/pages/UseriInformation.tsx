@@ -1,21 +1,47 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import UseBackground from '../components/Background/UseBackground';
 import Header from '../components/Form/Header';
 import UserFilter from '../components/Form/UserFilter';
 import UserInformationCard from '../components/Form/UserInformationCard';
-import { useUserList } from '../api/user/hooks/userList';
+import { useInfiniteUserList } from '../api/user/hooks/userList';
 
 const UserInformation = () => {
-  const [filters, setFilters] = useState<{
-    residence: string | null;
-    page: number;
-  }>({
+  const [filters, setFilters] = useState<{ residence: string | null }>({
     residence: null,
-    page: 0,
   });
 
-  const { data, isLoading, isError, error } = useUserList(filters);
+  const observerTarget = useRef<HTMLDivElement>(null);
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteUserList({ residence: filters.residence });
+
+  const users = data?.pages.flatMap((page) => page.users) ?? [];
+  const totalUsersCount = data?.pages[0]?.totalCount ?? 0;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -43,9 +69,6 @@ const UserInformation = () => {
     );
   }
 
-  const users = data?.users || data?.slice?.content || [];
-  const totalUsersCount = data?.totalCount || 0;
-
   return (
     <Container>
       <UseBackground />
@@ -60,7 +83,6 @@ const UserInformation = () => {
             setSelectedLocation={(location) =>
               setFilters({
                 residence: location === '전체 지역' ? null : location,
-                page: 0,
               })
             }
           />
@@ -68,7 +90,7 @@ const UserInformation = () => {
 
         {users.map((user) => (
           <UserInformationCard
-            key={user.id}
+            key={`${user.id}-${user.residence}`}
             location={user.residence}
             name={user.name}
             gender={user.gender}
@@ -85,6 +107,14 @@ const UserInformation = () => {
               : '등록된 회원이 없습니다.'}
           </EmptyText>
         )}
+        <div
+          ref={observerTarget}
+          style={{ height: '20px', margin: '10px 0' }}
+        />
+
+        {isFetchingNextPage && (
+          <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
+        )}
       </ContentWrapper>
     </Container>
   );
@@ -98,6 +128,7 @@ const Container = styled.div`
 
 const ContentWrapper = styled.div`
   min-height: calc(100vh - 12.04vh);
+  padding-bottom: 50px;
 `;
 
 const FilterWrapper = styled.div`
@@ -141,4 +172,13 @@ const EmptyText = styled.p`
   margin-top: 50px;
   text-align: center;
   color: #888;
+`;
+
+const InfoMessage = styled.p`
+  text-align: center;
+  color: #ffffff;
+  padding: 20px 0;
+  font-size: 16px;
+  opacity: 0.8;
+  animation: blink 1.5s infinite;
 `;
