@@ -13,12 +13,13 @@ export const userList = async (page = 0): Promise<UserListResponse> => {
 };
 
 export const usersByResidence = async (
-  residence: string
+  residence: string,
+  page = 0
 ): Promise<UserListResponse> => {
   const residenceParam = residence === '기타 지역' ? '기타' : residence;
 
   const response = await axiosInstance.get<UserListResponse>('/admin/user', {
-    params: { residence: residenceParam },
+    params: { residence: residenceParam, page },
   });
 
   return response.data;
