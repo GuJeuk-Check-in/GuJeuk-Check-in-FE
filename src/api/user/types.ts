@@ -40,3 +40,10 @@ export interface UserListResponse {
   slice?: UserSlice;
   users?: User[];
 }
+
+export interface NormalizedUserPage {
+  users: any[];
+  totalCount: number;
+  last: boolean;
+  page: number;
+}
