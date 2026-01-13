@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 import { useState } from 'react';
-import { useUpdatePurpose } from '../../../api/purpose/hooks/useUpdatePurpose';
+import { useUpdatePurpose } from '@features/purpose/update-purpose/model/useUpdatePurpose';
 import React from 'react';
 
 interface Purpose {
@@ -16,7 +16,7 @@ interface PurposeProps {
   isDeleting: boolean;
 }
 
-const PurposeBox = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
+const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(purpose.purpose);
   const [isEnterHandled, setIsEnterHandled] = useState(false);
@@ -120,7 +120,7 @@ const PurposeBox = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
   );
 };
 
-export default PurposeBox;
+export default PurposeCard;
 
 interface ContainerProps {
   $isDisabled: boolean;

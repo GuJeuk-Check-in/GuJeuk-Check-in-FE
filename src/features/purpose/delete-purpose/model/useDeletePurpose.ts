@@ -1,4 +1,4 @@
-import { deletePurpose } from '../api';
+import { deletePurpose } from '../../../../api/purpose/api';
 import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

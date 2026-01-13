@@ -17,13 +17,13 @@ import {
 } from '@dnd-kit/sortable';
 
 import UseBackground from '@shared/ui/Background/UseBackground';
-import Header from '@shared/ui/Form/Header';
-import PurposeBox from '@shared/ui/Form/PurposeBox';
-import PurposeAddBox from '@shared/ui/Button/PurposeAddBox';
+import Header from '@widgets/layout/header/Header';
+import PurposeBox from '@entities/purpose/ui/PurposeCard';
+import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
 import { usePurposeList } from '../api/purpose/hooks/usePurposeList';
-import { useDeletePurposeList } from '../api/purpose/hooks/useDeletePurposeList';
-import { useUpdatePurpose } from '../api/purpose/hooks/useUpdatePurpose';
+import { useDeletePurposeList } from '@features/purpose/delete-purpose/model/useDeletePurpose';
+import { useUpdatePurpose } from '@features/purpose/update-purpose/model/useUpdatePurpose';
 import { useUpdatePurposeMovement } from '../api/purpose/hooks/useUpdatePurposeMovement';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../components/Modal/Modal';

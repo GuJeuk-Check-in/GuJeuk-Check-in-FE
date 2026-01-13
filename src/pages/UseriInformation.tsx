@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import UseBackground from '@shared/ui/Background/UseBackground';
-import Header from '@shared/ui/Form/Header';
+import Header from '@widgets/layout/header/Header';
 import UserFilter from '@shared/ui/Form/UserFilter';
 import UserInformationCard from '@shared/ui/Form/UserInformationCard';
 import { useUserList } from '../api/user/hooks/userList';

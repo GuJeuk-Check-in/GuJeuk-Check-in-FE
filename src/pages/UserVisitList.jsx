@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import UseBackground from '@shared/ui/Background/UseBackground';
-import Header from '@shared/ui/Form/Header';
+import Header from '@widgets/layout/header/Header';
 import UserVisitCard from '@shared/ui/Form/UserVisitCard';
 import ExcelButton from '@shared/ui/Button/ExcelButton';
 import DateExportModal from '../components/Modal/DateExportModal';

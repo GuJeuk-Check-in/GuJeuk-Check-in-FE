@@ -1,4 +1,4 @@
-import PasswordButton from '../Button/PasswordButton';
+import PasswordButton from '@shared/ui/Button/PasswordButton';
 import styled from '@emotion/styled';
 import React from 'react';
 

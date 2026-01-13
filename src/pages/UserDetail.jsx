@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import Header from '@shared/ui/Form/Header';
-import VisitForm from '@shared/ui/Form/VisitForm';
+import Header from '@widgets/layout/header/Header';
+import VisitForm from '@widgets/layout/visit-form/VisitForm';
 import UseBackground from '@shared/ui/Background/UseBackground';
 import { Modal } from '../components/Modal/Modal';
 import { useCreateUserVisit } from '../api/visit/hooks/useCreateUserVisitList';

@@ -1,12 +1,12 @@
-import VisitFormInput from '../LabeldInput/VisitFormInput';
-import ToggleSelect from '../LabeldInput/ToggleSelect';
+import VisitFormInput from '@shared/ui/LabeldInput/VisitFormInput';
+import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import CountVisitor from '../LabeldInput/CountVisitor';
+import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
-import PasswordButton from '../Button/PasswordButton';
-import VisitDatePicker from '../LabeldInput/VisitDatePicker';
+import PasswordButton from '@shared/ui/Button/PasswordButton';
+import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import { usePurposeList } from '../../../api/purpose/hooks/usePurposeList';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import HeaderButton from '../Button/HeaderButton';
+import HeaderButton from '../../../shared/ui/Button/HeaderButton';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
 import React, { ReactNode } from 'react';

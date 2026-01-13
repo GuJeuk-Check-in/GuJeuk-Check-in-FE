@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import LeftPage from './LeftPage';
+import LeftPage from '../../../widgets/layout/LeftPage';
 import RightPage from './RightPage';
 import React from 'react';
 

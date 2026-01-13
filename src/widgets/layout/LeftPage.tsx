@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import Logo from '../../../assets/Logo.png';
+import Logo from '../../assets/Logo.png';
 import React from 'react';
 
 const LeftPage = () => {

@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import Header from '@shared/ui/Form/Header';
+import Header from '@widgets/layout/header/Header';
 import UseBackground from '@shared/ui/Background/UseBackground';
 import VisitDetailInput from '@shared/ui/LabeldInput/VisitDetailInput';
 import PasswordButton from '@shared/ui/Button/PasswordButton';

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import PasswordBackground from '@shared/ui/Background/PasswordBackground';
-import LeftPage from '@shared/ui/Form/LeftPage';
-import RightPage from '@shared/ui/Form/RightPage';
+import LeftPage from '@widgets/layout/LeftPage';
+import RightPage from '@widgets/layout/RightPage';
 import { LoginForm } from '@features/auth/login/ui/LoginForm';
 
 const EnterPassword = () => {
