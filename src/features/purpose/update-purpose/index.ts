@@ -1,2 +1,2 @@
 export * from './model/useUpdatePurpose';
-export * from './model/useUpdatePurposeMovement';
+export * from './ui/useUpdatePurposeHandler';
