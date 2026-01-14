@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { exportVisitListToExcel } from '../api';
+import { exportVisitListToExcel } from '@entities/visit/index';
 
 type ExportExcelVariables = {
   year: number;

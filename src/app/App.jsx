@@ -1,6 +1,6 @@
 import { Global, css } from '@emotion/react';
 import { Router } from '@app/router';
-import { useTokenRefresher } from '@features/auth/session-recovery';
+import { useTokenRefresher } from '@features/auth/index';
 
 const App = () => {
   useTokenRefresher();

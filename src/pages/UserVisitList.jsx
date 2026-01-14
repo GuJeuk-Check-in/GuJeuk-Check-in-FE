@@ -7,11 +7,11 @@ import UserVisitCard from '@shared/ui/Form/UserVisitCard';
 import ExcelButton from '@shared/ui/Button/ExcelButton';
 import DateExportModal from '../components/Modal/DateExportModal';
 import { Modal } from '../components/Modal/Modal';
-import { useExportExcel } from '../api/visit/hooks/useExportExcel';
+import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
 import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,
-} from '../api/visit/hooks/userVisitList';
+} from '../features/visit/visit-list/model/userVisitList';
 import { useModal } from '@shared/hooks/useModal';
 
 const UserVisitList = () => {

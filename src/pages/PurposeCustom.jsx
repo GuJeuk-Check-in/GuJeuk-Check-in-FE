@@ -21,7 +21,7 @@ import Header from '@widgets/layout/header/Header';
 import PurposeBox from '@entities/purpose/ui/PurposeCard';
 import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
-import { usePurposeList } from '@entities/purpose/model/usePurposeList';
+import { usePurposeList } from '@entities/purpose/index';
 import { useDeletePurposeList } from '@features/purpose/delete-purpose/model/useDeletePurpose';
 import { useUpdatePurpose } from '@features/purpose/update-purpose/model/useUpdatePurpose';
 import { useUpdatePurposeMovement } from '@features/purpose/update-purpose/model/useUpdatePurposeMovement';

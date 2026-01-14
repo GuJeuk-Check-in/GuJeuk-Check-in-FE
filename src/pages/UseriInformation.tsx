@@ -4,7 +4,7 @@ import UseBackground from '@shared/ui/Background/UseBackground';
 import Header from '@widgets/layout/header/Header';
 import UserFilter from '@shared/ui/Form/UserFilter';
 import UserInformationCard from '@shared/ui/Form/UserInformationCard';
-import { useInfiniteUserList } from '../api/user/hooks/userList';
+import { useInfiniteUserList } from '@features/user/index';
 
 const UserInformation = () => {
   const [filters, setFilters] = useState<{ residence: string | null }>({

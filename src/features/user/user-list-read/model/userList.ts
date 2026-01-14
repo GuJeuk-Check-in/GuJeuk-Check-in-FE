@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { userList, usersByResidence } from '../api';
-import { NormalizedUserPage } from '../types';
+import { userList, usersByResidence } from '@entities/user/api/user.api';
+import { NormalizedUserPage } from '@entities/user/index';
 import { AxiosError } from 'axios';
 
 interface UseUserListParams {

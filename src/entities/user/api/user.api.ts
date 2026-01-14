@@ -1,5 +1,5 @@
 import axiosInstance from '@shared/api/axiosInstance';
-import { UserListResponse, UserInformation } from './types';
+import { UserListResponse, UserInformation } from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(

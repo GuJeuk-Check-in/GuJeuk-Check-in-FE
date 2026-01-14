@@ -1,10 +1,13 @@
-import { updateVisitList } from '../api';
 import {
   useMutation,
   useQueryClient,
   UseMutationResult,
 } from '@tanstack/react-query';
-import { UpdateUserVisitRequest, UserVisitDetailResponse } from '../types';
+import {
+  updateVisitList,
+  UpdateUserVisitRequest,
+  UserVisitDetailResponse,
+} from '@entities/visit/index';
 import { AxiosError } from 'axios';
 
 interface ServerError {

@@ -1,12 +1,10 @@
 import axiosInstance from '@shared/api/axiosInstance';
 import {
-  UserVisitListResponse,
   DeleteUserVisitResponse,
-  CreateUserVisitRequest,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   UpdateUserVisitRequest,
-} from './types';
+} from '../index';
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);

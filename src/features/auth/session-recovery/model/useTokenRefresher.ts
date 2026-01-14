@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useAuthStore } from '@entities/auth/model/authstore';
+import { useAuthStore } from '@entities/auth/index';
 import axiosInstance from '@shared/api/axiosInstance';
 
-const useTokenRefresher = () => {
+export const useTokenRefresher = () => {
   const { accessToken, setAuth, logout } = useAuthStore();
   useEffect(() => {
     if (!accessToken) return;
@@ -23,5 +23,3 @@ const useTokenRefresher = () => {
     return () => clearInterval(timer);
   }, [accessToken, setAuth]);
 };
-
-export default useTokenRefresher;

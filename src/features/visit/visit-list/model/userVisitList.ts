@@ -3,8 +3,11 @@ import {
   useQueryClient,
   useInfiniteQuery,
 } from '@tanstack/react-query';
-import { fetchUserVisitList, deleteUserVisit } from '../api';
-import { UserVisitListResponse } from '../types';
+import {
+  fetchUserVisitList,
+  deleteUserVisit,
+  UserVisitListResponse,
+} from '@entities/visit/index';
 import { AxiosError } from 'axios';
 
 interface ServerError {
