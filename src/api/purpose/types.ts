@@ -11,3 +11,7 @@ export interface PurposeResponse {
   id: number;
   purpose: string;
 }
+
+export type UpdatePurposeMovementRequest = {
+  PurposeId: number[];
+};

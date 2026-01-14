@@ -1,8 +1,8 @@
 import axiosInstance from '../common/axiosInstance';
 import {
   CreatePurposeRequset,
-  UpdatePurposeRequest,
   PurposeResponse,
+  UpdatePurposeMovementRequest,
 } from './types';
 
 export const purposeList = async (): Promise<PurposeResponse[]> => {
@@ -26,5 +26,12 @@ export const updatePurpose = async (
 
 export const deletePurpose = async (id: number): Promise<void> => {
   const response = await axiosInstance.delete(`/purpose/${id}`);
+  return response.data;
+};
+
+export const updatePurposeMovement = async (
+  data: UpdatePurposeMovementRequest
+) => {
+  const response = await axiosInstance.patch('/purpose/move', data);
   return response.data;
 };
