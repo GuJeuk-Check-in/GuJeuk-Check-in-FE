@@ -19,13 +19,6 @@ export const useUpdatePurpose = () => {
     onSuccess: (_, variables) => {
       updateLocalPurpose(variables.id, variables.purpose);
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
-      alert('방문 목적이 성공적으로 수정되었습니다.');
-    },
-
-    onError: (error) => {
-      alert(
-        error.response?.data?.message ?? error.message ?? '방문 목적 수정 실패'
-      );
     },
   });
 };
