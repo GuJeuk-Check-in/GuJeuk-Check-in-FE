@@ -47,3 +47,13 @@ export interface NormalizedUserPage {
   last: boolean;
   page: number;
 }
+
+export interface UserInformation {
+  name: string;
+  userId: string;
+  phone: string;
+  gender: 'MALE' | 'FEMALE';
+  birthYMD: string;
+  residence: string;
+  privacyAgreed: boolean;
+}

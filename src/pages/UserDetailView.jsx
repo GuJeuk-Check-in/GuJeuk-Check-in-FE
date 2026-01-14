@@ -2,19 +2,19 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import Header from '../components/Form/Header';
-import UseBackground from '../components/Background/UseBackground';
-import VisitDetailInput from '../components/LabeldInput/VisitDetailInput';
-import PasswordButton from '../components/Button/PasswordButton';
-import ToggleSelect from '../components/LabeldInput/ToggleSelect';
-import CountVisitor from '../components/LabeldInput/CountVisitor';
-import VisitDatePicker from '../components/LabeldInput/VisitDatePicker';
+import Header from '@widgets/layout/header/Header';
+import UseBackground from '@shared/ui/Background/UseBackground';
+import VisitDetailInput from '@shared/ui/LabeldInput/VisitDetailInput';
+import PasswordButton from '@shared/ui/Button/PasswordButton';
+import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
+import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
+import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import { Modal } from '../components/Modal/Modal';
 import { formatPhoneNumber } from '../utils/formatters';
 import { useUpdateAdminItem } from '../api/visit/hooks/useUpdateVisitList';
 import { usePurposeList } from '../api/purpose/hooks/usePurposeList';
 import { useFetchUserVisitDetail } from '../api/visit/hooks/useFetchUserVisitDetail';
-import { useModal } from '../hooks/useModal';
+import { useModal } from '@shared/hooks/useModal';
 
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },

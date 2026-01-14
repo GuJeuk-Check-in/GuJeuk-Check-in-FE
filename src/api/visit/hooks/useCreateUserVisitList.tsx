@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { createUserVisit } from '../api';
-import { useModal } from '../../../hooks/useModal';
+import { useModal } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { CreateUserVisitRequest, UserVisitDetailResponse } from '../types';
 import { AxiosError } from 'axios';
@@ -36,7 +36,7 @@ export const useCreateUserVisit = ({
   >({
     mutationFn: createUserVisit,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['visits'] });
+      queryClient.invalidateQueries({ queryKey: ['visitList'] });
 
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,

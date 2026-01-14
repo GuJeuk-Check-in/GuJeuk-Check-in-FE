@@ -5,6 +5,7 @@ import Header from '../components/Form/Header';
 import UserFilter from '../components/Form/UserFilter';
 import UserInformationCard from '../components/Form/UserInformationCard';
 import { useInfiniteUserList } from '../api/user/hooks/userList';
+import { useUserList } from '../api/user/hooks/userList';
 
 const UserInformation = () => {
   const [filters, setFilters] = useState<{ residence: string | null }>({

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ModalConfig } from '../../hooks/useModal';
+import { type ModalConfig } from '@shared/hooks/useModal';
 import React from 'react';
 
 interface ModalProps {
