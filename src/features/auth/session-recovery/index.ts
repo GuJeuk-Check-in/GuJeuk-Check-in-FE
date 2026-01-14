@@ -1,1 +1,1 @@
-export { default as useTokenRefresher } from './model/useTokenRefresher';
+export * from './model/useTokenRefresher';

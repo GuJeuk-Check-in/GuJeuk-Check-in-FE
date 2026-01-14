@@ -1,2 +1,2 @@
-export { useUpdatePassword } from './model/useUpdatePassword';
-export { UpdatePasswordForm } from './ui/UpdatePasswordForm';
+export * from './model/useUpdatePassword';
+export * from './ui/UpdatePasswordForm';
