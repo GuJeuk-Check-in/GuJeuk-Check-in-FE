@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { updatePurposeMovement } from '../api';
-import { UpdatePurposeMovementRequest } from '../types';
+
+import { updatePurposeMovement } from '@entities/purpose/api/purpose.api';
+import { UpdatePurposeMovementRequest } from '@entities/purpose/model/types';
 
 export const useUpdatePurposeMovement = () => {
   const queryClient = useQueryClient();
@@ -13,7 +14,9 @@ export const useUpdatePurposeMovement = () => {
   >({
     mutationFn: updatePurposeMovement,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purposeList'] });
+      queryClient.invalidateQueries({
+        queryKey: ['purposeList'],
+      });
     },
   });
 };

@@ -12,7 +12,7 @@ import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import { Modal } from '../components/Modal/Modal';
 import { formatPhoneNumber } from '../utils/formatters';
 import { useUpdateAdminItem } from '../api/visit/hooks/useUpdateVisitList';
-import { usePurposeList } from '../api/purpose/hooks/usePurposeList';
+import { usePurposeList } from '@entities/purpose/model/usePurposeList';
 import { useFetchUserVisitDetail } from '../api/visit/hooks/useFetchUserVisitDetail';
 import { useModal } from '@shared/hooks/useModal';
 

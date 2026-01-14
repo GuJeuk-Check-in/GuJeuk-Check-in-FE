@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 import { useState, useRef, useEffect } from 'react';
-import UseBackground from '../components/Background/UseBackground';
-import Header from '../components/Form/Header';
-import UserFilter from '../components/Form/UserFilter';
-import UserInformationCard from '../components/Form/UserInformationCard';
+import UseBackground from '@shared/ui/Background/UseBackground';
+import Header from '@widgets/layout/header/Header';
+import UserFilter from '@shared/ui/Form/UserFilter';
+import UserInformationCard from '@shared/ui/Form/UserInformationCard';
 import { useInfiniteUserList } from '../api/user/hooks/userList';
-import { useUserList } from '../api/user/hooks/userList';
 
 const UserInformation = () => {
   const [filters, setFilters] = useState<{ residence: string | null }>({

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { purposeList } from '../api';
-import { PurposeResponse } from '../types';
+import { purposeList } from '@entities/purpose/api/purpose.api';
+import { PurposeResponse } from '@entities/purpose/model/types';
 import { AxiosError } from 'axios';
 
 export const usePurposeList = () => {
