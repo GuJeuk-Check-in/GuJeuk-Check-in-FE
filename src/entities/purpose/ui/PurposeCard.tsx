@@ -1,9 +1,7 @@
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
-import { useState } from 'react';
-import { useUpdatePurpose } from '@features/purpose/update-purpose/model/useUpdatePurpose';
-import React from 'react';
 
 interface Purpose {
   id: number;
@@ -13,16 +11,19 @@ interface Purpose {
 interface PurposeProps {
   purpose: Purpose;
   onDelete: (id: number) => void;
+  onUpdate: (params: { id: number; newPurpose: string }) => void;
   isDeleting: boolean;
 }
 
-const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
+const PurposeCard = ({
+  purpose,
+  onDelete,
+  onUpdate,
+  isDeleting,
+}: PurposeProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newLabel, setNewLabel] = useState(purpose.purpose);
   const [isEnterHandled, setIsEnterHandled] = useState(false);
-
-  const { mutate: updateMutate, isLoading: isUpdating } =
-    useUpdatePurpose() as any;
 
   const preventDrag = (
     e: React.PointerEvent | React.MouseEvent | React.TouchEvent
@@ -37,11 +38,13 @@ const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
       handleCancel();
       return;
     }
+
     if (trimmedLabel === purpose.purpose) {
       setIsEditing(false);
       return;
     }
-    updateMutate({ id: purpose.id, purpose: trimmedLabel });
+
+    onUpdate({ id: purpose.id, newPurpose: trimmedLabel });
     setIsEditing(false);
   };
 
@@ -58,19 +61,17 @@ const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
     setIsEditing(false);
   };
 
-  const isDisabled = isDeleting || isUpdating;
-
   return (
-    <Container $isDisabled={isDisabled}>
+    <Container $isDisabled={isDeleting}>
       <DeleteIcon
         type="button"
         onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        $isDeleting={isDisabled}
-        disabled={isDisabled}
+        $isDeleting={isDeleting}
+        disabled={isDeleting}
       >
-        {isDisabled ? (
+        {isDeleting ? (
           '...'
         ) : (
           <IoClose size="1.25rem" style={{ pointerEvents: 'none' }} />
@@ -86,7 +87,7 @@ const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
           onPointerDown={preventDrag}
           onMouseDown={preventDrag}
           onKeyDown={(e) => {
-            if (isUpdating) return;
+            if (isDeleting) return;
             e.stopPropagation();
 
             if (e.key === 'Enter') {
@@ -97,7 +98,7 @@ const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
             if (e.key === 'Escape') handleCancel();
           }}
           autoFocus
-          disabled={isUpdating}
+          disabled={isDeleting}
           onClick={(e) => e.stopPropagation()}
         />
       ) : (
@@ -106,13 +107,13 @@ const PurposeCard = ({ purpose, onDelete, isDeleting }: PurposeProps) => {
           <StyledEditIcon
             size={18}
             onClick={() => {
-              if (!isDisabled) {
+              if (!isDeleting) {
                 setIsEditing(true);
               }
             }}
             onPointerDown={preventDrag}
             onMouseDown={preventDrag}
-            $isDisabled={isDisabled}
+            $isDisabled={isDeleting}
           />
         </Label>
       )}
@@ -166,14 +167,6 @@ const Label = styled.span`
   align-items: center;
   font-size: 1.5rem;
   gap: 0.375rem;
-  svg {
-    cursor: pointer;
-    color: #5a5a5a;
-    transition: 0.2s ease;
-    &:hover {
-      color: #1e3a8a;
-    }
-  }
 `;
 
 const EditInput = styled.input`
@@ -190,12 +183,12 @@ const EditInput = styled.input`
 
 const StyledEditIcon = styled(MdEdit)<{ $isDisabled: boolean }>`
   cursor: ${(props) => (props.$isDisabled ? 'not-allowed' : 'pointer')};
-  color: ${(props) => (props.$isDisabled ? '#ccc' : '#666')};
+  color: ${(props) => (props.$isDisabled ? '#666' : '#666')};
   transition: color 0.2s;
   position: relative;
   z-index: 10;
 
   &:hover {
-    color: ${(props) => (props.$isDisabled ? '#ccc' : '#333')};
+    color: ${(props) => (props.$isDisabled ? '#666' : '#1e3a8a')};
   }
 `;
