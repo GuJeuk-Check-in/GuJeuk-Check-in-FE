@@ -26,7 +26,8 @@ export const LoginForm = () => {
           navigate('/log', { replace: true });
         },
         onError: (error) => {
-          const message = error.response?.data?.message || '로그인 실패';
+          const message =
+            error.response?.data?.message || error.message || '로그인 실패';
           setErrorMessage(message);
         },
       }
