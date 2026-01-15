@@ -1,36 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useLogin } from '../model/useLogin';
-import { useModal } from '@shared/hooks/useModal';
 import LabeledInput from '@shared/ui/Form/LabeledInput';
 import PasswordButton from '@shared/ui/Button/PasswordButton';
-import { Modal } from '../../../../components/Modal/Modal';
 
 export const LoginForm = () => {
-  const navigate = useNavigate();
   const [currentPW, setCurrentPW] = useState('');
-
-  const { isOpen, config, openModal, closeModal } = useModal();
-
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
   const { mutate: login, isPending } = useLogin();
 
   const handleConfirm = () => {
-    if (!currentPW.trim()) {
-      openModal({
-        icon: <FaExclamationTriangle color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '비밀번호를 입력해주세요.',
-        theme: 'warning',
-        buttons: [
-          {
-            label: '확인',
-            variant: 'primary',
-            onClick: closeModal,
-          },
-        ],
-      });
+    setErrorMessage('');
+
+    if (currentPW.trim() === '') {
+      setErrorMessage('비밀번호를 입력해주세요.');
       return;
     }
 
@@ -38,39 +23,11 @@ export const LoginForm = () => {
       { password: currentPW },
       {
         onSuccess: () => {
-          openModal({
-            icon: <FaCheckCircle color="#0F50A0" />,
-            title: '로그인 성공',
-            subtitle: '관리자 페이지로 이동합니다.',
-            theme: 'info',
-            buttons: [
-              {
-                label: '이동하기',
-                variant: 'secondary',
-                onClick: () => {
-                  closeModal();
-                  navigate('/log', { replace: true });
-                },
-              },
-            ],
-          });
+          navigate('/log', { replace: true });
         },
-
         onError: (error) => {
           const message = error.response?.data?.message || '로그인 실패';
-          openModal({
-            icon: <FaExclamationTriangle color="#D88282" />,
-            title: '로그인 실패',
-            subtitle: message,
-            theme: 'warning',
-            buttons: [
-              {
-                label: '닫기',
-                variant: 'secondary',
-                onClick: closeModal,
-              },
-            ],
-          });
+          setErrorMessage(message);
         },
       }
     );
@@ -89,27 +46,23 @@ export const LoginForm = () => {
         placeholder="비밀번호를 입력해주세요."
         type="password"
         value={currentPW}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange={(e) => {
           setCurrentPW(e.target.value);
+          setErrorMessage('');
         }}
-        isError={false}
+        isError={!!errorMessage}
         onKeyDown={handleKeyDown}
       />
-
+      <ErrorMessage visible={!!errorMessage}>{errorMessage}</ErrorMessage>
       <ButtonWrapper>
         <PasswordButton
           content={isPending ? '확인 중...' : '확인'}
           onClick={handleConfirm}
         />
       </ButtonWrapper>
-
       <LinkButton onClick={() => navigate('/admin/change')}>
         비밀번호 변경하기
       </LinkButton>
-
-      {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={closeModal} />
-      )}
     </LoginContentGroup>
   );
 };
@@ -120,6 +73,16 @@ const LoginContentGroup = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
+`;
+
+const ErrorMessage = styled.p<{ visible: boolean }>`
+  color: #ff5a5a;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 28.375rem;
+  text-align: right;
+  margin: 0 0 10px 10px;
+  opacity: ${(props) => (props.visible ? 1 : 0)};
 `;
 
 const ButtonWrapper = styled.div`
