@@ -1,11 +1,11 @@
 import { Routes, Route } from 'react-router-dom';
-import EnterPassword from '@pages/EnterPassword';
-import UpdatePassword from '@pages/UpdatePassword';
-import UserVisitList from '@pages/UserVisitList';
-import UserDetail from '@pages/UserDetail';
-import UserDetailView from '@pages/UserDetailView';
-import UserInformation from '@pages/UseriInformation';
-import PurposeCustom from '@pages/PurposeCustom';
+import EnterPassword from '@pages/auth/EnterPassword';
+import UpdatePassword from '@pages/auth/UpdatePassword';
+import UserVisitList from '@pages/visit/UserVisitList';
+import UserDetail from '@pages/visit/UserDetail';
+import UserDetailView from '@pages/visit/UserDetailView';
+import UserInformation from '@pages/user/UseriInformation';
+import PurposeCustom from '@pages/purpose/PurposeCustom';
 // import UserInformationDetail from '@pages/UserInformationDetail';
 
 export const Router = () => {

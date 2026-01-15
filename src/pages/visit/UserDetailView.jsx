@@ -9,11 +9,11 @@ import PasswordButton from '@shared/ui/Button/PasswordButton';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
-import { Modal } from '../components/Modal/Modal';
-import { formatPhoneNumber } from '../utils/formatters';
+import { Modal } from '../../components/Modal/Modal';
+import { formatPhoneNumber } from '../../utils/formatters';
 import { useUpdateAdminItem } from '@features/visit/update-visit-list/model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
-import { useFetchUserVisitDetail } from '../entities/visit/model/useFetchUserVisitDetail';
+import { useFetchUserVisitDetail } from '@entities/visit/index';
 import { useModal } from '@shared/hooks/useModal';
 
 const AGE_OPTIONS = [

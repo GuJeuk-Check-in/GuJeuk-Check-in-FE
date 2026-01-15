@@ -5,10 +5,10 @@ import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '@widgets/layout/header/Header';
 import UseBackground from '@shared/ui/Background/UseBackground';
 import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
-import { Modal } from '../components/Modal/Modal';
+import { Modal } from '../../components/Modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
-import { useFetchUserInformation } from '../entities/user/model/useFetchUesr';
-import { useUpdateUserInformation } from '../features/user/user-update/model/useUpdateUser';
+import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';
+import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
 interface UserInformationData {
   name: string;
