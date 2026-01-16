@@ -62,13 +62,13 @@ const PurposeCard = ({
   };
 
   return (
-    <Container $isDisabled={isDeleting}>
+    <Container isDisabled={isDeleting}>
       <DeleteIcon
         type="button"
         onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
-        $isDeleting={isDeleting}
+        isDeleting={isDeleting}
         disabled={isDeleting}
       >
         {isDeleting ? (
@@ -124,7 +124,7 @@ const PurposeCard = ({
 export default PurposeCard;
 
 interface ContainerProps {
-  $isDisabled: boolean;
+  isDisabled: boolean;
 }
 
 const Container = styled.div<ContainerProps>`
@@ -140,11 +140,11 @@ const Container = styled.div<ContainerProps>`
   font-size: 1.5rem;
   font-weight: 500;
   color: #3a3a3a;
-  opacity: ${(props) => (props.$isDisabled ? 0.7 : 1)};
+  opacity: ${(props) => (props.isDisabled ? 0.7 : 1)};
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
 `;
 
-const DeleteIcon = styled.button<{ $isDeleting: boolean }>`
+const DeleteIcon = styled.button<{ isDeleting: boolean }>`
   background: none;
   border: none;
   padding: 0;
@@ -152,13 +152,13 @@ const DeleteIcon = styled.button<{ $isDeleting: boolean }>`
   position: absolute;
   top: 0.625rem;
   right: 0.75rem;
-  color: ${(props) => (props.$isDeleting ? '#aaaaaa' : '#dc7676')};
-  cursor: ${(props) => (props.$isDeleting ? 'not-allowed' : 'pointer')};
+  color: ${(props) => (props.isDeleting ? '#aaaaaa' : '#dc7676')};
+  cursor: ${(props) => (props.isDeleting ? 'not-allowed' : 'pointer')};
   transition: 0.2s ease;
   z-index: 10;
 
   &:hover {
-    transform: ${(props) => (props.$isDeleting ? 'none' : 'scale(1.1)')};
+    transform: ${(props) => (props.isDeleting ? 'none' : 'scale(1.1)')};
   }
 `;
 

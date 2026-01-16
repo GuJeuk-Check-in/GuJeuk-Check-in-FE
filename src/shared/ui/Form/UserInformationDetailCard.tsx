@@ -161,15 +161,6 @@ const UserInformationDetailCard = ({
         />
       </InputRow>
 
-      <VisitDetailInput
-        label="개인 정보 수집 동의"
-        name="privacyAgreed"
-        value={isEditing ? formData.privacyAgreed : privacyAgreed}
-        onChange={isEditing ? handleChange : null}
-        isEditable={isEditing}
-        type="checkbox"
-      />
-
       <ButtonWrapper>
         {isEditing ? (
           <>

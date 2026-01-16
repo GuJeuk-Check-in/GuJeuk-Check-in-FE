@@ -14,6 +14,7 @@ import {
 } from '@features/purpose/index';
 
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
+import { Modal } from '../../../components/Modal/Modal';
 
 export const PurposeBoard = () => {
   const {
@@ -22,11 +23,10 @@ export const PurposeBoard = () => {
     isError,
     error,
   } = usePurposeList();
-
   const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
-
   const { handleUpdate, isLoading: isUpdating } = useUpdatePurposeHandler();
-  const { handleDelete, isLoading: isDeleting } = useDeletePurposeHandler();
+  const { handleDelete, deletingId, isOpen, config } =
+    useDeletePurposeHandler();
 
   if (isListLoading) {
     return (
@@ -67,14 +67,16 @@ export const PurposeBoard = () => {
                   id: number;
                   newPurpose: string;
                 }) => handleUpdate(id, newPurpose)}
-                isDeleting={isUpdating || isDeleting}
+                isDeleting={deletingId === purpose.id || isUpdating}
               />
             </SortablePurposeItem>
           ))}
         </SortableContext>
-
         <PurposeAddBox />
       </PurposeListGrid>
+      {isOpen && config && (
+        <Modal isOpen={isOpen} config={config} onClose={() => {}} />
+      )}
     </DndContext>
   );
 };

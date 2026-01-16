@@ -36,9 +36,5 @@ export const useUpdateAdminItem = (): UseMutationResult<
         });
       }
     },
-    onError: (error) => {
-      console.error('Update failed:', error);
-      alert(error.response?.data?.message || error.message || '업데이트 실패');
-    },
   });
 };

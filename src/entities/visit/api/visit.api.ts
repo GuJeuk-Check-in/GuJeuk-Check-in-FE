@@ -39,10 +39,6 @@ export const updateVisitList = async ({
   id,
   ...payload
 }: UpdateUserVisitRequest): Promise<UserVisitDetailResponse> => {
-  if (!id) {
-    throw new Error('수정할 ID가 필요합니다.');
-  }
-
   const response = await axiosInstance.patch(`/log/${id}`, payload);
 
   return response.data;

@@ -42,7 +42,7 @@ export interface UserListResponse {
 }
 
 export interface NormalizedUserPage {
-  users: any[];
+  users: User[];
   totalCount: number;
   last: boolean;
   page: number;
@@ -56,4 +56,14 @@ export interface UserInformation {
   birthYMD: string;
   residence: string;
   privacyAgreed: boolean;
+}
+
+export interface UserSearchFilters {
+  residence?: string | null;
+  searchName?: string | null;
+}
+
+export interface UserSearchState {
+  filters: UserSearchFilters;
+  searchName: string;
 }
