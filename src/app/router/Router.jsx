@@ -6,7 +6,7 @@ import UserDetail from '@pages/visit/UserDetail';
 import UserDetailView from '@pages/visit/UserDetailView';
 import UserInformation from '@pages/user/UseriInformation';
 import PurposeCustom from '@pages/purpose/PurposeCustom';
-// import UserInformationDetail from '@pages/UserInformationDetail';
+import UserInformationDetail from '@pages/user/UserInformationDetail';
 
 export const Router = () => {
   return (
@@ -17,7 +17,7 @@ export const Router = () => {
       <Route path="/log/create" element={<UserDetail />}></Route>
       <Route path="/log/:logId" element={<UserDetailView />} />
       <Route path="/admin/user/all" element={<UserInformation />} />
-      {/* <Route path="/admin/user/:id" element={<UserInformationDetail />} /> */}
+      <Route path="/admin/user/:userId" element={<UserInformationDetail />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
     </Routes>
   );
