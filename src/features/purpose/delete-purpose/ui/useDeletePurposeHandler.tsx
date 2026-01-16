@@ -2,10 +2,12 @@ import { useModal } from '@shared/hooks/useModal';
 import { useDeletePurposeList } from '../model/useDeletePurpose';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';
+import { useState } from 'react';
 
 export const useDeletePurposeHandler = () => {
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, isOpen, config } = useModal();
   const mutation = useDeletePurposeList();
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleDelete = (id: number) => {
     openModal({
@@ -17,7 +19,10 @@ export const useDeletePurposeHandler = () => {
         {
           label: '취소',
           variant: 'secondary',
-          onClick: closeModal,
+          onClick: () => {
+            setDeletingId(null);
+            closeModal();
+          },
         },
         {
           label: '삭제',
@@ -29,9 +34,12 @@ export const useDeletePurposeHandler = () => {
   };
 
   const executeDelete = (id: number) => {
+    setDeletingId(id);
+
     mutation.mutate(id, {
       onSuccess: () => {
         closeModal();
+        setDeletingId(null);
 
         setTimeout(() => {
           openModal({
@@ -52,6 +60,7 @@ export const useDeletePurposeHandler = () => {
         const message =
           error.response?.data?.message || '삭제 중 오류가 발생했습니다.';
 
+        setDeletingId(null);
         openModal({
           title: '삭제 실패',
           subtitle: message,
@@ -71,5 +80,8 @@ export const useDeletePurposeHandler = () => {
   return {
     handleDelete,
     isLoading: mutation.isPending,
+    deletingId,
+    isOpen,
+    config,
   };
 };

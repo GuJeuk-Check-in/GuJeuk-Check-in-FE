@@ -3,9 +3,13 @@ import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
 import { useState } from 'react';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 import React from 'react';
+import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { useModal } from '@shared/hooks/useModal';
+import { Modal } from '../../../../components/Modal/Modal';
 
 const PurposeAddBox = () => {
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
+  const { isOpen, config, openModal, closeModal } = useModal();
 
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
@@ -14,7 +18,13 @@ const PurposeAddBox = () => {
   const handleAdd = () => {
     const trimmedLabel = newLabel.trim();
     if (!trimmedLabel) {
-      alert('목적을 입력해주세요.');
+      openModal({
+        icon: <FaExclamationTriangle color="#D88282" />,
+        title: '입력 확인',
+        subtitle: '방문 목적을 입력해주세요.',
+        theme: 'warning',
+        buttons: [{ label: '확인', variant: 'primary', onClick: closeModal }],
+      });
       return;
     }
 
@@ -24,8 +34,35 @@ const PurposeAddBox = () => {
       { purpose: trimmedLabel },
       {
         onSuccess: () => {
-          setNewLabel('');
-          setIsAdding(false);
+          openModal({
+            icon: <FaCheckCircle color="#0F50A0" />,
+            title: '생성 성공',
+            subtitle: `"${trimmedLabel}" 목적이 추가되었습니다.`,
+            theme: 'info',
+            buttons: [
+              {
+                label: '확인',
+                variant: 'secondary',
+                onClick: () => {
+                  closeModal();
+                  setNewLabel('');
+                  setIsAdding(false);
+                },
+              },
+            ],
+          });
+        },
+        onError: (error: any) => {
+          const message = error.response?.data?.message || '생성 실패';
+          openModal({
+            icon: <FaExclamationTriangle color="#D88282" />,
+            title: '생성 실패',
+            subtitle: message,
+            theme: 'warning',
+            buttons: [
+              { label: '닫기', variant: 'secondary', onClick: closeModal },
+            ],
+          });
         },
       }
     );
@@ -61,31 +98,37 @@ const PurposeAddBox = () => {
   }
 
   return (
-    <Container $isDisabled={isDisabled}>
-      <AddInput
-        type="text"
-        value={newLabel}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        disabled={isDisabled}
-        autoFocus
-        placeholder="목적을 입력하세요"
-      />
-      <IconSection>
-        <MdCheck
-          size={26}
-          color={isDisabled ? '#ccc' : '#007bff'}
-          style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-          onClick={handleAdd}
+    <>
+      <Container $isDisabled={isDisabled}>
+        <AddInput
+          type="text"
+          value={newLabel}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={isDisabled}
+          autoFocus
+          placeholder="목적을 입력하세요"
         />
-        <MdClose
-          size={26}
-          color={isDisabled ? '#ccc' : '#dc3545'}
-          style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-          onClick={isDisabled ? undefined : handleCancel}
-        />
-      </IconSection>
-    </Container>
+        <IconSection>
+          <MdCheck
+            size={26}
+            color={isDisabled ? '#ccc' : '#007bff'}
+            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+            onClick={handleAdd}
+          />
+          <MdClose
+            size={26}
+            color={isDisabled ? '#ccc' : '#dc3545'}
+            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+            onClick={isDisabled ? undefined : handleCancel}
+          />
+        </IconSection>
+      </Container>
+
+      {isOpen && config && (
+        <Modal isOpen={isOpen} config={config} onClose={closeModal} />
+      )}
+    </>
   );
 };
 
