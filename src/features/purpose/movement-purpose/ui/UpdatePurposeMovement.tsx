@@ -50,7 +50,7 @@ export const useReorderPurpose = (initialItems: any[]) => {
     setItems(newOrderedItems);
 
     updateMovement(
-      { PurposeId: newOrderedItems.map((item) => item.id) },
+      { purposeId: newOrderedItems.map((item) => item.id) },
       {
         onError: () => {
           setItems(oldItems);
