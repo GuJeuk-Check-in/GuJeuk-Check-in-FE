@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 
 interface UserInformationCardProps {
+  id: number;
   name: string;
   location: string;
   gender: GenderType;
@@ -18,6 +20,7 @@ const GENDER_MAP: Record<GenderType, string> = {
 };
 
 const UserInformationCard = ({
+  id,
   name,
   location,
   gender,
@@ -25,6 +28,7 @@ const UserInformationCard = ({
   phonNumber,
   count,
 }: UserInformationCardProps) => {
+  const navigate = useNavigate();
   const displayCount = count !== null && count !== undefined ? count : 0;
 
   return (
@@ -36,7 +40,14 @@ const UserInformationCard = ({
 
       <RightSection>
         <RightWrapper>
-          <EditButton>수정</EditButton>
+          <EditButton
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/admin/user/${id}`);
+            }}
+          >
+            수정
+          </EditButton>{' '}
           <InfoWrapper>
             <Gender>{GENDER_MAP[gender] || gender}</Gender>
             <Diver />
@@ -63,9 +74,10 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2rem;
-  width: 70%;
-  height: 7.5rem;
-  margin: 0.75rem auto;
+  width: 100%;
+  box-sizing: border-box;
+  height: 10rem;
+  margin: 0;
   cursor: pointer;
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
 `;
