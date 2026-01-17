@@ -22,7 +22,7 @@ export const updateUserInformation = async (
   data: UserInformation
 ): Promise<UserInformation> => {
   const response = await axiosInstance.patch(
-    `/admin/user/${data.userId}`,
+    `/admin/user/${data.id}`,
     data
   );
   return response.data;
