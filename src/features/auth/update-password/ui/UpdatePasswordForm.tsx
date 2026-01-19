@@ -164,7 +164,6 @@ export const UpdatePasswordForm = () => {
   );
 };
 
-// ... 스타일 컴포넌트들 (기존과 동일)
 const FormContainer = styled.div`
   width: 100%;
   display: flex;
