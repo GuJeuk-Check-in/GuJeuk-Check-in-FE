@@ -89,6 +89,14 @@ const UserDetailView = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === 'phone') {
+      const formattedValue = formatPhoneNumber(value);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: formattedValue,
+      }));
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -242,7 +250,9 @@ const UserDetailView = () => {
   const currentData = isEditing && formData ? formData : visit;
 
   const ageDisplayLabel = formatAgeDisplay(visit.age);
-  const formattedPhone = formatPhoneNumber(visit.phone);
+  const formattedPhone = formatPhoneNumber(
+    isEditing && formData ? formData.phone : visit.phone
+  );
 
   return (
     <Container>
