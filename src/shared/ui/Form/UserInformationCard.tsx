@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface UserInformationCardProps {
   id: number;
@@ -19,6 +20,29 @@ const GENDER_MAP: Record<GenderType, string> = {
   WOMAN: '여성',
 };
 
+const spinAndFade = keyframes`
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) scale(0);
+    opacity: 0;
+  }
+`;
+
+const SpinningImage = styled.img`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  z-index: 99999;
+  pointer-events: none;
+  animation: ${spinAndFade} 0.8s ease-out forwards;
+`;
+
 const UserInformationCard = ({
   id,
   name,
@@ -30,9 +54,21 @@ const UserInformationCard = ({
 }: UserInformationCardProps) => {
   const navigate = useNavigate();
   const displayCount = count !== null && count !== undefined ? count : 0;
+  const [showSpinner, setShowSpinner] = useState(false);
+
+  const handleCardClick = () => {
+    setShowSpinner(true);
+    setTimeout(() => setShowSpinner(false), 800);
+  };
 
   return (
-    <Container>
+    <Container onClick={handleCardClick}>
+      {showSpinner && (
+        <SpinningImage
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfC-gXi_Ed2IW4yN7cjqHtDzDvEyd649snFA&s"
+          alt="Spinning"
+        />
+      )}
       <LeftSection>
         <Location>{location}</Location>
         <Name>{name}</Name>
