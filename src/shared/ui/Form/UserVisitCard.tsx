@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
+import { SlashGame } from '@shared/effects/SlashGame';
 
 interface UserVisitCardProps {
   id: number;
@@ -21,8 +22,13 @@ const UserVisitCard = ({
   onDelete,
 }: UserVisitCardProps) => {
   const navigate = useNavigate();
+  const [showSlashGame, setShowSlashGame] = useState(false);
 
   const handleCardClick = () => {
+    setShowSlashGame(true);
+  };
+
+  const handleGameComplete = () => {
     navigate(`/log/${id}`);
   };
 
@@ -32,8 +38,15 @@ const UserVisitCard = ({
   };
 
   return (
-    <Container onClick={handleCardClick}>
-      <LeftSection>
+    <>
+      {showSlashGame && (
+        <SlashGame
+          onClose={() => setShowSlashGame(false)}
+          onComplete={handleGameComplete}
+        />
+      )}
+      <Container onClick={handleCardClick}>
+        <LeftSection>
         <Name>대표자: {name}</Name>
         <Info>
           <span>남 : {male}</span>
@@ -43,12 +56,13 @@ const UserVisitCard = ({
       </LeftSection>
 
       <RightSection>
-        <Date>{date}</Date>
-        <CloseButton onClick={handleDeleteClick}>
-          <IoClose size="1.8rem" />
-        </CloseButton>
-      </RightSection>
-    </Container>
+          <Date>{date}</Date>
+          <CloseButton onClick={handleDeleteClick}>
+            <IoClose size="1.8rem" />
+          </CloseButton>
+        </RightSection>
+      </Container>
+    </>
   );
 };
 

@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import HeaderButton from '../../../shared/ui/Button/HeaderButton';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import React, { ReactNode, useState, useRef } from 'react';
 import { MiniGame } from '@shared/effects/MiniGame';
+import { fireConfetti } from '@shared/effects';
 
 interface HeaderProps {
   title: string;
@@ -13,8 +15,11 @@ interface HeaderProps {
 const Header = ({ title, children }: HeaderProps) => {
   const navigate = useNavigate();
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [showExplosion, setShowExplosion] = useState(false);
   const clickCountRef = useRef(0);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const purposeClickRef = useRef(0);
+  const purposeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleLogoClick = () => {
     clickCountRef.current += 1;
@@ -35,9 +40,37 @@ const Header = ({ title, children }: HeaderProps) => {
     }
   };
 
+  const handlePurposeClick = () => {
+    purposeClickRef.current += 1;
+
+    if (purposeTimerRef.current) {
+      clearTimeout(purposeTimerRef.current);
+    }
+
+    purposeTimerRef.current = setTimeout(() => {
+      purposeClickRef.current = 0;
+    }, 1500);
+
+    if (purposeClickRef.current >= 3) {
+      purposeClickRef.current = 0;
+      setShowExplosion(true);
+      setTimeout(() => {
+        fireConfetti();
+        setShowExplosion(false);
+      }, 1500);
+    } else {
+      navigate('/purpose/all');
+    }
+  };
+
   return (
     <Container>
       {showMiniGame && <MiniGame onClose={() => setShowMiniGame(false)} />}
+      {showExplosion && (
+        <ExplosionOverlay>
+          <ExplosionImage src="https://i.ytimg.com/vi/3oS1d9ZYU5c/maxresdefault.jpg" />
+        </ExplosionOverlay>
+      )}
       <LogoImage
         src={Logo}
         alt="로고 이미지"
@@ -52,7 +85,7 @@ const Header = ({ title, children }: HeaderProps) => {
           시설 이용 기록 추가
         </HeaderButton>
         <Diver />
-        <HeaderButton onClick={() => navigate('/purpose/all')}>
+        <HeaderButton onClick={handlePurposeClick}>
           방문 목적 커스텀
         </HeaderButton>
         <Diver />
@@ -126,4 +159,51 @@ const Diver = styled.div`
   height: 1.25rem;
   background-color: #aaa;
   flex-shrink: 0;
+`;
+
+const growAndExplode = keyframes`
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+  }
+  90% {
+    transform: translate(-50%, -50%) scale(1.8);
+    filter: brightness(2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+    filter: brightness(5);
+  }
+`;
+
+const ExplosionOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ExplosionImage = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 20px;
+  animation: ${growAndExplode} 1.5s ease-in-out forwards;
+  box-shadow: 0 0 50px rgba(255, 150, 0, 0.8);
 `;
