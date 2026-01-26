@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import HeaderButton from '../../../shared/ui/Button/HeaderButton';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState, useRef } from 'react';
+import { MiniGame } from '@shared/effects/MiniGame';
 
 interface HeaderProps {
   title: string;
@@ -11,13 +12,36 @@ interface HeaderProps {
 
 const Header = ({ title, children }: HeaderProps) => {
   const navigate = useNavigate();
+  const [showMiniGame, setShowMiniGame] = useState(false);
+  const clickCountRef = useRef(0);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoClick = () => {
+    clickCountRef.current += 1;
+
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
+    }
+
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 2000);
+
+    if (clickCountRef.current >= 10) {
+      clickCountRef.current = 0;
+      setShowMiniGame(true);
+    } else {
+      navigate('/log');
+    }
+  };
 
   return (
     <Container>
+      {showMiniGame && <MiniGame onClose={() => setShowMiniGame(false)} />}
       <LogoImage
         src={Logo}
         alt="로고 이미지"
-        onClick={() => navigate('/log')}
+        onClick={handleLogoClick}
       />
       <ButtonWrapper>
         <HeaderButton onClick={() => navigate('/log')}>

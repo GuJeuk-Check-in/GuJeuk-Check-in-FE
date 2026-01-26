@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
 import { useLogin } from '../model/useLogin';
 import LabeledInput from '@shared/ui/Form/LabeledInput';
 import PasswordButton from '@shared/ui/Button/PasswordButton';
@@ -8,6 +9,7 @@ import PasswordButton from '@shared/ui/Button/PasswordButton';
 export const LoginForm = () => {
   const [currentPW, setCurrentPW] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [failCount, setFailCount] = useState(0);
   const navigate = useNavigate();
   const { mutate: login, isPending } = useLogin();
 
@@ -23,12 +25,14 @@ export const LoginForm = () => {
       { password: currentPW },
       {
         onSuccess: () => {
+          setFailCount(0);
           navigate('/log', { replace: true });
         },
         onError: (error) => {
           const message =
             error.response?.data?.message || error.message || '로그인 실패';
           setErrorMessage(message);
+          setFailCount(prev => Math.min(prev + 1, 5));
         },
       }
     );
@@ -42,6 +46,11 @@ export const LoginForm = () => {
 
   return (
     <LoginContentGroup>
+      {failCount > 0 && (
+        <RedOverlay intensity={failCount}>
+          {failCount >= 5 && <WarningText>🔥 경고: 너무 많이 틀렸습니다! 🔥</WarningText>}
+        </RedOverlay>
+      )}
       <LabeledInput
         label=""
         placeholder="비밀번호를 입력해주세요."
@@ -104,4 +113,35 @@ const LinkButton = styled.button`
     text-decoration: underline;
     color: #bee8ff;
   }
+`;
+
+const shake = keyframes`
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+`;
+
+const RedOverlay = styled.div<{ intensity: number }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 0, 0, ${props => props.intensity * 0.15});
+  pointer-events: none;
+  z-index: 9999;
+  animation: ${shake} 0.1s ease-in-out ${props => props.intensity};
+  transition: background 0.3s ease;
+`;
+
+const WarningText = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+  color: #fff;
+  text-shadow: 0 0 20px red, 0 0 40px red;
+  animation: ${shake} 0.2s infinite;
+  white-space: nowrap;
 `;

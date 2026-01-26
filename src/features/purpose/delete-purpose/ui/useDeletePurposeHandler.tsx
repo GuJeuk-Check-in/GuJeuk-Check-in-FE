@@ -3,6 +3,7 @@ import { useDeletePurposeList } from '../model/useDeletePurpose';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
+import { triggerTrashEffect } from '@shared/effects';
 
 export const useDeletePurposeHandler = () => {
   const { openModal, closeModal, isOpen, config } = useModal();
@@ -40,6 +41,7 @@ export const useDeletePurposeHandler = () => {
       onSuccess: () => {
         closeModal();
         setDeletingId(null);
+        triggerTrashEffect();
 
         setTimeout(() => {
           openModal({
@@ -54,7 +56,7 @@ export const useDeletePurposeHandler = () => {
               },
             ],
           });
-        }, 300);
+        }, 1000);
       },
       onError: (error: AxiosError<{ message?: string }>) => {
         const message =
