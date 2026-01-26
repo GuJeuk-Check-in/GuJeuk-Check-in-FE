@@ -10,10 +10,12 @@ import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
-import { sanitizePhoneNumber } from '../../../utils/formatters';
+import {
+  sanitizePhoneNumber,
+  formatPhoneNumber,
+} from '../../../utils/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
-import React from 'react';
 
 interface VisitFormProps {
   onSubmit: (data: {
@@ -44,7 +46,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   type AgeDisplayType = keyof typeof AGE_MAP;
 
   const nameInput = useInput('');
-  const phoneInput = useInput('', sanitizePhoneNumber);
+  const phoneInput = useInput('', formatPhoneNumber);
   const [ageDisplay, setAgeDisplay] = useState('');
   const [purpose, setPurpose] = useState('');
   const maleCounter = useCounter(0);
@@ -87,7 +89,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
     const dataToSend = {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay as AgeDisplayType],
-      phone: phoneInput.value,
+      phone: sanitizePhoneNumber(phoneInput.value),
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,
@@ -127,7 +129,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
         <VisitFormInput
           label="연락처"
-          placeholder="연락처를 입력해주세요 ex) 01012345678"
+          placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
           icon={<IoIosCall size={24} />}
           {...phoneInput}
         />
