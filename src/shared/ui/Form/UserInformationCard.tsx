@@ -35,8 +35,8 @@ const SpinningImage = styled.img`
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 200px;
-  height: 200px;
+  width: 500px;
+  height: 500px;
   object-fit: contain;
   z-index: 99999;
   pointer-events: none;
