@@ -12,6 +12,7 @@ import {
   UserVisitDetailResponse,
 } from '@entities/visit/index';
 import { AxiosError } from 'axios';
+import { fireSuccessEffect } from '@shared/effects';
 
 interface UseCreateUserVisitProps {
   onSuccessCallback?: () => void;
@@ -40,6 +41,7 @@ export const useCreateUserVisit = ({
     mutationFn: createUserVisit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visitList'] });
+      fireSuccessEffect();
 
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,

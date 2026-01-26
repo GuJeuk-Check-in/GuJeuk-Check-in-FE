@@ -5,6 +5,7 @@ import {
   UpdatePasswordRequest,
 } from '@entities/auth/model/types';
 import { updatePassword } from '@entities/auth/api/auth.api';
+import { fireSuccessEffect } from '@shared/effects';
 
 export const useUpdatePassword = () => {
   return useMutation<
@@ -13,5 +14,8 @@ export const useUpdatePassword = () => {
     UpdatePasswordRequest
   >({
     mutationFn: updatePassword,
+    onSuccess: () => {
+      fireSuccessEffect();
+    },
   });
 };

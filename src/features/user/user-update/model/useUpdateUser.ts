@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUserInformation } from '@entities/user/api/user.api';
 import { UserInformation } from '@entities/user/index';
+import { fireSideConfetti } from '@shared/effects';
 
 export const useUpdateUserInformation = () => {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ export const useUpdateUserInformation = () => {
       queryClient.invalidateQueries({
         queryKey: ['user', data.userId],
       });
+      fireSideConfetti();
     },
   });
 };

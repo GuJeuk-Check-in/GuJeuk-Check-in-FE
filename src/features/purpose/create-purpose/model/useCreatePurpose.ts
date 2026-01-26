@@ -5,6 +5,7 @@ import {
   CreatePurposeRequest,
   PurposeResponse,
 } from '@entities/purpose/model/types';
+import { fireSideConfetti } from '@shared/effects';
 
 export const useCreatePurpose = () => {
   const queryClient = useQueryClient();
@@ -18,6 +19,7 @@ export const useCreatePurpose = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
+      fireSideConfetti();
     },
   });
 };

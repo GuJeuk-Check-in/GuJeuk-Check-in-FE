@@ -1,11 +1,12 @@
 import { Global, css } from '@emotion/react';
 import { Router } from '@app/router';
 import { useTokenRefresher } from '@features/auth/index';
+import { EffectProvider } from '@shared/effects';
 
 const App = () => {
   useTokenRefresher();
   return (
-    <>
+    <EffectProvider>
       <Global
         styles={css`
           html,
@@ -17,7 +18,7 @@ const App = () => {
         `}
       />
       <Router />
-    </>
+    </EffectProvider>
   );
 };
 

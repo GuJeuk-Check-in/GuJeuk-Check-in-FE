@@ -5,6 +5,7 @@ import {
   useAuthStore,
   type EnterPasswordResponse,
 } from '@entities/auth';
+import { fireSuccessEffect } from '@shared/effects';
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -19,6 +20,7 @@ export const useLogin = () => {
     onSuccess: ({ accessToken, refreshToken }) => {
       if (accessToken && refreshToken) {
         setAuth(accessToken, refreshToken);
+        fireSuccessEffect();
       }
     },
   });
