@@ -7,13 +7,11 @@ import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
 import PasswordButton from '@shared/ui/Button/PasswordButton';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
+import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
-import {
-  sanitizePhoneNumber,
-  formatPhoneNumber,
-} from '../../../utils/formatters';
+import { formatPhoneNumber } from '../../../utils/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 
@@ -53,6 +51,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const femaleCounter = useCounter(0);
   const [date, setDate] = useState('');
   const privacyCheck = useCheck(true);
+  const [residence, setResidence] = useState('');
+  const [visitTime, setVisitTime] = useState('');
+
 
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
@@ -75,7 +76,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       !phoneInput.value ||
       !trimmedPurpose ||
       !date ||
-      !ageDisplay
+      !ageDisplay ||
+      !residence ||
+      !visitTime    
     ) {
       alert('모든 필수 필드를 입력해주세요.');
       return;
@@ -89,11 +92,13 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
     const dataToSend = {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay as AgeDisplayType],
-      phone: sanitizePhoneNumber(phoneInput.value),
+      phone: phoneInput.value,
+      residence: residence,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,
       visitDate: date,
+      visitTime: visitTime, 
       privacyAgreed: privacyCheck.checked,
     };
 
@@ -150,6 +155,16 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           disable={isLoading || isPurposeLoading || !purposeOptions.length}
         />
 
+        <ToggleSelect
+          label="거주지"
+          options={['구즉동', '관평동', '노은 1동', '노은 2동', '노은 3동', '상대동', '신성동', '온천 1동', 
+            '온천 2동', '원신흥동', '전민동', '진잠동', '학하동', '기타지역']}
+          placeholder="거주지를 선택해주세요"
+          value={residence}
+          onChange={setResidence}
+          icon={<FaLocationDot size={24} />}
+        />
+
         <CountVisiorWrapper>
           <CountVisitor
             label="방문 남성 수"
@@ -164,6 +179,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
         </CountVisiorWrapper>
 
         <VisitDatePicker value={date} onChange={setDate} />
+
+        <VisitTimePicker value={visitTime} onChange={setVisitTime}/>
 
         <PrivacyConsentWrapper>
           <Checkbox
