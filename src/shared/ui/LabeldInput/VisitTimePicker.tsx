@@ -9,99 +9,157 @@ interface VisitTimePickerProps {
   label?: string;
 }
 
-const AMPM = ['AM', 'PM'] as const;
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-
-const ITEM_HEIGHT = 44;
-const VISIBLE_COUNT = 3;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const VisitTimePicker = ({
   value,
   onChange,
-  label = '방문 시간',
+  label = '방문시간',
 }: VisitTimePickerProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [ampm, setAmpm] = useState<'AM' | 'PM'>('PM');
   const [hour, setHour] = useState(5);
   const [minute, setMinute] = useState(25);
 
-  const ampmRef = useRef<HTMLDivElement>(null);
   const hourRef = useRef<HTMLDivElement>(null);
   const minuteRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!value) return;
+
     const [h, m] = value.split(':').map(Number);
     const isPM = h >= 12;
-    setAmpm(isPM ? 'PM' : 'AM');
-    setHour(isPM ? h - 12 || 12 : h);
-    setMinute(m);
-  }, [value]);
 
-  useEffect(() => {
+    setAmpm(isPM ? 'PM' : 'AM');
+    setHour(h === 0 ? 12 : h > 12 ? h - 12 : h);
+    setMinute(m);
+  }, []);
+
+  // 24시간 형식으로 변환
+  const get24Hour = () => {
     let h24 = hour % 12;
     if (ampm === 'PM') h24 += 12;
+    if (ampm === 'AM' && hour === 12) h24 = 0;
+    return h24;
+  };
+
+  // 상태가 변경되면 value 업데이트
+  useEffect(() => {
+    const h24 = get24Hour();
     onChange(`${pad(h24)}:${pad(minute)}`);
   }, [ampm, hour, minute]);
 
-  const handleScroll = <T,>(
-    e: React.UIEvent<HTMLDivElement>,
-    list: readonly T[],
-    setter: (v: T) => void
-  ) => {
-    const index = Math.round(e.currentTarget.scrollTop / ITEM_HEIGHT);
-    if (list[index] !== undefined) setter(list[index]);
+  // 스크롤 시 선택 업데이트
+  const handleHourScroll = () => {
+    if (!hourRef.current) return;
+    const scrollTop = hourRef.current.scrollTop;
+    const index = Math.round(scrollTop / 48);
+    if (HOURS[index] !== undefined) {
+      setHour(HOURS[index]);
+    }
   };
+
+  const handleMinuteScroll = () => {
+    if (!minuteRef.current) return;
+    const scrollTop = minuteRef.current.scrollTop;
+    const index = Math.round(scrollTop / 48);
+    if (MINUTES[index] !== undefined) {
+      setMinute(MINUTES[index]);
+    }
+  };
+
+  // 열릴 때 스크롤 위치 설정
+  useEffect(() => {
+    if (isOpen) {
+      requestAnimationFrame(() => {
+        const hourIndex = HOURS.indexOf(hour);
+        const minuteIndex = minute;
+
+        if (hourRef.current && hourIndex >= 0) {
+          hourRef.current.scrollTop = hourIndex * 48;
+        }
+        if (minuteRef.current) {
+          minuteRef.current.scrollTop = minuteIndex * 48;
+        }
+      });
+    }
+  }, [isOpen]);
+
+  // 24시간 형식으로 표시 (예: 17:20)
+  const displayTime = `${pad(get24Hour())}:${pad(minute)}`;
 
   return (
     <Container>
       <Label>{label}</Label>
 
-      <InputContainer onClick={() => setIsOpen(p => !p)}>
-        <FaClock size={22} />
-        <Input readOnly value={value || '시간을 선택해주세요'} />
-        {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
+      <InputContainer onClick={() => setIsOpen((p) => !p)}>
+        <FaClock size={18} color="#666" />
+        <DisplayText>{displayTime}</DisplayText>
+        {isOpen ? <IoIosArrowUp color="#666" /> : <IoIosArrowDown color="#666" />}
       </InputContainer>
 
       {isOpen && (
         <PickerBox>
-          <Wheel
-            ref={ampmRef}
-            onScroll={(e) => handleScroll(e, AMPM, setAmpm)}
-          >
-            {AMPM.map(v => (
-              <WheelItem key={v} active={ampm === v}>
-                {v === 'AM' ? '오전' : '오후'}
-              </WheelItem>
-            ))}
-          </Wheel>
+          <PickerContent>
+            {/* 헤더 */}
+            <PickerHeader>
+              <HeaderSpacer />
+              <HeaderCell>시</HeaderCell>
+              <HeaderCell>분</HeaderCell>
+            </PickerHeader>
 
-          <Wheel
-            ref={hourRef}
-            onScroll={(e) => handleScroll(e, HOURS, setHour)}
-          >
-            {HOURS.map(h => (
-              <WheelItem key={h} active={hour === h}>
-                {h}
-              </WheelItem>
-            ))}
-          </Wheel>
+            <Divider />
 
-          <Wheel
-            ref={minuteRef}
-            onScroll={(e) => handleScroll(e, MINUTES, setMinute)}
-          >
-            {MINUTES.map(m => (
-              <WheelItem key={m} active={minute === m}>
-                {pad(m)}
-              </WheelItem>
-            ))}
-          </Wheel>
+            {/* 선택 영역 */}
+            <PickerBody>
+              {/* 오전/오후 */}
+              <AmPmColumn>
+                <AmPmItem
+                  selected={ampm === 'AM'}
+                  onClick={() => setAmpm('AM')}
+                >
+                  오전
+                </AmPmItem>
+                <AmPmItem
+                  selected={ampm === 'PM'}
+                  onClick={() => setAmpm('PM')}
+                >
+                  오후
+                </AmPmItem>
+              </AmPmColumn>
 
-          <CenterHighlight />
+              {/* 시 */}
+              <ScrollColumn
+                ref={hourRef}
+                onScroll={handleHourScroll}
+              >
+                <ScrollPadding />
+                {HOURS.map((h) => (
+                  <ScrollItem key={h} selected={hour === h}>
+                    {h}
+                  </ScrollItem>
+                ))}
+                <ScrollPadding />
+              </ScrollColumn>
+
+              {/* 분 */}
+              <ScrollColumn
+                ref={minuteRef}
+                onScroll={handleMinuteScroll}
+              >
+                <ScrollPadding />
+                {MINUTES.map((m) => (
+                  <ScrollItem key={m} selected={minute === m}>
+                    {m}
+                  </ScrollItem>
+                ))}
+                <ScrollPadding />
+              </ScrollColumn>
+            </PickerBody>
+          </PickerContent>
         </PickerBox>
       )}
     </Container>
@@ -113,14 +171,14 @@ export default VisitTimePicker;
 const Container = styled.div`
   position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 `;
 
 const Label = styled.label`
-  font-size: 1.25rem;
+  display: block;
+  font-size: 1rem;
   font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
 `;
 
 const InputContainer = styled.div`
@@ -128,59 +186,130 @@ const InputContainer = styled.div`
   align-items: center;
   gap: 0.75rem;
   padding: 0 1rem;
-  height: 3.5rem;
-  border: 1px solid #404040;
+  height: 3.25rem;
+  border: 1px solid #ddd;
   border-radius: 0.5rem;
   cursor: pointer;
+  background: #fff;
+
+  &:hover {
+    border-color: #aaa;
+  }
 `;
 
-const Input = styled.input`
+const DisplayText = styled.span`
   flex: 1;
-  border: none;
-  outline: none;
-  font-size: 1.25rem;
-  background: transparent;
+  font-size: 1rem;
+  color: #333;
 `;
 
 const PickerBox = styled.div`
   position: absolute;
-  top: 100%;
-  width: 100%;
-  margin-top: 0.5rem;
-  background: white;
+  top: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 880px;
+  height: 380px;
+  background: #fff;
+  border: 1px solid #ddd;
   border-radius: 0.75rem;
-  display: flex;
-  justify-content: space-around;
-  padding: 1.5rem 0;
-  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1);
-  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  overflow: hidden;
 `;
 
-const Wheel = styled.div`
-  height: ${ITEM_HEIGHT * VISIBLE_COUNT}px;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  text-align: center;
-  width: 33%;
-`;
-
-const WheelItem = styled.div<{ active: boolean }>`
-  height: ${ITEM_HEIGHT}px;
-  line-height: ${ITEM_HEIGHT}px;
-  scroll-snap-align: center;
-  font-size: ${({ active }) => (active ? '1.25rem' : '1rem')};
-  font-weight: ${({ active }) => (active ? 700 : 400)};
-  color: ${({ active }) => (active ? '#000' : '#aaa')};
-`;
-
-const CenterHighlight = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 0;
+const PickerContent = styled.div`
   width: 100%;
-  height: ${ITEM_HEIGHT}px;
-  transform: translateY(-50%);
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-  pointer-events: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
+`;
+
+const PickerHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+`;
+
+const HeaderSpacer = styled.div`
+  width: 120px;
+  margin-right: 92px;
+`;
+
+const HeaderCell = styled.div`
+  width: 80px;
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  margin: 0 46px;
+`;
+
+const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #eee;
+  margin-bottom: 1.5rem;
+`;
+
+const PickerBody = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  gap: 92px;
+`;
+
+const AmPmColumn = styled.div`
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+`;
+
+const AmPmItem = styled.div<{ selected: boolean }>`
+  text-align: center;
+  font-size: ${({ selected }) => (selected ? '1.5rem' : '1.25rem')};
+  font-weight: ${({ selected }) => (selected ? 700 : 400)};
+  color: ${({ selected }) => (selected ? '#000' : '#bbb')};
+  cursor: pointer;
+  padding: 12px 24px;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #333;
+  }
+`;
+
+const ScrollColumn = styled.div`
+  width: 80px;
+  height: 180px;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const ScrollPadding = styled.div`
+  height: 66px;
+`;
+
+const ScrollItem = styled.div<{ selected: boolean }>`
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  font-size: ${({ selected }) => (selected ? '1.5rem' : '1.25rem')};
+  font-weight: ${({ selected }) => (selected ? 700 : 400)};
+  color: ${({ selected }) => (selected ? '#000' : '#bbb')};
+  cursor: pointer;
+  transition: all 0.15s;
 `;
