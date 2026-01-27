@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { FaClock } from 'react-icons/fa6';
 
 interface VisitTimePickerProps {
-  value: string;             
+  value: string; // "HH:mm"
   onChange: (time: string) => void;
   label?: string;
 }
 
-const HOURS = Array.from({ length: 12 }, (_, i) => i + 1); // 1~12
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);  // 0~59
+const AMPM = ['AM', 'PM'] as const;
+const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
+const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+
+const ITEM_HEIGHT = 44;
+const VISIBLE_COUNT = 3;
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -24,33 +28,39 @@ const VisitTimePicker = ({
   const [hour, setHour] = useState(5);
   const [minute, setMinute] = useState(25);
 
+  const ampmRef = useRef<HTMLDivElement>(null);
+  const hourRef = useRef<HTMLDivElement>(null);
+  const minuteRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!value) return;
-
     const [h, m] = value.split(':').map(Number);
     const isPM = h >= 12;
-
     setAmpm(isPM ? 'PM' : 'AM');
     setHour(isPM ? h - 12 || 12 : h);
     setMinute(m);
   }, [value]);
 
-  const emitChange = (
-    nextAmpm = ampm,
-    nextHour = hour,
-    nextMinute = minute
-  ) => {
-    let h24 = nextHour % 12;
-    if (nextAmpm === 'PM') h24 += 12;
+  useEffect(() => {
+    let h24 = hour % 12;
+    if (ampm === 'PM') h24 += 12;
+    onChange(`${pad(h24)}:${pad(minute)}`);
+  }, [ampm, hour, minute]);
 
-    onChange(`${pad(h24)}:${pad(nextMinute)}`);
+  const handleScroll = <T,>(
+    e: React.UIEvent<HTMLDivElement>,
+    list: readonly T[],
+    setter: (v: T) => void
+  ) => {
+    const index = Math.round(e.currentTarget.scrollTop / ITEM_HEIGHT);
+    if (list[index] !== undefined) setter(list[index]);
   };
 
   return (
     <Container>
       <Label>{label}</Label>
 
-      <InputContainer onClick={() => setIsOpen((p) => !p)}>
+      <InputContainer onClick={() => setIsOpen(p => !p)}>
         <FaClock size={22} />
         <Input readOnly value={value || '시간을 선택해주세요'} />
         {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
@@ -58,53 +68,40 @@ const VisitTimePicker = ({
 
       {isOpen && (
         <PickerBox>
-          <Column>
-            <Header />
-            {['AM', 'PM'].map((v) => (
-              <Item
-                key={v}
-                active={ampm === v}
-                onClick={() => {
-                  setAmpm(v as 'AM' | 'PM');
-                  emitChange(v as 'AM' | 'PM');
-                }}
-              >
+          <Wheel
+            ref={ampmRef}
+            onScroll={(e) => handleScroll(e, AMPM, setAmpm)}
+          >
+            {AMPM.map(v => (
+              <WheelItem key={v} active={ampm === v}>
                 {v === 'AM' ? '오전' : '오후'}
-              </Item>
+              </WheelItem>
             ))}
-          </Column>
+          </Wheel>
 
-          <Column>
-            <Header>시</Header>
-            {HOURS.map((h) => (
-              <Item
-                key={h}
-                active={hour === h}
-                onClick={() => {
-                  setHour(h);
-                  emitChange(undefined, h);
-                }}
-              >
+          <Wheel
+            ref={hourRef}
+            onScroll={(e) => handleScroll(e, HOURS, setHour)}
+          >
+            {HOURS.map(h => (
+              <WheelItem key={h} active={hour === h}>
                 {h}
-              </Item>
+              </WheelItem>
             ))}
-          </Column>
+          </Wheel>
 
-          <Column>
-            <Header>분</Header>
-            {MINUTES.map((m) => (
-              <Item
-                key={m}
-                active={minute === m}
-                onClick={() => {
-                  setMinute(m);
-                  emitChange(undefined, undefined, m);
-                }}
-              >
+          <Wheel
+            ref={minuteRef}
+            onScroll={(e) => handleScroll(e, MINUTES, setMinute)}
+          >
+            {MINUTES.map(m => (
+              <WheelItem key={m} active={minute === m}>
                 {pad(m)}
-              </Item>
+              </WheelItem>
             ))}
-          </Column>
+          </Wheel>
+
+          <CenterHighlight />
         </PickerBox>
       )}
     </Container>
@@ -148,30 +145,42 @@ const Input = styled.input`
 const PickerBox = styled.div`
   position: absolute;
   top: 100%;
-  left: 0;
-  margin-top: 0.5rem;
   width: 100%;
+  margin-top: 0.5rem;
   background: white;
   border-radius: 0.75rem;
   display: flex;
-  padding: 1.5rem;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  justify-content: space-around;
+  padding: 1.5rem 0;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1);
   z-index: 20;
 `;
 
-const Column = styled.div`
-  flex: 1;
+const Wheel = styled.div`
+  height: ${ITEM_HEIGHT * VISIBLE_COUNT}px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
   text-align: center;
+  width: 33%;
 `;
 
-const Header = styled.div`
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-`;
-
-const Item = styled.div<{ active: boolean }>`
-  padding: 0.5rem 0;
-  cursor: pointer;
-  color: ${({ active }) => (active ? '#000' : '#888')};
+const WheelItem = styled.div<{ active: boolean }>`
+  height: ${ITEM_HEIGHT}px;
+  line-height: ${ITEM_HEIGHT}px;
+  scroll-snap-align: center;
+  font-size: ${({ active }) => (active ? '1.25rem' : '1rem')};
   font-weight: ${({ active }) => (active ? 700 : 400)};
+  color: ${({ active }) => (active ? '#000' : '#aaa')};
+`;
+
+const CenterHighlight = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: ${ITEM_HEIGHT}px;
+  transform: translateY(-50%);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  pointer-events: none;
 `;
