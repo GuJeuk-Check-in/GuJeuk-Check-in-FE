@@ -161,7 +161,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
         <ToggleSelect
           label="거주지"
           options={['구즉동', '관평동', '노은 1동', '노은 2동', '노은 3동', '상대동', '신성동', '온천 1동', 
-            '온천', '2동', '원신흥동', '전민동', '진잠동', '학하동', '기타지역']}
+            '온천 2동', '원신흥동', '전민동', '진잠동', '학하동', '기타지역']}
           placeholder="거주지를 선택해주세요"
           value={residence}
           onChange={setResidence}
