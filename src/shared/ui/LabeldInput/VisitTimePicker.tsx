@@ -104,16 +104,6 @@ const VisitTimePicker = ({
       {isOpen && (
         <PickerBox>
           <PickerContent>
-            {/* 헤더 */}
-            <PickerHeader>
-              <HeaderSpacer />
-              <HeaderCell>시</HeaderCell>
-              <HeaderCell>분</HeaderCell>
-            </PickerHeader>
-
-            <Divider />
-
-            {/* 선택 영역 */}
             <PickerBody>
               {/* 오전/오후 */}
               <AmPmColumn>
@@ -132,32 +122,38 @@ const VisitTimePicker = ({
               </AmPmColumn>
 
               {/* 시 */}
-              <ScrollColumn
-                ref={hourRef}
-                onScroll={handleHourScroll}
-              >
-                <ScrollPadding />
-                {HOURS.map((h) => (
-                  <ScrollItem key={h} selected={hour === h}>
-                    {h}
-                  </ScrollItem>
-                ))}
-                <ScrollPadding />
-              </ScrollColumn>
+              <ColumnWithHeader>
+                <HeaderCell>시</HeaderCell>
+                <ScrollColumn
+                  ref={hourRef}
+                  onScroll={handleHourScroll}
+                >
+                  <ScrollPadding />
+                  {HOURS.map((h) => (
+                    <ScrollItem key={h} selected={hour === h}>
+                      {h}
+                    </ScrollItem>
+                  ))}
+                  <ScrollPadding />
+                </ScrollColumn>
+              </ColumnWithHeader>
 
               {/* 분 */}
-              <ScrollColumn
-                ref={minuteRef}
-                onScroll={handleMinuteScroll}
-              >
-                <ScrollPadding />
-                {MINUTES.map((m) => (
-                  <ScrollItem key={m} selected={minute === m}>
-                    {m}
-                  </ScrollItem>
-                ))}
-                <ScrollPadding />
-              </ScrollColumn>
+              <ColumnWithHeader>
+                <HeaderCell>분</HeaderCell>
+                <ScrollColumn
+                  ref={minuteRef}
+                  onScroll={handleMinuteScroll}
+                >
+                  <ScrollPadding />
+                  {MINUTES.map((m) => (
+                    <ScrollItem key={m} selected={minute === m}>
+                      {m}
+                    </ScrollItem>
+                  ))}
+                  <ScrollPadding />
+                </ScrollColumn>
+              </ColumnWithHeader>
             </PickerBody>
           </PickerContent>
         </PickerBox>
@@ -223,43 +219,34 @@ const PickerContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   padding: 2rem 3rem;
   box-sizing: border-box;
-`;
-
-const PickerHeader = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 1rem;
-`;
-
-const HeaderSpacer = styled.div`
-  width: 120px;
-  margin-right: 92px;
-`;
-
-const HeaderCell = styled.div`
-  width: 80px;
-  text-align: center;
-  font-size: 1rem;
-  color: #666;
-  margin: 0 46px;
-`;
-
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background: #eee;
-  margin-bottom: 1.5rem;
 `;
 
 const PickerBody = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
   gap: 92px;
+`;
+
+const ColumnWithHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const HeaderCell = styled.div`
+  width: 21px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #666;
+  margin-bottom: 10px;
 `;
 
 const AmPmColumn = styled.div`
