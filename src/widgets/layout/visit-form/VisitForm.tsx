@@ -11,10 +11,7 @@ import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
-import {
-  sanitizePhoneNumber,
-  formatPhoneNumber,
-} from '../../../utils/formatters';
+import { formatPhoneNumber } from '../../../utils/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 
@@ -95,7 +92,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
     const dataToSend = {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay as AgeDisplayType],
-      phone: sanitizePhoneNumber(phoneInput.value),
+      phone: phoneInput.value,
       residence: residence,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
