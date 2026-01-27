@@ -49,6 +49,7 @@ export interface NormalizedUserPage {
 }
 
 export interface UserInformation {
+  id: number;
   name: string;
   userId: string;
   phone: string;

@@ -13,12 +13,9 @@ export const useTokenRefresher = () => {
         const newAccess = res.data?.accessToken;
         const newRefresh = res.data?.refreshToken;
         if (newAccess && newRefresh) {
-          console.log('토큰 갱신 성공');
           setAuth(newAccess, newRefresh);
         }
-      } catch (error) {
-        console.error('자동 갱신 실패: ', error);
-      }
+      } catch (error) {}
     }, refreshCycle);
     return () => clearInterval(timer);
   }, [accessToken, setAuth]);

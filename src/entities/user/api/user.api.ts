@@ -21,10 +21,7 @@ export const fetchUserInformation = async (
 export const updateUserInformation = async (
   data: UserInformation
 ): Promise<UserInformation> => {
-  const response = await axiosInstance.patch(
-    `/admin/user/${data.userId}`,
-    data
-  );
+  const response = await axiosInstance.patch(`/admin/user/${data.id}`, data);
   return response.data;
 };
 

@@ -39,9 +39,8 @@ const ToggleSelect = ({
     <Container>
       {label && <Label>{label}</Label>}
       <Box onClick={handleToggle} isDisable={disable}>
-        <Icon>{icon}</Icon>
         <SelectedValue>{value || placeholder || `${label} 선택`}</SelectedValue>
-        {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+        <ArrowIcon>{open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}</ArrowIcon>
       </Box>
 
       {open && !disable && (
@@ -165,4 +164,9 @@ const Icon = styled.div`
   margin-right: 0.5rem;
   color: #2e2e2e;
   font-size: 1.5rem;
+`;
+
+const ArrowIcon = styled.div`
+  display: flex;
+  align-items: center;
 `;

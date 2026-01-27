@@ -11,6 +11,7 @@ import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr'
 import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
 interface UserInformationData {
+  id: number;
   name: string;
   userId: string;
   phone: string;
@@ -21,7 +22,7 @@ interface UserInformationData {
 }
 
 const UserInformationDetail = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId: userIdParam } = useParams<{ userId: string }>();
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState<UserInformationData | null>(null);
 
@@ -32,13 +33,15 @@ const UserInformationDetail = () => {
     isLoading: isUserLoading,
     isError: isUserError,
     error,
-  } = useFetchUserInformation(userId);
+    refetch,
+  } = useFetchUserInformation(userIdParam);
 
   const updateMutation = useUpdateUserInformation();
 
   useEffect(() => {
     if (userInfo) {
       setUserData({
+        id: userInfo.id || parseInt(userIdParam || '0', 10),
         name: userInfo.name || '',
         userId: userInfo.userId || '',
         phone: userInfo.phone || '',
@@ -48,7 +51,7 @@ const UserInformationDetail = () => {
         privacyAgreed: userInfo.privacyAgreed || false,
       });
     }
-  }, [userInfo]);
+  }, [userInfo, userIdParam]);
 
   const handleSave = (formData: UserInformationData) => {
     if (
@@ -68,6 +71,7 @@ const UserInformationDetail = () => {
     }
 
     const dataToUpdate = {
+      id: formData.id,
       userId: formData.userId,
       name: formData.name,
       phone: formData.phone,
@@ -78,8 +82,8 @@ const UserInformationDetail = () => {
     };
 
     updateMutation.mutate(dataToUpdate, {
-      onSuccess: () => {
-        setUserData(formData);
+      onSuccess: async () => {
+        await refetch();
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
           title: '수정 완료',
@@ -93,6 +97,7 @@ const UserInformationDetail = () => {
               onClick: () => {
                 modal.closeModal();
                 setIsEditing(false);
+                window.location.reload();
               },
             },
           ],
@@ -155,6 +160,7 @@ const UserInformationDetail = () => {
       <Header title={`사용자 정보 ${isEditing ? '수정' : '상세 조회'}`} />
       <Wrapper>
         <UserInformationDetailCard
+          id={userData.id}
           name={userData.name}
           userId={userData.userId}
           phone={userData.phone}
@@ -162,6 +168,8 @@ const UserInformationDetail = () => {
           birthYMD={userData.birthYMD}
           residence={userData.residence}
           privacyAgreed={userData.privacyAgreed}
+          onSave={handleSave}
+          onEditStateChange={setIsEditing}
         />
       </Wrapper>
 

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Calendar from 'react-calendar';
 import styled from '@emotion/styled';
 import { FaCalendarDays } from 'react-icons/fa6';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import 'react-calendar/dist/Calendar.css';
 import React from 'react';
 
@@ -10,13 +11,14 @@ type CalendarValue = Date | null | [Date | null, Date | null];
 interface VisitDatePickerProps {
   value: string | Date | null;
   onChange: (date: string) => void;
+  label?: string;
 }
 
 const formatDateToISOString = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `${year}년${month}월${day}일`;
+  return `${year}-${month}-${day}`;
 };
 
 const safeDateConvert = (dateString) => {
@@ -51,7 +53,7 @@ const safeDateConvert = (dateString) => {
   return date;
 };
 
-const VisitDatePicker = ({ value, onChange }) => {
+const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleDateSelect = (value: CalendarValue) => {
@@ -74,15 +76,16 @@ const VisitDatePicker = ({ value, onChange }) => {
 
   return (
     <Container>
-      <Label>방문 날짜</Label>
+      <Label>{label}</Label>
       <InputContainer onClick={() => setIsOpen((prev) => !prev)}>
         <FaCalendarDays size={24} color="#2e2e32" />
         <Input
           type="text"
           value={dateObject ? formatDate(dateObject) : ''}
-          placeholder="방문 날짜를 선택해주세요."
+          placeholder={`${label}를 선택해주세요.`}
           readOnly
         />
+        <ArrowIcon>{isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}</ArrowIcon>
       </InputContainer>
       {isOpen && (
         <CalendarWrapper>
@@ -137,6 +140,11 @@ const Input = styled.input`
   font-size: 1.25rem;
   color: #2e2e32;
   background: transparent;
+`;
+
+const ArrowIcon = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const CalendarWrapper = styled.div`

@@ -1,11 +1,22 @@
-export const formatPhoneNumber = (rawNumber) => {
+export const formatPhoneNumber = (rawNumber: string): string => {
+  if (!rawNumber) return '';
+
   const digits = rawNumber.replace(/[^0-9]/g, '');
-  if (digits.length !== 11) {
-    return rawNumber;
+  const limitedDigits = digits.slice(0, 11);
+
+  if (limitedDigits.length <= 3) {
+    return limitedDigits;
+  } else if (limitedDigits.length <= 7) {
+    return `${limitedDigits.slice(0, 3)}-${limitedDigits.slice(3)}`;
+  } else {
+    return `${limitedDigits.slice(0, 3)}-${limitedDigits.slice(
+      3,
+      7
+    )}-${limitedDigits.slice(7)}`;
   }
-  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 };
 
-export const sanitizePhoneNumber = (value) => {
-  return value.replace(/[^0-9]/g, '').slice(0, 11);
+export const sanitizePhoneNumber = (rawNumber: string): string => {
+  if (!rawNumber) return '';
+  return rawNumber.replace(/[^0-9]/g, '');
 };

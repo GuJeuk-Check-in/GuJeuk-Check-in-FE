@@ -6,17 +6,12 @@ export const useSearchUser = (allUsers: User[], filters: UserSearchFilters) => {
 
   const filteredUsers = useMemo(() => {
     return allUsers.filter((user) => {
+      if (searchName && !user.name.includes(searchName)) {
+        return false;
+      }
       if (filters.residence && user.residence !== filters.residence) {
         return false;
       }
-
-      if (
-        searchName &&
-        !user.name.toLowerCase().includes(searchName.toLowerCase())
-      ) {
-        return false;
-      }
-
       return true;
     });
   }, [allUsers, filters.residence, searchName]);
