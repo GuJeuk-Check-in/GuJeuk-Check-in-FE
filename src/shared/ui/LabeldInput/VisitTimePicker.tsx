@@ -257,11 +257,12 @@ const HeaderCell = styled.div`
 
 const AmPmColumn = styled.div`
   width: 120px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 `;
 
 const AmPmItem = styled.div<{ selected: boolean }>`
