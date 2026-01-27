@@ -38,7 +38,6 @@ const VisitTimePicker = ({
     setMinute(m);
   }, []);
 
-  // 24시간 형식으로 변환
   const get24Hour = () => {
     let h24 = hour % 12;
     if (ampm === 'PM') h24 += 12;
@@ -46,13 +45,11 @@ const VisitTimePicker = ({
     return h24;
   };
 
-  // 상태가 변경되면 value 업데이트
   useEffect(() => {
     const h24 = get24Hour();
     onChange(`${pad(h24)}:${pad(minute)}`);
   }, [ampm, hour, minute]);
 
-  // 스크롤 시 선택 업데이트
   const handleHourScroll = () => {
     if (!hourRef.current) return;
     const scrollTop = hourRef.current.scrollTop;
@@ -71,7 +68,6 @@ const VisitTimePicker = ({
     }
   };
 
-  // 열릴 때 스크롤 위치 설정
   useEffect(() => {
     if (isOpen) {
       requestAnimationFrame(() => {
@@ -88,18 +84,18 @@ const VisitTimePicker = ({
     }
   }, [isOpen]);
 
-  // 24시간 형식으로 표시 (예: 17:20)
   const displayTime = `${pad(get24Hour())}:${pad(minute)}`;
 
   return (
     <Container>
       <Label>{label}</Label>
 
-      <InputContainer onClick={() => setIsOpen((p) => !p)}>
-        <FaClock size={18} color="#666" />
+      <InputContainer onClick={() => setIsOpen(p => !p)}>
+        <IconBox><FaClock size={20} color="#666" /></IconBox>
         <DisplayText>{displayTime}</DisplayText>
-        {isOpen ? <IoIosArrowUp color="#666" /> : <IoIosArrowDown color="#666" />}
+        {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
       </InputContainer>
+
 
       {isOpen && (
         <PickerBox>
@@ -167,14 +163,15 @@ export default VisitTimePicker;
 const Container = styled.div`
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 const Label = styled.label`
-  display: block;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  color: #2e2e32;
   font-weight: 500;
-  color: #333;
-  margin-bottom: 0.5rem;
 `;
 
 const InputContainer = styled.div`
@@ -182,21 +179,30 @@ const InputContainer = styled.div`
   align-items: center;
   gap: 0.75rem;
   padding: 0 1rem;
-  height: 3.25rem;
-  border: 1px solid #ddd;
+  height: 3.5rem;
+  border: 0.0625rem solid #404040;
   border-radius: 0.5rem;
+  font-size: 1.25rem;
+  color: #2e2e32;
+  background-color: #ffffff;
   cursor: pointer;
-  background: #fff;
+`;
 
-  &:hover {
-    border-color: #aaa;
-  }
+const IconBox = styled.div`
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 `;
 
 const DisplayText = styled.span`
   flex: 1;
-  font-size: 1rem;
-  color: #333;
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  color: #2e2e32;
 `;
 
 const PickerBox = styled.div`
