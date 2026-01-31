@@ -1,17 +1,6 @@
 export const formatPhoneNumber = (rawNumber: string): string => {
   if (!rawNumber) return '';
 
-  const digits = rawNumber.replace(/[^0-9]/g, '');
-  const limitedDigits = digits.slice(0, 11);
-
-  if (limitedDigits.length <= 3) {
-    return limitedDigits;
-  } else if (limitedDigits.length <= 7) {
-    return `${limitedDigits.slice(0, 3)}-${limitedDigits.slice(3)}`;
-  } else {
-    return `${limitedDigits.slice(0, 3)}-${limitedDigits.slice(
-      3,
-      7
-    )}-${limitedDigits.slice(7)}`;
-  }
+  // 숫자와 -만 허용, 최대 13자 (010-1234-5678 형식)
+  return rawNumber.replace(/[^0-9-]/g, '').slice(0, 13);
 };
