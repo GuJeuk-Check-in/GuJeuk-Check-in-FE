@@ -10,10 +10,7 @@ import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
-import {
-  sanitizePhoneNumber,
-  formatPhoneNumber,
-} from '../../../utils/formatters';
+import { sanitizePhoneNumber } from '../../../utils/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 
@@ -46,7 +43,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   type AgeDisplayType = keyof typeof AGE_MAP;
 
   const nameInput = useInput('');
-  const phoneInput = useInput('', formatPhoneNumber);
+  const phoneInput = useInput('');
   const [ageDisplay, setAgeDisplay] = useState('');
   const [purpose, setPurpose] = useState('');
   const maleCounter = useCounter(0);
