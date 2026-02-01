@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useState, useCallback, ChangeEvent } from 'react';
-import React from 'react';
 
 interface DateExportModalProps {
   isVisible: boolean;

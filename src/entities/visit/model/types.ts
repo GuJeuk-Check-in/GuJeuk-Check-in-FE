@@ -62,10 +62,12 @@ export interface CreateUserVisitRequest {
   name: string | null;
   age: AgeType;
   phone: string;
+  residence: String;
   maleCount: number;
   femaleCount: number;
   purpose: string;
   visitDate: string;
+  visitTime: String;
   privacyAgreed: boolean;
 }
 

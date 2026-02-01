@@ -5,8 +5,9 @@ import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '@widgets/layout/header/Header';
 import UseBackground from '@shared/ui/Background/UseBackground';
 import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
-import { Modal } from '../../components/Modal/Modal';
+import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
+import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
 import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';
 import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
@@ -62,8 +63,8 @@ const UserInformationDetail = () => {
     ) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '필수 필드를 모두 입력해주세요.',
+        title: MODAL_COMMENT.INPUT_INVALID.title,
+        subtitle: MODAL_COMMENT.INPUT_INVALID.subtitle,
         theme: 'warning',
         buttons: [{ label: '확인', onClick: modal.closeModal }],
       });
@@ -86,8 +87,8 @@ const UserInformationDetail = () => {
         await refetch();
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-          title: '수정 완료',
-          subtitle: '사용자 정보가 성공적으로 수정되었습니다.',
+          title: MODAL_COMMENT.USER_UPDATE_SUCCESS.title,
+          subtitle: MODAL_COMMENT.USER_UPDATE_SUCCESS.subtitle,
           theme: 'info',
           buttons: [
             {
@@ -106,8 +107,8 @@ const UserInformationDetail = () => {
       onError: (err) => {
         modal.openModal({
           icon: <FaExclamationTriangle size={48} color="#D88282" />,
-          title: '수정 실패',
-          subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
+          title: MODAL_COMMENT.UPDATE_FAIL(err.message).title,
+          subtitle: MODAL_COMMENT.UPDATE_FAIL(err.message).subtitle,
           theme: 'warning',
           buttons: [{ label: '닫기', onClick: modal.closeModal }],
         });
