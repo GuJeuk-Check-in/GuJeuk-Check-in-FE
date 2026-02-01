@@ -27,3 +27,5 @@ const MODAL_UI = {
     theme: 'warning',
   },
 } as const;
+
+export default MODAL_UI;
