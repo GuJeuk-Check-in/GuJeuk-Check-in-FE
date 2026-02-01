@@ -90,12 +90,13 @@ const VisitTimePicker = ({
     <Container>
       <Label>{label}</Label>
 
-      <InputContainer onClick={() => setIsOpen(p => !p)}>
-        <IconBox><FaClock size={20} color="#666" /></IconBox>
+      <InputContainer onClick={() => setIsOpen((p) => !p)}>
+        <IconBox>
+          <FaClock size={20} color="#666" />
+        </IconBox>
         <DisplayText>{displayTime}</DisplayText>
         {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
       </InputContainer>
-
 
       {isOpen && (
         <PickerBox>
@@ -120,10 +121,7 @@ const VisitTimePicker = ({
               {/* 시 */}
               <ColumnWithHeader>
                 <HeaderCell>시</HeaderCell>
-                <ScrollColumn
-                  ref={hourRef}
-                  onScroll={handleHourScroll}
-                >
+                <ScrollColumn ref={hourRef} onScroll={handleHourScroll}>
                   <ScrollPadding />
                   {HOURS.map((h) => (
                     <ScrollItem key={h} selected={hour === h}>
@@ -137,10 +135,7 @@ const VisitTimePicker = ({
               {/* 분 */}
               <ColumnWithHeader>
                 <HeaderCell>분</HeaderCell>
-                <ScrollColumn
-                  ref={minuteRef}
-                  onScroll={handleMinuteScroll}
-                >
+                <ScrollColumn ref={minuteRef} onScroll={handleMinuteScroll}>
                   <ScrollPadding />
                   {MINUTES.map((m) => (
                     <ScrollItem key={m} selected={minute === m}>
