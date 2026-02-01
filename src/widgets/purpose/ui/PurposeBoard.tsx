@@ -14,7 +14,7 @@ import {
 } from '@features/purpose/index';
 
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
-import { Modal } from '../../../components/Modal/Modal';
+import { Modal } from '../../../shared/ui/modal/Modal';
 
 export const PurposeBoard = () => {
   const {
