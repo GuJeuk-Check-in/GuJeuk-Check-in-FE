@@ -11,10 +11,6 @@ import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
-import {
-  sanitizePhoneNumber,
-  formatPhoneNumber,
-} from '../../../shared/lib/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 
@@ -57,7 +53,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const [residence, setResidence] = useState('');
   const [visitTime, setVisitTime] = useState('');
 
-
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
   const resetForm = () => {
@@ -81,7 +76,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       !date ||
       !ageDisplay ||
       !residence ||
-      !visitTime    
+      !visitTime
     ) {
       alert('모든 필수 필드를 입력해주세요.');
       return;
@@ -101,7 +96,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,
       visitDate: date,
-      visitTime: visitTime, 
+      visitTime: visitTime,
       privacyAgreed: privacyCheck.checked,
     };
 
@@ -160,8 +155,22 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
         <ToggleSelect
           label="거주지"
-          options={['구즉동', '관평동', '노은 1동', '노은 2동', '노은 3동', '상대동', '신성동', '온천 1동', 
-            '온천 2동', '원신흥동', '전민동', '진잠동', '학하동', '기타지역']}
+          options={[
+            '구즉동',
+            '관평동',
+            '노은 1동',
+            '노은 2동',
+            '노은 3동',
+            '상대동',
+            '신성동',
+            '온천 1동',
+            '온천 2동',
+            '원신흥동',
+            '전민동',
+            '진잠동',
+            '학하동',
+            '기타지역',
+          ]}
           placeholder="거주지를 선택해주세요"
           value={residence}
           onChange={setResidence}
@@ -183,7 +192,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
         <VisitDatePicker value={date} onChange={setDate} />
 
-        <VisitTimePicker value={visitTime} onChange={setVisitTime}/>
+        <VisitTimePicker value={visitTime} onChange={setVisitTime} />
 
         <PrivacyConsentWrapper>
           <Checkbox

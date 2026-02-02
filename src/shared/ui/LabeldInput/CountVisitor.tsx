@@ -1,34 +1,75 @@
 import styled from '@emotion/styled';
-import { FaMinus } from 'react-icons/fa6';
-import { FaPlus } from 'react-icons/fa6';
-import React from 'react';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
+import { useEffect, useState } from 'react';
 
 interface CountVisitorProps {
   label: string;
   value: number;
   onChange: (newValue: number) => void;
+  min?: number;
+  max?: number;
 }
 
-const CountVisitor = ({ label, value, onChange }: CountVisitorProps) => {
+const CountVisitor = ({
+  label,
+  value,
+  onChange,
+  min = 0,
+  max = 999,
+}: CountVisitorProps) => {
+  const [inputValue, setInputValue] = useState<string>(String(value));
+
+  useEffect(() => {
+    setInputValue(String(value));
+  }, [value]);
+
   const handleIncrement = () => {
-    onChange(value + 1);
+    const next = Math.min(value + 1, max);
+    onChange(next);
   };
 
   const handleDecrement = () => {
-    if (value > 0) {
-      onChange(value - 1);
+    const next = Math.max(value - 1, min);
+    onChange(next);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+
+    if (!/^\d*$/.test(raw)) return;
+
+    setInputValue(raw);
+  };
+
+  const commitInput = () => {
+    const num = Number(inputValue);
+
+    if (Number.isNaN(num)) {
+      setInputValue(String(value));
+      return;
     }
+
+    const clamped = Math.min(Math.max(num, min), max);
+    onChange(clamped);
+    setInputValue(String(clamped));
   };
 
   return (
     <Container>
       <Label>{label}</Label>
       <Counter>
-        <Button onClick={handleDecrement} disabled={value === 0}>
+        <Button onClick={handleDecrement} disabled={value <= min}>
           <FaMinus />
         </Button>
-        <Value>{value}</Value>
-        <Button onClick={handleIncrement}>
+
+        <Input
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={commitInput}
+          onKeyDown={(e) => e.key === 'Enter' && commitInput()}
+        />
+
+        <Button onClick={handleIncrement} disabled={value >= max}>
           <FaPlus />
         </Button>
       </Counter>
@@ -74,7 +115,12 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-const Value = styled.span`
-  font-size: 1.25rem;
+const Input = styled.input`
+  width: 3rem;
   text-align: center;
+  font-size: 1.25rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #2e2e32;
 `;
