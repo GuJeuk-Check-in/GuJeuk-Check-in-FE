@@ -14,7 +14,7 @@ import { useInput } from '@shared/hooks/useInput';
 import {
   sanitizePhoneNumber,
   formatPhoneNumber,
-} from '../../../utils/formatters';
+} from '../../../shared/lib/formatters';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 

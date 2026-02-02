@@ -7,7 +7,7 @@ import UseBackground from '@shared/ui/Background/UseBackground';
 import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
-import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
+import { USER_MODAL_MESSAGES } from '@features/user/model/modalMessages';
 import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';
 import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
@@ -63,8 +63,8 @@ const UserInformationDetail = () => {
     ) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: MODAL_COMMENT.INPUT_INVALID.title,
-        subtitle: MODAL_COMMENT.INPUT_INVALID.subtitle,
+        title: USER_MODAL_MESSAGES.INPUT_INVALID.title,
+        subtitle: USER_MODAL_MESSAGES.INPUT_INVALID.subtitle,
         theme: 'warning',
         buttons: [{ label: '확인', onClick: modal.closeModal }],
       });
@@ -87,8 +87,8 @@ const UserInformationDetail = () => {
         await refetch();
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-          title: MODAL_COMMENT.USER_UPDATE_SUCCESS.title,
-          subtitle: MODAL_COMMENT.USER_UPDATE_SUCCESS.subtitle,
+          title: USER_MODAL_MESSAGES.UPDATE_SUCCESS.title,
+          subtitle: USER_MODAL_MESSAGES.UPDATE_SUCCESS.subtitle,
           theme: 'info',
           buttons: [
             {
@@ -107,8 +107,8 @@ const UserInformationDetail = () => {
       onError: (err) => {
         modal.openModal({
           icon: <FaExclamationTriangle size={48} color="#D88282" />,
-          title: MODAL_COMMENT.UPDATE_FAIL(err.message).title,
-          subtitle: MODAL_COMMENT.UPDATE_FAIL(err.message).subtitle,
+          title: USER_MODAL_MESSAGES.UPDATE_FAIL(err.message).title,
+          subtitle: USER_MODAL_MESSAGES.UPDATE_FAIL(err.message).subtitle,
           theme: 'warning',
           buttons: [{ label: '닫기', onClick: modal.closeModal }],
         });

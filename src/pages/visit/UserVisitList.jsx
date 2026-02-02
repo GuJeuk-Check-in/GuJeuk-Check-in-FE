@@ -5,7 +5,7 @@ import UseBackground from '@shared/ui/Background/UseBackground';
 import Header from '@widgets/layout/header/Header';
 import UserVisitCard from '@shared/ui/Form/UserVisitCard';
 import ExcelButton from '@shared/ui/Button/ExcelButton';
-import DateExportModal from '@features/visit/index';
+import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
 import {
