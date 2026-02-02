@@ -282,7 +282,7 @@ const UserDetailView = () => {
         <VisitDetailInput
           label="연락처"
           name="phone"
-          value={isEditing && formData ? formData.phone : formattedPhone}
+          value={isEditing && formData ? formData.phone : visit.phone}
           onChange={isEditing ? handleChange : null}
           isEditable={isEditing}
           type="tel"
