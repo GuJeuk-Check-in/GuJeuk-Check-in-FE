@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { createUserVisit } from '@entities/visit/index';
 import { useModal } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
 import {
   CreateUserVisitRequest,
   UserVisitDetailResponse,
@@ -43,8 +44,8 @@ export const useCreateUserVisit = ({
 
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,
-        title: '등록 완료',
-        subtitle: '시설 이용 추가가 완료되었습니다.',
+        title: MODAL_COMMENT.CREATE_SUCCESS.title,
+        subtitle: MODAL_COMMENT.CREATE_SUCCESS.subtitle,
         theme: 'info',
         buttons: [
           {
@@ -65,11 +66,12 @@ export const useCreateUserVisit = ({
 
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '등록 실패',
-        subtitle:
-          error.response?.data?.message ||
-          error.message ||
-          '알 수 없는 오류가 발생했습니다.',
+        title: MODAL_COMMENT.CREATE_FAIL(
+          error.response?.data?.message || error.message
+        ).title,
+        subtitle: MODAL_COMMENT.CREATE_FAIL(
+          error.response?.data?.message || error.message
+        ).subtitle,
         theme: 'warning',
         buttons: [
           {

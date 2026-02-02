@@ -15,3 +15,8 @@ export const formatPhoneNumber = (rawNumber: string): string => {
     )}-${limitedDigits.slice(7)}`;
   }
 };
+
+export const sanitizePhoneNumber = (rawNumber: string): string => {
+  if (!rawNumber) return '';
+  return rawNumber.replace(/[^0-9]/g, '');
+};
