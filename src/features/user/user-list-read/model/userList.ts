@@ -20,7 +20,7 @@ export const useInfiniteUserList = ({ residence }: UseUserListParams) => {
         : await userList(currentPage);
 
       return {
-        users: res.slice?.content || res.users || [],
+        users: res.slice?.content || [],
         totalCount: res.totalCount,
         last: res.slice?.last ?? true,
         page: res.slice?.number ?? 0,
