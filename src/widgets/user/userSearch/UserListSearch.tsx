@@ -41,7 +41,7 @@ export const UserListWithSearch = ({
     handleClearSearch,
     resultCount,
   } = useSearchUser(allUsers, {
-    residence: filters.residence,
+    residence: null,
     searchName: '',
   });
 
