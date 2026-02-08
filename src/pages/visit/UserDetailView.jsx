@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '@widgets/layout/header/Header';
-import UseBackground from '@shared/ui/Background/UseBackground';
+import { UseBackground } from '@shared/ui/Background/index';
 import VisitDetailInput from '@shared/ui/input/VisitDetailInput';
 import PasswordButton from '@shared/ui/Button/PasswordButton';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';

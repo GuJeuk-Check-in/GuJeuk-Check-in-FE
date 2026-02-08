@@ -6,7 +6,7 @@ interface CircleData {
   left: string;
 }
 
-const CircleData = [
+export const CircleData = [
   { id: 1, color: '#0F50A0', size: '38.3vw', top: '-27.5vh', left: '-16.8vw' },
   { id: 2, color: '#2ABFEC', size: '10.7vw', top: '-7.8vh', left: '20.1vw' },
   { id: 3, color: '#FBBC18', size: '12.1vw', top: '31.0vh', left: '-6.0vw' },
@@ -21,5 +21,3 @@ const CircleData = [
   { id: 12, color: '#FBBC18', size: '3.3vw', top: '10.4vh', left: '95.5vw' },
   { id: 13, color: '#17A753', size: '4.1vw', top: '23.8vh', left: '91.4vw' },
 ];
-
-export default CircleData;

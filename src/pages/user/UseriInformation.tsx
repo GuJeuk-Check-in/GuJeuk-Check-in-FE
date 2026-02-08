@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import UseBackground from '@shared/ui/Background/UseBackground';
+import { UseBackground } from '@shared/ui/Background/index';
 import Header from '@widgets/layout/header/Header';
 import { UserListWithSearch } from '@widgets/user/userSearch/UserListSearch';
 
