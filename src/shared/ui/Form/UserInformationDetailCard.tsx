@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import VisitDetailInput from '../LabeldInput/VisitDetailInput';
+import VisitDetailInput from '../input/VisitDetailInput';
 import PasswordButton from '../Button/PasswordButton';
 import ToggleSelect from '../LabeldInput/ToggleSelect';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';

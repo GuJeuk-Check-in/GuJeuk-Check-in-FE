@@ -1,4 +1,4 @@
-import VisitFormInput from '@shared/ui/LabeldInput/VisitFormInput';
+import VisitFormInput from '@shared/ui/input/VisitFormInput';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import { useState } from 'react';
 import styled from '@emotion/styled';
