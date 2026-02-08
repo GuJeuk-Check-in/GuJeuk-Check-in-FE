@@ -6,7 +6,7 @@ import { useUpdatePassword } from '../model/useUpdatePassword';
 import { useAuthStore } from '@entities/auth';
 import { useModal } from '@shared/hooks/useModal';
 import LabeledInput from '@shared/ui/Form/LabeledInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import { Modal } from '@shared/ui/modal/Modal';
 
 export const UpdatePasswordForm = () => {

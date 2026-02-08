@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
 import LabeledInput from '@shared/ui/Form/LabeledInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 
 export const LoginForm = () => {
   const [currentPW, setCurrentPW] = useState('');

@@ -5,7 +5,7 @@ import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
 import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
 import LabeledInput from '@shared/ui/Form/LabeledInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 
 interface CreatePurposeModalProps {
@@ -38,7 +38,8 @@ export const CreatePurposeModal = ({ onClose }: CreatePurposeModalProps) => {
           openModal({
             icon: <FaCheckCircle color="#0F50A0" />,
             title: MODAL_COMMENT.PURPOSE_CREATE_SUCCESS(trimmedPurpose).title,
-            subtitle: MODAL_COMMENT.PURPOSE_CREATE_SUCCESS(trimmedPurpose).subtitle,
+            subtitle:
+              MODAL_COMMENT.PURPOSE_CREATE_SUCCESS(trimmedPurpose).subtitle,
             theme: 'info',
             buttons: [
               {

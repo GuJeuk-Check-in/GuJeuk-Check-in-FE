@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
 import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
 import { usePurposeList } from '@entities/purpose/index';

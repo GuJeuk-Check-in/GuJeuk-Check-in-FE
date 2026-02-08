@@ -5,7 +5,7 @@ import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import Header from '@widgets/layout/header/Header';
 import { UseBackground } from '@shared/ui/Background/index';
 import VisitDetailInput from '@shared/ui/input/VisitDetailInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
