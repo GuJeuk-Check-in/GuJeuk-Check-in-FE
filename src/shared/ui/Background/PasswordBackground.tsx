@@ -1,8 +1,7 @@
-import CircleData from './CircleData';
+import { CircleData } from './CircleData';
 import styled from '@emotion/styled';
-import React from 'react';
 
-const PasswordBackground = () => {
+export const PasswordBackground = () => {
   return (
     <Container>
       {CircleData.map((circle) => (
@@ -17,8 +16,6 @@ const PasswordBackground = () => {
     </Container>
   );
 };
-
-export default PasswordBackground;
 
 interface CircleProps {
   $color: string;

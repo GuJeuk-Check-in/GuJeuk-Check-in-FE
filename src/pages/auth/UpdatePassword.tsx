@@ -1,4 +1,4 @@
-import PasswordBackground from '@shared/ui/Background/PasswordBackground';
+import { PasswordBackground } from '@shared/ui/Background/index';
 import LeftPage from '@widgets/layout/LeftPage';
 import RightPage from '@widgets/layout/RightPage';
 import styled from '@emotion/styled';

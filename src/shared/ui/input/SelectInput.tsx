@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import VisitFormInput from './VisitFormInput';
-import SelectOptionCard from './SelectOptionCard';
+import SelectOptionCard from '../LabeldInput/SelectOptionCard';
 
 interface SelectInputProps {
   label: string;

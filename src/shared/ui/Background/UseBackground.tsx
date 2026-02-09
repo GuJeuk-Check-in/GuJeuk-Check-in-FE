@@ -2,11 +2,9 @@ import styled from '@emotion/styled';
 import UserBackground from '../../../assets/UssrBackground.png';
 import React from 'react';
 
-const UseBackground = () => {
+export const UseBackground = () => {
   return <Container></Container>;
 };
-
-export default UseBackground;
 
 const Container = styled.div`
   position: fixed;
