@@ -10,7 +10,6 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useUpdatePurposeMovement } from '../model/useUpdatePurposeMovement';
 import { useModal } from '@shared/hooks/useModal';
-import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
 export const useReorderPurpose = (initialItems: any[]) => {
@@ -57,8 +56,8 @@ export const useReorderPurpose = (initialItems: any[]) => {
           setItems(oldItems);
           openModal({
             icon: <FaExclamationTriangle size={48} color="#D88282" />,
-            title: MODAL_COMMENT.PURPOSE_MOVEMENT_FAIL.title,
-            subtitle: MODAL_COMMENT.PURPOSE_MOVEMENT_FAIL.subtitle,
+            title: '순서 변경 실패',
+            subtitle: '네트워크 오류가 발생했습니다. 다시 시도해주세요.',
             theme: 'warning',
             buttons: [{ label: '확인', onClick: closeModal }],
           });

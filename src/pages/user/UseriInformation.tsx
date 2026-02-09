@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { UseBackground } from '@shared/ui/Background/index';
-import Header from '@widgets/layout/ui/Header';
+import { Header } from '@widgets/GlobalLayout/index';
 import { UserListWithSearch } from '@widgets/user/userSearch/UserListSearch';
 
 const UserInformation = () => {

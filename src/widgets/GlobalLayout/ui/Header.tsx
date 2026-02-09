@@ -9,7 +9,7 @@ interface HeaderProps {
   children?: ReactNode;
 }
 
-const Header = ({ title, children }: HeaderProps) => {
+export const Header = ({ title, children }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -43,8 +43,6 @@ const Header = ({ title, children }: HeaderProps) => {
     </Container>
   );
 };
-
-export default Header;
 
 const Container = styled.div`
   background-color: #ffffff;

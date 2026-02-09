@@ -6,7 +6,6 @@ import React from 'react';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
-import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
 
 const PurposeAddBox = () => {
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
@@ -21,8 +20,8 @@ const PurposeAddBox = () => {
     if (!trimmedLabel) {
       openModal({
         icon: <FaExclamationTriangle color="#D88282" />,
-        title: MODAL_COMMENT.PURPOSE_INPUT_INVALID.title,
-        subtitle: MODAL_COMMENT.PURPOSE_INPUT_INVALID.subtitle,
+        title: '입력 확인',
+        subtitle: '방문 목적을 입력해주세요.',
         theme: 'warning',
         buttons: [{ label: '확인', variant: 'primary', onClick: closeModal }],
       });
@@ -37,8 +36,8 @@ const PurposeAddBox = () => {
         onSuccess: () => {
           openModal({
             icon: <FaCheckCircle color="#0F50A0" />,
-            title: MODAL_COMMENT.PURPOSE_CREATE_SUCCESS(trimmedLabel).title,
-            subtitle: MODAL_COMMENT.PURPOSE_CREATE_SUCCESS(trimmedLabel).subtitle,
+            title: '생성 성공',
+            subtitle: `"${trimmedLabel}" 목적이 추가되었습니다.`,
             theme: 'info',
             buttons: [
               {
@@ -53,12 +52,12 @@ const PurposeAddBox = () => {
             ],
           });
         },
-        onError: (error: any) => {
+        onError: (error) => {
           const message = error.response?.data?.message || '생성 실패';
           openModal({
             icon: <FaExclamationTriangle color="#D88282" />,
-            title: MODAL_COMMENT.PURPOSE_CREATE_FAIL(message).title,
-            subtitle: MODAL_COMMENT.PURPOSE_CREATE_FAIL(message).subtitle,
+            title: '생성 실패',
+            subtitle: message || '생성 실패',
             theme: 'warning',
             buttons: [
               { label: '닫기', variant: 'secondary', onClick: closeModal },

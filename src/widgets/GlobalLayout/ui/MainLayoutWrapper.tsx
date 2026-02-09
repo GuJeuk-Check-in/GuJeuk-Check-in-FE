@@ -5,11 +5,9 @@ interface MainLayoutWrapperProps {
   children: React.ReactNode;
 }
 
-const MainLayoutWrapper = ({ children }: MainLayoutWrapperProps) => {
+export const MainLayoutWrapper = ({ children }: MainLayoutWrapperProps) => {
   return <LayoutWrapper>{children}</LayoutWrapper>;
 };
-
-export default MainLayoutWrapper;
 
 const LayoutWrapper = styled.div`
   display: flex;
