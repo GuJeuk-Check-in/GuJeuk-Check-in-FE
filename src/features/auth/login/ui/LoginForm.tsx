@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
-import LabeledInput from '@shared/ui/Form/LabeledInput';
+import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
 
 export const LoginForm = () => {
@@ -42,7 +42,7 @@ export const LoginForm = () => {
 
   return (
     <LoginContentGroup>
-      <LabeledInput
+      <AuthInput
         label=""
         placeholder="비밀번호를 입력해주세요."
         type="password"

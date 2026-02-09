@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
-
-import LabeledInput from '@shared/ui/Form/LabeledInput';
+import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 
@@ -71,7 +70,7 @@ export const CreatePurposeModal = ({ onClose }: CreatePurposeModalProps) => {
   return (
     <ModalContainer>
       <Title>방문 목적 추가</Title>
-      <LabeledInput
+      <AuthInput
         label="목적 명칭"
         placeholder="예: 회의, 방문, 면접 등"
         value={purpose}
