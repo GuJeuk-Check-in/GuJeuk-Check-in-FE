@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import Logo from '../../assets/Logo.png';
-import React from 'react';
+import Logo from '../../../assets/Logo.png';
 
-const LeftPage = () => {
+export const LeftLayout = () => {
   return (
     <Container>
       <LogoImage src={Logo} alt="로고 이미지" />
@@ -20,8 +19,6 @@ const LeftPage = () => {
     </Container>
   );
 };
-
-export default LeftPage;
 
 const Container = styled.div`
   width: 35.89vw;

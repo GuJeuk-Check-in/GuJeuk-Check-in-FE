@@ -1,18 +1,15 @@
 import styled from '@emotion/styled';
-import LeftPage from '@widgets/layout/LeftPage';
-import RightPage from './RightPage';
-import React from 'react';
+import { LeftLayout } from './LeftLayout';
+import { RightLayout } from './RightLayout';
 
-const MainLayout = () => {
+export const MainLayout = () => {
   return (
     <LayoutWrapper>
-      <LeftPage />
-      <RightPage />
+      <LeftLayout />
+      <RightLayout />
     </LayoutWrapper>
   );
 };
-
-export default MainLayout;
 
 const LayoutWrapper = styled.div`
   display: flex;

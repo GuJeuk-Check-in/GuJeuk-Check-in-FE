@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { UseBackground } from '@shared/ui/Background/index';
-import Header from '@widgets/layout/header/Header';
+import Header from '@widgets/layout/ui/Header';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { PurposeBoard } from '@widgets/purpose/ui/PurposeBoard';

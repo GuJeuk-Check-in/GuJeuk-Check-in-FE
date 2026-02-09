@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { HeaderButton } from '@shared/ui/Button/index';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface HeaderProps {
   title: string;

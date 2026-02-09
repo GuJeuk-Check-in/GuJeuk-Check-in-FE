@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import Header from '@widgets/layout/header/Header';
+import Header from '@widgets/layout/ui/Header';
 import { UseBackground } from '@shared/ui/Background/index';
 import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
 import { Modal } from '../../shared/ui/modal/Modal';
