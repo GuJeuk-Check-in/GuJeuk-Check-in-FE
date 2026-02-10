@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { PasswordBackground } from '@shared/ui/Background/index';
-import LeftPage from '@widgets/layout/LeftPage';
-import RightPage from '@widgets/layout/RightPage';
+import { LeftLayout } from '@widgets/authLayout/index';
+import { RightLayout } from '@widgets/authLayout/index';
 import { LoginForm } from '@features/auth/login/ui/LoginForm';
 
 const EnterPassword = () => {
@@ -10,10 +10,10 @@ const EnterPassword = () => {
       <PasswordBackground />
       <MainWrapper>
         <PageContainer>
-          <LeftPage />
-          <RightPage title="관리자 비밀번호 입력">
+          <LeftLayout />
+          <RightLayout title="관리자 비밀번호 입력">
             <LoginForm />
-          </RightPage>
+          </RightLayout>
         </PageContainer>
       </MainWrapper>
     </>

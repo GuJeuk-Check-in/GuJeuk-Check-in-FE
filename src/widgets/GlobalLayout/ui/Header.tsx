@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import HeaderButton from '../../../shared/ui/Button/HeaderButton';
+import { HeaderButton } from '@shared/ui/Button/index';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 interface HeaderProps {
   title: string;
   children?: ReactNode;
 }
 
-const Header = ({ title, children }: HeaderProps) => {
+export const Header = ({ title, children }: HeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -43,8 +43,6 @@ const Header = ({ title, children }: HeaderProps) => {
     </Container>
   );
 };
-
-export default Header;
 
 const Container = styled.div`
   background-color: #ffffff;

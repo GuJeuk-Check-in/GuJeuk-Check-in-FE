@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import { LeftLayout } from './LeftLayout';
+import { RightLayout } from './RightLayout';
 
-interface MainLayoutWrapperProps {
-  children: React.ReactNode;
-}
-
-const MainLayoutWrapper = ({ children }: MainLayoutWrapperProps) => {
-  return <LayoutWrapper>{children}</LayoutWrapper>;
+export const MainLayout = () => {
+  return (
+    <LayoutWrapper>
+      <LeftLayout />
+      <RightLayout />
+    </LayoutWrapper>
+  );
 };
-
-export default MainLayoutWrapper;
 
 const LayoutWrapper = styled.div`
   display: flex;

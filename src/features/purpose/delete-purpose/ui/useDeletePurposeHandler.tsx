@@ -1,6 +1,6 @@
 import { useModal } from '@shared/hooks/useModal';
 import { useDeletePurposeList } from '../model/useDeletePurpose';
-import { MODAL_COMMENT } from '@entities/record/modal/ModalComment';
+
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
@@ -13,8 +13,8 @@ export const useDeletePurposeHandler = () => {
   const handleDelete = (id: number) => {
     openModal({
       icon: <FaExclamationTriangle size={48} color="#D88282" />,
-      title: MODAL_COMMENT.PURPOSE_DELETE_CONFIRM.title,
-      subtitle: MODAL_COMMENT.PURPOSE_DELETE_CONFIRM.subtitle,
+      title: '정말로 이 방문 목적을 삭제하시겠습니까?',
+      subtitle: '삭제한 방문 목적은 복구할 수 없습니다.',
       theme: 'warning',
       buttons: [
         {
@@ -45,8 +45,8 @@ export const useDeletePurposeHandler = () => {
         setTimeout(() => {
           openModal({
             icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-            title: MODAL_COMMENT.PURPOSE_DELETE_SUCCESS.title,
-            subtitle: MODAL_COMMENT.PURPOSE_DELETE_SUCCESS.subtitle,
+            title: '삭제 완료',
+            subtitle: '방문 목적이 성공적으로 삭제되었습니다.',
             theme: 'info',
             buttons: [
               {
@@ -63,8 +63,8 @@ export const useDeletePurposeHandler = () => {
 
         setDeletingId(null);
         openModal({
-          title: MODAL_COMMENT.PURPOSE_DELETE_FAIL(message).title,
-          subtitle: MODAL_COMMENT.PURPOSE_DELETE_FAIL(message).subtitle,
+          title: '삭제 실패',
+          subtitle: message || '삭제 중 오류가 발생했습니다.',
           theme: 'warning',
           buttons: [
             {
