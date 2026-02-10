@@ -20,5 +20,5 @@ export const Router = () => {
       <Route path="/admin/user/:userId" element={<UserInformationDetail />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
     </Routes>
-  );
+  );  
 };
