@@ -8,7 +8,7 @@ interface SelectInputProps {
   placeholder?: string;
   icon: React.ReactNode;
   value: string;
-  onChange: (e: { target: { value: string } }) => void;
+  onChange: (value: string) => void;
   options: { label: string; value: string }[];
   cols?: number;
 }
@@ -28,7 +28,7 @@ const SelectInput = ({
     options.find((opt) => opt.value === value)?.label || placeholder || '';
 
   const handleSelect = (optionValue: string) => {
-    onChange({ target: { value: optionValue } });
+    onChange(optionValue);
     setIsOpen(false);
   };
 

@@ -6,11 +6,9 @@ interface HeaderButtonProps {
   onClick: () => void;
 }
 
-const HeaderButton = ({ children, onClick }: HeaderButtonProps) => {
+export const HeaderButton = ({ children, onClick }: HeaderButtonProps) => {
   return <Button onClick={onClick}>{children}</Button>;
 };
-
-export default HeaderButton;
 
 const Button = styled.button`
   border: none;

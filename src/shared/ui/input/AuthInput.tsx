@@ -5,23 +5,25 @@ import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
 import React from 'react';
 
-interface LabeledInputProps {
+interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
   [key: string]: any;
+  icon?: React.ReactNode;
 }
 
-const LabeledInput = ({
+export const AuthInput = ({
   label,
   placeholder,
   value,
   onChange,
-  type,
+  type = 'text',
+  icon = <IoMdLock />,
   ...props
-}: LabeledInputProps) => {
+}: AuthInputProps) => {
   const [showPW, setShowPW] = useState(false);
   const id = useId();
   const handleType = () => {
@@ -34,7 +36,7 @@ const LabeledInput = ({
       <Label htmlFor={id}>{label}</Label>
       <InputWrapper>
         <LeftIcon>
-          <IoMdLock />
+          {icon}
           <Divider />
         </LeftIcon>
         <Input
@@ -55,13 +57,9 @@ const LabeledInput = ({
   );
 };
 
-export default LabeledInput;
-
 const Container = styled.div`
   width: 100%;
-  max-width: 28.375rem;
   margin-bottom: 0;
-
   flex-shrink: 0;
 
   @media (max-width: 768px) {

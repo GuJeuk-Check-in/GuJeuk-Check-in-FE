@@ -1,20 +1,20 @@
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import styled from '@emotion/styled';
 import React from 'react';
 
-interface RightPageProps {
+interface RightLayoutProps {
   title?: string;
   children?: React.ReactNode;
   buttonContent?: string;
   onClick?: () => void;
 }
 
-const RightPage = ({
+export const RightLayout = ({
   title,
   children,
   buttonContent,
   onClick,
-}: RightPageProps) => {
+}: RightLayoutProps) => {
   return (
     <Container>
       {title && <Title>{title}</Title>}
@@ -27,8 +27,6 @@ const RightPage = ({
     </Container>
   );
 };
-
-export default RightPage;
 
 const Container = styled.div`
   background-color: #0f50a0;

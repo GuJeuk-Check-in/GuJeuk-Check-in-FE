@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { PiExportBold } from 'react-icons/pi';
-import React from 'react';
 
 interface ExcelButtonProps {
   onClick: () => void;
   disabled?: boolean;
 }
 
-const ExcelButton = ({ onClick, disabled }: ExcelButtonProps) => {
+export const ExcelButton = ({ onClick, disabled }: ExcelButtonProps) => {
   return (
     <ButtonContainer onClick={onClick} disabled={disabled}>
       <PiExportBold size="1.25rem" style={{ flexShrink: 0 }} />
@@ -15,8 +14,6 @@ const ExcelButton = ({ onClick, disabled }: ExcelButtonProps) => {
     </ButtonContainer>
   );
 };
-
-export default ExcelButton;
 
 const ButtonContainer = styled.button`
   display: inline-flex;
