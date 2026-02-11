@@ -26,10 +26,10 @@ const UserVisitCard = ({
     navigate(`/log/${id}`);
   };
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onDelete) onDelete();
-  };
+  // const handleDeleteClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   if (onDelete) onDelete();
+  // };
 
   return (
     <Container onClick={handleCardClick}>
@@ -44,9 +44,9 @@ const UserVisitCard = ({
 
       <RightSection>
         <Date>{date}</Date>
-        <CloseButton onClick={handleDeleteClick}>
+        {/* <CloseButton onClick={handleDeleteClick}>
           <IoClose size="1.8rem" />
-        </CloseButton>
+        </CloseButton> */}
       </RightSection>
     </Container>
   );
@@ -55,19 +55,20 @@ const UserVisitCard = ({
 export default UserVisitCard;
 
 const Container = styled.div`
-  position: relative;
-  background-color: #ffffff;
-  border: 0.0625rem solid #6f95c4;
-  border-radius: 3rem;
+  width: 100%;
+  max-width: 80rem;
+  min-height: 8.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2rem;
-  width: 70%;
-  height: 7.5rem;
-  margin: 0.75rem auto;
+  background-color: #ffffff;
+  border: 1px solid #6f95c4;
+  border-radius: 2.25rem;
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
   cursor: pointer;
+  box-sizing: border-box;
+  margin: 0;
 `;
 
 const LeftSection = styled.div`
@@ -105,14 +106,4 @@ const RightSection = styled.div`
 const Date = styled.span`
   font-size: 1.25rem;
   color: #969698;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #c00;
 `;

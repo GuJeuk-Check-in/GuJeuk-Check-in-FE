@@ -119,7 +119,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <LoadingText>사용자 정보를 불러오는 중...</LoadingText>
         </Wrapper>
@@ -131,7 +131,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <ErrorText>
             사용자 정보 조회에 실패했습니다:{' '}
@@ -146,7 +146,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>
         </Wrapper>
@@ -157,7 +157,7 @@ const UserInformationDetail = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title={`사용자 정보 ${isEditing ? '수정' : '상세 조회'}`} />
+      <Header />
       <Wrapper>
         <UserInformationDetailCard
           id={userData.id}
@@ -185,15 +185,19 @@ const UserInformationDetail = () => {
 export default UserInformationDetail;
 
 const Container = styled.div`
-  padding-top: 6.375rem;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  padding: 3.5rem 0;
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 90%;
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding-bottom: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
 `;
 
 const LoadingText = styled.p`

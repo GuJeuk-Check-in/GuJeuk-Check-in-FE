@@ -144,19 +144,20 @@ const UserVisitList = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title="시설 이용 목록 조회" />
-
-      <ExportButtonWrapper>
-        <ExcelButton onClick={handleExcelExportClick} disabled={isExporting} />
-        {isExporting && (
-          <ExportLoadingMessage>
-            엑셀 파일을 준비 중입니다... (
-            {getExportingPeriodMessage(exportingDate)})
-          </ExportLoadingMessage>
-        )}
-      </ExportButtonWrapper>
-
+      <Header />
       <ContentWrapper>
+        <ExportButtonWrapper>
+          <ExcelButton
+            onClick={handleExcelExportClick}
+            disabled={isExporting}
+          />
+          {isExporting && (
+            <ExportLoadingMessage>
+              엑셀 파일을 준비 중입니다... (
+              {getExportingPeriodMessage(exportingDate)})
+            </ExportLoadingMessage>
+          )}
+        </ExportButtonWrapper>
         {isLoading && (
           <LoadingOverlay>
             <LoadingBox>
@@ -165,13 +166,10 @@ const UserVisitList = () => {
             </LoadingBox>
           </LoadingOverlay>
         )}
-
         {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
-
         {!isLoading && !error && visits.length === 0 && (
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
-
         {visits.map((visit) => {
           if (!visit) return null;
 
@@ -187,9 +185,7 @@ const UserVisitList = () => {
             />
           );
         })}
-
         {hasNextPage && <ObserverTarget ref={observerTarget} />}
-
         {isFetchingNextPage && (
           <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
         )}
@@ -216,23 +212,30 @@ const UserVisitList = () => {
 export default UserVisitList;
 
 const Container = styled.div`
-  padding-top: 8.125rem;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const ContentWrapper = styled.div`
-  margin: 0 auto;
-  padding-bottom: 3.125rem;
-  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 3.5rem 3.75rem;
+  gap: 1.25rem;
+  box-sizing: border-box;
 `;
 
 const ExportButtonWrapper = styled.div`
-  position: fixed;
-  top: 2rem;
-  right: 16%;
-  z-index: 1000;
+  width: 100%;
+  max-width: 80rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  margin-bottom: 0.5rem;
 `;
 
 const ExportLoadingMessage = styled.p`

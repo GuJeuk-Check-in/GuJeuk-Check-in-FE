@@ -13,7 +13,13 @@ export const HeaderButton = ({ children, onClick }: HeaderButtonProps) => {
 const Button = styled.button`
   border: none;
   background: none;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 400;
   color: #565656;
   cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #000000;
+  }
 `;

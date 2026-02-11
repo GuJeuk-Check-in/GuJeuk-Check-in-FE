@@ -44,7 +44,11 @@ const UserDetail = () => {
 export default UserDetail;
 
 const Container = styled.div`
-  padding-top: 8.125rem;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  padding: 3.5rem 0;
+  box-sizing: border-box;
 `;
 
 const ContentWrapper = styled.div`

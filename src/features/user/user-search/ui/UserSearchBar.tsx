@@ -54,14 +54,15 @@ const SearchIconWrapper = styled.div`
 
 const SearchInput = styled.input`
   width: 100%;
-  height: 3.5rem;
-  padding: 0 2.5rem 0 3rem;
-  border: 0.0625rem solid #404040;
-  border-radius: 0.5rem;
+  height: 3.75rem;
+  padding: 0 0 0 3rem;
+  border-radius: 16px;
   font-size: 1.125rem;
   color: #2e2e32;
   background-color: #fff;
   box-sizing: border-box;
+  border: none;
+  box-shadow: 0 6px 10px rgb(0 0 0 0 0.08);
 
   &::placeholder {
     color: #999;

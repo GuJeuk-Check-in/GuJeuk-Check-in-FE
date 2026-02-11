@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { useState } from 'react';
-import React from 'react';
 
 interface UserFilterProps {
   selectedLocation: string;
@@ -45,7 +45,7 @@ const UserFilter = ({
       <DropdownWrapper>
         <LocationHeader onClick={toggleDropdown}>
           {selectedLocation}
-          <DropdownIcon isOpen={isOpen} />
+          {isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
         </LocationHeader>
 
         {isOpen && (
@@ -68,19 +68,12 @@ const UserFilter = ({
 
 export default UserFilter;
 
-interface DropdownIconProps {
-  isOpen: boolean;
-}
-
 const Container = styled.div`
-  width: 100%;
   display: flex;
   align-items: center;
   position: relative;
   justify-content: flex-end;
   box-sizing: border-box;
-  padding: 0.625rem 0;
-  margin-right: 15.2%;
   z-index: 100;
 `;
 
@@ -90,10 +83,9 @@ const DropdownWrapper = styled.div`
 `;
 
 const LocationHeader = styled.div`
-  width: 100%;
-  height: 3.5rem;
-  border: 0.0625rem solid #404040;
-  border-radius: 0.5rem;
+  width: 70%;
+  height: 3.75rem;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,28 +96,17 @@ const LocationHeader = styled.div`
   background-color: #fff;
 `;
 
-const DropdownIcon = styled.div<DropdownIconProps>`
-  width: 0;
-  height: 0;
-  border-left: 0.375rem solid transparent;
-  border-right: 0.375rem solid transparent;
-  border-top: ${({ isOpen }) => (isOpen ? 'none' : '0.375rem solid #2e2e32')};
-  border-bottom: ${({ isOpen }) =>
-    isOpen ? '0.375rem solid #2e2e32' : 'none'};
-`;
-
 const LocationList = styled.div`
   position: absolute;
-  top: 3.75rem;
-  width: 100%;
+  top: 4rem;
+  width: 84%;
   max-height: 13.75rem;
   overflow-y: auto;
   background-color: #ffffff;
   border: 0.0625rem solid #404040;
-  border-radius: 0.5rem;
+  border-radius: 12px;
   box-shadow: 0 0.375rem 0.625rem rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  width: calc(100% + 2rem);
 `;
 
 const LocationItem = styled.div<{ isSelected: boolean }>`
