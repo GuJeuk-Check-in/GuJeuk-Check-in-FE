@@ -40,7 +40,9 @@ const ToggleSelect = ({
       {label && <Label>{label}</Label>}
       <Box onClick={handleToggle} isDisable={disable}>
         <SelectedValue>{value || placeholder || `${label} 선택`}</SelectedValue>
-        <ArrowIcon>{open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}</ArrowIcon>
+        <ArrowIcon>
+          {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+        </ArrowIcon>
       </Box>
 
       {open && !disable && (
