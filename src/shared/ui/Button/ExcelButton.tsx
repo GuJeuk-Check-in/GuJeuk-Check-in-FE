@@ -29,16 +29,18 @@ const ButtonContainer = styled.button`
   color: #333333;
   font-size: 1.1rem;
   font-weight: 600;
-  transition: background-color 0.2s, box-shadow 0.2s;
   position: relative;
   top: 0.5rem;
   white-space: normal;
   text-align: center;
   min-width: 120px;
+  min-height: 54px;
+  transition: all 0.2s ease;
 
   &:hover {
     background-color: #f0f0f0;
     box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.1rem);
   }
 
   &:disabled {
@@ -49,4 +51,8 @@ const ButtonContainer = styled.button`
   }
 `;
 
-const ButtonText = styled.span``;
+const ButtonText = styled.span`
+  color: #565656;
+  font-size: 1.1rem;
+  font-weight: 600;
+`;

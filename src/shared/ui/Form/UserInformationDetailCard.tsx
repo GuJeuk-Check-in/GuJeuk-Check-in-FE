@@ -265,8 +265,8 @@ const UserInformationDetailCard = ({
 export default UserInformationDetailCard;
 
 const Container = styled.div`
-  width: 90%;
-  max-width: 59.375rem;
+  width: 100%;
+  max-width: 80rem;
   margin: 2.5rem auto;
   background-color: #ffffff;
   border-radius: 1.25rem;

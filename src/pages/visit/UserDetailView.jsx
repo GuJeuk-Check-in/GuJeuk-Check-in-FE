@@ -404,13 +404,17 @@ const UserDetailView = () => {
 export default UserDetailView;
 
 const Container = styled.div`
-  padding-top: 6.375rem;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  padding: 3.5rem 0;
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
   width: 90%;
-  max-width: 59.375rem;
-  margin: 2.5rem auto;
+  max-width: 60rem;
+  margin: 0 auto;
   background-color: #ffffff;
   border-radius: 1.25rem;
   padding: 2.5rem;

@@ -83,7 +83,7 @@ export const UserListWithSearch = ({
   }
 
   return (
-    <Wrapper>
+    <ContentWrapper>
       <FilterWrapper>
         <InfoSection>
           <TotalCountText>
@@ -143,23 +143,16 @@ export const UserListWithSearch = ({
           <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
         )}
       </UserListContainer>
-    </Wrapper>
+    </ContentWrapper>
   );
 };
-const Wrapper = styled.div`
-  width: 75%;
-  margin: 0 auto;
-  padding: 40px 0;
-  min-width: 800px;
-`;
 
-const FilterWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  flex-direction: column;
   width: 100%;
+  box-sizing: border-box;
+  gap: 36px;
 `;
 
 const UserListContainer = styled.div`
@@ -169,16 +162,26 @@ const UserListContainer = styled.div`
   width: 100%;
 `;
 
+const FilterWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  width: 100%;
+`;
+
 const InfoSection = styled.div``;
+
 const ControlSection = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 16px;
   align-items: center;
+  margin-left: auto;
 `;
 
 const TotalCountText = styled.p`
   color: #ffffff;
-  font-size: 20px;
+  font-size: 24px;
   margin: 0;
 `;
 
@@ -208,8 +211,9 @@ const ErrorText = styled.p`
 const EmptyText = styled.p`
   grid-column: 1 / -1;
   text-align: center;
-  color: #888;
+  color: #eee;
   padding: 50px 0;
+  font-size: 1.1rem;
 `;
 
 const InfoMessage = styled.p`

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
 
 interface UserInformationCardProps {
   id: number;
@@ -31,6 +30,9 @@ const UserInformationCard = ({
   const navigate = useNavigate();
   const displayCount = count !== null && count !== undefined ? count : 0;
 
+  const handleCardClick = () => {
+    navigate(`/user/${id}`);
+  };
   return (
     <Container>
       <LeftSection>
@@ -66,20 +68,25 @@ const UserInformationCard = ({
 export default UserInformationCard;
 
 const Container = styled.div`
-  position: relative;
+  width: 100%;
+  max-width: 80rem;
   background-color: #ffffff;
-  border: 0.0625rem solid #6f95c4;
+  border: 1px solid #6f95c4;
   border-radius: 2.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 2rem;
-  width: 100%;
   box-sizing: border-box;
-  height: 10rem;
-  margin: 0;
+  min-height: 10rem;
+  margin: 0 auto;
   cursor: pointer;
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s ease;
+  }
 `;
 
 const LeftSection = styled.div`

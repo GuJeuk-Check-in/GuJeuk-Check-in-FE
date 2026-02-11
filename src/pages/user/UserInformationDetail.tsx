@@ -185,15 +185,19 @@ const UserInformationDetail = () => {
 export default UserInformationDetail;
 
 const Container = styled.div`
-  padding-top: 6.375rem;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  padding: 3.5rem 0;
+  box-sizing: border-box;
 `;
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 90%;
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding-bottom: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
 `;
 
 const LoadingText = styled.p`

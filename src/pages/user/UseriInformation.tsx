@@ -7,7 +7,7 @@ const UserInformation = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title="회원 목록 조회" />
+      <Header />
       <ContentWrapper>
         <UserListWithSearch totalCountText="총" />
       </ContentWrapper>
@@ -18,10 +18,19 @@ const UserInformation = () => {
 export default UserInformation;
 
 const Container = styled.div`
-  padding-top: 12.04vh;
+  margin-left: 20rem;
+  width: calc(100% - 20rem);
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const ContentWrapper = styled.div`
-  min-height: calc(100vh - 12.04vh);
-  padding-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 3.5rem 3.75rem;
+  gap: 1.25rem;
+  box-sizing: border-box;
 `;
