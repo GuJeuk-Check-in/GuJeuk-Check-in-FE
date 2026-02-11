@@ -4,12 +4,7 @@ import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
-interface HeaderProps {
-  title: string;
-  children?: ReactNode;
-}
-
-export const Header = ({ title, children }: HeaderProps) => {
+export const Header = () => {
   const navigate = useNavigate();
 
   return (
@@ -23,23 +18,16 @@ export const Header = ({ title, children }: HeaderProps) => {
         <HeaderButton onClick={() => navigate('/log')}>
           시설 이용 목록 조회
         </HeaderButton>
-        <Diver />
         <HeaderButton onClick={() => navigate('/log/create')}>
           시설 이용 기록 추가
         </HeaderButton>
-        <Diver />
         <HeaderButton onClick={() => navigate('/purpose/all')}>
           방문 목적 커스텀
         </HeaderButton>
-        <Diver />
         <HeaderButton onClick={() => navigate('/admin/user/all')}>
           회원 목록 조회
         </HeaderButton>
       </ButtonWrapper>
-      <RightGroup>
-        {children}
-        <Title>{title}</Title>
-      </RightGroup>
     </Container>
   );
 };
@@ -47,57 +35,39 @@ export const Header = ({ title, children }: HeaderProps) => {
 const Container = styled.div`
   background-color: #ffffff;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  width: 100%;
-  height: 8.125rem;
+  width: 20%;
+  height: 100%;
   box-sizing: border-box;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  padding-right: 1.25rem;
+  box-sizing: border-box;
+  padding: 2rem 0;
 `;
 
 const LogoImage = styled.img`
   width: 15rem;
   height: auto;
   object-fit: contain;
-  margin-left: 1.875rem;
+  margin-left: 1rem;
   margin-right: 1rem;
+  margin-bottom: 3rem;
   cursor: pointer;
   flex-shrink: 0;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
   flex: 1;
   min-width: 0;
-  margin-right: 1rem;
   flex-wrap: wrap;
   overflow: hidden;
-`;
-
-const RightGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: auto;
-  flex-shrink: 0;
-`;
-
-const Title = styled.h1`
-  font-size: 1.625rem;
-  font-weight: 600;
-  color: #393939;
-  white-space: nowrap;
-  margin-left: 0.5rem;
-`;
-
-const Diver = styled.div`
-  width: 0.09375rem;
-  height: 1.25rem;
-  background-color: #aaa;
-  flex-shrink: 0;
+  font-size: 28px;
+  margin-right: 1.25rem;
 `;
