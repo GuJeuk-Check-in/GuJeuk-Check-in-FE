@@ -77,7 +77,7 @@ const LoginContentGroup = styled.div`
 `;
 
 const ErrorMessage = styled.p<{ visible: boolean }>`
-  color: #ff5a5a;
+  color: #d88282;
   font-size: 1rem;
   width: 100%;
   max-width: 28.375rem;

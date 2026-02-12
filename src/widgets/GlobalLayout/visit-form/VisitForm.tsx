@@ -301,7 +301,7 @@ const CountVisiorWrapper = styled.div`
 `;
 
 const ErrorMessage = styled.div`
-  color: #d32f2f;
+  color: #d88282;
   font-size: 0.875rem;
   margin-top: -0.625rem;
   text-align: center;

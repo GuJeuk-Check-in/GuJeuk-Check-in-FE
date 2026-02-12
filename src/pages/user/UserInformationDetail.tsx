@@ -208,6 +208,6 @@ const LoadingText = styled.p`
 `;
 
 const ErrorText = styled(LoadingText)`
-  color: #ff5a5a;
+  color: #d88282;
   font-weight: bold;
 `;

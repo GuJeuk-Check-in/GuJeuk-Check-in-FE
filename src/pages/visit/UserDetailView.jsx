@@ -452,7 +452,7 @@ const LoadingText = styled.p`
 `;
 
 const ErrorText = styled(LoadingText)`
-  color: #ff007b;
+  color: #d88282;
   font-weight: bold;
 `;
 

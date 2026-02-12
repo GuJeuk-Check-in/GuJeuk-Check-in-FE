@@ -275,7 +275,7 @@ const LoadingBox = styled.div`
 `;
 
 const ErrorMessage = styled.p`
-  color: red;
+  color: D88282;
   text-align: center;
   margin-top: 2rem;
 `;
