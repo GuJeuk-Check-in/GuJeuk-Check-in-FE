@@ -7,6 +7,7 @@ import UserDetailView from '@pages/visit/UserDetailView';
 import UserInformation from '@pages/user/UseriInformation';
 import PurposeCustom from '@pages/purpose/PurposeCustom';
 import UserInformationDetail from '@pages/user/UserInformationDetail';
+import { ResidenceCustom } from '@pages/residence/ResidenceCustom';
 
 export const Router = () => {
   return (
@@ -19,6 +20,7 @@ export const Router = () => {
       <Route path="/admin/user/all" element={<UserInformation />} />
       <Route path="/admin/user/:userId" element={<UserInformationDetail />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
+      <Route path="/residence" element={<ResidenceCustom />} />
     </Routes>
-  );  
+  );
 };
