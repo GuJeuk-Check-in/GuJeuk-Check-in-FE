@@ -62,7 +62,7 @@ const ModalContent = styled.div<{ $theme?: string }>`
   border-radius: 1.875rem;
   background-color: white;
   padding: 2rem;
-  width: 90%;
+  width: 100%;
   max-width: 24rem;
   text-align: center;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);

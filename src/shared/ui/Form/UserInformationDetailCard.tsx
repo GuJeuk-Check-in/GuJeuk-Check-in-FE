@@ -267,13 +267,13 @@ export default UserInformationDetailCard;
 const Container = styled.div`
   width: 100%;
   max-width: 80rem;
-  margin: 2.5rem auto;
   background-color: #ffffff;
   border-radius: 1.25rem;
   padding: 2rem;
   box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  margin-right: 5rem;
   gap: 1rem;
 `;
 

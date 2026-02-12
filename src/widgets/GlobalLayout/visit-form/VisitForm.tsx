@@ -223,8 +223,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 export default VisitForm;
 
 const Container = styled.div`
-  width: 90%;
+  width: 100%;
   max-width: 59.375rem;
+  margin-right: 4rem;
   height: auto;
   background-color: #ffffff;
   border-radius: 1.25rem;

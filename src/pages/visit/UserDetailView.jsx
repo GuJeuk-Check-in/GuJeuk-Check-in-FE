@@ -412,7 +412,7 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  width: 90%;
+  width: 100%;
   max-width: 60rem;
   margin: 0 auto;
   background-color: #ffffff;

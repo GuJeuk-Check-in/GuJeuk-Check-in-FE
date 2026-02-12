@@ -44,8 +44,8 @@ const UserDetail = () => {
 export default UserDetail;
 
 const Container = styled.div`
-  margin-left: 20rem;
-  width: calc(100% - 20rem);
+  margin-left: 24rem;
+  width: calc(100% - 24rem);
   min-height: 100vh;
   padding: 3.5rem 0;
   box-sizing: border-box;
