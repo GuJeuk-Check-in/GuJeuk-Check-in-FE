@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -14,7 +13,7 @@ import {
 } from '@features/purpose/index';
 
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
-import { Modal } from '../../../shared/ui/modal/Modal';
+import { Modal } from '@shared/ui/modal/Modal';
 
 export const PurposeBoard = () => {
   const {
