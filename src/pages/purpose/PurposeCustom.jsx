@@ -11,7 +11,7 @@ const PurposeCustom = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title="방문 목적 커스텀" />
+      <Header />
       <PurposeBoard openModal={openModal} closeModal={closeModal} />
       <Modal isOpen={isOpen} config={config} onClose={closeModal} />
     </Container>
