@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import { HeaderButton } from '@shared/ui/Button/index';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -26,6 +25,9 @@ export const Header = () => {
         </HeaderButton>
         <HeaderButton onClick={() => navigate('/admin/user/all')}>
           회원 목록 조회
+        </HeaderButton>
+        <HeaderButton onClick={() => navigate('/residence')}>
+          거주지 커스텀
         </HeaderButton>
       </ButtonWrapper>
     </Container>
