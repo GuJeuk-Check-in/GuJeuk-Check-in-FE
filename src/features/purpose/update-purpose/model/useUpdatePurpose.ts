@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updatePurpose } from '@entities/purpose/api/purpose.api';
 import { AxiosError } from 'axios';
 import { UpdatePurposeRequest } from '@entities/purpose/model/types';
-import usePurposeStore from '@entities/purpose/model/purposeStore';
+import { usePurposeStore } from '@entities/purpose/index';
 
 export const useUpdatePurpose = () => {
   const queryClient = useQueryClient();
@@ -14,7 +14,10 @@ export const useUpdatePurpose = () => {
     UpdatePurposeRequest
   >({
     mutationFn: (variables) => {
-      return updatePurpose(variables.id, { purpose: variables.purpose });
+      return updatePurpose(variables.id, {
+        id: variables.id,
+        purpose: variables.purpose,
+      });
     },
     onSuccess: (_, variables) => {
       updateLocalPurpose(variables.id, variables.purpose);
