@@ -6,6 +6,7 @@ interface RightLayoutProps {
   title?: string;
   children?: React.ReactNode;
   buttonContent?: string;
+  backgroundColor?: "#FFFFFF" | "#0F50A0";
   onClick?: () => void;
 }
 
@@ -13,10 +14,11 @@ export const RightLayout = ({
   title,
   children,
   buttonContent,
+  backgroundColor,
   onClick,
 }: RightLayoutProps) => {
   return (
-    <Container>
+    <Container backgroundColor={backgroundColor}>
       {title && <Title>{title}</Title>}
       <ContentWrapper>{children}</ContentWrapper>
       {buttonContent && (
@@ -28,18 +30,18 @@ export const RightLayout = ({
   );
 };
 
-const Container = styled.div`
-  background-color: #0f50a0;
-  width: 35.89vw;
-  height: 74.63vh;
-  border-radius: 0 20px 20px 0;
-  padding: 40px 30px;
+const Container = styled.div<Pick<RightLayoutProps, "backgroundColor">>`
+  background-color: ${({ backgroundColor }) => backgroundColor ?? "#FFFFFF"};
+  width: 37.5vw;
+  height: 74.44vh;
+  border-radius: 20px;
+  padding: 40px 154px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 40px;
   box-shadow: 0 6px 10px rgb(207, 220, 235);
 
   @media (max-width: 1024px) {
@@ -83,7 +85,7 @@ const Title = styled.p`
 const ContentWrapper = styled.div`
   width: 100%;
   max-height: 60vh;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
