@@ -1,5 +1,4 @@
 import { PasswordBackground } from '@shared/ui/Background/index';
-import { LeftLayout } from '@widgets/authLayout/index';
 import { RightLayout } from '@widgets/authLayout/index';
 import styled from '@emotion/styled';
 import { UpdatePasswordForm } from '@features/auth/update-password/ui/UpdatePasswordForm';
@@ -9,8 +8,7 @@ const UpdatePassword = () => {
     <>
       <PasswordBackground />
       <MainWrapper>
-        <LeftLayout />
-        <RightLayout title="관리자 비밀번호 변경">
+        <RightLayout title="관리자 비밀번호 변경" backgroundColor="#0F50A0" color="#FFFFFF" spacer={40}>
           <UpdatePasswordForm />
         </RightLayout>
       </MainWrapper>

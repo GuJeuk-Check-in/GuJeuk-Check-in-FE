@@ -87,7 +87,7 @@ const ErrorMessage = styled.p<{ visible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
-  margin-top: 10px;
+  margin-top: 100px;
   margin-bottom: 10px;
 `;
 
@@ -99,9 +99,9 @@ const LinkButton = styled.button`
   cursor: pointer;
   padding: 5px;
   margin-top: 5px;
+  text-decoration: underline;
 
   &:hover {
-    text-decoration: underline;
     color: #bee8ff;
   }
 `;

@@ -91,7 +91,7 @@ const Input = styled.input`
   width: 100%;
   height: 4.5rem;
   border-radius: 2.2rem;
-  border: none;
+  border: 1px solid rgba(15, 80, 160, 0.6);
   color: #000000;
   font-size: 1.25rem;
   padding: 0.75rem 2.8125rem 0.75rem 4.375rem;
