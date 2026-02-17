@@ -15,7 +15,7 @@ interface ResidenceProps {
   isDeleting: boolean;
 }
 
-const PurposeCard = ({
+export const ResidenceCard = ({
   residence,
   onDelete,
   onUpdate,
@@ -120,8 +120,6 @@ const PurposeCard = ({
     </Container>
   );
 };
-
-export default PurposeCard;
 
 interface ContainerProps {
   isDisabled: boolean;
