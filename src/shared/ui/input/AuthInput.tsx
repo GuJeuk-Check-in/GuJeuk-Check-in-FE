@@ -1,4 +1,6 @@
 import { useId, useState } from 'react';
+import eye_visible from "../../../assets/eye-visible.png"
+import eye_hidden from "../../../assets/eye-hidden.png"
 import { FaEyeSlash } from 'react-icons/fa';
 import { IoEyeSharp } from 'react-icons/io5';
 import { IoMdLock } from 'react-icons/io';
@@ -49,7 +51,7 @@ export const AuthInput = ({
         />
         {type === 'password' && (
           <IconButton type="button" onClick={() => setShowPW(!showPW)}>
-            {showPW ? <IoEyeSharp /> : <FaEyeSlash />}
+            {showPW ? <img src={eye_visible} /> : <img src={eye_hidden} />}
           </IconButton>
         )}
       </InputWrapper>
