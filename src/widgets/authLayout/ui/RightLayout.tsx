@@ -48,9 +48,25 @@ const Container = styled.div<Pick<RightLayoutProps, "backgroundColor" | "spacer"
   gap: ${({ spacer }) => spacer ?? 80}px;
   box-shadow: 0 6px 10px rgb(207, 220, 235);
 
+  @media (max-width: 1800px) {
+    padding: 40px 100px;
+  }
+
+
+  @media (max-width: 1600px) {
+    width: 40%;
+    padding: 40px 75px;
+  }
+
+  @media (max-width: 1300px) {
+    width: 45%;
+    padding: 40px 50px;
+  }
+
   @media (max-width: 1024px) {
     width: 50%;
     height: 60vh;
+    padding: 40px 50px;
   }
 
   @media (max-width: 768px) {
@@ -68,6 +84,7 @@ const Container = styled.div<Pick<RightLayoutProps, "backgroundColor" | "spacer"
 `;
 
 const Title = styled.p<Pick<RightLayoutProps, "color">>`
+  white-space: nowrap;
   font-size: 2.5rem;
   font-weight: 300;
   color: ${({ color }) => color ?? "#000000"};
@@ -95,9 +112,14 @@ const ContentWrapper = styled.div`
   align-items: center;
   gap: 15px;
 
+  @media (max-width: 1800px) {
+    max-height: none;
+    overflow-y: auto;
+  }
+
   @media (max-width: 768px) {
     max-height: none;
-    overflow-y: visible;
+    overflow-y: auto;
   }
 `;
 
