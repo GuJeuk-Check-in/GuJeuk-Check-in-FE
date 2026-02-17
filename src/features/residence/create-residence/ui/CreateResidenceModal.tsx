@@ -4,7 +4,7 @@ import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useCreateResidence } from '../model/useCreateResidence';
 
-export const ResidenceAddBox = () => {
+export const CreateResidenceModal = () => {
   const { mutate: createMutate, isPending } = useCreateResidence();
   const { isOpen, config, openModal, closeModal } = useModal();
 
