@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { UseBackground } from '@shared/ui/Background';
 import { Header } from '@widgets/GlobalLayout/index';
-import { PurposeBoard } from '@widgets/purpose/ui/PurposeBoard';
+import { ResidenceBoard } from '@widgets/residence/ui/ResidenceBoard';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '@shared/ui/modal/Modal';
 
@@ -12,7 +12,7 @@ export const ResidenceCustom = () => {
     <Container>
       <UseBackground />
       <Header />
-      <PurposeBoard openModal={openModal} closeModal={closeModal} />
+      <ResidenceBoard openModal={openModal} closeModal={closeModal} />
       <Modal isOpen={isOpen} config={config} onClose={closeModal} />
     </Container>
   );
