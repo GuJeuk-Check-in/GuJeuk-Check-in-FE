@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
-import { LeftLayout } from './LeftLayout';
 import { RightLayout } from './RightLayout';
 
 export const MainLayout = () => {
   return (
     <LayoutWrapper>
-      <LeftLayout />
       <RightLayout />
     </LayoutWrapper>
   );

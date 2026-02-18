@@ -151,7 +151,7 @@ export const UpdatePasswordForm = () => {
       <ButtonWrapper>
         {/* 📌 [수정 2] disabled -> disable 로 변경 */}
         <PasswordButton
-          content={isPending ? '변경 중...' : '변경'}
+          content={isPending ? '확인 중...' : '확인'}
           onClick={handleConfirm}
           disable={isPending}
         />
@@ -165,7 +165,7 @@ export const UpdatePasswordForm = () => {
 };
 
 const FormContainer = styled.div`
-  width: 100%;
+  width: 99%;
   display: flex;
   flex-direction: column;
   align-items: center;

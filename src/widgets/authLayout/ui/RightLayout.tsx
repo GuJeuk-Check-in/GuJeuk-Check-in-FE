@@ -6,6 +6,7 @@ interface RightLayoutProps {
   title?: string;
   children?: React.ReactNode;
   buttonContent?: string;
+  spacer?: 40 | 80;
   onClick?: () => void;
 }
 
@@ -13,10 +14,11 @@ export const RightLayout = ({
   title,
   children,
   buttonContent,
+  spacer,
   onClick,
 }: RightLayoutProps) => {
   return (
-    <Container>
+    <Container spacer={spacer}>
       {title && <Title>{title}</Title>}
       <ContentWrapper>{children}</ContentWrapper>
       {buttonContent && (
@@ -28,23 +30,39 @@ export const RightLayout = ({
   );
 };
 
-const Container = styled.div`
-  background-color: #0f50a0;
-  width: 35.89vw;
-  height: 74.63vh;
-  border-radius: 0 20px 20px 0;
-  padding: 40px 30px;
+const Container = styled.div<Pick<RightLayoutProps, "spacer">>`
+  background-color: #0F50A0;
+  width: 37.5vw;
+  height: 74.44vh;
+  border-radius: 20px;
+  padding: 40px 154px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: ${({ spacer }) => spacer ?? 80}px;
   box-shadow: 0 6px 10px rgb(207, 220, 235);
+
+  @media (max-width: 1800px) {
+    padding: 40px 100px;
+  }
+
+
+  @media (max-width: 1600px) {
+    width: 40%;
+    padding: 40px 75px;
+  }
+
+  @media (max-width: 1300px) {
+    width: 45%;
+    padding: 40px 50px;
+  }
 
   @media (max-width: 1024px) {
     width: 50%;
     height: 60vh;
+    padding: 40px 50px;
   }
 
   @media (max-width: 768px) {
@@ -62,9 +80,10 @@ const Container = styled.div`
 `;
 
 const Title = styled.p`
+  white-space: nowrap;
   font-size: 2.5rem;
   font-weight: 300;
-  color: #ffffff;
+  color: #FFFFFF;
   font-family: 'Jua', sans-serif;
   text-align: center;
   margin: 0;
@@ -83,15 +102,20 @@ const Title = styled.p`
 const ContentWrapper = styled.div`
   width: 100%;
   max-height: 60vh;
-  overflow-y: auto;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
 
+  @media (max-width: 1800px) {
+    max-height: none;
+    overflow-y: auto;
+  }
+
   @media (max-width: 768px) {
     max-height: none;
-    overflow-y: visible;
+    overflow-y: auto;
   }
 `;
 
