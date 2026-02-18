@@ -25,13 +25,3 @@ const Container = styled.div`
   box-sizing: border-box;
   position: relative;
 `;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 3.5rem 3.75rem;
-  gap: 1.25rem;
-  box-sizing: border-box;
-`;
