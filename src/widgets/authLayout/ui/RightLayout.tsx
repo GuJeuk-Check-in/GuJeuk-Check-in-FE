@@ -6,8 +6,6 @@ interface RightLayoutProps {
   title?: string;
   children?: React.ReactNode;
   buttonContent?: string;
-  color?: "#FFFFFF" | "#000000";
-  backgroundColor?: "#FFFFFF" | "#0F50A0";
   spacer?: 40 | 80;
   onClick?: () => void;
 }
@@ -16,14 +14,12 @@ export const RightLayout = ({
   title,
   children,
   buttonContent,
-  color,
-  backgroundColor,
   spacer,
   onClick,
 }: RightLayoutProps) => {
   return (
-    <Container backgroundColor={backgroundColor} spacer={spacer}>
-      {title && <Title color={color}>{title}</Title>}
+    <Container spacer={spacer}>
+      {title && <Title>{title}</Title>}
       <ContentWrapper>{children}</ContentWrapper>
       {buttonContent && (
         <ButtonFixer>
@@ -34,8 +30,8 @@ export const RightLayout = ({
   );
 };
 
-const Container = styled.div<Pick<RightLayoutProps, "backgroundColor" | "spacer">>`
-  background-color: ${({ backgroundColor }) => backgroundColor ?? "#FFFFFF"};
+const Container = styled.div<Pick<RightLayoutProps, "spacer">>`
+  background-color: #0F50A0;
   width: 37.5vw;
   height: 74.44vh;
   border-radius: 20px;
@@ -83,11 +79,11 @@ const Container = styled.div<Pick<RightLayoutProps, "backgroundColor" | "spacer"
   }
 `;
 
-const Title = styled.p<Pick<RightLayoutProps, "color">>`
+const Title = styled.p`
   white-space: nowrap;
   font-size: 2.5rem;
   font-weight: 300;
-  color: ${({ color }) => color ?? "#000000"};
+  color: #FFFFFF;
   font-family: 'Jua', sans-serif;
   text-align: center;
   margin: 0;

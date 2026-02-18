@@ -8,7 +8,7 @@ const UpdatePassword = () => {
     <>
       <PasswordBackground />
       <MainWrapper>
-        <RightLayout title="관리자 비밀번호 변경" backgroundColor="#0F50A0" color="#FFFFFF" spacer={40}>
+        <RightLayout title="관리자 비밀번호 변경" spacer={40}>
           <UpdatePasswordForm />
         </RightLayout>
       </MainWrapper>

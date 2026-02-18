@@ -8,7 +8,7 @@ const EnterPassword = () => {
     <>
       <PasswordBackground />
       <MainWrapper>
-        <RightLayout title="관리자 비밀번호 입력" backgroundColor="#FFFFFF" color="#000000" spacer={80}>
+        <RightLayout title="관리자 비밀번호 입력" spacer={80}>
           <LoginForm />
         </RightLayout>
       </MainWrapper>
