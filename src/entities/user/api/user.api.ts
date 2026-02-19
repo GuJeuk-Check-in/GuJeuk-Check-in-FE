@@ -3,7 +3,7 @@ import { UserListResponse, UserInformation } from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(
-    '/admin/user/all',
+    '/organ/user/all',
     {
       params: { page },
     }
@@ -14,14 +14,14 @@ export const userList = async (page = 0): Promise<UserListResponse> => {
 export const fetchUserInformation = async (
   userId: string
 ): Promise<UserInformation> => {
-  const response = await axiosInstance.get(`/admin/user/${userId}`);
+  const response = await axiosInstance.get(`/organ/user/${userId}`);
   return response.data;
 };
 
 export const updateUserInformation = async (
   data: UserInformation
 ): Promise<UserInformation> => {
-  const response = await axiosInstance.patch(`/admin/user/${data.id}`, data);
+  const response = await axiosInstance.patch(`/organ/user/${data.id}`, data);
   return response.data;
 };
 

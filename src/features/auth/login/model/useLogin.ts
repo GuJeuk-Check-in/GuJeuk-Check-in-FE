@@ -3,18 +3,23 @@ import { AxiosError } from 'axios';
 import {
   enterPassword,
   useAuthStore,
-  type EnterPasswordResponse,
+  type OrganLoginResponse,
 } from '@entities/auth';
 
 export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation<
-    EnterPasswordResponse,
+    OrganLoginResponse,
     AxiosError<{ message?: string }>,
-    { password: string }
+    { organName: string; password: string }
   >({
-    mutationFn: enterPassword,
+    mutationFn: ({ organName, password }) =>
+      enterPassword({
+        organName,
+        password,
+        client: 'ADMIN_VIEW',
+      }),
 
     onSuccess: ({ accessToken, refreshToken }) => {
       if (accessToken && refreshToken) {
