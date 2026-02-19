@@ -9,7 +9,7 @@ export interface UpdateResidenceRequest {
 
 export interface ResidenceResponse {
   id: number;
-  residenceName: string;
+  residence: string;
 }
 
 export type UpdateResidenceMovementRequest = {
