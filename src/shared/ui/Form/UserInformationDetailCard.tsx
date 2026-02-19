@@ -153,7 +153,7 @@ const UserInformationDetailCard = ({
   return (
     <Container>
       <CardHeader>
-        <BackButton onClick={() => navigate('/admin/user/all')}>
+        <BackButton onClick={() => navigate('/organ/user/all')}>
           <FaArrowLeft size={20} />
         </BackButton>
       </CardHeader>

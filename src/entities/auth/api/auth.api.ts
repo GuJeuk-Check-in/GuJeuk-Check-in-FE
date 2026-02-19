@@ -1,14 +1,14 @@
 import axiosInstance from '@shared/api/axiosInstance';
 import {
-  EnterPasswordRequest,
-  EnterPasswordResponse,
+  OrganLoginRequest,
+  OrganLoginResponse,
   UpdatePasswordRequest,
   UpdatePasswordResponse,
 } from '../model/types';
 
-export const enterPassword = async (payload: EnterPasswordRequest) => {
-  const response = await axiosInstance.post<EnterPasswordResponse>(
-    '/admin/login',
+export const enterPassword = async (payload: OrganLoginRequest) => {
+  const response = await axiosInstance.post<OrganLoginResponse>(
+    '/organ/login',
     payload
   );
   return response.data;
@@ -17,6 +17,6 @@ export const enterPassword = async (payload: EnterPasswordRequest) => {
 export const updatePassword = async (
   payload: UpdatePasswordRequest
 ): Promise<UpdatePasswordResponse> => {
-  const response = await axiosInstance.patch('/admin/change', payload);
+  const response = await axiosInstance.patch('/organ/change', payload);
   return response.data;
 };

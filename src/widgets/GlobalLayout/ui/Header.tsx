@@ -23,7 +23,7 @@ export const Header = () => {
         <HeaderButton onClick={() => navigate('/purpose/all')}>
           방문 목적 커스텀
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/admin/user/all')}>
+        <HeaderButton onClick={() => navigate('/organ/user/all')}>
           회원 목록 조회
         </HeaderButton>
         <HeaderButton onClick={() => navigate('/residence')}>

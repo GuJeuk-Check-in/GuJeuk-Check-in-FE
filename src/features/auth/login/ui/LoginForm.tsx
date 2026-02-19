@@ -6,21 +6,29 @@ import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
 
 export const LoginForm = () => {
+  const [organName, setOrganName] = useState('');
   const [currentPW, setCurrentPW] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [organNameError, setOrganNameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const { mutate: login, isPending } = useLogin();
 
   const handleConfirm = () => {
-    setErrorMessage('');
+    setOrganNameError('');
+    setPasswordError('');
+
+    if (organName.trim() === '') {
+      setOrganNameError('기관 이름을 입력해주세요.');
+      return;
+    }
 
     if (currentPW.trim() === '') {
-      setErrorMessage('비밀번호를 입력해주세요.');
+      setPasswordError('비밀번호를 입력해주세요.');
       return;
     }
 
     login(
-      { password: currentPW },
+      { organName, password: currentPW },
       {
         onSuccess: () => {
           navigate('/log', { replace: true });
@@ -28,7 +36,16 @@ export const LoginForm = () => {
         onError: (error) => {
           const message =
             error.response?.data?.message || error.message || '로그인 실패';
-          setErrorMessage(message);
+          if (message.includes('기관') || message.includes('organName')) {
+            setOrganNameError(message);
+          } else if (
+            message.includes('비밀번호') ||
+            message.includes('password')
+          ) {
+            setPasswordError(message);
+          } else {
+            setPasswordError(message);
+          }
         },
       }
     );
@@ -40,8 +57,22 @@ export const LoginForm = () => {
     }
   };
 
+  const errorMessage = organNameError || passwordError;
+
   return (
     <LoginContentGroup>
+      <AuthInput
+        label=""
+        placeholder="기관 이름을 입력해주세요."
+        type="text"
+        value={organName}
+        onChange={(e) => {
+          setOrganName(e.target.value);
+          setOrganNameError('');
+        }}
+        isError={!!organNameError}
+        onKeyDown={handleKeyDown}
+      />
       <AuthInput
         label=""
         placeholder="비밀번호를 입력해주세요."
@@ -49,9 +80,9 @@ export const LoginForm = () => {
         value={currentPW}
         onChange={(e) => {
           setCurrentPW(e.target.value);
-          setErrorMessage('');
+          setPasswordError('');
         }}
-        isError={!!errorMessage}
+        isError={!!passwordError}
         onKeyDown={handleKeyDown}
       />
       <ErrorMessage visible={!!errorMessage}>{errorMessage}</ErrorMessage>
@@ -61,7 +92,7 @@ export const LoginForm = () => {
           onClick={handleConfirm}
         />
       </ButtonWrapper>
-      <LinkButton onClick={() => navigate('/admin/change')}>
+      <LinkButton onClick={() => navigate('/organ/change')}>
         비밀번호 변경하기
       </LinkButton>
     </LoginContentGroup>
