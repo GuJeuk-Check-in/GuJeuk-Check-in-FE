@@ -13,6 +13,7 @@ import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
+import { useResidenceList } from '@entities/residence';
 
 interface VisitFormProps {
   onSubmit: (data: {
@@ -22,6 +23,7 @@ interface VisitFormProps {
     maleCount: number;
     femaleCount: number;
     purpose: string;
+    residence: string;
     visitDate: string;
     privacyAgreed: boolean;
   }) => Promise<void>;
@@ -54,6 +56,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const [visitTime, setVisitTime] = useState('');
 
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
+  const { data: residences, isLoading: isResidenceLoading } =
+    useResidenceList();
 
   const resetForm = () => {
     nameInput.reset();
@@ -155,26 +159,23 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
         <ToggleSelect
           label="거주지"
-          options={[
-            '구즉동',
-            '관평동',
-            '노은 1동',
-            '노은 2동',
-            '노은 3동',
-            '상대동',
-            '신성동',
-            '온천 1동',
-            '온천 2동',
-            '원신흥동',
-            '전민동',
-            '진잠동',
-            '학하동',
-            '기타지역',
-          ]}
+          options={
+            isResidenceLoading
+              ? ['불러오는 중...']
+              : residences && residences.length > 0
+              ? residences.map((r) => r.residence)
+              : ['데이터 없음']
+          }
           placeholder="거주지를 선택해주세요"
           value={residence}
           onChange={setResidence}
           icon={<FaLocationDot size={24} />}
+          disable={
+            isLoading ||
+            isResidenceLoading ||
+            !residences ||
+            residences.length === 0
+          }
         />
 
         <CountVisiorWrapper>
