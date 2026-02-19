@@ -17,7 +17,12 @@ export const ResidenceBoard = () => {
     residences || []
   );
 
-  const { mutate: updateMutate, isPending: isUpdating } = useUpdateResidence();
+  const {
+    mutate: updateMutate,
+    isPending: isUpdating,
+    variables: updatingVariable,
+  } = useUpdateResidence();
+
   const {
     mutate: deleteMutate,
     isPending: isDeleting,
@@ -73,7 +78,7 @@ export const ResidenceBoard = () => {
                 }) => handleUpdate(id, newResidence)}
                 isDeleting={
                   (isDeleting && deletingVariable === residence.id) ||
-                  isUpdating
+                  (isUpdating && updatingVariable?.id === residence.id)
                 }
               />
             </SortablePurposeItem>
