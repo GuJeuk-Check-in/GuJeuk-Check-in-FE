@@ -57,6 +57,7 @@ export const ResidenceBoard = () => {
   }
 
   return (
+    <Container>
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
@@ -87,17 +88,24 @@ export const ResidenceBoard = () => {
         <CreateResidenceModal />
       </ResidenceListGrid>
     </DndContext>
+    </Container>
   );
 };
 
-const ResidenceListGrid = styled.div`
+const Container = styled.div`
   flex: 1;
+  display: flex;
+  justify-content: center;
+`
+
+const ResidenceListGrid = styled.div`
+  width: 100%;
+  max-width: 75rem;
+  max-height: 31rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   justify-items: center;
-  width: 100%;
-  max-width: 75rem;
   padding: 2.5rem 0;
 `;
 

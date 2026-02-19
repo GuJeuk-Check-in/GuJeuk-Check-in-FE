@@ -14,8 +14,7 @@ export const ResidenceCustom = () => {
 };
 
 const Container = styled.div`
-  width: calc(100% - 20rem);
-  min-height: 100vh;
+  flex: 1;
   box-sizing: border-box;
   display: flex;
 `;
