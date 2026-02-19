@@ -61,11 +61,11 @@ This project follows **Feature-Sliced Design (FSD)** architecture with the follo
 
 ## Main Routes
 
-- `/admin/login` - Admin login
-- `/admin/change` - Change password
+- `/organ/login` - Admin login
+- `/organ/change` - Change password
 - `/log` - Visit log list
 - `/log/create` - Create new visit log
 - `/log/:logId` - View visit log detail
-- `/admin/user/all` - User list
-- `/admin/user/:userId` - User detail
+- `/organ/user/all` - User list
+- `/organ/user/:userId` - User detail
 - `/purpose/all` - Purpose customization
