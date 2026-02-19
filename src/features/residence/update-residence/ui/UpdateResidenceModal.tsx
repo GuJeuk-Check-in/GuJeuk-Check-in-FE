@@ -34,7 +34,7 @@ export const useUpdateResidenceHandler = () => {
           openModal({
             icon: <FaExclamationTriangle size={48} color="#D88282" />,
             title: '수정 실패',
-            subtitle: message || '수정 중 오류가 발생했습니다.',
+            subtitle: message,
             theme: 'warning',
             buttons: [
               {

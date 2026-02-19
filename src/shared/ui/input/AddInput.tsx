@@ -98,8 +98,7 @@ const Container = styled.div<ContainerProps>`
   margin: 0 auto 0.9375rem auto;
   transition: 0.2s ease;
   opacity: ${({ $isDisabled }) => ($isDisabled ? 0.6 : 1)};
-  cursor: ${({ $isDisabled, $isAddButton }) =>
-    $isDisabled ? 'not-allowed' : $isAddButton ? 'pointer' : 'default'};
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'none' : 'auto')};
   pointer-events: ${({ $isDisabled, $isAddButton }) =>
     $isDisabled && !$isAddButton ? 'none' : 'auto'};
 
