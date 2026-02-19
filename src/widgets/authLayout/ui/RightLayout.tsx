@@ -1,4 +1,3 @@
-import { PasswordButton } from '@shared/ui/Button/index';
 import styled from '@emotion/styled';
 import React from 'react';
 
@@ -13,19 +12,12 @@ interface RightLayoutProps {
 export const RightLayout = ({
   title,
   children,
-  buttonContent,
   spacer,
-  onClick,
 }: RightLayoutProps) => {
   return (
     <Container spacer={spacer}>
       {title && <Title>{title}</Title>}
       <ContentWrapper>{children}</ContentWrapper>
-      {buttonContent && (
-        <ButtonFixer>
-          <PasswordButton content={buttonContent} onClick={onClick} />
-        </ButtonFixer>
-      )}
     </Container>
   );
 };

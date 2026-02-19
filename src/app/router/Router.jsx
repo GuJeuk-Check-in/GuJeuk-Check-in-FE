@@ -13,7 +13,7 @@ export const Router = () => {
   return (
     <Routes>
       <Route path="/organ/login" element={<EnterPassword />}></Route>
-      <Route path="/admin/change" element={<UpdatePassword />}></Route>
+      <Route path="/organ/change" element={<UpdatePassword />}></Route>
       <Route path="/log" element={<UserVisitList />}></Route>
       <Route path="/log/create" element={<UserDetail />}></Route>
       <Route path="/log/:logId" element={<UserDetailView />} />
