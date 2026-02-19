@@ -40,7 +40,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   min-width: 20vw;
-  min-height: 100vh;
+  height: 100vh;
   box-sizing: border-box;
   top: 0;
   left: 0;

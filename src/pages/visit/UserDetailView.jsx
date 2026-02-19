@@ -407,12 +407,15 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const Wrapper = styled.div`
   width: 90%;
+  height: 100%;
   max-width: 60rem;
-  margin: 0 auto;
+  margin: 60px auto;
   background-color: #ffffff;
   border-radius: 1.25rem;
   padding: 2.5rem;
