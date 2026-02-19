@@ -129,8 +129,7 @@ interface ContainerProps {
 
 const Container = styled.div<ContainerProps>`
   width: 100%;
-  max-width: 20.625rem;
-  height: 9.375rem;
+  height: 100%;
   background-color: #ffffff;
   border-radius: 1.25rem;
   position: relative;

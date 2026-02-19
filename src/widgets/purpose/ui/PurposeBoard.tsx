@@ -47,47 +47,55 @@ export const PurposeBoard = () => {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <PurposeListGrid>
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((purpose) => (
-            <SortablePurposeItem key={purpose.id} id={purpose.id}>
-              <PurposeCard
-                purpose={purpose}
-                onDelete={handleDelete}
-                onUpdate={({
-                  id,
-                  newPurpose,
-                }: {
-                  id: number;
-                  newPurpose: string;
-                }) => handleUpdate(id, newPurpose)}
-                isDeleting={deletingId === purpose.id || isUpdating}
-              />
-            </SortablePurposeItem>
-          ))}
-        </SortableContext>
-        <PurposeAddBox />
-      </PurposeListGrid>
-      {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={() => {}} />
-      )}
-    </DndContext>
+    <Container>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <PurposeListGrid>
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            {items.map((purpose) => (
+              <SortablePurposeItem key={purpose.id} id={purpose.id}>
+                <PurposeCard
+                  purpose={purpose}
+                  onDelete={handleDelete}
+                  onUpdate={({
+                    id,
+                    newPurpose,
+                  }: {
+                    id: number;
+                    newPurpose: string;
+                  }) => handleUpdate(id, newPurpose)}
+                  isDeleting={deletingId === purpose.id || isUpdating}
+                />
+              </SortablePurposeItem>
+            ))}
+          </SortableContext>
+          <PurposeAddBox />
+        </PurposeListGrid>
+        {isOpen && config && (
+          <Modal isOpen={isOpen} config={config} onClose={() => {}} />
+        )}
+      </DndContext>
+    </Container>
   );
 };
 
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+`
+
 const PurposeListGrid = styled.div`
+  width: 100%;
+  max-width: 75rem;
+  max-height: 31rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   justify-items: center;
-  width: 100%;
-  max-width: 75rem;
-  margin: 0 auto;
   padding: 2.5rem 0;
 `;
 

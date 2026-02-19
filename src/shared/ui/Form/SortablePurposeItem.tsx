@@ -26,7 +26,7 @@ export const SortablePurposeItem = ({
     zIndex: isDragging ? 999 : 'auto',
     opacity: isDragging ? 0.8 : 1,
     width: '100%',
-    height: '9.375rem',
+    height: '100%',
   };
 
   return (
