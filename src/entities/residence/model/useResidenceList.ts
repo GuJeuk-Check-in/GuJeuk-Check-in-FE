@@ -1,12 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
-import { residenceList } from '@entities/residence/index';
-import { ResidenceResponse } from './types';
-import { AxiosError } from 'axios';
+import { residenceList } from '../index';
+import { useResidenceStore } from './residenceStore';
+import { useEffect } from 'react';
 
 export const useResidenceList = () => {
-  return useQuery<ResidenceResponse[], AxiosError<{ message?: string }>>({
+  const setResidences = useResidenceStore((state) => state.setResidences);
+
+  const query = useQuery({
     queryKey: ['residenceList'],
     queryFn: residenceList,
-    staleTime: 1000 * 60 * 5,
   });
+
+  useEffect(() => {
+    if (query.data) {
+      setResidences(query.data);
+    }
+  }, [query.data, setResidences]);
+
+  return query;
 };
