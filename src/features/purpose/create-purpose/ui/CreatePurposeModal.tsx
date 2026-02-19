@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
-import { AuthInput } from '@shared/ui/input/AuthInput';
-import { PasswordButton } from '@shared/ui/Button/index';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 
 interface CreatePurposeModalProps {
@@ -69,23 +67,9 @@ export const CreatePurposeModal = ({ onClose }: CreatePurposeModalProps) => {
 
   return (
     <ModalContainer>
-      <Title>방문 목적 추가</Title>
-      <AuthInput
-        label="목적 명칭"
-        placeholder="예: 회의, 방문, 면접 등"
-        value={purpose}
-        onChange={(e) => setPurpose(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
-      />
-
       <ButtonWrapper>
-        <PasswordButton
-          content={isPending ? '처리 중...' : '등록하기'}
-          onClick={handleConfirm}
-        />
         <CancelButton onClick={onClose}>취소</CancelButton>
       </ButtonWrapper>
-
       {isOpen && config && (
         <Modal isOpen={isOpen} config={config} onClose={closeModal} />
       )}
@@ -98,12 +82,6 @@ const ModalContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   padding: 10px;
-`;
-
-const Title = styled.h2`
-  font-size: 1.2rem;
-  color: #333;
-  margin-bottom: 5px;
 `;
 
 const ButtonWrapper = styled.div`

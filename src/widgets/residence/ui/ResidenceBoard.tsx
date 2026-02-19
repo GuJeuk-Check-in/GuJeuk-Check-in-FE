@@ -1,33 +1,43 @@
 import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-
-import { usePurposeList } from '@entities/purpose/index';
-import PurposeCard from '@entities/purpose/ui/PurposeCard';
-
-import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
+import { useResidenceList } from '@entities/residence/index';
+import { ResidenceCard } from '@entities/residence/index';
+import { CreateResidenceModal } from '@features/residence/create-residence';
 import {
-  useUpdatePurposeHandler,
-  useDeletePurposeHandler,
-  useReorderPurpose,
-} from '@features/purpose/index';
-
+  useUpdateResidence,
+  useDeleteResidence,
+  useReorderResidence,
+} from '@features/residence/index';
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
-import { Modal } from '@shared/ui/modal/Modal';
 
-export const PurposeBoard = () => {
+export const ResidenceBoard = () => {
+  const { data: residences, isLoading, isError, error } = useResidenceList();
+  const { items, sensors, handleDragEnd } = useReorderResidence(
+    residences || []
+  );
+
   const {
-    data: purposes,
-    isLoading: isListLoading,
-    isError,
-    error,
-  } = usePurposeList();
-  const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
-  const { handleUpdate, isLoading: isUpdating } = useUpdatePurposeHandler();
-  const { handleDelete, deletingId, isOpen, config } =
-    useDeletePurposeHandler();
+    mutate: updateMutate,
+    isPending: isUpdating,
+    variables: updatingVariable,
+  } = useUpdateResidence();
 
-  if (isListLoading) {
+  const {
+    mutate: deleteMutate,
+    isPending: isDeleting,
+    variables: deletingVariable,
+  } = useDeleteResidence();
+
+  const handleUpdate = (id: number, newResidence: string) => {
+    updateMutate({ id, residence: newResidence });
+  };
+
+  const handleDelete = (id: number) => {
+    deleteMutate(id);
+  };
+
+  if (isLoading) {
     return (
       <LoadingOverlay>
         <LoadingBox>
@@ -52,35 +62,35 @@ export const PurposeBoard = () => {
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <PurposeListGrid>
+      <ResidenceListGrid>
         <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((purpose) => (
-            <SortablePurposeItem key={purpose.id} id={purpose.id}>
-              <PurposeCard
-                purpose={purpose}
+          {items.map((residence) => (
+            <SortablePurposeItem key={residence.id} id={residence.id}>
+              <ResidenceCard
+                residence={residence}
                 onDelete={handleDelete}
                 onUpdate={({
                   id,
-                  newPurpose,
+                  newResidence,
                 }: {
                   id: number;
-                  newPurpose: string;
-                }) => handleUpdate(id, newPurpose)}
-                isDeleting={deletingId === purpose.id || isUpdating}
+                  newResidence: string;
+                }) => handleUpdate(id, newResidence)}
+                isDeleting={
+                  (isDeleting && deletingVariable === residence.id) ||
+                  (isUpdating && updatingVariable?.id === residence.id)
+                }
               />
             </SortablePurposeItem>
           ))}
         </SortableContext>
-        <PurposeAddBox />
-      </PurposeListGrid>
-      {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={() => {}} />
-      )}
+        <CreateResidenceModal />
+      </ResidenceListGrid>
     </DndContext>
   );
 };
 
-const PurposeListGrid = styled.div`
+const ResidenceListGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
