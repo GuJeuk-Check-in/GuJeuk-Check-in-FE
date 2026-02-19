@@ -91,13 +91,13 @@ export const ResidenceBoard = () => {
 };
 
 const ResidenceListGrid = styled.div`
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   justify-items: center;
   width: 100%;
   max-width: 75rem;
-  margin: 0 auto;
   padding: 2.5rem 0;
 `;
 

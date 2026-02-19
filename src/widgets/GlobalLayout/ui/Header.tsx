@@ -39,10 +39,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 20%;
-  height: 100%;
+  width: 20vw;
+  height: 100vh;
   box-sizing: border-box;
-  position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
