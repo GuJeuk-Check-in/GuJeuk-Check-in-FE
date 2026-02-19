@@ -22,6 +22,7 @@ export interface Residence {
 }
 
 export interface ResidenceStore {
-  residences: Residence[];
+  residences: ResidenceResponse[];
+  setResidences: (residences: ResidenceResponse[]) => void;
   updateResidence: (id: number, newResidenceName: string) => void;
 }
