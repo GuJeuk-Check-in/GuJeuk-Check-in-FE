@@ -91,9 +91,10 @@ const Container = styled.div`
 const PurposeListGrid = styled.div`
   width: 100%;
   max-width: 75rem;
-  max-height: 31rem;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 9rem;
   gap: 1.5rem;
   justify-items: center;
   padding: 2.5rem 0;
