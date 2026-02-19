@@ -1,4 +1,3 @@
-import { PasswordButton } from '@shared/ui/Button/index';
 import styled from '@emotion/styled';
 import React from 'react';
 
@@ -6,42 +5,36 @@ interface RightLayoutProps {
   title?: string;
   children?: React.ReactNode;
   buttonContent?: string;
-  spacer?: 40 | 80;
+  spacer?: 40 | 70;
   onClick?: () => void;
 }
 
 export const RightLayout = ({
   title,
   children,
-  buttonContent,
   spacer,
-  onClick,
 }: RightLayoutProps) => {
   return (
     <Container spacer={spacer}>
       {title && <Title>{title}</Title>}
       <ContentWrapper>{children}</ContentWrapper>
-      {buttonContent && (
-        <ButtonFixer>
-          <PasswordButton content={buttonContent} onClick={onClick} />
-        </ButtonFixer>
-      )}
     </Container>
   );
 };
 
 const Container = styled.div<Pick<RightLayoutProps, "spacer">>`
   background-color: #0F50A0;
+  overflow-x: visible;
   width: 37.5vw;
   height: 74.44vh;
   border-radius: 20px;
-  padding: 40px 154px;
+  padding: 40px 133px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: ${({ spacer }) => spacer ?? 80}px;
+  gap: ${({ spacer }) => spacer ?? 70}px;
   box-shadow: 0 6px 10px rgb(207, 220, 235);
 
   @media (max-width: 1800px) {

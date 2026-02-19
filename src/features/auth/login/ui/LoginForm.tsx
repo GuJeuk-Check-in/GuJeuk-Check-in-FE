@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
 import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
+import idInput from '../../../../assets/idInput.png'
 
 export const LoginForm = () => {
   const [organName, setOrganName] = useState('');
@@ -72,6 +73,7 @@ export const LoginForm = () => {
         }}
         isError={!!organNameError}
         onKeyDown={handleKeyDown}
+        icon={<img src={idInput} />}
       />
       <AuthInput
         label=""
@@ -86,15 +88,17 @@ export const LoginForm = () => {
         onKeyDown={handleKeyDown}
       />
       <ErrorMessage visible={!!errorMessage}>{errorMessage}</ErrorMessage>
-      <ButtonWrapper>
-        <PasswordButton
-          content={isPending ? '확인 중...' : '확인'}
-          onClick={handleConfirm}
-        />
-      </ButtonWrapper>
-      <LinkButton onClick={() => navigate('/organ/change')}>
-        비밀번호 변경하기
-      </LinkButton>
+      <BottomWrapper>
+        <ButtonWrapper>
+          <PasswordButton
+            content={isPending ? '확인 중...' : '확인'}
+            onClick={handleConfirm}
+          />
+        </ButtonWrapper>
+        <LinkButton onClick={() => navigate('/organ/change')}>
+          비밀번호 변경하기
+        </LinkButton>
+      </BottomWrapper>
     </LoginContentGroup>
   );
 };
@@ -104,7 +108,7 @@ const LoginContentGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 40px;
 `;
 
 const ErrorMessage = styled.p<{ visible: boolean }>`
@@ -118,8 +122,6 @@ const ErrorMessage = styled.p<{ visible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
-  margin-top: 100px;
-  margin-bottom: 10px;
 `;
 
 const LinkButton = styled.button`
@@ -136,3 +138,8 @@ const LinkButton = styled.button`
     color: #bee8ff;
   }
 `;
+
+const BottomWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
