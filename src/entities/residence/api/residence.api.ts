@@ -26,8 +26,7 @@ export const updateResidence = async (
 };
 
 export const deleteResidence = async (id: number): Promise<void> => {
-  const response = await axiosInstance.delete(`/residence/${id}`);
-  return response.data;
+  await axiosInstance.delete(`/residence/${id}`);
 };
 
 export const updateResidenceMovement = async (
