@@ -55,7 +55,7 @@ export const UpdatePasswordForm = () => {
                 onClick: () => {
                   closeModal();
                   logout();
-                  navigate('/admin/login', { replace: true });
+                  navigate('/organ/login', { replace: true });
                 },
               },
             ],

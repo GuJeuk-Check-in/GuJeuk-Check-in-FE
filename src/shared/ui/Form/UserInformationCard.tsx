@@ -45,7 +45,7 @@ const UserInformationCard = ({
           <EditButton
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/admin/user/${id}`);
+              navigate(`/organ/user/${id}`);
             }}
           >
             수정
