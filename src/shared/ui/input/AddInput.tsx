@@ -19,6 +19,8 @@ export const AddInput = ({
 
   const handleConfirm = () => {
     onConfirm(value);
+    setValue('');
+    setIsAdding(false);
   };
 
   const handleCancel = () => {
