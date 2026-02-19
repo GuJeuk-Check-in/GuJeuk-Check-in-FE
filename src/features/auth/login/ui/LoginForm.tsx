@@ -6,6 +6,7 @@ import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
 
 export const LoginForm = () => {
+  const [organName, setOrganName] = useState('');
   const [currentPW, setCurrentPW] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export const LoginForm = () => {
     }
 
     login(
-      { password: currentPW },
+      { organName: organName, password: currentPW },
       {
         onSuccess: () => {
           navigate('/log', { replace: true });
@@ -44,6 +45,18 @@ export const LoginForm = () => {
     <LoginContentGroup>
       <AuthInput
         label=""
+        placeholder="기관 이름을 입력해주세요."
+        type="text"
+        value={organName}
+        onChange={(e) => {
+          setOrganName(e.target.value);
+          setErrorMessage('');
+        }}
+        isError={!!errorMessage}
+        onKeyDown={handleKeyDown}
+      />
+      <AuthInput
+        label=""
         placeholder="비밀번호를 입력해주세요."
         type="password"
         value={currentPW}
@@ -61,7 +74,7 @@ export const LoginForm = () => {
           onClick={handleConfirm}
         />
       </ButtonWrapper>
-      <LinkButton onClick={() => navigate('/admin/change')}>
+      <LinkButton onClick={() => navigate('/organ/change')}>
         비밀번호 변경하기
       </LinkButton>
     </LoginContentGroup>
