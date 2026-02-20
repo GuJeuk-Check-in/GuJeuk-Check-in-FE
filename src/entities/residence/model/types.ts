@@ -4,7 +4,7 @@ export interface CreateResidenceRequest {
 
 export interface UpdateResidenceRequest {
   id: number;
-  residence: string;
+  residenceName: string;
 }
 
 export interface ResidenceResponse {
