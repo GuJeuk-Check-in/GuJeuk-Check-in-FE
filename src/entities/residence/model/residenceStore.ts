@@ -9,7 +9,7 @@ export const useResidenceStore = create<ResidenceStore>((set) => ({
   updateResidence: (id, newResidenceName) =>
     set((state) => ({
       residences: state.residences.map((r) =>
-        r.id === id ? { ...r, residenceName: newResidenceName } : r
+        r.id === id ? { ...r, residence: newResidenceName } : r
       ),
     })),
 }));
