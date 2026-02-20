@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   useSensors,
   useSensor,
@@ -12,14 +12,19 @@ import { useUpdatePurposeMovement } from '../model/useUpdatePurposeMovement';
 import { useModal } from '@shared/hooks/useModal';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
-export const useReorderPurpose = (initialItems: any[]) => {
-  const [items, setItems] = useState(initialItems);
+export const useReorderPurpose = (initialItems: any[] | undefined) => {
+  const stableInitialItems = useMemo(
+    () => initialItems ?? [],
+    [initialItems?.map((i) => i.id).join(',')]
+  );
+
+  const [items, setItems] = useState(stableInitialItems);
 
   useEffect(() => {
-    if (initialItems) {
-      setItems(initialItems);
+    if (stableInitialItems.length > 0) {
+      setItems(stableInitialItems);
     }
-  }, [initialItems]);
+  }, [stableInitialItems]);
 
   const { mutate: updateMovement } = useUpdatePurposeMovement();
   const { openModal, closeModal } = useModal();
