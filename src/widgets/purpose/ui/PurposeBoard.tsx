@@ -97,7 +97,7 @@ const PurposeListGrid = styled.div`
   grid-auto-rows: 9rem;
   gap: 1.5rem;
   justify-items: center;
-  padding: 2.5rem 0;
+  padding: 2.5rem 7.5rem;
 `;
 
 const ErrorText = styled.div`
