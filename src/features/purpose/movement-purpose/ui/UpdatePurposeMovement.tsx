@@ -15,7 +15,7 @@ import { FaExclamationTriangle } from 'react-icons/fa';
 export const useReorderPurpose = (initialItems: any[] | undefined) => {
   const stableInitialItems = useMemo(
     () => initialItems ?? [],
-    [initialItems?.map((i) => i.id).join(',')]
+    [initialItems ? initialItems.map((i) => i.id).join(',') : '']
   );
 
   const [items, setItems] = useState(stableInitialItems);
