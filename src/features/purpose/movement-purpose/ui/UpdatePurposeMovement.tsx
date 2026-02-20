@@ -21,7 +21,7 @@ export const useReorderPurpose = (initialItems: any[] | undefined) => {
   const [items, setItems] = useState(stableInitialItems);
 
   useEffect(() => {
-    if (stableInitialItems.length > 0) {
+    if (initialItems !== undefined) {
       setItems(stableInitialItems);
     }
   }, [stableInitialItems]);
