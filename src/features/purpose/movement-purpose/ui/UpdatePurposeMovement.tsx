@@ -16,13 +16,8 @@ export const useReorderPurpose = (initialItems: any[]) => {
   const [items, setItems] = useState(initialItems);
 
   useEffect(() => {
-    if (initialItems && initialItems.length > 0) {
-      const initialIds = initialItems.map((i) => i.id).join(',');
-      const currentIds = items.map((i) => i.id).join(',');
-
-      if (initialIds !== currentIds) {
-        setItems(initialItems);
-      }
+    if (initialItems) {
+      setItems(initialItems);
     }
   }, [initialItems]);
 

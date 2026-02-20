@@ -23,7 +23,8 @@ export const PurposeBoard = () => {
     error,
   } = usePurposeList();
   const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
-  const { handleUpdate, isLoading: isUpdating } = useUpdatePurposeHandler();
+  const { handleUpdate, isLoading: isUpdating, isOpen: isUpdateOpen, config: updateConfig } =
+    useUpdatePurposeHandler();
   const { handleDelete, deletingId, isOpen, config } =
     useDeletePurposeHandler();
 
@@ -75,6 +76,9 @@ export const PurposeBoard = () => {
       </PurposeListGrid>
       {isOpen && config && (
         <Modal isOpen={isOpen} config={config} onClose={() => {}} />
+      )}
+      {isUpdateOpen && updateConfig && (
+        <Modal isOpen={isUpdateOpen} config={updateConfig} onClose={() => {}} />
       )}
     </DndContext>
   );
