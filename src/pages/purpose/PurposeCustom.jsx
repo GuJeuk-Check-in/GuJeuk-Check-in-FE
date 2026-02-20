@@ -21,9 +21,7 @@ const PurposeCustom = () => {
 export default PurposeCustom;
 
 const Container = styled.div`
-  margin-left: 20rem;
-  width: calc(100% - 20rem);
-  min-height: 100vh;
-  padding: 3.5rem 0;
+  flex: 1;
   box-sizing: border-box;
+  display: flex;
 `;

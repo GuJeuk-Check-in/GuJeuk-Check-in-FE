@@ -212,11 +212,9 @@ const UserVisitList = () => {
 export default UserVisitList;
 
 const Container = styled.div`
-  margin-left: 20rem;
-  width: calc(100% - 20rem);
-  min-height: 100vh;
+  flex: 1;
   box-sizing: border-box;
-  position: relative;
+  display: flex;
 `;
 
 const ContentWrapper = styled.div`

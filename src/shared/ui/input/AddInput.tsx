@@ -83,8 +83,7 @@ interface ContainerProps {
 
 const Container = styled.div<ContainerProps>`
   width: 100%;
-  max-width: 20.625rem;
-  height: 9.375rem;
+  height: 100%;
   border-radius: 1.25rem;
   display: flex;
   align-items: center;
@@ -113,10 +112,10 @@ const AddInputBox = styled.input`
   border: none;
   border-bottom: 0.125rem solid #007bff;
   outline: none;
-  padding: 0.25rem 0;
-  width: 70%;
+  width: 100%;
   color: #2e2e32;
   font-weight: 500;
+  margin: 0;
 
   &:disabled {
     cursor: progress;
