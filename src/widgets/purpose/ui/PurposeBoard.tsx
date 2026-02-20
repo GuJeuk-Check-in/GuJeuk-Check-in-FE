@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 
-import { usePurposeList } from '@entities/purpose/index';
+import { usePurposeList, Purpose } from '@entities/purpose/index';
 import PurposeCard from '@entities/purpose/ui/PurposeCard';
 
 import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
@@ -22,8 +22,15 @@ export const PurposeBoard = () => {
     isError,
     error,
   } = usePurposeList();
-  const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
-  const { handleUpdate, isLoading: isUpdating } = useUpdatePurposeHandler();
+  const { items, sensors, handleDragEnd } = useReorderPurpose(
+    purposes || []
+  ) as { items: Purpose[]; sensors: any; handleDragEnd: (event: any) => void };
+  const {
+    handleUpdate,
+    isLoading: isUpdating,
+    isOpen: isUpdateOpen,
+    config: updateConfig,
+  } = useUpdatePurposeHandler();
   const { handleDelete, deletingId, isOpen, config } =
     useDeletePurposeHandler();
 
@@ -56,7 +63,7 @@ export const PurposeBoard = () => {
         <PurposeListGrid>
           <SortableContext items={items} strategy={rectSortingStrategy}>
             {items.map((purpose) => (
-              <SortablePurposeItem key={purpose.id} id={purpose.id}>
+              <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
                 <PurposeCard
                   purpose={purpose}
                   onDelete={handleDelete}
@@ -74,8 +81,9 @@ export const PurposeBoard = () => {
           </SortableContext>
           <PurposeAddBox />
         </PurposeListGrid>
-        {isOpen && config && (
-          <Modal isOpen={isOpen} config={config} onClose={() => {}} />
+        {isOpen && config && <Modal isOpen={isOpen} config={config} />}
+        {isUpdateOpen && updateConfig && (
+          <Modal isOpen={isUpdateOpen} config={updateConfig} />
         )}
       </DndContext>
     </Container>
@@ -86,7 +94,7 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
-`
+`;
 
 const PurposeListGrid = styled.div`
   width: 100%;

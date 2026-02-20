@@ -5,37 +5,28 @@ import { useResidenceList } from '@entities/residence/index';
 import { ResidenceCard } from '@entities/residence/index';
 import { CreateResidenceModal } from '@features/residence/create-residence';
 import {
-  useUpdateResidence,
-  useDeleteResidence,
+  useUpdateResidenceHandler,
+  useDeleteResidenceHandler,
   useReorderResidence,
 } from '@features/residence/index';
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
+import { Modal } from '@shared/ui/modal/Modal';
+import { useModal } from '@shared/hooks/useModal';
 
 export const ResidenceBoard = () => {
   const { data: residences, isLoading, isError, error } = useResidenceList();
   const { items, sensors, handleDragEnd } = useReorderResidence(
     residences || []
   );
+  const { isOpen, config, openModal, closeModal } = useModal();
 
-  const {
-    mutate: updateMutate,
-    isPending: isUpdating,
-    variables: updatingVariable,
-  } = useUpdateResidence();
+  const { handleUpdate, isLoading: updatingId } = useUpdateResidenceHandler({
+    modal: { isOpen, config, openModal, closeModal },
+  });
 
-  const {
-    mutate: deleteMutate,
-    isPending: isDeleting,
-    variables: deletingVariable,
-  } = useDeleteResidence();
-
-  const handleUpdate = (id: number, newResidence: string) => {
-    updateMutate({ id, residence: newResidence });
-  };
-
-  const handleDelete = (id: number) => {
-    deleteMutate(id);
-  };
+  const { handleDelete, deletingId } = useDeleteResidenceHandler({
+    modal: { isOpen, config, openModal, closeModal },
+  });
 
   if (isLoading) {
     return (
@@ -58,36 +49,36 @@ export const ResidenceBoard = () => {
 
   return (
     <Container>
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <ResidenceListGrid>
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((residence) => (
-            <SortablePurposeItem key={residence.id} id={residence.id}>
-              <ResidenceCard
-                residence={residence}
-                onDelete={handleDelete}
-                onUpdate={({
-                  id,
-                  newResidence,
-                }: {
-                  id: number;
-                  newResidence: string;
-                }) => handleUpdate(id, newResidence)}
-                isDeleting={
-                  (isDeleting && deletingVariable === residence.id) ||
-                  (isUpdating && updatingVariable?.id === residence.id)
-                }
-              />
-            </SortablePurposeItem>
-          ))}
-        </SortableContext>
-        <CreateResidenceModal />
-      </ResidenceListGrid>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <ResidenceListGrid>
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            {items.map((residence) => (
+              <SortablePurposeItem key={residence.id} id={residence.id}>
+                <ResidenceCard
+                  residence={residence}
+                  onDelete={handleDelete}
+                  onUpdate={({
+                    id,
+                    newResidence,
+                  }: {
+                    id: number;
+                    newResidence: string;
+                  }) => handleUpdate(id, newResidence)}
+                  isDeleting={deletingId === residence.id}
+                />
+              </SortablePurposeItem>
+            ))}
+          </SortableContext>
+          <CreateResidenceModal />
+        </ResidenceListGrid>
+      </DndContext>
+      {isOpen && config && (
+        <Modal isOpen={isOpen} config={config} onClose={closeModal} />
+      )}
     </Container>
   );
 };
@@ -96,7 +87,7 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
-`
+`;
 
 const ResidenceListGrid = styled.div`
   width: 100%;

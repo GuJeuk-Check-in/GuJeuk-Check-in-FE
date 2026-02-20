@@ -4,12 +4,12 @@ export interface CreateResidenceRequest {
 
 export interface UpdateResidenceRequest {
   id: number;
-  residence: string;
+  residenceName: string;
 }
 
 export interface ResidenceResponse {
   id: number;
-  residenceName: string;
+  residence: string;
 }
 
 export type UpdateResidenceMovementRequest = {

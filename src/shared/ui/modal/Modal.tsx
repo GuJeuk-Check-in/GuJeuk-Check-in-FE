@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 import { type ModalConfig } from '@shared/hooks/useModal';
-import React from 'react';
 
 interface ModalProps {
   isOpen: boolean;
   config: ModalConfig | null;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export const Modal = ({ isOpen, config, onClose }: ModalProps) => {

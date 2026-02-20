@@ -4,7 +4,7 @@ import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';
 
 export const useUpdatePurposeHandler = () => {
-  const { openModal, closeModal } = useModal();
+  const { openModal, closeModal, isOpen, config } = useModal();
   const mutation = useUpdatePurpose();
 
   const handleUpdate = (id: number, newPurpose: string) => {
@@ -52,5 +52,7 @@ export const useUpdatePurposeHandler = () => {
   return {
     handleUpdate,
     isLoading: mutation.isPending,
+    isOpen,
+    config,
   };
 };

@@ -1,1 +1,0 @@
-import{n as e,r as t}from"./GlobalLayout-RZNjXhXG.js";function n(n,r){return e(n,t,r)}export{n as t};

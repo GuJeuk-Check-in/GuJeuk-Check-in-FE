@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   useSensors,
   useSensor,
@@ -12,17 +12,22 @@ import { useUpdatePurposeMovement } from '../model/useUpdatePurposeMovement';
 import { useModal } from '@shared/hooks/useModal';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
-export const useReorderPurpose = (initialItems: any[]) => {
-  const [items, setItems] = useState(initialItems);
+type Item = {
+  id: string | number;
+};
+
+export const useReorderPurpose = (initialItems?: Item[]) => {
+  const [items, setItems] = useState<Item[]>(() => initialItems ?? []);
+  const prevIdsRef = useRef<string>('');
 
   useEffect(() => {
-    if (initialItems && initialItems.length > 0) {
-      const initialIds = initialItems.map((i) => i.id).join(',');
-      const currentIds = items.map((i) => i.id).join(',');
+    if (!initialItems) return;
 
-      if (initialIds !== currentIds) {
-        setItems(initialItems);
-      }
+    const currentIds = initialItems.map((i) => i.id).join(',');
+
+    if (prevIdsRef.current !== currentIds) {
+      prevIdsRef.current = currentIds;
+      setItems(initialItems);
     }
   }, [initialItems]);
 
@@ -34,23 +39,31 @@ export const useReorderPurpose = (initialItems: any[]) => {
     useSensor(TouchSensor, {
       activationConstraint: { delay: 250, tolerance: 5 },
     }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const oldItems = [...items];
+    const oldItems = items;
     const oldIndex = items.findIndex((item) => item.id === active.id);
     const newIndex = items.findIndex((item) => item.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
 
     const newOrderedItems = arrayMove(items, oldIndex, newIndex);
 
     setItems(newOrderedItems);
 
     updateMovement(
-      { purposeId: newOrderedItems.map((item) => item.id) },
+      {
+        purposeId: newOrderedItems
+          .map((item) => Number(item.id))
+          .filter((id) => !isNaN(id)),
+      },
       {
         onError: () => {
           setItems(oldItems);

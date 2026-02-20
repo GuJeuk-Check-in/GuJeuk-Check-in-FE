@@ -1,12 +1,17 @@
-import { useModal } from '@shared/hooks/useModal';
+import { useModal, UseModalReturn } from '@shared/hooks/useModal';
 import { useDeleteResidence } from '../model/useDeleteResidence';
-import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { AxiosError } from 'axios';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import { useState } from 'react';
 
-export const useDeleteResidenceHandler = () => {
-  const { openModal, closeModal } = useModal();
-  const mutation = useDeleteResidence();
+interface UseDeleteResidenceHandlerParams {
+  modal: UseModalReturn;
+}
+
+export const useDeleteResidenceHandler = ({
+  modal,
+}: UseDeleteResidenceHandlerParams) => {
+  const { openModal, closeModal } = modal;
+  const mutation = useDeleteResidence(modal);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleDelete = (id: number) => {
@@ -35,48 +40,7 @@ export const useDeleteResidenceHandler = () => {
 
   const executeDelete = (id: number) => {
     setDeletingId(id);
-
-    mutation.mutate(id, {
-      onSuccess: () => {
-        closeModal();
-        setDeletingId(null);
-
-        setTimeout(() => {
-          openModal({
-            icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-            title: '삭제 완료',
-            subtitle: '거주지가 성공적으로 삭제되었습니다.',
-            theme: 'info',
-            buttons: [
-              {
-                label: '확인',
-                onClick: closeModal,
-              },
-            ],
-          });
-        }, 300);
-      },
-      onError: (error: AxiosError<{ message?: string }>) => {
-        const message =
-          error.response?.data?.message ||
-          error.message ||
-          '삭제 중 오류가 발생했습니다.';
-
-        setDeletingId(null);
-        openModal({
-          title: '삭제 실패',
-          subtitle: message || '삭제 중 오류가 발생했습니다.',
-          theme: 'warning',
-          buttons: [
-            {
-              label: '확인',
-              variant: 'primary',
-              onClick: closeModal,
-            },
-          ],
-        });
-      },
-    });
+    mutation.mutate(id);
   };
 
   return {
