@@ -302,3 +302,4 @@ const ScrollItem = styled.div<{ selected: boolean }>`
   cursor: pointer;
   transition: all 0.15s;
 `;
+

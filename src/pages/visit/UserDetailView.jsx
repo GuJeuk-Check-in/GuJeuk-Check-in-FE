@@ -2,10 +2,10 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import Header from '@widgets/layout/header/Header';
+import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
 import VisitDetailInput from '@shared/ui/input/VisitDetailInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
@@ -404,13 +404,18 @@ const UserDetailView = () => {
 export default UserDetailView;
 
 const Container = styled.div`
-  padding-top: 6.375rem;
+  flex: 1;
+  box-sizing: border-box;
+  display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const Wrapper = styled.div`
   width: 90%;
-  max-width: 59.375rem;
-  margin: 2.5rem auto;
+  height: 100%;
+  max-width: 60rem;
+  margin: 60px auto;
   background-color: #ffffff;
   border-radius: 1.25rem;
   padding: 2.5rem;

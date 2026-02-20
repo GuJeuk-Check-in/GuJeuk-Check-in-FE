@@ -11,5 +11,3 @@ export const usePurposeStore = create<PurposeStore>((set) => ({
       ),
     })),
 }));
-
-export default usePurposeStore;

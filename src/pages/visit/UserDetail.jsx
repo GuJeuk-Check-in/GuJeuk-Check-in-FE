@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import Header from '@widgets/layout/header/Header';
-import VisitForm from '@widgets/layout/visit-form/VisitForm';
+import { Header } from '@widgets/GlobalLayout/index';
+import VisitForm from '@widgets/GlobalLayout/visit-form/VisitForm';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useCreateUserVisit } from '@features/visit/index';
@@ -44,13 +44,18 @@ const UserDetail = () => {
 export default UserDetail;
 
 const Container = styled.div`
-  padding-top: 8.125rem;
+  flex: 1;
+  box-sizing: border-box;
+  display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const ContentWrapper = styled.div`
-  width: 100%;
+  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100dvh;
+  overflow-y: scroll;
+  padding: 60px 0;
 `;

@@ -67,7 +67,7 @@ axiosInstance.interceptors.response.use(
     ) {
       useAuthStore.getState().logout();
       localStorage.removeItem('auth-storage');
-      window.location.href = '/admin/login?error=expired';
+      window.location.href = '/organ/login?error=expired';
       return Promise.reject(
         new Error('세션이 만료되었습니다. 다시 로그인해주세요.')
       );
@@ -125,7 +125,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         useAuthStore.getState().logout();
-        window.location.href = '/admin/login?error=expired';
+        window.location.href = '/organ/login?error=expired';
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
@@ -134,7 +134,7 @@ axiosInstance.interceptors.response.use(
 
     if (status === 401) {
       useAuthStore.getState().logout();
-      window.location.href = '/admin/login?error=expired';
+      window.location.href = '/organ/login?error=expired';
       return Promise.reject(new Error('다시 로그인을 진행해주세요.'));
     }
 

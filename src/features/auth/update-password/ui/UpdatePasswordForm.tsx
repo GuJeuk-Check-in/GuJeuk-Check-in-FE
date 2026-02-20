@@ -5,8 +5,8 @@ import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useUpdatePassword } from '../model/useUpdatePassword';
 import { useAuthStore } from '@entities/auth';
 import { useModal } from '@shared/hooks/useModal';
-import LabeledInput from '@shared/ui/Form/LabeledInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { AuthInput } from '@shared/ui/input/AuthInput';
+import { PasswordButton } from '@shared/ui/Button/index';
 import { Modal } from '@shared/ui/modal/Modal';
 
 export const UpdatePasswordForm = () => {
@@ -55,7 +55,7 @@ export const UpdatePasswordForm = () => {
                 onClick: () => {
                   closeModal();
                   logout();
-                  navigate('/admin/login', { replace: true });
+                  navigate('/organ/login', { replace: true });
                 },
               },
             ],
@@ -100,7 +100,7 @@ export const UpdatePasswordForm = () => {
   return (
     <FormContainer>
       <InputGroup>
-        <LabeledInput
+        <AuthInput
           label="기존 비밀번호"
           placeholder="비밀번호를 입력해주세요."
           type="password"
@@ -117,7 +117,7 @@ export const UpdatePasswordForm = () => {
       </InputGroup>
 
       <InputGroup>
-        <LabeledInput
+        <AuthInput
           label="새 비밀번호"
           placeholder="새 비밀번호를 입력해주세요."
           type="password"
@@ -132,7 +132,7 @@ export const UpdatePasswordForm = () => {
       </InputGroup>
 
       <InputGroup>
-        <LabeledInput
+        <AuthInput
           label="비밀번호 확인"
           placeholder="비밀번호를 다시 입력해주세요."
           type="password"
@@ -151,7 +151,7 @@ export const UpdatePasswordForm = () => {
       <ButtonWrapper>
         {/* 📌 [수정 2] disabled -> disable 로 변경 */}
         <PasswordButton
-          content={isPending ? '변경 중...' : '변경'}
+          content={isPending ? '확인 중...' : '확인'}
           onClick={handleConfirm}
           disable={isPending}
         />
@@ -165,7 +165,7 @@ export const UpdatePasswordForm = () => {
 };
 
 const FormContainer = styled.div`
-  width: 100%;
+  width: 99%;
   display: flex;
   flex-direction: column;
   align-items: center;

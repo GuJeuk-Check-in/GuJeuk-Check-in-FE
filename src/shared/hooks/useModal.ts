@@ -15,7 +15,7 @@ export interface ModalConfig {
   theme?: 'default' | 'warning' | 'info';
 }
 
-interface UseModalReturn {
+export interface UseModalReturn {
   isOpen: boolean;
   config: ModalConfig | null;
   openModal: (modalConfig: ModalConfig) => void;

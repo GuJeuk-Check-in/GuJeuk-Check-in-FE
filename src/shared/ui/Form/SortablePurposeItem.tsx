@@ -1,4 +1,4 @@
-import React, { ReactNode, CSSProperties } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -25,7 +25,7 @@ export const SortablePurposeItem = ({
     transition,
     zIndex: isDragging ? 999 : 'auto',
     opacity: isDragging ? 0.8 : 1,
-    width: '85%',
+    width: '100%',
     height: '100%',
   };
 

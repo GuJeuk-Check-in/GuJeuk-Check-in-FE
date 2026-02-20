@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { UseBackground } from '@shared/ui/Background/index';
-import Header from '@widgets/layout/header/Header';
+import { Header } from '@widgets/GlobalLayout/index';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { PurposeBoard } from '@widgets/purpose/ui/PurposeBoard';
@@ -11,7 +11,7 @@ const PurposeCustom = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title="방문 목적 커스텀" />
+      <Header />
       <PurposeBoard openModal={openModal} closeModal={closeModal} />
       <Modal isOpen={isOpen} config={config} onClose={closeModal} />
     </Container>
@@ -21,6 +21,7 @@ const PurposeCustom = () => {
 export default PurposeCustom;
 
 const Container = styled.div`
-  padding-top: 8.125rem;
-  min-height: 100vh;
+  flex: 1;
+  box-sizing: border-box;
+  display: flex;
 `;

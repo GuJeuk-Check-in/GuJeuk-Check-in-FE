@@ -3,6 +3,7 @@ import {
   CreatePurposeRequest,
   PurposeResponse,
   UpdatePurposeMovementRequest,
+  UpdatePurposeRequest,
 } from '../model/types';
 
 export const purposeList = async (): Promise<PurposeResponse[]> => {
@@ -19,7 +20,7 @@ export const createPurpose = async (
 
 export const updatePurpose = async (
   id: number,
-  payload: { purpose: string }
+  payload: UpdatePurposeRequest
 ): Promise<void> => {
   await axiosInstance.patch(`/purpose/${id}`, payload);
 };

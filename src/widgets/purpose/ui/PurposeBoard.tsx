@@ -1,9 +1,8 @@
-import React from 'react';
 import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 
-import { usePurposeList } from '@entities/purpose/index';
+import { usePurposeList, Purpose } from '@entities/purpose/index';
 import PurposeCard from '@entities/purpose/ui/PurposeCard';
 
 import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
@@ -14,7 +13,7 @@ import {
 } from '@features/purpose/index';
 
 import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
-import { Modal } from '../../../shared/ui/modal/Modal';
+import { Modal } from '@shared/ui/modal/Modal';
 
 export const PurposeBoard = () => {
   const {
@@ -23,8 +22,15 @@ export const PurposeBoard = () => {
     isError,
     error,
   } = usePurposeList();
-  const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
-  const { handleUpdate, isLoading: isUpdating } = useUpdatePurposeHandler();
+  const { items, sensors, handleDragEnd } = useReorderPurpose(
+    purposes || []
+  ) as { items: Purpose[]; sensors: any; handleDragEnd: (event: any) => void };
+  const {
+    handleUpdate,
+    isLoading: isUpdating,
+    isOpen: isUpdateOpen,
+    config: updateConfig,
+  } = useUpdatePurposeHandler();
   const { handleDelete, deletingId, isOpen, config } =
     useDeletePurposeHandler();
 
@@ -48,48 +54,58 @@ export const PurposeBoard = () => {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <PurposeListGrid>
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((purpose) => (
-            <SortablePurposeItem key={purpose.id} id={purpose.id}>
-              <PurposeCard
-                purpose={purpose}
-                onDelete={handleDelete}
-                onUpdate={({
-                  id,
-                  newPurpose,
-                }: {
-                  id: number;
-                  newPurpose: string;
-                }) => handleUpdate(id, newPurpose)}
-                isDeleting={deletingId === purpose.id || isUpdating}
-              />
-            </SortablePurposeItem>
-          ))}
-        </SortableContext>
-        <PurposeAddBox />
-      </PurposeListGrid>
-      {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={() => {}} />
-      )}
-    </DndContext>
+    <Container>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <PurposeListGrid>
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            {items.map((purpose) => (
+              <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
+                <PurposeCard
+                  purpose={purpose}
+                  onDelete={handleDelete}
+                  onUpdate={({
+                    id,
+                    newPurpose,
+                  }: {
+                    id: number;
+                    newPurpose: string;
+                  }) => handleUpdate(id, newPurpose)}
+                  isDeleting={deletingId === purpose.id || isUpdating}
+                />
+              </SortablePurposeItem>
+            ))}
+          </SortableContext>
+          <PurposeAddBox />
+        </PurposeListGrid>
+        {isOpen && config && <Modal isOpen={isOpen} config={config} />}
+        {isUpdateOpen && updateConfig && (
+          <Modal isOpen={isUpdateOpen} config={updateConfig} />
+        )}
+      </DndContext>
+    </Container>
   );
 };
 
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+`;
+
 const PurposeListGrid = styled.div`
+  width: 100%;
+  max-width: 75rem;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-auto-rows: 9rem;
+  gap: 1.5rem;
   justify-items: center;
-  width: 90%;
-  max-width: 75rem;
-  margin: 0 auto;
-  padding: 2.5rem 0;
+  padding: 2.5rem 7.5rem;
 `;
 
 const ErrorText = styled.div`

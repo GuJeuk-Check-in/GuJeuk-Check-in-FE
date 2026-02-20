@@ -2,25 +2,34 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
-import LabeledInput from '@shared/ui/Form/LabeledInput';
-import PasswordButton from '@shared/ui/Button/PasswordButton';
+import { AuthInput } from '@shared/ui/input/AuthInput';
+import { PasswordButton } from '@shared/ui/Button/index';
+import idInput from '../../../../assets/idInput.png'
 
 export const LoginForm = () => {
+  const [organName, setOrganName] = useState('');
   const [currentPW, setCurrentPW] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [organNameError, setOrganNameError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const { mutate: login, isPending } = useLogin();
 
   const handleConfirm = () => {
-    setErrorMessage('');
+    setOrganNameError('');
+    setPasswordError('');
+
+    if (organName.trim() === '') {
+      setOrganNameError('기관 이름을 입력해주세요.');
+      return;
+    }
 
     if (currentPW.trim() === '') {
-      setErrorMessage('비밀번호를 입력해주세요.');
+      setPasswordError('비밀번호를 입력해주세요.');
       return;
     }
 
     login(
-      { password: currentPW },
+      { organName, password: currentPW },
       {
         onSuccess: () => {
           navigate('/log', { replace: true });
@@ -28,7 +37,16 @@ export const LoginForm = () => {
         onError: (error) => {
           const message =
             error.response?.data?.message || error.message || '로그인 실패';
-          setErrorMessage(message);
+          if (message.includes('기관') || message.includes('organName')) {
+            setOrganNameError(message);
+          } else if (
+            message.includes('비밀번호') ||
+            message.includes('password')
+          ) {
+            setPasswordError(message);
+          } else {
+            setPasswordError(message);
+          }
         },
       }
     );
@@ -40,40 +58,57 @@ export const LoginForm = () => {
     }
   };
 
+  const errorMessage = organNameError || passwordError;
+
   return (
     <LoginContentGroup>
-      <LabeledInput
+      <AuthInput
+        label=""
+        placeholder="기관 이름을 입력해주세요."
+        type="text"
+        value={organName}
+        onChange={(e) => {
+          setOrganName(e.target.value);
+          setOrganNameError('');
+        }}
+        isError={!!organNameError}
+        onKeyDown={handleKeyDown}
+        icon={<img src={idInput} />}
+      />
+      <AuthInput
         label=""
         placeholder="비밀번호를 입력해주세요."
         type="password"
         value={currentPW}
         onChange={(e) => {
           setCurrentPW(e.target.value);
-          setErrorMessage('');
+          setPasswordError('');
         }}
-        isError={!!errorMessage}
+        isError={!!passwordError}
         onKeyDown={handleKeyDown}
       />
       <ErrorMessage visible={!!errorMessage}>{errorMessage}</ErrorMessage>
-      <ButtonWrapper>
-        <PasswordButton
-          content={isPending ? '확인 중...' : '확인'}
-          onClick={handleConfirm}
-        />
-      </ButtonWrapper>
-      <LinkButton onClick={() => navigate('/admin/change')}>
-        비밀번호 변경하기
-      </LinkButton>
+      <BottomWrapper>
+        <ButtonWrapper>
+          <PasswordButton
+            content={isPending ? '확인 중...' : '확인'}
+            onClick={handleConfirm}
+          />
+        </ButtonWrapper>
+        <LinkButton onClick={() => navigate('/organ/change')}>
+          비밀번호 변경하기
+        </LinkButton>
+      </BottomWrapper>
     </LoginContentGroup>
   );
 };
 
 const LoginContentGroup = styled.div`
-  width: 100%;
+  width: 99%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 40px;
 `;
 
 const ErrorMessage = styled.p<{ visible: boolean }>`
@@ -87,8 +122,6 @@ const ErrorMessage = styled.p<{ visible: boolean }>`
 `;
 
 const ButtonWrapper = styled.div`
-  margin-top: 10px;
-  margin-bottom: 10px;
 `;
 
 const LinkButton = styled.button`
@@ -99,9 +132,14 @@ const LinkButton = styled.button`
   cursor: pointer;
   padding: 5px;
   margin-top: 5px;
+  text-decoration: underline;
 
   &:hover {
-    text-decoration: underline;
     color: #bee8ff;
   }
 `;
+
+const BottomWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`

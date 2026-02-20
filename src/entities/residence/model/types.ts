@@ -1,0 +1,28 @@
+export interface CreateResidenceRequest {
+  residenceName: string;
+}
+
+export interface UpdateResidenceRequest {
+  id: number;
+  residenceName: string;
+}
+
+export interface ResidenceResponse {
+  id: number;
+  residence: string;
+}
+
+export type UpdateResidenceMovementRequest = {
+  residenceId: number[];
+};
+
+export interface Residence {
+  id: number;
+  residenceName: string;
+}
+
+export interface ResidenceStore {
+  residences: ResidenceResponse[];
+  setResidences: (residences: ResidenceResponse[]) => void;
+  updateResidence: (id: number, newResidenceName: string) => void;
+}

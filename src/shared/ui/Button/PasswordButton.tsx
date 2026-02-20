@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import React from 'react';
 
 interface PasswordButtonProps {
   content: string;
@@ -7,7 +6,7 @@ interface PasswordButtonProps {
   disable?: boolean;
 }
 
-const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
+export const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
   return (
     <Container
       tabIndex={0}
@@ -18,8 +17,6 @@ const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
     </Container>
   );
 };
-
-export default PasswordButton;
 
 const Container = styled.div`
   width: 10.75rem;

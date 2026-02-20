@@ -2,12 +2,11 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import Header from '@widgets/layout/header/Header';
+import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
 import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
-import { USER_MODAL_MESSAGES } from '@features/user/model/modalMessages';
 import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';
 import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
@@ -63,8 +62,8 @@ const UserInformationDetail = () => {
     ) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: USER_MODAL_MESSAGES.INPUT_INVALID.title,
-        subtitle: USER_MODAL_MESSAGES.INPUT_INVALID.subtitle,
+        title: '입력 확인',
+        subtitle: '필수 입력 항목을 모두 채워주세요.',
         theme: 'warning',
         buttons: [{ label: '확인', onClick: modal.closeModal }],
       });
@@ -87,8 +86,8 @@ const UserInformationDetail = () => {
         await refetch();
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-          title: USER_MODAL_MESSAGES.UPDATE_SUCCESS.title,
-          subtitle: USER_MODAL_MESSAGES.UPDATE_SUCCESS.subtitle,
+          title: '수정 완료',
+          subtitle: '사용자 정보가 성공적으로 수정되었습니다.',
           theme: 'info',
           buttons: [
             {
@@ -107,8 +106,8 @@ const UserInformationDetail = () => {
       onError: (err) => {
         modal.openModal({
           icon: <FaExclamationTriangle size={48} color="#D88282" />,
-          title: USER_MODAL_MESSAGES.UPDATE_FAIL(err.message).title,
-          subtitle: USER_MODAL_MESSAGES.UPDATE_FAIL(err.message).subtitle,
+          title: '수정 실패',
+          subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
           theme: 'warning',
           buttons: [{ label: '닫기', onClick: modal.closeModal }],
         });
@@ -120,7 +119,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <LoadingText>사용자 정보를 불러오는 중...</LoadingText>
         </Wrapper>
@@ -132,7 +131,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <ErrorText>
             사용자 정보 조회에 실패했습니다:{' '}
@@ -147,7 +146,7 @@ const UserInformationDetail = () => {
     return (
       <Container>
         <UseBackground />
-        <Header title="사용자 정보 상세 조회" />
+        <Header />
         <Wrapper>
           <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>
         </Wrapper>
@@ -158,7 +157,7 @@ const UserInformationDetail = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title={`사용자 정보 ${isEditing ? '수정' : '상세 조회'}`} />
+      <Header />
       <Wrapper>
         <UserInformationDetailCard
           id={userData.id}
@@ -186,15 +185,17 @@ const UserInformationDetail = () => {
 export default UserInformationDetail;
 
 const Container = styled.div`
-  padding-top: 6.375rem;
+  flex: 1;
+  box-sizing: border-box;
+  display: flex;
 `;
 
 const Wrapper = styled.div`
-  width: 100%;
+  width: 90%;
   display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding-bottom: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
 `;
 
 const LoadingText = styled.p`

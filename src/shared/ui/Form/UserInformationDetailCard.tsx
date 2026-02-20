@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import VisitDetailInput from '../input/VisitDetailInput';
-import PasswordButton from '../Button/PasswordButton';
+import { PasswordButton } from '@shared/ui/Button/index';
 import ToggleSelect from '../LabeldInput/ToggleSelect';
 import VisitDatePicker from '../LabeldInput/VisitDatePicker';
 import SimpleDropdown from '../LabeldInput/SimpleDropdown';
@@ -153,7 +153,7 @@ const UserInformationDetailCard = ({
   return (
     <Container>
       <CardHeader>
-        <BackButton onClick={() => navigate('/admin/user/all')}>
+        <BackButton onClick={() => navigate('/organ/user/all')}>
           <FaArrowLeft size={20} />
         </BackButton>
       </CardHeader>
@@ -265,8 +265,8 @@ const UserInformationDetailCard = ({
 export default UserInformationDetailCard;
 
 const Container = styled.div`
-  width: 90%;
-  max-width: 59.375rem;
+  width: 100%;
+  max-width: 80rem;
   margin: 2.5rem auto;
   background-color: #ffffff;
   border-radius: 1.25rem;

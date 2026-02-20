@@ -1,10 +1,13 @@
-export interface EnterPasswordRequest {
+export interface OrganLoginRequest {
+  organName: string;
   password: string;
+  client: 'ADMIN_VIEW';
 }
 
-export interface EnterPasswordResponse {
+export interface OrganLoginResponse {
   accessToken: string;
   refreshToken: string;
+  organName: string;
 }
 
 export interface UpdatePasswordRequest {
