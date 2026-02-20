@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 
-import { usePurposeList } from '@entities/purpose/index';
+import { usePurposeList, Purpose } from '@entities/purpose/index';
 import PurposeCard from '@entities/purpose/ui/PurposeCard';
 
 import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
@@ -22,7 +22,9 @@ export const PurposeBoard = () => {
     isError,
     error,
   } = usePurposeList();
-  const { items, sensors, handleDragEnd } = useReorderPurpose(purposes || []);
+  const { items, sensors, handleDragEnd } = useReorderPurpose(
+    purposes || []
+  ) as { items: Purpose[]; sensors: any; handleDragEnd: (event: any) => void };
   const {
     handleUpdate,
     isLoading: isUpdating,
@@ -60,7 +62,7 @@ export const PurposeBoard = () => {
       <PurposeListGrid>
         <SortableContext items={items} strategy={rectSortingStrategy}>
           {items.map((purpose) => (
-            <SortablePurposeItem key={purpose.id} id={purpose.id}>
+            <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
               <PurposeCard
                 purpose={purpose}
                 onDelete={handleDelete}
