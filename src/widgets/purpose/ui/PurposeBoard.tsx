@@ -54,48 +54,57 @@ export const PurposeBoard = () => {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <PurposeListGrid>
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((purpose) => (
-            <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
-              <PurposeCard
-                purpose={purpose}
-                onDelete={handleDelete}
-                onUpdate={({
-                  id,
-                  newPurpose,
-                }: {
-                  id: number;
-                  newPurpose: string;
-                }) => handleUpdate(id, newPurpose)}
-                isDeleting={deletingId === purpose.id || isUpdating}
-              />
-            </SortablePurposeItem>
-          ))}
-        </SortableContext>
-        <PurposeAddBox />
-      </PurposeListGrid>
-      {isOpen && config && <Modal isOpen={isOpen} config={config} />}
-      {isUpdateOpen && updateConfig && (
-        <Modal isOpen={isUpdateOpen} config={updateConfig} />
-      )}
-    </DndContext>
+    <Container>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <PurposeListGrid>
+          <SortableContext items={items} strategy={rectSortingStrategy}>
+            {items.map((purpose) => (
+              <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
+                <PurposeCard
+                  purpose={purpose}
+                  onDelete={handleDelete}
+                  onUpdate={({
+                    id,
+                    newPurpose,
+                  }: {
+                    id: number;
+                    newPurpose: string;
+                  }) => handleUpdate(id, newPurpose)}
+                  isDeleting={deletingId === purpose.id || isUpdating}
+                />
+              </SortablePurposeItem>
+            ))}
+          </SortableContext>
+          <PurposeAddBox />
+        </PurposeListGrid>
+        {isOpen && config && <Modal isOpen={isOpen} config={config} />}
+        {isUpdateOpen && updateConfig && (
+          <Modal isOpen={isUpdateOpen} config={updateConfig} />
+        )}
+      </DndContext>
+    </Container>
   );
 };
 
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+`;
+
 const PurposeListGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  justify-items: center;
   width: 100%;
   max-width: 75rem;
-  margin: 0 auto;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 9rem;
+  gap: 1.5rem;
+  justify-items: center;
   padding: 2.5rem 0;
 `;
 

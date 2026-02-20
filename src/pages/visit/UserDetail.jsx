@@ -44,17 +44,18 @@ const UserDetail = () => {
 export default UserDetail;
 
 const Container = styled.div`
-  margin-left: 20rem;
-  width: calc(100% - 20rem);
-  min-height: 100vh;
-  padding: 3.5rem 0;
+  flex: 1;
   box-sizing: border-box;
+  display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const ContentWrapper = styled.div`
-  width: 100%;
+  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  min-height: 100dvh;
+  overflow-y: scroll;
+  padding: 60px 0;
 `;

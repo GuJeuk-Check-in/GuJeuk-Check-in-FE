@@ -25,7 +25,7 @@ export const SortablePurposeItem = ({
     transition,
     zIndex: isDragging ? 999 : 'auto',
     opacity: isDragging ? 0.8 : 1,
-    width: '85%',
+    width: '100%',
     height: '100%',
   };
 
