@@ -8,21 +8,35 @@ import { ResidenceResponse } from '@entities/residence/model/types';
 export const useDeleteResidence = (modal?: UseModalReturn) => {
   const queryClient = useQueryClient();
 
-  return useMutation<void, AxiosError<{ message?: string }>, number>({
+  type DeleteResidenceContext = {
+    previousData: ResidenceResponse[] | undefined;
+  };
+
+  return useMutation<
+    void,
+    AxiosError<{ message?: string }>,
+    number,
+    DeleteResidenceContext
+  >({
     mutationFn: deleteResidence,
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ['residenceList'] });
-      
-      const previousData = queryClient.getQueryData<ResidenceResponse[]>(['residenceList']);
-      
-      queryClient.setQueryData<ResidenceResponse[]>(['residenceList'], (old) => {
-        if (!old) return old;
-        return old.filter((item) => item.id !== id);
-      });
+
+      const previousData = queryClient.getQueryData<ResidenceResponse[]>([
+        'residenceList',
+      ]);
+
+      queryClient.setQueryData<ResidenceResponse[]>(
+        ['residenceList'],
+        (old) => {
+          if (!old) return old;
+          return old.filter((item) => item.id !== id);
+        }
+      );
 
       return { previousData };
     },
-    onError: (error: AxiosError<{ message?: string }>, id, context: { previousData: ResidenceResponse[] | undefined } | undefined) => {
+    onError: (error, id, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(['residenceList'], context.previousData);
       }
@@ -34,6 +48,7 @@ export const useDeleteResidence = (modal?: UseModalReturn) => {
           '삭제 중 오류가 발생했습니다.';
 
         modal.openModal({
+          icon: <FaExclamationTriangle size={48} color="#D9534F" />,
           title: '삭제 실패',
           subtitle: message,
           theme: 'warning',
