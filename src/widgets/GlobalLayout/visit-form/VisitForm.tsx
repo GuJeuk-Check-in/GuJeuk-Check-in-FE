@@ -111,7 +111,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   };
 
   const purposeOptions = Array.isArray(purposes)
-    ? purposes.map((p) => p.purpose)
+    ? purposes.map((p, index) => `${index + 1}. ${p.purpose}`)
     : [];
 
   const ageOptions = Object.keys(AGE_MAP);
@@ -154,7 +154,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           value={purpose}
           onChange={setPurpose}
           icon={<FaLocationDot size={24} />}
-          disable={isLoading || isPurposeLoading || !purposeOptions.length}
+          disable={isLoading || isPurposeLoading || purposeOptions.length === 0}
         />
 
         <ToggleSelect
@@ -163,7 +163,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
             isResidenceLoading
               ? ['불러오는 중...']
               : residences && residences.length > 0
-              ? residences.map((r) => r.residence)
+              ? residences.map((r, index) => `${index + 1}. ${r.residence}`)
               : ['데이터 없음']
           }
           placeholder="거주지를 선택해주세요"
