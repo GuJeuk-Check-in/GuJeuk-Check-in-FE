@@ -56,9 +56,10 @@ export const ResidenceBoard = () => {
       >
         <ResidenceListGrid>
           <SortableContext items={items} strategy={rectSortingStrategy}>
-            {items.map((residence) => (
+            {items.map((residence, index) => (
               <SortablePurposeItem key={residence.id} id={residence.id}>
                 <ResidenceCard
+                  index={index + 1}
                   residence={residence}
                   onDelete={handleDelete}
                   onUpdate={({
