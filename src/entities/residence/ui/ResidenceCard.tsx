@@ -10,12 +10,14 @@ interface Residence {
 
 interface ResidenceProps {
   residence: Residence;
+  index: number;
   onDelete: (id: number) => void;
   onUpdate: (params: { id: number; newResidence: string }) => void;
   isDeleting: boolean;
 }
 
 export const ResidenceCard = ({
+  index,
   residence,
   onDelete,
   onUpdate,
@@ -103,7 +105,7 @@ export const ResidenceCard = ({
         />
       ) : (
         <Label>
-          {residence.residence}
+          {index}. {residence.residence}
           <StyledEditIcon
             size={18}
             onClick={() => {
