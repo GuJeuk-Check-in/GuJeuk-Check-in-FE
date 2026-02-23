@@ -95,7 +95,9 @@ export const useAuthInterceptors = () => {
           const text = await response.data.text();
           const errorJson = JSON.parse(text);
           errorMsg = errorJson.message || errorMsg;
-        } catch {}
+        } catch (parseError) {
+          console.error('응답 파싱 실패:', parseError);
+        }
       }
 
       if (
