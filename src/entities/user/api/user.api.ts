@@ -31,7 +31,7 @@ export const usersByResidence = async (
 ): Promise<UserListResponse> => {
   const residenceParam = residence === '기타 지역' ? '기타' : residence;
 
-  const response = await axiosInstance.get<UserListResponse>('/admin/user', {
+  const response = await axiosInstance.get<UserListResponse>('/organ/user', {
     params: { residence: residenceParam, page },
   });
 
