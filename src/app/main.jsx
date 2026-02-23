@@ -3,8 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuthInterceptors } from '@app/providers/useAuthInterceptors';
 
 const queryClient = new QueryClient();
+
+useAuthInterceptors();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
