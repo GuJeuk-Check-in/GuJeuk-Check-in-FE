@@ -106,7 +106,10 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
     try {
       await onSubmit(dataToSend);
-    } catch {}
+      resetForm();
+    } catch (error) {
+      console.error('이용 기록 제출 실패:', error);
+    }
   };
 
   const purposeOptions = Array.isArray(purposes)
