@@ -73,6 +73,12 @@ export const Header = () => {
         <ExcelButton
           onClick={handleExcelExportClick}
           disabled={isExporting}
+          label='기록 액셀 추출하기'
+        />
+        <ExcelButton
+          onClick={handleExcelExportClick}
+          disabled={isExporting}
+          label='사용자 엑셀 추출하기'
         />
         {isExporting && (
           <ExportLoadingMessage>
@@ -85,7 +91,7 @@ export const Header = () => {
           onClose={() => setIsModalOpen(false)}
           onExport={handleExportConfirmedWithDate}
         />
-  
+
         <Modal
           isOpen={modal.isOpen}
           config={modal.config}
