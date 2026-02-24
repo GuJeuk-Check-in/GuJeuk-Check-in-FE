@@ -1,10 +1,51 @@
 import { useNavigate } from 'react-router-dom';
-import { HeaderButton } from '@shared/ui/Button/index';
+import { ExcelButton, HeaderButton } from '@shared/ui/Button/index';
 import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
+import { useState } from 'react';
+import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
+import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
+import { Modal } from '@shared/ui/modal/Modal';
+import { useModal } from '@shared/hooks/useModal';
 
 export const Header = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [exportingDate, setExportingDate] = useState('');
+  const modal = useModal();
+
+  const { mutate: excelMutate, isPending: isExporting } = useExportExcel();
+  const handleExcelExportClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleExportConfirmedWithDate = (year, month) => {
+    console.log('엑셀 요청 실행', year, month);
+    const dataString = `${year}-${month}`;
+    setExportingDate(dataString);
+
+    excelMutate(
+      { year, month },
+      {
+        onSettled: () => {
+          setExportingDate('');
+        },
+      }
+    );
+
+    setIsModalOpen(false);
+  };
+
+  const getExportingPeriodMessage = (dateString: string) => {
+    if (!dateString) return '전체 기간';
+
+    const parts = dateString.split('-');
+    if (parts.length === 2) {
+      return `기간: ${parts[0]}년 ${parts[1]}월`;
+    }
+
+    return dateString;
+  };
 
   return (
     <Container>
@@ -29,6 +70,27 @@ export const Header = () => {
         <HeaderButton onClick={() => navigate('/residence')}>
           거주지 커스텀
         </HeaderButton>
+        <ExcelButton
+          onClick={handleExcelExportClick}
+          disabled={isExporting}
+        />
+        {isExporting && (
+          <ExportLoadingMessage>
+            엑셀 파일을 준비 중입니다... (
+            {getExportingPeriodMessage(exportingDate)})
+          </ExportLoadingMessage>
+        )}
+        <DateExportModal
+          isVisible={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onExport={handleExportConfirmedWithDate}
+        />
+  
+        <Modal
+          isOpen={modal.isOpen}
+          config={modal.config}
+          onClose={modal.closeModal}
+        />
       </ButtonWrapper>
     </Container>
   );
@@ -47,6 +109,14 @@ const Container = styled.div`
   z-index: 1000;
   box-sizing: border-box;
   padding: 2rem 0;
+`;
+
+
+
+const ExportLoadingMessage = styled.p`
+  margin-left: 0.625rem;
+  color: #3f51b5;
+  white-space: nowrap;
 `;
 
 const LogoImage = styled.img`

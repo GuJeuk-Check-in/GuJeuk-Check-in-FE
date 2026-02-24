@@ -30,11 +30,9 @@ const ButtonContainer = styled.button`
   font-size: 1.1rem;
   font-weight: 600;
   position: relative;
-  top: 0.5rem;
   white-space: normal;
   text-align: center;
   min-width: 120px;
-  min-height: 54px;
   transition: all 0.2s ease;
 
   &:hover {

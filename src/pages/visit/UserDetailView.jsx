@@ -245,8 +245,6 @@ const UserDetailView = () => {
     );
   }
 
-  const currentData = isEditing && formData ? formData : visit;
-
   const ageDisplayLabel = formatAgeDisplay(visit.age);
 
   return (
