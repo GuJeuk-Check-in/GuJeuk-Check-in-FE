@@ -1,6 +1,11 @@
 import { useEffect } from 'react';
+<<<<<<< HEAD
 import { useAuthStore } from '@entities/auth/index';
 import { axiosInstance } from '@shared/api/axiosInstance';
+=======
+import { useAuthStore } from '@entities/auth';
+import { axiosInstance } from '@shared/api';
+>>>>>>> 4da692d (chore :: import 경로 변경)
 
 export const useTokenRefresher = () => {
   const { accessToken, setAuth, logout } = useAuthStore();

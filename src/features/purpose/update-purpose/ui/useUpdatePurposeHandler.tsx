@@ -1,4 +1,4 @@
-import { useModal } from '@shared/hooks/useModal';
+import { useModal } from '@shared/hooks';
 import { useUpdatePurpose } from '../model/useUpdatePurpose';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';

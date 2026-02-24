@@ -7,7 +7,7 @@ interface UserFilterProps {
   setSelectedLocation: (location: string) => void;
 }
 
-const UserFilter = ({
+export const UserFilter = ({
   selectedLocation,
   setSelectedLocation,
 }: UserFilterProps) => {
@@ -65,8 +65,6 @@ const UserFilter = ({
     </Container>
   );
 };
-
-export default UserFilter;
 
 const Container = styled.div`
   display: flex;

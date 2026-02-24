@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import VisitDetailInput from '../input/VisitDetailInput';
+import { VisitDetailInput } from '../input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import ToggleSelect from '../LabeldInput/ToggleSelect';
-import VisitDatePicker from '../LabeldInput/VisitDatePicker';
-import SimpleDropdown from '../LabeldInput/SimpleDropdown';
+import { ToggleSelect } from '../LabeldInput/ToggleSelect';
+import { VisitDatePicker } from '../LabeldInput/VisitDatePicker';
+import { SimpleDropdown } from '../LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
 
@@ -76,7 +76,7 @@ const RESIDENCE_OPTIONS = [
   '기타 지역',
 ];
 
-const UserInformationDetailCard = ({
+export const UserInformationDetailCard = ({
   id,
   name,
   userId,
@@ -261,8 +261,6 @@ const UserInformationDetailCard = ({
     </Container>
   );
 };
-
-export default UserInformationDetailCard;
 
 const Container = styled.div`
   width: 100%;

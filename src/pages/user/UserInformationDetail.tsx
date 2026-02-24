@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
-import UserInformationDetailCard from '@shared/ui/Form/UserInformationDetailCard';
+import { UserInformationDetailCard } from '@shared/ui/Form/UserInformationDetailCard';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';

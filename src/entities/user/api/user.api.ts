@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { axiosInstance } from '@shared/api/axiosInstance';
+=======
+import { axiosInstance } from '@shared/api';
+>>>>>>> 4da692d (chore :: import 경로 변경)
 import { UserListResponse, UserInformation } from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {

@@ -4,10 +4,8 @@ import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useUpdatePassword } from '../model/useUpdatePassword';
 import { useAuthStore } from '@entities/auth';
-import { useModal } from '@shared/hooks/useModal';
-import { AuthInput } from '@shared/ui/input/AuthInput';
-import { PasswordButton } from '@shared/ui/Button/index';
-import { Modal } from '@shared/ui/modal/Modal';
+import { useModal } from '@shared/hooks';
+import { PasswordButton, Modal, AuthInput } from '@shared/ui';
 
 export const UpdatePasswordForm = () => {
   const navigate = useNavigate();

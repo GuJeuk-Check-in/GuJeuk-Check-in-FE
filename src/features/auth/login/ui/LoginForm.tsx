@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
 import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import idInput from '../../../../assets/idInput.png'
+import idInput from '../../../../assets/idInput.png';
 
 export const LoginForm = () => {
   const [organName, setOrganName] = useState('');
@@ -121,8 +121,7 @@ const ErrorMessage = styled.p<{ visible: boolean }>`
   opacity: ${(props) => (props.visible ? 1 : 0)};
 `;
 
-const ButtonWrapper = styled.div`
-`;
+const ButtonWrapper = styled.div``;
 
 const LinkButton = styled.button`
   border: none;
@@ -142,4 +141,4 @@ const LinkButton = styled.button`
 const BottomWrapper = styled.div`
   display: flex;
   flex-direction: column;
-`
+`;

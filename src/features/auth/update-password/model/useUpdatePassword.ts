@@ -3,9 +3,8 @@ import { AxiosError } from 'axios';
 import {
   UpdatePasswordResponse,
   UpdatePasswordRequest,
-} from '@entities/auth/model/types';
-import { updatePassword } from '@entities/auth/api/auth.api';
-
+  updatePassword,
+} from '@entities/auth';
 export const useUpdatePassword = () => {
   return useMutation<
     UpdatePasswordResponse,

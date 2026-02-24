@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 import { axiosInstance } from '@shared/api/axiosInstance';
+=======
+import { axiosInstance } from '@shared/api';
+>>>>>>> 4da692d (chore :: import 경로 변경)
 import {
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   UpdateUserVisitRequest,
-} from '../index';
+} from '../model/types';
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);
