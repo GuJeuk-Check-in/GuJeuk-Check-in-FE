@@ -95,6 +95,7 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
+  overflow-y: scroll
 `;
 
 const PurposeListGrid = styled.div`
