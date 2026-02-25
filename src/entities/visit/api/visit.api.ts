@@ -52,7 +52,7 @@ export const exportVisitListToExcel = async ({
     const formattedMonth = String(month).padStart(2, '0');
 
     const response = await axiosInstance.get(
-      `/admin/excel/${year}-${formattedMonth}`,
+      `/organ/excel/log/${year}-${formattedMonth}`,
       {
         responseType: 'blob',
       }
