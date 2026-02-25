@@ -1,2 +1,2 @@
-export * from './model/useExportExcel';
+export * from './model/useVisitListExportExcel';
 export * from './ui/DateExportModal';

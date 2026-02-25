@@ -1,18 +1,13 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { exportVisitListToExcel } from '@entities/visit/index';
+import { exportUserListToExcel } from '@entities/user';
 
-type ExportExcelVariables = {
-  year: number;
-  month: number;
-};
-
-export const useExportExcel = (): UseMutationResult<
+export const useUserListExportExcel = (): UseMutationResult<
   string,
   Error,
-  ExportExcelVariables
+  void
 > => {
-  return useMutation<string, Error, ExportExcelVariables>({
-    mutationFn: exportVisitListToExcel,
+  return useMutation<string, Error, void>({
+    mutationFn: exportUserListToExcel,
     onSuccess: () => {
       alert('엑셀 파일 다운로드가 시작되었습니다. 파일을 확인해 주세요.');
     },

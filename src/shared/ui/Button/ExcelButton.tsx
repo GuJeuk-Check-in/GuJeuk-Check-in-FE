@@ -4,13 +4,14 @@ import { PiExportBold } from 'react-icons/pi';
 interface ExcelButtonProps {
   onClick: () => void;
   disabled?: boolean;
+  label: string;
 }
 
-export const ExcelButton = ({ onClick, disabled }: ExcelButtonProps) => {
+export const ExcelButton = ({ onClick, disabled, label }: ExcelButtonProps) => {
   return (
     <ButtonContainer onClick={onClick} disabled={disabled}>
       <PiExportBold size="1.25rem" style={{ flexShrink: 0 }} />
-      <ButtonText>엑셀 파일로 내보내기</ButtonText>
+      <ButtonText>{label}</ButtonText>
     </ButtonContainer>
   );
 };
@@ -32,7 +33,7 @@ const ButtonContainer = styled.button`
   position: relative;
   white-space: normal;
   text-align: center;
-  min-width: 120px;
+  min-width: 236px;
   transition: all 0.2s ease;
 
   &:hover {
