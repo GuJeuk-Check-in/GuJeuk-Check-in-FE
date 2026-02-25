@@ -4,9 +4,10 @@ import Logo from '../../../assets/Logo.png';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
-import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
+import { useVisitListExportExcel } from '@features/visit/export-excel/model/useVisitListExportExcel';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
+import { useUserListExportExcel } from '@features/user/export-excel';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -14,17 +15,21 @@ export const Header = () => {
   const [exportingDate, setExportingDate] = useState('');
   const modal = useModal();
 
-  const { mutate: excelMutate, isPending: isExporting } = useExportExcel();
-  const handleExcelExportClick = () => {
+const { mutate: visitExcelMutate, isPending: isVisitExporting } = useVisitListExportExcel();
+const { mutate: userExcelMutate, isPending: isUserExporting } = useUserListExportExcel();
+
+  const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
+  };
+  const handleUserListExcelExportClick = () => {
+    userExcelMutate()
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
-    console.log('엑셀 요청 실행', year, month);
     const dataString = `${year}-${month}`;
     setExportingDate(dataString);
 
-    excelMutate(
+    visitExcelMutate(
       { year, month },
       {
         onSettled: () => {
@@ -71,19 +76,24 @@ export const Header = () => {
           거주지 커스텀
         </HeaderButton>
         <ExcelButton
-          onClick={handleExcelExportClick}
-          disabled={isExporting}
+          onClick={handleVisitListExcelExportClick}
+          disabled={isVisitExporting}
           label='기록 액셀 추출하기'
         />
         <ExcelButton
-          onClick={handleExcelExportClick}
-          disabled={isExporting}
+          onClick={handleUserListExcelExportClick}
+          disabled={isUserExporting}
           label='사용자 엑셀 추출하기'
         />
-        {isExporting && (
+        {isVisitExporting && (
           <ExportLoadingMessage>
             엑셀 파일을 준비 중입니다... (
             {getExportingPeriodMessage(exportingDate)})
+          </ExportLoadingMessage>
+        )}
+        {isUserExporting && (
+          <ExportLoadingMessage>
+            엑셀 파일을 준비 중입니다...
           </ExportLoadingMessage>
         )}
         <DateExportModal
@@ -116,8 +126,6 @@ const Container = styled.div`
   box-sizing: border-box;
   padding: 2rem 0;
 `;
-
-
 
 const ExportLoadingMessage = styled.p`
   margin-left: 0.625rem;
