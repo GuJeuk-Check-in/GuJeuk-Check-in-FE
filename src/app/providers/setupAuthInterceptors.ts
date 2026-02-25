@@ -121,7 +121,7 @@ export const useAuthInterceptors = () => {
           const res = await axiosInstance.patch<{
             accessToken: string;
             refreshToken: string;
-          }>('admin/re-issue');
+          }>('/organ/re-issue');
 
           const { accessToken, refreshToken } = res.data;
           useAuthStore.getState().setAuth(accessToken, refreshToken);
