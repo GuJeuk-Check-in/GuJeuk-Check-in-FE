@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@entities/auth/index';
-import axiosInstance from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api/axiosInstance';
 
 export const useTokenRefresher = () => {
   const { accessToken, setAuth, logout } = useAuthStore();
@@ -9,7 +9,7 @@ export const useTokenRefresher = () => {
     const refreshCycle = 1000 * 3300;
     const timer = setInterval(async () => {
       try {
-        const res = await axiosInstance.patch('admin/re-issue');
+        const res = await axiosInstance.patch('/organ/re-issue');
         const newAccess = res.data?.accessToken;
         const newRefresh = res.data?.refreshToken;
         if (newAccess && newRefresh) {
