@@ -55,6 +55,7 @@ export interface UserVisitDetailResponse {
   femaleCount: number;
   purpose: string;
   visitDate: string;
+  visitTime: string;
   privacyAgreed: boolean;
 }
 
@@ -62,12 +63,12 @@ export interface CreateUserVisitRequest {
   name: string | null;
   age: AgeType;
   phone: string;
-  residence: String;
+  residence: string;
   maleCount: number;
   femaleCount: number;
   purpose: string;
   visitDate: string;
-  visitTime: String;
+  visitTime: string;
   privacyAgreed: boolean;
 }
 

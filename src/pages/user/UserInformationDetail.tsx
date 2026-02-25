@@ -188,6 +188,8 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const Wrapper = styled.div`
@@ -196,6 +198,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100dvh;
+  overflow-y: scroll;
 `;
 
 const LoadingText = styled.p`

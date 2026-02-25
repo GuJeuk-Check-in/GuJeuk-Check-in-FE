@@ -21,8 +21,9 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
-
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -32,4 +33,5 @@ const ContentWrapper = styled.div`
   padding: 3.5rem 3.75rem;
   gap: 1.25rem;
   box-sizing: border-box;
+  overflow-y: scroll;
 `;

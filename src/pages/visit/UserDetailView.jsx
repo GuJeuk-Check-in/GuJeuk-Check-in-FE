@@ -9,6 +9,7 @@ import { PasswordButton } from '@shared/ui/Button/index';
 import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
 import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
 import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
+import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useUpdateAdminItem } from '@features/visit/update-visit-list/model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
@@ -72,6 +73,7 @@ const UserDetailView = () => {
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
         visitDate: visit.visitDate || '',
+        visitTime: visit.visitTime || '',
         privacyAgreed: visit.privacyAgreed || false,
       });
     }
@@ -150,6 +152,7 @@ const UserDetailView = () => {
       femaleCount: Number(formData.femaleCount),
       purpose: formData.purpose,
       visitDate: formData.visitDate,
+      visitTime: formData.visitTime,
       privacyAgreed: formData.privacyAgreed,
     };
 
@@ -196,6 +199,7 @@ const UserDetailView = () => {
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
         visitDate: visit.visitDate || '',
+        visitTime: visit.visitTime || '',
         privacyAgreed: visit.privacyAgreed || false,
       });
     }
@@ -246,6 +250,7 @@ const UserDetailView = () => {
   }
 
   const currentData = isEditing && formData ? formData : visit;
+  const currentPrivacyAgreed = currentData?.privacyAgreed ?? false;
 
   const ageDisplayLabel = formatAgeDisplay(visit.age);
 
@@ -358,16 +363,38 @@ const UserDetailView = () => {
             </>
           )}
         </CountVisiorWrapper>
-        <VisitDetailInput
-          label="개인 정보 수집 동의"
-          name="privacyAgreed"
-          value={
-            isEditing && formData ? formData.privacyAgreed : visit.privacyAgreed
-          }
-          onChange={isEditing ? handleChange : null}
-          isEditable={isEditing}
-          type="checkbox"
-        />
+
+        {isEditing && formData ? (
+          <VisitTimePicker
+            value={formData.visitTime || ''}
+            onChange={(time) =>
+              setFormData((prev) => ({ ...prev, visitTime: time }))
+            }
+          />
+        ) : (
+          <VisitDetailInput
+            label="방문 시간"
+            value={visit.visitTime || ''}
+            isEditable={false}
+          />
+        )}
+
+        <CustomInputGroup>
+          <CustomLabel>개인 정보 수집 동의</CustomLabel>
+          <PrivacyConsentWrapper isEditable={isEditing}>
+            <Checkbox
+              type="checkbox"
+              name="privacyAgreed"
+              checked={currentPrivacyAgreed}
+              onChange={isEditing ? handleChange : undefined}
+              disabled={!isEditing}
+            />
+            <ConsentText checked={currentPrivacyAgreed}>
+              {currentPrivacyAgreed ? '동의함' : '동의하지 않음'}
+            </ConsentText>
+          </PrivacyConsentWrapper>
+        </CustomInputGroup>
+
         <CustomButtonWrapper>
           {isEditing ? (
             <>
@@ -423,6 +450,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  overflow-y: auto;
 `;
 
 const InputRow = styled.div`
@@ -466,4 +494,67 @@ const CustomButtonWrapper = styled.div`
 
 const ToggleSelectWrapper = styled.div`
   flex: 1;
+`;
+
+const CustomInputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+`;
+
+const CustomLabel = styled.label`
+  font-size: 1.25rem;
+  color: #2e2e32;
+  font-weight: 500;
+`;
+
+const Checkbox = styled.input`
+  width: 1.5rem;
+  height: 1.5rem;
+  appearance: none;
+  border: 0.125rem solid #d1d8e0;
+  border-radius: 0.25rem;
+  background-color: #ffffff;
+  position: relative;
+  cursor: inherit;
+
+  &:checked {
+    background-color: #3d72b3;
+    border-color: #3d72b3;
+  }
+
+  &:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+`;
+
+const PrivacyConsentWrapper = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  height: 3.5rem;
+  border: 0.0625rem solid #404040;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  cursor: ${({ isEditable }) => (isEditable ? 'pointer' : 'default')};
+  transition: all 0.2s;
+`;
+
+const ConsentText = styled.span`
+  font-size: 1.125rem;
+  color: ${({ checked }) => (checked ? '#2e2e32' : '#888')};
+  font-weight: ${({ checked }) => (checked ? '500' : '400')};
 `;

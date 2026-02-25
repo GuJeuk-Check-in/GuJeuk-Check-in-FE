@@ -10,12 +10,14 @@ interface Purpose {
 
 interface PurposeProps {
   purpose: Purpose;
+  index: number;
   onDelete: (id: number) => void;
   onUpdate: (params: { id: number; newPurpose: string }) => void;
   isDeleting: boolean;
 }
 
 const PurposeCard = ({
+  index,
   purpose,
   onDelete,
   onUpdate,
@@ -103,7 +105,7 @@ const PurposeCard = ({
         />
       ) : (
         <Label>
-          {purpose.purpose}
+          {index}. {purpose.purpose}
           <StyledEditIcon
             size={18}
             onClick={() => {

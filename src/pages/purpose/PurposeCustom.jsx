@@ -24,4 +24,6 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;

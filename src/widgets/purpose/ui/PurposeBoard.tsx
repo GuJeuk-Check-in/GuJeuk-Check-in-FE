@@ -62,9 +62,10 @@ export const PurposeBoard = () => {
       >
         <PurposeListGrid>
           <SortableContext items={items} strategy={rectSortingStrategy}>
-            {items.map((purpose) => (
+            {items.map((purpose, index) => (
               <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
                 <PurposeCard
+                  index={index + 1}
                   purpose={purpose}
                   onDelete={handleDelete}
                   onUpdate={({
@@ -94,6 +95,7 @@ const Container = styled.div`
   flex: 1;
   display: flex;
   justify-content: center;
+  overflow-y: scroll
 `;
 
 const PurposeListGrid = styled.div`

@@ -1,13 +1,10 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Header } from '@widgets/GlobalLayout/index';
 import UserVisitCard from '@shared/ui/Form/UserVisitCard';
-import { ExcelButton } from '@shared/ui/Button/index';
-import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
 import { Modal } from '../../shared/ui/modal/Modal';
-import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
 import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,
@@ -15,8 +12,6 @@ import {
 import { useModal } from '@shared/hooks/useModal';
 
 const UserVisitList = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exportingDate, setExportingDate] = useState('');
   const modal = useModal();
 
   const {
@@ -30,8 +25,6 @@ const UserVisitList = () => {
 
   const { mutate: deleteMutate, isLoading: isDeleting } =
     useDeleteVisitMutation();
-
-  const { mutate: excelMutate, isLoading: isExporting } = useExportExcel();
 
   const visits = useMemo(() => {
     if (!data?.pages) return [];
@@ -114,50 +107,11 @@ const UserVisitList = () => {
     });
   };
 
-  const handleExcelExportClick = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleExportConfirmedWithDate = (year, month) => {
-    const dataString = `${year}-${month}`;
-    setExportingDate(dataString);
-    excelMutate(
-      { year, month },
-      {
-        onSettled: () => {
-          setExportingDate('');
-        },
-      }
-    );
-    setIsModalOpen(false);
-  };
-
-  const getExportingPeriodMessage = (dateString) => {
-    if (!dateString) return '전체 기간';
-    const parts = dateString.split('-');
-    if (parts.length === 2) {
-      return `기간: ${parts[0]}년 ${parts[1]}월`;
-    }
-    return dateString;
-  };
-
   return (
     <Container>
       <UseBackground />
       <Header />
       <ContentWrapper>
-        <ExportButtonWrapper>
-          <ExcelButton
-            onClick={handleExcelExportClick}
-            disabled={isExporting}
-          />
-          {isExporting && (
-            <ExportLoadingMessage>
-              엑셀 파일을 준비 중입니다... (
-              {getExportingPeriodMessage(exportingDate)})
-            </ExportLoadingMessage>
-          )}
-        </ExportButtonWrapper>
         {isLoading && (
           <LoadingOverlay>
             <LoadingBox>
@@ -194,12 +148,6 @@ const UserVisitList = () => {
         )}
       </ContentWrapper>
 
-      <DateExportModal
-        isVisible={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onExport={handleExportConfirmedWithDate}
-      />
-
       <Modal
         isOpen={modal.isOpen}
         config={modal.config}
@@ -215,6 +163,8 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
+  max-height: 100vh;
+  overflow-y: hidden;
 `;
 
 const ContentWrapper = styled.div`
@@ -225,21 +175,7 @@ const ContentWrapper = styled.div`
   padding: 3.5rem 3.75rem;
   gap: 1.25rem;
   box-sizing: border-box;
-`;
-
-const ExportButtonWrapper = styled.div`
-  width: 100%;
-  max-width: 80rem;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 0.5rem;
-`;
-
-const ExportLoadingMessage = styled.p`
-  margin-left: 0.625rem;
-  color: #3f51b5;
-  white-space: nowrap;
+  overflow-y: scroll;
 `;
 
 const EmptyMessage = styled.p`
