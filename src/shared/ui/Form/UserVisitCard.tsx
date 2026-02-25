@@ -26,10 +26,10 @@ const UserVisitCard = ({
     navigate(`/log/${id}`);
   };
 
-  // const handleDeleteClick = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   if (onDelete) onDelete();
-  // };
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) onDelete();
+  };
 
   return (
     <Container onClick={handleCardClick}>
@@ -44,9 +44,9 @@ const UserVisitCard = ({
 
       <RightSection>
         <Date>{date}</Date>
-        {/* <CloseButton onClick={handleDeleteClick}>
+        <CloseButton onClick={handleDeleteClick}>
           <IoClose size="1.8rem" />
-        </CloseButton> */}
+        </CloseButton>
       </RightSection>
     </Container>
   );
@@ -106,4 +106,16 @@ const RightSection = styled.div`
 const Date = styled.span`
   font-size: 1.25rem;
   color: #969698;
+`;
+
+const CloseButton = styled.button`
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #969696;
+  cursor: pointer;
 `;
