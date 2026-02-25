@@ -26,7 +26,7 @@ export const Header = () => {
         <HeaderButton onClick={() => navigate('/log/create')}>
           시설 이용 기록 추가
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/residence')}>
+        <HeaderButton onClick={() => navigate('/residence/all')}>
           거주지 커스텀
         </HeaderButton>
       </ButtonWrapper>
