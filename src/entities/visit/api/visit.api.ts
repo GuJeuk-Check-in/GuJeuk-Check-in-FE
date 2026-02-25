@@ -1,4 +1,4 @@
-import axiosInstance from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api/axiosInstance';
 import {
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
@@ -52,7 +52,7 @@ export const exportVisitListToExcel = async ({
     const formattedMonth = String(month).padStart(2, '0');
 
     const response = await axiosInstance.get(
-      `/admin/excel/${year}-${formattedMonth}`,
+      `/organ/excel/${year}-${formattedMonth}`,
       {
         responseType: 'blob',
       }

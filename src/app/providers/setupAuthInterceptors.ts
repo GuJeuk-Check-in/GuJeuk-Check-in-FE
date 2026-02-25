@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@entities/auth';
-import axiosInstance from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api/axiosInstance';
 
 interface FailedQueueItem {
   resolve: (token: string | null) => void;
@@ -39,7 +39,6 @@ const processQueue = (error: unknown, token: string | null = null) => {
 
 const redirectToLogin = () => {
   useAuthStore.getState().logout();
-  localStorage.removeItem('auth-storage');
   window.location.href = '/organ/login?error=expired';
 };
 
