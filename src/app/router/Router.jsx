@@ -20,7 +20,7 @@ export const Router = () => {
       <Route path="/organ/user/all" element={<UserInformation />} />
       <Route path="/organ/user/:userId" element={<UserInformationDetail />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
-      <Route path="/residence" element={<ResidenceCustom />} />
+      <Route path="/residence/all" element={<ResidenceCustom />} />
     </Routes>
   );
 };
