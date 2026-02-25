@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 import { FaClock } from 'react-icons/fa6';
 
@@ -15,7 +15,7 @@ const VisitTimePicker = ({
 }: VisitTimePickerProps) => {
   const [error, setError] = useState<string>('');
 
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     onChange(input);
   };
