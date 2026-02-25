@@ -250,6 +250,7 @@ const UserDetailView = () => {
   }
 
   const currentData = isEditing && formData ? formData : visit;
+  const currentPrivacyAgreed = currentData?.privacyAgreed ?? false;
 
   const ageDisplayLabel = formatAgeDisplay(visit.age);
 
