@@ -25,6 +25,7 @@ interface VisitFormProps {
     purpose: string;
     residence: string;
     visitDate: string;
+    visitTime: string;
     privacyAgreed: boolean;
   }) => Promise<void>;
   isLoading: boolean;
@@ -79,7 +80,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       !trimmedPurpose ||
       !date ||
       !ageDisplay ||
-      !residence ||
       !visitTime
     ) {
       alert('모든 필수 필드를 입력해주세요.');
@@ -106,7 +106,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
     try {
       await onSubmit(dataToSend);
-      resetForm();
     } catch {}
   };
 
