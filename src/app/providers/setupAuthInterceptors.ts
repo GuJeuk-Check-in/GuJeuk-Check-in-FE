@@ -113,6 +113,9 @@ export const useAuthInterceptors = () => {
           return new Promise<string | null>((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           }).then((newToken) => {
+            if (!newToken) {
+              return Promise.reject(new Error('Token refresh failed'));
+            }
             if (newToken && originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
             }
