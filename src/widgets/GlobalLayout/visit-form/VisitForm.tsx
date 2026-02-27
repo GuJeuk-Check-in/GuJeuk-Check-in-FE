@@ -60,17 +60,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const { data: residences, isLoading: isResidenceLoading } =
     useResidenceList();
 
-  const resetForm = () => {
-    nameInput.reset();
-    phoneInput.reset();
-    maleCounter.reset();
-    femaleCounter.reset();
-    setAgeDisplay('');
-    setPurpose('');
-    setDate('');
-    privacyCheck.setChecked(true);
-  };
-
   const handleSubmit = async () => {
     const trimmedPurpose = purpose.trim();
 
@@ -106,7 +95,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
     try {
       await onSubmit(dataToSend);
-      resetForm();
     } catch (error) {
       console.error('이용 기록 제출 실패:', error);
     }
