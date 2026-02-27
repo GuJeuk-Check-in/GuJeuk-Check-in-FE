@@ -14,7 +14,7 @@ export const useTokenRefresher = () => {
     const refreshCycle = 1000 * 3300;
     const timer = setInterval(async () => {
       try {
-        const res = await axiosInstance.patch('organ/re-issue');
+        const res = await axiosInstance.patch('/organ/re-issue');
         const newAccess = res.data?.accessToken;
         const newRefresh = res.data?.refreshToken;
         if (newAccess && newRefresh) {
