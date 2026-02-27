@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
-import { Modal } from '../../../../shared/ui/modal/Modal';
+import { Modal } from '@shared/ui';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 
 interface CreatePurposeModalProps {

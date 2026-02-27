@@ -5,7 +5,3 @@ export const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
 });
-
-export const axiosPublicInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-});

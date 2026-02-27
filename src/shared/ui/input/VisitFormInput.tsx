@@ -15,7 +15,7 @@ interface VisitFormInputProps {
   readOnly?: boolean;
 }
 
-const VisitFormInput = ({
+export const VisitFormInput = ({
   label,
   placeholder,
   icon = <IoMdPerson size="1.5rem" />,
@@ -41,8 +41,6 @@ const VisitFormInput = ({
     </Container>
   );
 };
-
-export default VisitFormInput;
 
 interface ContainerProps {
   width: string;

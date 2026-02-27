@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import UserFilter from '@shared/ui/Form/UserFilter';
-import UserInformationCard from '@shared/ui/Form/UserInformationCard';
+import { UserFilter, UserInformationCard } from '@shared/ui';
 import {
   UserSearchBar,
   useSearchUser,

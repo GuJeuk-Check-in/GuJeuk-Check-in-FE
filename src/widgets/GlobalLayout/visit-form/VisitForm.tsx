@@ -1,13 +1,13 @@
-import VisitFormInput from '@shared/ui/input/VisitFormInput';
-import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
+import { VisitFormInput } from '@shared/ui/input/VisitFormInput';
+import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
+import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
 import { PasswordButton } from '@shared/ui/Button/index';
-import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
-import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
+import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
+import { VisitTimePicker } from '@shared/ui/LabeldInput/VisitTimePicker';
 import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
@@ -60,17 +60,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   const { data: residences, isLoading: isResidenceLoading } =
     useResidenceList();
 
-  const resetForm = () => {
-    nameInput.reset();
-    phoneInput.reset();
-    maleCounter.reset();
-    femaleCounter.reset();
-    setAgeDisplay('');
-    setPurpose('');
-    setDate('');
-    privacyCheck.setChecked(true);
-  };
-
   const handleSubmit = async () => {
     const trimmedPurpose = purpose.trim();
 
@@ -106,7 +95,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
     try {
       await onSubmit(dataToSend);
-    } catch {}
+    } catch (error) {
+      console.error('이용 기록 제출 실패:', error);
+    }
   };
 
   const purposeOptions = Array.isArray(purposes)

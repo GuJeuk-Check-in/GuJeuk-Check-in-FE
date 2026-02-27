@@ -1,10 +1,10 @@
-import { axiosInstance } from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api';
 import {
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   UpdateUserVisitRequest,
-} from '../index';
+} from '../model/types';
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);
@@ -52,7 +52,7 @@ export const exportVisitListToExcel = async ({
     const formattedMonth = String(month).padStart(2, '0');
 
     const response = await axiosInstance.get(
-      `/admin/excel/${year}-${formattedMonth}`,
+      `/organ/excel/${year}-${formattedMonth}`,
       {
         responseType: 'blob',
       }

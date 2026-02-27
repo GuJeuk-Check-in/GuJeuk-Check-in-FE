@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuthInterceptors } from '@app/providers/setupAuthInterceptors';
+import { useAuthInterceptors } from '@app/providers';
 
 const queryClient = new QueryClient();
 

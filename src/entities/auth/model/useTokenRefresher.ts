@@ -15,8 +15,11 @@ export const useTokenRefresher = () => {
         if (newAccess && newRefresh) {
           setAuth(newAccess, newRefresh);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error('토큰 갱신 실패:', error);
+        logout();
+      }
     }, refreshCycle);
     return () => clearInterval(timer);
-  }, [accessToken, setAuth]);
+  }, [accessToken, setAuth, logout]);
 };

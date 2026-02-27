@@ -20,7 +20,7 @@ interface VisitDetailInputProps {
   placeholder?: string;
 }
 
-const VisitDetailInput: React.FC<VisitDetailInputProps> = ({
+export const VisitDetailInput: React.FC<VisitDetailInputProps> = ({
   label,
   value,
   width = '100%',
@@ -93,8 +93,6 @@ const VisitDetailInput: React.FC<VisitDetailInputProps> = ({
     </Container>
   );
 };
-
-export default VisitDetailInput;
 
 const Container = styled.div<{ width: string }>`
   width: ${({ width }) => width};

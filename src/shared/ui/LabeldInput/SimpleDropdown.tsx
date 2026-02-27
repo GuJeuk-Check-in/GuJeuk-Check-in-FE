@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import React from 'react';
 
 interface SimpleDropdownProps {
   label: string;
@@ -10,7 +9,7 @@ interface SimpleDropdownProps {
   placeholder?: string;
 }
 
-const SimpleDropdown = ({
+export const SimpleDropdown = ({
   label,
   options,
   value,
@@ -56,8 +55,6 @@ const SimpleDropdown = ({
     </Container>
   );
 };
-
-export default SimpleDropdown;
 
 interface DropdownIconProps {
   isOpen: boolean;

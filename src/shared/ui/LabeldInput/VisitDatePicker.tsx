@@ -14,7 +14,7 @@ interface VisitDatePickerProps {
   label?: string;
 }
 
-const formatDateToISOString = (date: Date): string => {
+export const formatDateToISOString = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
@@ -53,7 +53,7 @@ const safeDateConvert = (dateString) => {
   return date;
 };
 
-const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) => {
+export const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleDateSelect = (value: CalendarValue) => {
@@ -85,7 +85,9 @@ const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) => {
           placeholder={`${label}를 선택해주세요.`}
           readOnly
         />
-        <ArrowIcon>{isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}</ArrowIcon>
+        <ArrowIcon>
+          {isOpen ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+        </ArrowIcon>
       </InputContainer>
       {isOpen && (
         <CalendarWrapper>
@@ -102,8 +104,6 @@ const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) => {
     </Container>
   );
 };
-
-export default VisitDatePicker;
 
 const Container = styled.div`
   position: relative;

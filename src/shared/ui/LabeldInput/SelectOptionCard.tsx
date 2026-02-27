@@ -7,7 +7,7 @@ interface SelectOptionCardProps {
   onClick: () => void;
 }
 
-const SelectOptionCard = ({
+export const SelectOptionCard = ({
   label,
   isSelected,
   onClick,
@@ -19,8 +19,6 @@ const SelectOptionCard = ({
     </CardContainer>
   );
 };
-
-export default SelectOptionCard;
 
 interface styleProps {
   isSelected: boolean;

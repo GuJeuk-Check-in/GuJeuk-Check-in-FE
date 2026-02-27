@@ -13,7 +13,7 @@ interface ToggleSelectProps {
   disable?: boolean;
 }
 
-const ToggleSelect = ({
+export const ToggleSelect = ({
   label,
   options,
   value,
@@ -62,8 +62,6 @@ const ToggleSelect = ({
     </Container>
   );
 };
-
-export default ToggleSelect;
 
 interface OptionProps {
   selected: boolean;

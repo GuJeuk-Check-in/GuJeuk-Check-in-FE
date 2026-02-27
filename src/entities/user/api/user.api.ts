@@ -1,4 +1,4 @@
-import { axiosInstance } from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api';
 import { UserListResponse, UserInformation } from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
@@ -31,7 +31,7 @@ export const usersByResidence = async (
 ): Promise<UserListResponse> => {
   const residenceParam = residence === '기타 지역' ? '기타' : residence;
 
-  const response = await axiosInstance.get<UserListResponse>('/admin/user', {
+  const response = await axiosInstance.get<UserListResponse>('/organ/user', {
     params: { residence: residenceParam, page },
   });
 
@@ -40,20 +40,14 @@ export const usersByResidence = async (
 
 export const exportUserListToExcel = async (): Promise<string> => {
   try {
-    const response = await axiosInstance.get(
-      `/organ/excel/user`,
-      {
-        responseType: 'blob',
-      }
-    );
+    const response = await axiosInstance.get(`/organ/excel/user`, {
+      responseType: 'blob',
+    });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute(
-      'download',
-      `회원 목록.xlsx`
-    );
+    link.setAttribute('download', `회원 목록.xlsx`);
     document.body.appendChild(link);
     link.click();
     link.remove();

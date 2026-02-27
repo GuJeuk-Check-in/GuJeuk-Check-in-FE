@@ -1,4 +1,4 @@
-import { axiosInstance, axiosPublicInstance } from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api';
 import {
   CreatePurposeRequest,
   PurposeResponse,

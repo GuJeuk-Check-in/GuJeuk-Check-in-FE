@@ -9,7 +9,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useUpdatePurposeMovement } from '../model/useUpdatePurposeMovement';
-import { useModal } from '@shared/hooks/useModal';
+import { useModal } from '@shared/hooks';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
 type Item = {

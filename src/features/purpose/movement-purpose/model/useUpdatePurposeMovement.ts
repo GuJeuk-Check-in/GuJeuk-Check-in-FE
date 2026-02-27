@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-
-import { updatePurposeMovement } from '@entities/purpose/api/purpose.api';
-import { UpdatePurposeMovementRequest } from '@entities/purpose/model/types';
+import {
+  updatePurposeMovement,
+  UpdatePurposeMovementRequest,
+} from '@entities/purpose';
 
 export const useUpdatePurposeMovement = () => {
   const queryClient = useQueryClient();

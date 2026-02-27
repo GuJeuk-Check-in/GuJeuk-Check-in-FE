@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@entities/auth';
-import { axiosInstance } from '@shared/api/axiosInstance';
+import { axiosInstance } from '@shared/api';
 
 interface FailedQueueItem {
   resolve: (token: string | null) => void;
@@ -95,7 +95,9 @@ export const useAuthInterceptors = () => {
           const text = await response.data.text();
           const errorJson = JSON.parse(text);
           errorMsg = errorJson.message || errorMsg;
-        } catch {}
+        } catch (parseError) {
+          console.error('응답 파싱 실패:', parseError);
+        }
       }
 
       if (
@@ -107,6 +109,9 @@ export const useAuthInterceptors = () => {
           return new Promise<string | null>((resolve, reject) => {
             failedQueue.push({ resolve, reject });
           }).then((newToken) => {
+            if (!newToken) {
+              return Promise.reject(new Error('Token refresh failed'));
+            }
             if (newToken && originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
             }
