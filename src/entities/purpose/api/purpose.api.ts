@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { axiosInstance, axiosPublicInstance } from '@shared/api/axiosInstance';
-=======
 import { axiosInstance } from '@shared/api';
->>>>>>> 4da692d (chore :: import 경로 변경)
 import {
   CreatePurposeRequest,
   PurposeResponse,

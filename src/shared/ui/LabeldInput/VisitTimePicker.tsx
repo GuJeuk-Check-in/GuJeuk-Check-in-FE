@@ -8,16 +8,7 @@ interface VisitTimePickerProps {
   label?: string;
 }
 
-<<<<<<< HEAD
-const VisitTimePicker = ({
-=======
-const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
-const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-
-const pad = (n: number) => String(n).padStart(2, '0');
-
 export const VisitTimePicker = ({
->>>>>>> 4da692d (chore :: import 경로 변경)
   value,
   onChange,
   label = '방문시간',
@@ -100,23 +91,3 @@ const ErrorText = styled.span`
   font-size: 0.875rem;
   color: #d32f2f;
 `;
-<<<<<<< HEAD
-=======
-
-const ScrollPadding = styled.div`
-  height: 66px;
-`;
-
-const ScrollItem = styled.div<{ selected: boolean }>`
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  scroll-snap-align: center;
-  font-size: ${({ selected }) => (selected ? '1.5rem' : '1.25rem')};
-  font-weight: ${({ selected }) => (selected ? 700 : 400)};
-  color: ${({ selected }) => (selected ? '#000' : '#bbb')};
-  cursor: pointer;
-  transition: all 0.15s;
-`;
->>>>>>> 4da692d (chore :: import 경로 변경)

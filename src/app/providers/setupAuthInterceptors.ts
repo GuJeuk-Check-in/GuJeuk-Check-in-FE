@@ -1,10 +1,6 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@entities/auth';
-<<<<<<< HEAD
-import { axiosInstance } from '@shared/api/axiosInstance';
-=======
 import { axiosInstance } from '@shared/api';
->>>>>>> 4da692d (chore :: import 경로 변경)
 
 interface FailedQueueItem {
   resolve: (token: string | null) => void;

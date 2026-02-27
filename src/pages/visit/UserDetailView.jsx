@@ -6,18 +6,10 @@ import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-<<<<<<< HEAD
-import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
-import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
-import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
-import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
-import { Modal } from '../../shared/ui/modal/Modal';
-=======
 import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
 import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { Modal } from '@shared/ui';
->>>>>>> 4da692d (chore :: import 경로 변경)
 import { useUpdateAdminItem } from '@features/visit/update-visit-list/model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
 import { useFetchUserVisitDetail } from '@entities/visit/index';

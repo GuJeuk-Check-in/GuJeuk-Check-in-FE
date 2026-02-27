@@ -3,16 +3,8 @@ import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Header } from '@widgets/GlobalLayout/index';
-<<<<<<< HEAD
-import UserVisitCard from '@shared/ui/Form/UserVisitCard';
-import { Modal } from '../../shared/ui/modal/Modal';
-=======
 import { UserVisitCard } from '@shared/ui/Form/UserVisitCard';
-import { ExcelButton } from '@shared/ui/Button/index';
-import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
 import { Modal } from '@shared/ui';
-import { useExportExcel } from '@features/visit/export-excel/model/useExportExcel';
->>>>>>> 4da692d (chore :: import 경로 변경)
 import {
   useInfiniteUserVisitList,
   useDeleteVisitMutation,

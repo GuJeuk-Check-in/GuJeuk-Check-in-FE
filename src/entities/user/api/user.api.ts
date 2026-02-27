@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { axiosInstance } from '@shared/api/axiosInstance';
-=======
 import { axiosInstance } from '@shared/api';
->>>>>>> 4da692d (chore :: import 경로 변경)
 import { UserListResponse, UserInformation } from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
@@ -44,20 +40,14 @@ export const usersByResidence = async (
 
 export const exportUserListToExcel = async (): Promise<string> => {
   try {
-    const response = await axiosInstance.get(
-      `/organ/excel/user`,
-      {
-        responseType: 'blob',
-      }
-    );
+    const response = await axiosInstance.get(`/organ/excel/user`, {
+      responseType: 'blob',
+    });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute(
-      'download',
-      `회원 목록.xlsx`
-    );
+    link.setAttribute('download', `회원 목록.xlsx`);
     document.body.appendChild(link);
     link.click();
     link.remove();
