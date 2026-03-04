@@ -13,8 +13,11 @@ export const UserFilter = ({
   setSelectedLocation,
 }: UserFilterProps) => {
   const { residences } = useResidenceStore();
-  const LocationData = ['전체 지역', ...residences.map((r) => r.residence)];
 
+  const LocationData = [
+    '전체 지역',
+    ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
+  ];
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
