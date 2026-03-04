@@ -13,11 +13,7 @@ export const UserFilter = ({
   setSelectedLocation,
 }: UserFilterProps) => {
   const { residences } = useResidenceStore();
-  const LocationData = [
-    '전체 지역',
-    ...residences.map((r) => r.residence),
-    '기타 지역',
-  ];
+  const LocationData = ['전체 지역', ...residences.map((r) => r.residence)];
 
   const [isOpen, setIsOpen] = useState(false);
 
