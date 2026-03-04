@@ -219,7 +219,7 @@ const UserDetailView = () => {
     setIsEditing(false);
   };
 
-  if (isVisitLoading || isPurposesLoading) {
+  if (isVisitLoading || isPurposesLoading || isResidenceLoading) {
     return (
       <Container>
         <UseBackground />
@@ -228,6 +228,8 @@ const UserDetailView = () => {
           <LoadingText>
             {isPurposesLoading
               ? '목적 목록을 불러오는 중...'
+              : isResidenceLoading
+              ? '거주지 목록을 불러오는 중...'
               : '상세 기록을 불러오는 중...'}
           </LoadingText>
         </Wrapper>
