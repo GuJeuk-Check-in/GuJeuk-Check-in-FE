@@ -6,6 +6,7 @@ import {
   useSearchUser,
   useInfiniteUserList,
 } from '@features/user/index';
+import { useResidenceList } from '@entities/residence';
 
 interface UserListWithSearchProps {
   totalCountText?: string;
@@ -14,6 +15,7 @@ interface UserListWithSearchProps {
 export const UserListWithSearch = ({
   totalCountText = '총',
 }: UserListWithSearchProps) => {
+  useResidenceList();
   const [filters, setFilters] = useState<{ residence: string | null }>({
     residence: null,
   });
