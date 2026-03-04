@@ -83,6 +83,7 @@ const UserDetailView = () => {
         maleCount: visit.maleCount || 0,
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
+        residence: visit.residence || '',
         visitDate: visit.visitDate || '',
         visitTime: visit.visitTime || '',
         privacyAgreed: visit.privacyAgreed || false,
