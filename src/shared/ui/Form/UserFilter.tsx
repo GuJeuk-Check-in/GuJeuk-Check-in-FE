@@ -1,34 +1,23 @@
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { useState } from 'react';
+import { useResidenceStore } from '@entities/residence';
 
 interface UserFilterProps {
   selectedLocation: string;
   setSelectedLocation: (location: string) => void;
 }
 
-const UserFilter = ({
+export const UserFilter = ({
   selectedLocation,
   setSelectedLocation,
 }: UserFilterProps) => {
+  const { residences } = useResidenceStore();
+
   const LocationData = [
     '전체 지역',
-    '구즉동',
-    '관평동',
-    '노은1동',
-    '노은2동',
-    '노은3동',
-    '상대동',
-    '신성동',
-    '온천1동',
-    '온천2동',
-    '원신흥동',
-    '전민동',
-    '진잠동',
-    '학하동',
-    '기타 지역',
+    ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
   ];
-
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -65,8 +54,6 @@ const UserFilter = ({
     </Container>
   );
 };
-
-export default UserFilter;
 
 const Container = styled.div`
   display: flex;

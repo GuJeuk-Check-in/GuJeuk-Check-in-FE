@@ -18,7 +18,7 @@ const GENDER_MAP: Record<GenderType, string> = {
   WOMAN: '여성',
 };
 
-const UserInformationCard = ({
+export const UserInformationCard = ({
   id,
   name,
   location,
@@ -64,8 +64,6 @@ const UserInformationCard = ({
     </Container>
   );
 };
-
-export default UserInformationCard;
 
 const Container = styled.div`
   width: 100%;

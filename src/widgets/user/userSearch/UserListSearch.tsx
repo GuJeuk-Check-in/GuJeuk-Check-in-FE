@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import UserFilter from '@shared/ui/Form/UserFilter';
-import UserInformationCard from '@shared/ui/Form/UserInformationCard';
+import { UserFilter, UserInformationCard } from '@shared/ui';
 import {
   UserSearchBar,
   useSearchUser,
   useInfiniteUserList,
 } from '@features/user/index';
+import { useResidenceList } from '@entities/residence';
 
 interface UserListWithSearchProps {
   totalCountText?: string;
@@ -15,6 +15,7 @@ interface UserListWithSearchProps {
 export const UserListWithSearch = ({
   totalCountText = '총',
 }: UserListWithSearchProps) => {
+  useResidenceList();
   const [filters, setFilters] = useState<{ residence: string | null }>({
     residence: null,
   });

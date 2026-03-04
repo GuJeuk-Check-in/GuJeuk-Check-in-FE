@@ -8,7 +8,7 @@ interface VisitTimePickerProps {
   label?: string;
 }
 
-const VisitTimePicker = ({
+export const VisitTimePicker = ({
   value,
   onChange,
   label = '방문시간',
@@ -38,8 +38,6 @@ const VisitTimePicker = ({
     </Container>
   );
 };
-
-export default VisitTimePicker;
 
 const Container = styled.div`
   width: 100%;

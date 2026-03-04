@@ -4,17 +4,18 @@ import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
-import VisitDetailInput from '@shared/ui/input/VisitDetailInput';
+import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import ToggleSelect from '@shared/ui/LabeldInput/ToggleSelect';
-import CountVisitor from '@shared/ui/LabeldInput/CountVisitor';
-import VisitDatePicker from '@shared/ui/LabeldInput/VisitDatePicker';
-import VisitTimePicker from '@shared/ui/LabeldInput/VisitTimePicker';
-import { Modal } from '../../shared/ui/modal/Modal';
+import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
+import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
+import { VisitDatePicker } from '@shared/ui';
+import { VisitTimePicker } from '@shared/ui';
+import { Modal } from '@shared/ui';
 import { useUpdateAdminItem } from '@features/visit/update-visit-list/model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
 import { useFetchUserVisitDetail } from '@entities/visit/index';
 import { useModal } from '@shared/hooks/useModal';
+import { useResidenceList } from '@entities/residence';
 
 const AGE_OPTIONS = [
   { value: 'BABY', label: '0~8세' },
@@ -58,8 +59,18 @@ const UserDetailView = () => {
     isError: isPurposesError,
   } = usePurposeList();
 
+  const {
+    data: residences = [],
+    isLoading: isResidenceLoading,
+    isError: isResidenceError,
+  } = useResidenceList();
+
   const purposeOptions = Array.isArray(purposes)
     ? purposes.map((p) => p.purpose)
+    : [];
+
+  const residenceOptions = Array.isArray(residences)
+    ? residences.map((r) => r.residence)
     : [];
 
   useEffect(() => {
@@ -72,6 +83,7 @@ const UserDetailView = () => {
         maleCount: visit.maleCount || 0,
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
+        residence: visit.residence || '',
         visitDate: visit.visitDate || '',
         visitTime: visit.visitTime || '',
         privacyAgreed: visit.privacyAgreed || false,
@@ -151,6 +163,7 @@ const UserDetailView = () => {
       maleCount: Number(formData.maleCount),
       femaleCount: Number(formData.femaleCount),
       purpose: formData.purpose,
+      residence: formData.residence,
       visitDate: formData.visitDate,
       visitTime: formData.visitTime,
       privacyAgreed: formData.privacyAgreed,
@@ -198,6 +211,7 @@ const UserDetailView = () => {
         maleCount: visit.maleCount || 0,
         femaleCount: visit.femaleCount || 0,
         purpose: visit.purpose || '',
+        residence: visit.residence || '',
         visitDate: visit.visitDate || '',
         visitTime: visit.visitTime || '',
         privacyAgreed: visit.privacyAgreed || false,
@@ -206,7 +220,7 @@ const UserDetailView = () => {
     setIsEditing(false);
   };
 
-  if (isVisitLoading || isPurposesLoading) {
+  if (isVisitLoading || isPurposesLoading || isResidenceLoading) {
     return (
       <Container>
         <UseBackground />
@@ -215,6 +229,8 @@ const UserDetailView = () => {
           <LoadingText>
             {isPurposesLoading
               ? '목적 목록을 불러오는 중...'
+              : isResidenceLoading
+              ? '거주지 목록을 불러오는 중...'
               : '상세 기록을 불러오는 중...'}
           </LoadingText>
         </Wrapper>
@@ -222,7 +238,7 @@ const UserDetailView = () => {
     );
   }
 
-  if (isVisitError || isPurposesError) {
+  if (isVisitError || isPurposesError || isResidenceError) {
     return (
       <Container>
         <UseBackground />
@@ -313,6 +329,22 @@ const UserDetailView = () => {
           <VisitDetailInput
             label="방문 목적"
             value={visit.purpose}
+            isEditable={false}
+          />
+        )}
+        {isEditing && formData ? (
+          <ToggleSelect
+            label="거주지"
+            options={residenceOptions}
+            value={formData.residence}
+            onChange={(value) =>
+              handleChange({ target: { name: 'residence', value } })
+            }
+          />
+        ) : (
+          <VisitDetailInput
+            label="거주지"
+            value={visit.residence}
             isEditable={false}
           />
         )}

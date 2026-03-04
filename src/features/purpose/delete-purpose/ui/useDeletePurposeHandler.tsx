@@ -1,6 +1,5 @@
-import { useModal } from '@shared/hooks/useModal';
+import { useModal } from '@shared/hooks';
 import { useDeletePurposeList } from '../model/useDeletePurpose';
-
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { AxiosError } from 'axios';
 import { useState } from 'react';

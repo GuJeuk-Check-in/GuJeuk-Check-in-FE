@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { IoClose } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import { IoClose } from 'react-icons/io5';
 
 interface UserVisitCardProps {
   id: number;
@@ -12,7 +11,7 @@ interface UserVisitCardProps {
   onDelete?: () => void;
 }
 
-const UserVisitCard = ({
+export const UserVisitCard = ({
   id,
   name,
   male,
@@ -51,8 +50,6 @@ const UserVisitCard = ({
     </Container>
   );
 };
-
-export default UserVisitCard;
 
 const Container = styled.div`
   width: 100%;

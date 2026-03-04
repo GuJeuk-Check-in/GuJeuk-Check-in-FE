@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import VisitFormInput from './VisitFormInput';
-import SelectOptionCard from '../LabeldInput/SelectOptionCard';
+import { VisitFormInput } from './VisitFormInput';
+import { SelectOptionCard } from '../LabeldInput/SelectOptionCard';
 
 interface SelectInputProps {
   label: string;
@@ -13,7 +13,7 @@ interface SelectInputProps {
   cols?: number;
 }
 
-const SelectInput = ({
+export const SelectInput = ({
   label,
   placeholder,
   icon,
@@ -59,8 +59,6 @@ const SelectInput = ({
     </Wrapper>
   );
 };
-
-export default SelectInput;
 
 const Wrapper = styled.div`
   width: 100%;

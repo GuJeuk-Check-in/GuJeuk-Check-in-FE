@@ -1,10 +1,10 @@
-import { createPurpose } from '@entities/purpose/api/purpose.api';
-import { AxiosError } from 'axios';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+  createPurpose,
   CreatePurposeRequest,
   PurposeResponse,
-} from '@entities/purpose/model/types';
+} from '@entities/purpose';
+import { AxiosError } from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePurpose = () => {
   const queryClient = useQueryClient();

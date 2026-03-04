@@ -10,7 +10,7 @@ interface CountVisitorProps {
   max?: number;
 }
 
-const CountVisitor = ({
+export const CountVisitor = ({
   label,
   value,
   onChange,
@@ -76,8 +76,6 @@ const CountVisitor = ({
     </Container>
   );
 };
-
-export default CountVisitor;
 
 const Container = styled.div`
   display: flex;

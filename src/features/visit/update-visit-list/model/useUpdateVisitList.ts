@@ -29,12 +29,8 @@ export const useUpdateAdminItem = (): UseMutationResult<
     mutationFn: (updateData: UpdateUserVisitRequest) =>
       updateVisitList(updateData),
     onSuccess: (data, variables) => {
+      queryClient.setQueryData(['visitDetail', String(variables.id)], data);
       queryClient.invalidateQueries({ queryKey: ['adminList'] });
-      if (variables?.id) {
-        queryClient.invalidateQueries({
-          queryKey: ['adminItem', variables.id],
-        });
-      }
     },
   });
 };
