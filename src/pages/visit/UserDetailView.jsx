@@ -183,7 +183,7 @@ const UserDetailView = () => {
               bgColor: '#0F50A0',
               onClick: () => {
                 modal.closeModal();
-                window.location.reload();
+                setIsEditing(false);
               },
             },
           ],
