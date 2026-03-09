@@ -115,7 +115,7 @@ export const ResidenceCard = ({
             }}
             onPointerDown={preventDrag}
             onMouseDown={preventDrag}
-            $isDisabled={isDeleting}
+            isDeleting={isDeleting}
           />
         </Label>
       )}
@@ -180,14 +180,14 @@ const EditInput = styled.input`
   padding: 0;
 `;
 
-const StyledEditIcon = styled(MdEdit)<{ $isDisabled: boolean }>`
-  cursor: ${(props) => (props.$isDisabled ? 'not-allowed' : 'pointer')};
-  color: ${(props) => (props.$isDisabled ? '#666' : '#666')};
+const StyledEditIcon = styled(MdEdit)<{ isDeleting: boolean }>`
+  cursor: ${(props) => (props.isDeleting ? 'not-allowed' : 'pointer')};
+  color: ${(props) => (props.isDeleting ? '#666' : '#666')};
   transition: color 0.2s;
   position: relative;
   z-index: 10;
 
   &:hover {
-    color: ${(props) => (props.$isDisabled ? '#666' : '#1e3a8a')};
+    color: ${(props) => (props.isDeleting ? '#666' : '#1e3a8a')};
   }
 `;
