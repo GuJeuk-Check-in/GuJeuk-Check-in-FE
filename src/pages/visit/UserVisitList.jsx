@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Header } from '@widgets/GlobalLayout/index';
-import { UserVisitCard } from '@shared/ui/Form/UserVisitCard';
+import { UserVisitCard } from '@entities/visit';
 import { Modal } from '@shared/ui';
 import {
   useInfiniteUserVisitList,

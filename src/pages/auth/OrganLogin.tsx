@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { PasswordBackground } from '@shared/ui/Background/index';
-import { RightLayout } from '@widgets/authLayout/index';
+import { RightLayout } from '@widgets/auth/index';
 import { LoginForm } from '@features/auth/login/ui/LoginForm';
 import { useEffect } from 'react';
 import { useAuthStore } from '@entities/auth';

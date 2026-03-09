@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { VisitDetailInput } from '../input/VisitDetailInput';
+import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import { ToggleSelect } from '../LabeldInput/ToggleSelect';
-import { VisitDatePicker } from '../LabeldInput/VisitDatePicker';
-import { SimpleDropdown } from '../LabeldInput/SimpleDropdown';
+import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
+import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
+import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
 

@@ -1,5 +1,5 @@
 import { PasswordBackground } from '@shared/ui/Background/index';
-import { RightLayout } from '@widgets/authLayout/index';
+import { RightLayout } from '@widgets/auth/index';
 import styled from '@emotion/styled';
 import { UpdatePasswordForm } from '@features/auth/update-password/ui/UpdatePasswordForm';
 
