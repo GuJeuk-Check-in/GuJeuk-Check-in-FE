@@ -48,9 +48,11 @@ export interface UserVisitListResponse {
 }
 
 export interface UserVisitDetailResponse {
+  id: number;
   name: string | null;
   age: AgeType;
   phone: string;
+  residence: string;
   maleCount: number;
   femaleCount: number;
   purpose: string;
