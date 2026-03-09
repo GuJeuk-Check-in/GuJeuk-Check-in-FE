@@ -1,6 +1,5 @@
 import { useId, useState } from 'react';
-import eye_visible from "../../../assets/eye-visible.png"
-import eye_hidden from "../../../assets/eye-hidden.png"
+import { EyeVisible, EyeHidden } from '@shared/assets';
 import { IoMdLock } from 'react-icons/io';
 import styled from '@emotion/styled';
 import React from 'react';
@@ -49,7 +48,7 @@ export const AuthInput = ({
         />
         {type === 'password' && (
           <IconButton type="button" onClick={() => setShowPW(!showPW)}>
-            {showPW ? <img src={eye_visible} /> : <img src={eye_hidden} />}
+            {showPW ? <img src={EyeVisible} /> : <img src={EyeHidden} />}
           </IconButton>
         )}
       </InputWrapper>
