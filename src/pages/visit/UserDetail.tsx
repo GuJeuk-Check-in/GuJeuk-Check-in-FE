@@ -5,11 +5,12 @@ import VisitForm from '@widgets/visit/ui/VisitForm';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Modal } from '@shared/ui';
 import { useCreateUserVisit } from '@features/visit/index';
+import { CreateUserVisitRequest } from '@entities/visit';
 
 const UserDetail = () => {
   const navigate = useNavigate();
   const {
-    mutate,
+    mutateAsync,
     isPending: isLoading,
     isError,
     error,
@@ -20,8 +21,8 @@ const UserDetail = () => {
     },
   });
 
-  const handleSubmit = async (dataToSend: any) => {
-    await mutate(dataToSend);
+  const handleSubmit = async (dataToSend: CreateUserVisitRequest) => {
+    await mutateAsync(dataToSend);
   };
 
   return (
