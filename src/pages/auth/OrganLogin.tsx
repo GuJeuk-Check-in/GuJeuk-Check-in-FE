@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { PasswordBackground } from '@shared/ui/Background/index';
-import { RightLayout } from '@widgets/authLayout/index';
+import { RightLayout } from '@widgets/auth/index';
 import { LoginForm } from '@features/auth/login/ui/LoginForm';
 import { useEffect } from 'react';
 import { useAuthStore } from '@entities/auth';
 
-const EnterPassword = () => {
+const OrganLogin = () => {
   const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const EnterPassword = () => {
   );
 };
 
-export default EnterPassword;
+export default OrganLogin;
 
 const MainWrapper = styled.div`
   min-height: 100dvh;
@@ -32,16 +32,4 @@ const MainWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
 `;

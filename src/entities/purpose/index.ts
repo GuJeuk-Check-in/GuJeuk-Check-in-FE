@@ -3,3 +3,4 @@ export * from './model/types';
 export * from './model/purposeStore';
 export * from './model/usePurposeList';
 export * from './ui/PurposeCard';
+export * from './ui/SortablePurposeItem';

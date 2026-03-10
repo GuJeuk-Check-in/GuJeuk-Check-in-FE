@@ -14,40 +14,30 @@ import { useInput } from '@shared/hooks/useInput';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
 import { useResidenceList } from '@entities/residence';
+import { CreateUserVisitRequest } from '@entities/visit';
 
 interface VisitFormProps {
-  onSubmit: (data: {
-    name: string;
-    age: string;
-    phone: string;
-    maleCount: number;
-    femaleCount: number;
-    purpose: string;
-    residence: string;
-    visitDate: string;
-    visitTime: string;
-    privacyAgreed: boolean;
-  }) => Promise<void>;
+  onSubmit: (data: CreateUserVisitRequest) => Promise<void>;
   isLoading: boolean;
   isError: boolean;
-  error: any;
+  error: unknown;
 }
 
+const AGE_MAP = {
+  '0~8세': 'BABY',
+  '9~13세': 'AGE_9_13',
+  '14~16세': 'AGE_14_16',
+  '17~19세': 'AGE_17_19',
+  '20~24세': 'AGE_20_24',
+  성인: 'ADULT',
+} as const;
+
+type AgeDisplayType = keyof typeof AGE_MAP;
+
 const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
-  const AGE_MAP = {
-    '0~8세': 'BABY',
-    '9~13세': 'AGE_9_13',
-    '14~16세': 'AGE_14_16',
-    '17~19세': 'AGE_17_19',
-    '20~24세': 'AGE_20_24',
-    성인: 'ADULT',
-  };
-
-  type AgeDisplayType = keyof typeof AGE_MAP;
-
   const nameInput = useInput('');
   const phoneInput = useInput('');
-  const [ageDisplay, setAgeDisplay] = useState('');
+  const [ageDisplay, setAgeDisplay] = useState<AgeDisplayType | ''>('');
   const [purpose, setPurpose] = useState('');
   const maleCounter = useCounter(0);
   const femaleCounter = useCounter(0);
@@ -80,9 +70,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       return;
     }
 
-    const dataToSend = {
+    const dataToSend: CreateUserVisitRequest = {
       name: nameInput.value,
-      age: AGE_MAP[ageDisplay as AgeDisplayType],
+      age: AGE_MAP[ageDisplay],
       phone: phoneInput.value,
       residence: residence.replace(/^\d+\.\s*/, ''),
       maleCount: maleCounter.count,
@@ -95,8 +85,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
     try {
       await onSubmit(dataToSend);
-    } catch (error) {
-      console.error('이용 기록 제출 실패:', error);
+    } catch (err) {
+      console.error('이용 기록 제출 실패:', err);
     }
   };
 
@@ -104,7 +94,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
     ? purposes.map((p, index) => `${index + 1}. ${p.purpose}`)
     : [];
 
-  const ageOptions = Object.keys(AGE_MAP);
+  const ageOptions = Object.keys(AGE_MAP) as AgeDisplayType[];
 
   return (
     <Container>
@@ -119,7 +109,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
             label="연령"
             options={ageOptions}
             value={ageDisplay}
-            onChange={setAgeDisplay}
+            onChange={(value) => setAgeDisplay(value as AgeDisplayType)}
             icon={<PiStudentBold size={24} />}
           />
         </InputRow>
@@ -168,7 +158,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           }
         />
 
-        <CountVisiorWrapper>
+        <CountVisitorWrapper>
           <CountVisitor
             label="방문 남성 수"
             value={maleCounter.count}
@@ -179,10 +169,9 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
             value={femaleCounter.count}
             onChange={femaleCounter.setCount}
           />
-        </CountVisiorWrapper>
+        </CountVisitorWrapper>
 
         <VisitDatePicker value={date} onChange={setDate} />
-
         <VisitTimePicker value={visitTime} onChange={setVisitTime} />
 
         <PrivacyConsentWrapper>
@@ -198,7 +187,8 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
 
       {isError && (
         <ErrorMessage>
-          등록에 실패했습니다: {error?.message || '알 수 없는 서버 오류.'}
+          등록에 실패했습니다:
+          {(error as Error)?.message ?? '알 수 없는 서버 오류'}
         </ErrorMessage>
       )}
 
@@ -216,7 +206,6 @@ export default VisitForm;
 const Container = styled.div`
   width: 90%;
   max-width: 59.375rem;
-  height: auto;
   background-color: #ffffff;
   border-radius: 1.25rem;
   padding: 2.5rem;
@@ -282,7 +271,7 @@ const ConsentText = styled.span`
   color: #6e7680;
 `;
 
-const CountVisiorWrapper = styled.div`
+const CountVisitorWrapper = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: center;

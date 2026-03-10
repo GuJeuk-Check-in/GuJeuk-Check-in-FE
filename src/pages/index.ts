@@ -1,5 +1,5 @@
-export * from './auth/EnterPassword';
-export * from './auth/UpdatePassword';
+export * from './auth/OrganLogin';
+export * from './auth/OrganChange';
 export * from './purpose/PurposeCustom';
 export * from './user/UserInformationDetail';
 export * from './user/UseriInformation';

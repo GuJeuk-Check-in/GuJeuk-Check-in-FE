@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ExcelButton, HeaderButton } from '@shared/ui/Button/index';
-import Logo from '../../../assets/Logo.png';
+import { Logo } from '@shared/assets';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
@@ -15,14 +15,16 @@ export const Header = () => {
   const [exportingDate, setExportingDate] = useState('');
   const modal = useModal();
 
-const { mutate: visitExcelMutate, isPending: isVisitExporting } = useVisitListExportExcel();
-const { mutate: userExcelMutate, isPending: isUserExporting } = useUserListExportExcel();
+  const { mutate: visitExcelMutate, isPending: isVisitExporting } =
+    useVisitListExportExcel();
+  const { mutate: userExcelMutate, isPending: isUserExporting } =
+    useUserListExportExcel();
 
   const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
   };
   const handleUserListExcelExportClick = () => {
-    userExcelMutate()
+    userExcelMutate();
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
@@ -78,12 +80,12 @@ const { mutate: userExcelMutate, isPending: isUserExporting } = useUserListExpor
         <ExcelButton
           onClick={handleVisitListExcelExportClick}
           disabled={isVisitExporting}
-          label='기록 액셀 추출하기'
+          label="기록 엑셀 추출하기"
         />
         <ExcelButton
           onClick={handleUserListExcelExportClick}
           disabled={isUserExporting}
-          label='사용자 엑셀 추출하기'
+          label="사용자 엑셀 추출하기"
         />
         {isVisitExporting && (
           <ExportLoadingMessage>
