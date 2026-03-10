@@ -58,7 +58,7 @@ export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
       <InputRow>
         <VisitDetailInput
           label="대표자 이름"
-          value={visit.name}
+          value={visit.name ?? ''}
           isEditable={false}
         />
         <VisitDetailInput
