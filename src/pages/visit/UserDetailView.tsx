@@ -13,7 +13,7 @@ const UserDetailView = () => {
   return (
     <Container>
       <UseBackground />
-      <Header title="시설 이용 상세 정보" />
+      <Header />
       <Wrapper>
         <UserVisitDetail logId={logId} />
       </Wrapper>
