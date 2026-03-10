@@ -2,6 +2,7 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
+  InfiniteData,
 } from '@tanstack/react-query';
 import {
   fetchUserVisitList,
@@ -18,7 +19,7 @@ export const useInfiniteUserVisitList = () => {
   return useInfiniteQuery<
     UserVisitListResponse,
     AxiosError,
-    UserVisitListResponse,
+    InfiniteData<UserVisitListResponse>,
     ['visitList'],
     number
   >({
