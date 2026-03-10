@@ -16,7 +16,11 @@ const AGE_MAP = {
   ADULT: '성인',
 };
 
-export const UserVisitDetail = ({ logId }) => {
+interface UserVisitDetailProps {
+  logId: string | undefined;
+}
+
+export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const modal = useModal();
   const {
