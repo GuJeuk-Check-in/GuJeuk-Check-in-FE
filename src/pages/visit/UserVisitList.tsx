@@ -23,18 +23,18 @@ const UserVisitList = () => {
     error,
   } = useInfiniteUserVisitList();
 
-  const { mutate: deleteMutate, isLoading: isDeleting } =
+  const { mutate: deleteMutate, isPending: isDeleting } =
     useDeleteVisitMutation();
 
   const visits = useMemo(() => {
     if (!data?.pages) return [];
 
-    return data.pages.flatMap((page) => {
+    return data.pages.flatMap((page: any) => {
       return page?.content || [];
     });
   }, [data]);
 
-  const observerTarget = useRef(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isLoading || !hasNextPage || isFetchingNextPage) return;
@@ -60,7 +60,7 @@ const UserVisitList = () => {
     };
   }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleDelete = (id, name) => {
+  const handleDelete = (id: number, name: string | null) => {
     if (isDeleting) return;
 
     const displayName = name || '방문자';
@@ -124,7 +124,7 @@ const UserVisitList = () => {
         {!isLoading && !error && visits.length === 0 && (
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
-        {visits.map((visit) => {
+        {visits.map((visit: any) => {
           if (!visit) return null;
 
           return (
