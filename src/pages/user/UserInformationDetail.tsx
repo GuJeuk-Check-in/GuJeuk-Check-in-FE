@@ -7,7 +7,7 @@ import { UseBackground } from '@shared/ui/Background/index';
 import { UserInformationDetailCard } from '@entities/user';
 import { Modal } from '../../shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
-import { useFetchUserInformation } from '../../entities/user/model/useFetchUesr';
+import { useFetchUserInformation } from '../../entities/user/model/useFetchUser';
 import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
 
 interface UserInformationData {
