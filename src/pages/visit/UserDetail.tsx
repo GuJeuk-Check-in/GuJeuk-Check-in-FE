@@ -8,20 +8,26 @@ import { useCreateUserVisit } from '@features/visit/index';
 
 const UserDetail = () => {
   const navigate = useNavigate();
-  const { mutate, isLoading, isError, error, modal } = useCreateUserVisit({
+  const {
+    mutate,
+    isPending: isLoading,
+    isError,
+    error,
+    modal,
+  } = useCreateUserVisit({
     onSuccessCallback: () => {
       navigate('/log');
     },
   });
 
-  const handleSubmit = (dataToSend) => {
-    mutate(dataToSend);
+  const handleSubmit = async (dataToSend: any) => {
+    await mutate(dataToSend);
   };
 
   return (
     <Container>
       <UseBackground />
-      <Header title={isLoading ? '등록 중...' : '시설 이용 기록 추가'} />
+      <Header />
 
       <ContentWrapper>
         <VisitForm
