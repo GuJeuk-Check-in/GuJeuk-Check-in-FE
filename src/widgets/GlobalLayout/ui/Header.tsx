@@ -80,7 +80,7 @@ export const Header = () => {
         <ExcelButton
           onClick={handleVisitListExcelExportClick}
           disabled={isVisitExporting}
-          label="기록 액셀 추출하기"
+          label="기록 엑셀 추출하기"
         />
         <ExcelButton
           onClick={handleUserListExcelExportClick}
