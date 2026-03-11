@@ -87,7 +87,6 @@ export const UserInformationDetailCard = ({
   const { residences } = useResidenceStore();
 
   const LocationData = [
-    '전체 지역',
     ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
   ];
   const handleChange = (
