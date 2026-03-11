@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 
 useAuthInterceptors();
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

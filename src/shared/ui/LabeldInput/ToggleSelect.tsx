@@ -8,7 +8,7 @@ interface ToggleSelectProps {
   options: string[];
   value: string;
   onChange: (option: string) => void;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   placeholder?: string;
   disable?: boolean;
 }

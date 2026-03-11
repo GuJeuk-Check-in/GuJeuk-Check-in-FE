@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useLogin } from '../model/useLogin';
 import { AuthInput } from '@shared/ui/input/AuthInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import idInput from '../../../../assets/idInput.png';
+import { IdInput } from '@shared/assets';
 
 export const LoginForm = () => {
   const [organName, setOrganName] = useState('');
@@ -73,7 +73,7 @@ export const LoginForm = () => {
         }}
         isError={!!organNameError}
         onKeyDown={handleKeyDown}
-        icon={<img src={idInput} />}
+        icon={<img src={IdInput} />}
       />
       <AuthInput
         label=""

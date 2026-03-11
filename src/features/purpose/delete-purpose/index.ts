@@ -1,2 +1,2 @@
 export * from './model/useDeletePurpose';
-export * from './ui/useDeletePurposeHandler';
+export * from './model/useDeletePurposeHandler';

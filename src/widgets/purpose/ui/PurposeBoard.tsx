@@ -12,7 +12,7 @@ import {
   useReorderPurpose,
 } from '@features/purpose/index';
 
-import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
+import { SortablePurposeItem } from '@entities/purpose';
 import { Modal } from '@shared/ui/modal/Modal';
 
 export const PurposeBoard = () => {

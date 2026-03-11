@@ -9,7 +9,7 @@ import {
   useDeleteResidenceHandler,
   useReorderResidence,
 } from '@features/residence/index';
-import { SortablePurposeItem } from '@shared/ui/Form/SortablePurposeItem';
+import { SortablePurposeItem } from '@entities/purpose';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 

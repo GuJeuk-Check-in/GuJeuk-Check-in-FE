@@ -1,9 +1,9 @@
 import { PasswordBackground } from '@shared/ui/Background/index';
-import { RightLayout } from '@widgets/authLayout/index';
+import { RightLayout } from '@widgets/auth/index';
 import styled from '@emotion/styled';
 import { UpdatePasswordForm } from '@features/auth/update-password/ui/UpdatePasswordForm';
 
-const UpdatePassword = () => {
+const OrganChange = () => {
   return (
     <>
       <PasswordBackground />
@@ -16,7 +16,7 @@ const UpdatePassword = () => {
   );
 };
 
-export default UpdatePassword;
+export default OrganChange;
 
 const MainWrapper = styled.div`
   min-height: 100dvh;
