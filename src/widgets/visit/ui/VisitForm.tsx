@@ -91,7 +91,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   };
 
   const purposeOptions = Array.isArray(purposes)
-    ? purposes.map((p, index) => `${index + 1}. ${p.purpose}`)
+    ? purposes.map((p) => `${p.purpose}`)
     : [];
 
   const ageOptions = Object.keys(AGE_MAP) as AgeDisplayType[];
