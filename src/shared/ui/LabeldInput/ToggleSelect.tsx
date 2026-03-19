@@ -1,7 +1,19 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { keyframes } from '@emotion/react';
 import React from 'react';
+
+const slideDown = keyframes`
+from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+to {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
 
 interface ToggleSelectProps {
   label: string;
@@ -18,7 +30,6 @@ export const ToggleSelect = ({
   options,
   value,
   onChange,
-  icon,
   placeholder,
   disable,
 }: ToggleSelectProps) => {
@@ -127,6 +138,7 @@ const OptionContainer = styled.div`
   background-color: #ffffff;
   margin: 0;
   padding: 0;
+  animation: ${slideDown} 0.2s ease-out;
 `;
 
 const Option = styled.div<OptionProps>`
@@ -155,15 +167,6 @@ const Circle = styled.div<OptionProps>`
   transition: 0.2s;
   box-shadow: ${({ selected }) =>
     selected ? 'inset 0 0 0 0.1875rem #FFFFFF' : 'none'};
-`;
-
-const Icon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.5rem;
-  color: #2e2e2e;
-  font-size: 1.5rem;
 `;
 
 const ArrowIcon = styled.div`
