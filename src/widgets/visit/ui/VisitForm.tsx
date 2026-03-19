@@ -74,10 +74,10 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay],
       phone: phoneInput.value,
-      residence: residence.replace(/^\d+\.\s*/, ''),
+      residence: residence,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
-      purpose: trimmedPurpose.replace(/^\d+\.\s*/, ''),
+      purpose: trimmedPurpose,
       visitDate: date,
       visitTime: visitTime,
       privacyAgreed: privacyCheck.checked,
@@ -91,7 +91,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
   };
 
   const purposeOptions = Array.isArray(purposes)
-    ? purposes.map((p, index) => `${index + 1}. ${p.purpose}`)
+    ? purposes.map((p) => `${p.purpose}`)
     : [];
 
   const ageOptions = Object.keys(AGE_MAP) as AgeDisplayType[];
@@ -143,7 +143,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
             isResidenceLoading
               ? ['불러오는 중...']
               : residences && residences.length > 0
-              ? residences.map((r, index) => `${index + 1}. ${r.residence}`)
+              ? residences.map((r) => `${r.residence}`)
               : ['데이터 없음']
           }
           placeholder="거주지를 선택해주세요"

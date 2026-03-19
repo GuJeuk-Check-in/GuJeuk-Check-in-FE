@@ -8,6 +8,7 @@ import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
+import { useResidenceStore } from '@entities/residence';
 
 type GenderType = 'MALE' | 'FEMALE';
 
@@ -59,23 +60,6 @@ const GENDER_DISPLAY_MAP: Record<GenderType, string> = {
   FEMALE: '여성',
 };
 
-const RESIDENCE_OPTIONS = [
-  '구즉동',
-  '관평동',
-  '노은1동',
-  '노은2동',
-  '노은3동',
-  '상대동',
-  '신성동',
-  '온천1동',
-  '온천2동',
-  '원신흥동',
-  '전민동',
-  '진잠동',
-  '학하동',
-  '기타 지역',
-];
-
 export const UserInformationDetailCard = ({
   id,
   name,
@@ -100,7 +84,11 @@ export const UserInformationDetailCard = ({
     residence,
     privacyAgreed,
   });
+  const { residences } = useResidenceStore();
 
+  const LocationData = [
+    ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
+  ];
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -230,7 +218,7 @@ export const UserInformationDetailCard = ({
       {isEditing ? (
         <SimpleDropdown
           label="거주지"
-          options={RESIDENCE_OPTIONS}
+          options={LocationData}
           value={formData.residence}
           onChange={(residence) => {
             handleChange({

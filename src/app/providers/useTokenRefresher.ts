@@ -18,6 +18,7 @@ export const useTokenRefresher = () => {
       } catch (error) {
         console.error('토큰 갱신 실패:', error);
         logout();
+        window.location.href = '/organ/login?error=expired';
       }
     }, refreshCycle);
     return () => clearInterval(timer);

@@ -68,18 +68,6 @@ export const UserVisitForm = ({
   ) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
 
-    if (name === 'phone') {
-      const formattedValue = value
-        .replace(/[^0-9]/g, '')
-        .replace(/^(\d{2,3})(\d{3,4})(\d{4})$/, `$1-$2-$3`);
-
-      setFormData((prev) => ({
-        ...prev,
-        [name]: formattedValue,
-      }));
-      return;
-    }
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -167,7 +155,6 @@ export const UserVisitForm = ({
         value={formData.phone}
         onChange={handleChange}
         isEditable={true}
-        type="tel"
       />
       <ToggleSelect
         label="방문 목적"
