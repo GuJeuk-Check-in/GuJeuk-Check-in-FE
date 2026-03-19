@@ -143,7 +143,7 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
             isResidenceLoading
               ? ['불러오는 중...']
               : residences && residences.length > 0
-              ? residences.map((r, index) => `${index + 1}. ${r.residence}`)
+              ? residences.map((r) => `${r.residence}`)
               : ['데이터 없음']
           }
           placeholder="거주지를 선택해주세요"
