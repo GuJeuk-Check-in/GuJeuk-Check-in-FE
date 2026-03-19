@@ -4,7 +4,18 @@ import styled from '@emotion/styled';
 import { FaCalendarDays } from 'react-icons/fa6';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import 'react-calendar/dist/Calendar.css';
-import React from 'react';
+import { keyframes } from '@emotion/react';
+
+const slideDown = keyframes`
+from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+to {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
 
 type CalendarValue = Date | null | [Date | null, Date | null];
 
@@ -159,6 +170,7 @@ const CalendarWrapper = styled.div`
   z-index: 10;
   padding: 1.25rem;
   box-shadow: 0rem 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  animation: ${slideDown} 0.2s ease-out forwards;
 `;
 
 const StyledCalendar = styled(Calendar)`
