@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
 import { useFetchUserInformation } from '../../entities/user/model/useFetchUser';
-import { UserInformationDetailActions } from '@features/user/user-update/ui/UserInformationDetailActions';
+import { UserInformationDetailActions } from '@features/user';
 import type { UserInformation } from '@entities/user';
 
 const UserInformationDetail = () => {
