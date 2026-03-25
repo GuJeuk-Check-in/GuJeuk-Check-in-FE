@@ -17,10 +17,8 @@ import { useResidenceList } from '@entities/residence';
 import { CreateUserVisitRequest } from '@entities/visit';
 
 interface VisitFormProps {
-  onSubmit: (data: CreateUserVisitRequest) => Promise<void>;
+  onSubmit: (data: CreateUserVisitRequest) => Promise<unknown>;
   isLoading: boolean;
-  isError: boolean;
-  error: unknown;
 }
 
 const AGE_MAP = {
@@ -34,7 +32,7 @@ const AGE_MAP = {
 
 type AgeDisplayType = keyof typeof AGE_MAP;
 
-const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
+const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const nameInput = useInput('');
   const phoneInput = useInput('');
   const [ageDisplay, setAgeDisplay] = useState<AgeDisplayType | ''>('');
@@ -184,13 +182,6 @@ const VisitForm = ({ onSubmit, isLoading, isError, error }: VisitFormProps) => {
           <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
         </PrivacyConsentWrapper>
       </InputGroup>
-
-      {isError && (
-        <ErrorMessage>
-          등록에 실패했습니다:
-          {(error as Error)?.message ?? '알 수 없는 서버 오류'}
-        </ErrorMessage>
-      )}
 
       <PasswordButton
         content={isLoading ? '등록 중...' : '추가'}
