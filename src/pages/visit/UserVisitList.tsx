@@ -126,7 +126,7 @@ const UserVisitList = () => {
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
         <MonthVisitButtonWrapper>
-          <MonthVisitButton />
+          <MonthVisitButton onClick={() => {}} />
         </MonthVisitButtonWrapper>
         {visits.map((visit: any) => {
           if (!visit) return null;

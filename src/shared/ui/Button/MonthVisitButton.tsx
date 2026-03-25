@@ -5,9 +5,9 @@ interface MonthVisitButtonProps {
   onClick: () => void;
 }
 
-export const MonthVisitButton = () => {
+export const MonthVisitButton = ({ onClick }: MonthVisitButtonProps) => {
   return (
-    <Button>
+    <Button onClick={onClick}>
       <img src={monthVisit} />
       <Text>월간 이용기록</Text>
     </Button>
