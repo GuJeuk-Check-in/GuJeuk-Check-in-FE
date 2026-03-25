@@ -24,17 +24,7 @@ export const useUserDetail = (userIdParam?: string): UseUserDetailResult => {
     if (!userInfo) {
       return null;
     }
-
-    return {
-      id: userInfo.id || parseInt(userIdParam || '0', 10),
-      name: userInfo.name || '',
-      userId: userInfo.userId || '',
-      phone: userInfo.phone || '',
-      gender: userInfo.gender || 'MALE',
-      birthYMD: userInfo.birthYMD || '',
-      residence: userInfo.residence || '',
-      privacyAgreed: userInfo.privacyAgreed || false,
-    };
+    return userInfo;
   }, [userInfo, userIdParam]);
 
   const isNotFound = !isLoading && !isError && !userData;
