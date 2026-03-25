@@ -10,6 +10,7 @@ import {
   useDeleteVisitMutation,
 } from '@features/visit/index';
 import { useModal } from '@shared/hooks/useModal';
+import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
 
 const UserVisitList = () => {
   const modal = useModal();
@@ -124,6 +125,9 @@ const UserVisitList = () => {
         {!isLoading && !error && visits.length === 0 && (
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
+        <MonthVisitButtonWrapper>
+          <MonthVisitButton />
+        </MonthVisitButtonWrapper>
         {visits.map((visit: any) => {
           if (!visit) return null;
 
@@ -222,4 +226,11 @@ const InfoMessage = styled.p`
 
 const ObserverTarget = styled.div`
   height: 10px;
+`;
+
+const MonthVisitButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 10rem;
 `;
