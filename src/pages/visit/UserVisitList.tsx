@@ -13,7 +13,8 @@ import { useModal } from '@shared/hooks/useModal';
 import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
 
 const UserVisitList = () => {
-  const modal = useModal();
+  const deleteConfirmModal = useModal();
+  const monthVisitModal = useModal();
 
   const {
     data,
@@ -66,7 +67,7 @@ const UserVisitList = () => {
 
     const displayName = name || '방문자';
 
-    modal.openModal({
+    deleteConfirmModal.openModal({
       icon: <FaExclamationTriangle size={48} color="#D88282" />,
       title: `정말 ${displayName}님의 기록을 삭제하시겠나요?`,
       subtitle: '한 번 삭제한 기록은 복구할 수 없습니다',
@@ -75,7 +76,7 @@ const UserVisitList = () => {
         {
           label: '아니요',
           variant: 'secondary',
-          onClick: modal.closeModal,
+          onClick: deleteConfirmModal.closeModal,
         },
         {
           label: '네, 삭제합니다',
@@ -84,7 +85,7 @@ const UserVisitList = () => {
           onClick: () => {
             deleteMutate(id, {
               onSuccess: () => {
-                modal.openModal({
+                deleteConfirmModal.openModal({
                   icon: <FaCheckCircle size={48} color="#0F50A0" />,
                   title: '삭제되었습니다',
                   subtitle: '목록을 갱신합니다.',
@@ -92,13 +93,13 @@ const UserVisitList = () => {
                   buttons: [
                     {
                       label: '확인',
-                      onClick: modal.closeModal,
+                      onClick: deleteConfirmModal.closeModal,
                     },
                   ],
                 });
               },
               onError: () => {
-                modal.closeModal();
+                deleteConfirmModal.closeModal();
                 alert('삭제 중 오류가 발생했습니다.');
               },
             });
@@ -153,9 +154,9 @@ const UserVisitList = () => {
       </ContentWrapper>
 
       <Modal
-        isOpen={modal.isOpen}
-        config={modal.config}
-        onClose={modal.closeModal}
+        isOpen={deleteConfirmModal.isOpen}
+        config={deleteConfirmModal.config}
+        onClose={deleteConfirmModal.closeModal}
       />
     </Container>
   );
