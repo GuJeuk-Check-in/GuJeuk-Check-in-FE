@@ -94,7 +94,6 @@ export const UserVisitListFeature = () => {
               },
               onError: () => {
                 modal.closeModal();
-                alert('삭제 중 오류가 발생했습니다.');
               },
             });
           },
