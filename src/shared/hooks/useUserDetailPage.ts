@@ -1,0 +1,52 @@
+import { useMemo } from 'react';
+import { useFetchUserInformation } from '@entities/user';
+import type { UserInformation } from '@entities/user';
+
+interface UseUserDetailPageResult {
+  userData: UserInformation | null;
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+  refetch: () => void;
+  isNotFound: boolean;
+}
+
+export const useUserDetailPage = (
+  userIdParam?: string
+): UseUserDetailPageResult => {
+  const {
+    data: userInfo,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useFetchUserInformation(userIdParam);
+
+  const userData = useMemo<UserInformation | null>(() => {
+    if (!userInfo) {
+      return null;
+    }
+
+    return {
+      id: userInfo.id || parseInt(userIdParam || '0', 10),
+      name: userInfo.name || '',
+      userId: userInfo.userId || '',
+      phone: userInfo.phone || '',
+      gender: userInfo.gender || 'MALE',
+      birthYMD: userInfo.birthYMD || '',
+      residence: userInfo.residence || '',
+      privacyAgreed: userInfo.privacyAgreed || false,
+    };
+  }, [userInfo, userIdParam]);
+
+  const isNotFound = !isLoading && !isError && !userData;
+
+  return {
+    userData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isNotFound,
+  };
+};

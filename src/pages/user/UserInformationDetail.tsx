@@ -1,89 +1,46 @@
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
-import { useFetchUserInformation } from '../../entities/user/model/useFetchUser';
+import { useUserDetailPage } from '@shared/hooks';
 import { UserInformationDetailActions } from '@features/user';
-import type { UserInformation } from '@entities/user';
 
 const UserInformationDetail = () => {
   const { userId: userIdParam } = useParams<{ userId: string }>();
+  const { userData, isLoading, isError, error, refetch, isNotFound } =
+    useUserDetailPage(userIdParam);
 
-  const {
-    data: userInfo,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useFetchUserInformation(userIdParam);
-
-  const userData = useMemo<UserInformation | null>(() => {
-    if (!userInfo) {
-      return null;
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingText>사용자 정보를 불러오는 중...</LoadingText>;
     }
 
-    return {
-      id: userInfo.id || parseInt(userIdParam || '0', 10),
-      name: userInfo.name || '',
-      userId: userInfo.userId || '',
-      phone: userInfo.phone || '',
-      gender: userInfo.gender || 'MALE',
-      birthYMD: userInfo.birthYMD || '',
-      residence: userInfo.residence || '',
-      privacyAgreed: userInfo.privacyAgreed || false,
-    };
-  }, [userInfo, userIdParam]);
+    if (isError) {
+      return (
+        <ErrorText>
+          사용자 정보 조회에 실패했습니다:
+          {error?.message || '알 수 없는 오류가 발생했습니다.'}
+        </ErrorText>
+      );
+    }
 
-  if (isLoading) {
-    return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <LoadingText>사용자 정보를 불러오는 중...</LoadingText>
-        </Wrapper>
-      </Container>
-    );
-  }
+    if (isNotFound) {
+      return <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>;
+    }
 
-  if (isError) {
     return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <ErrorText>
-            사용자 정보 조회에 실패했습니다:
-            {error?.message || '알 수 없는 오류가 발생했습니다.'}
-          </ErrorText>
-        </Wrapper>
-      </Container>
+      <UserInformationDetailActions
+        userData={userData!}
+        refetchUserInformation={refetch}
+      />
     );
-  }
-
-  if (!userData) {
-    return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>
-        </Wrapper>
-      </Container>
-    );
-  }
+  };
 
   return (
     <Container>
       <UseBackground />
       <Header />
-      <Wrapper>
-        <UserInformationDetailActions
-          userData={userData}
-          refetchUserInformation={refetch}
-        />
-      </Wrapper>
+      <Wrapper>{renderContent()}</Wrapper>
     </Container>
   );
 };
