@@ -4,7 +4,7 @@ import OrganChange from '@pages/auth/OrganChange';
 import UserVisitList from '@pages/visit/UserVisitList';
 import UserDetail from '@pages/visit/UserDetail';
 import UserDetailView from '@pages/visit/UserDetailView';
-import UserInformation from '@pages/user/UseriInformation';
+import UserInformation from '@pages/user/UserInformation';
 import PurposeCustom from '@pages/purpose/PurposeCustom';
 import UserInformationDetail from '@pages/user/UserInformationDetail';
 import ResidenceCustom from '@pages/residence/ResidenceCustom';
