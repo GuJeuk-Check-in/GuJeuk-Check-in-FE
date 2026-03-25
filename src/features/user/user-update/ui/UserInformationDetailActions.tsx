@@ -1,9 +1,8 @@
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
-import { UserInformationDetailCard } from '@entities/user';
+import { UserInformationDetailCard, UserInformation } from '@entities/user';
 import { useUpdateUserInformation } from '../model/useUpdateUser';
-import type { UserInformation } from '@entities/user';
 
 interface Props {
   userData: UserInformation;
@@ -60,7 +59,6 @@ export const UserInformationDetailActions = ({
               bgColor: '#0F50A0',
               onClick: () => {
                 modal.closeModal();
-                window.location.reload();
               },
             },
           ],
