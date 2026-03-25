@@ -2,13 +2,13 @@ import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
-import { useUserDetailPage } from '@shared/hooks';
+import { useUserDetail } from '@features/user';
 import { UserInformationDetailActions } from '@features/user';
 
 const UserInformationDetail = () => {
   const { userId: userIdParam } = useParams<{ userId: string }>();
   const { userData, isLoading, isError, error, refetch, isNotFound } =
-    useUserDetailPage(userIdParam);
+    useUserDetail(userIdParam);
 
   const renderContent = () => {
     if (isLoading) {

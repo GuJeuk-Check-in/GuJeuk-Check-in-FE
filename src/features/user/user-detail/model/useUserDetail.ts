@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useFetchUserInformation } from '@entities/user';
 import type { UserInformation } from '@entities/user';
 
-interface UseUserDetailPageResult {
+interface UseUserDetailResult {
   userData: UserInformation | null;
   isLoading: boolean;
   isError: boolean;
@@ -11,9 +11,7 @@ interface UseUserDetailPageResult {
   isNotFound: boolean;
 }
 
-export const useUserDetailPage = (
-  userIdParam?: string
-): UseUserDetailPageResult => {
+export const useUserDetail = (userIdParam?: string): UseUserDetailResult => {
   const {
     data: userInfo,
     isLoading,
