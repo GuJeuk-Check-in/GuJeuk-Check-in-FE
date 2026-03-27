@@ -19,9 +19,10 @@ export const fetchUserInformation = async (
 };
 
 export const updateUserInformation = async (
-  data: UserInformation
-): Promise<UserInformation> => {
-  const response = await axiosInstance.patch(`/organ/user/${data.id}`, data);
+  id: number,
+  data: Omit<UserInformation, 'id'>
+) => {
+  const response = await axiosInstance.patch(`/organ/user/${id}`, data);
   return response.data;
 };
 
