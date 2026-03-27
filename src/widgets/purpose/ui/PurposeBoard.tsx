@@ -1,18 +1,19 @@
 import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-
-import { usePurposeList, Purpose } from '@entities/purpose/index';
-import { PurposeCard } from '@entities/purpose/ui/PurposeCard';
-
-import PurposeAddBox from '@features/purpose/create-purpose/ui/PurposeAddBox';
+import {
+  usePurposeList,
+  Purpose,
+  PurposeCard,
+  SortablePurposeItem,
+} from '@entities/purpose/index';
 import {
   useUpdatePurposeHandler,
   useDeletePurposeHandler,
   useReorderPurpose,
+  PurposeAddBox,
 } from '@features/purpose/index';
 
-import { SortablePurposeItem } from '@entities/purpose';
 import { Modal } from '@shared/ui/modal/Modal';
 
 export const PurposeBoard = () => {
