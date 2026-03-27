@@ -7,7 +7,7 @@ interface DetailMonthVisitButtonProps {
 
 export const DetailMonthVisitButton = ({ onClick, pressable }: DetailMonthVisitButtonProps) => {
   return (
-    <Button onClick={onClick} $pressable={pressable}>상세보기</Button>
+    <Button onClick={onClick} $pressable={pressable} disabled={!pressable}>상세보기</Button>
   );
 };
 
@@ -20,7 +20,6 @@ const Button = styled.button<{ $pressable: boolean }>`
   background-color: #ffffff;
   border-radius: 1rem;
   cursor: ${({ $pressable }) => $pressable ? 'pointer' : 'not-allowed'};
-  pointer-events: ${({ $pressable }) => $pressable ? 'auto' : 'none'};
   color: ${({ $pressable }) => $pressable ? '#2ABFEC' : '#AAE5F7'};
   border: 1px solid ${({ $pressable }) => $pressable ? '#2ABFEC' : '#D4F2FB'};
   font-size: 19.2px;
