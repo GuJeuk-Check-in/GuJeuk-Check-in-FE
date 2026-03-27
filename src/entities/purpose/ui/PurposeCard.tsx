@@ -16,7 +16,7 @@ interface PurposeProps {
   isDeleting: boolean;
 }
 
-const PurposeCard = ({
+export const PurposeCard = ({
   index,
   purpose,
   onDelete,
@@ -122,8 +122,6 @@ const PurposeCard = ({
     </Container>
   );
 };
-
-export default PurposeCard;
 
 interface ContainerProps {
   isDisabled: boolean;
