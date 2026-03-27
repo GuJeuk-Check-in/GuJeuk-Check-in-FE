@@ -22,20 +22,20 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.75rem;
-  border-radius: 1.25rem;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+  padding: 1.4rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 `;
 
 const Title = styled.span`
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 500;
   color: #2E2E32;
 `
 
 const Visitors = styled.span`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
   color: #2E2E32;
-  padding: 2rem 0 1.25rem;
+  padding: 1.6rem 0 1rem;
 `;
