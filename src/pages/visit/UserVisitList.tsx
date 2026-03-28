@@ -1,40 +1,58 @@
-import { useRef, useEffect, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useRef, useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
+import styled from '@emotion/styled';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UserVisitCard } from '@entities/visit';
 import { Modal } from '@shared/ui';
 import {
   useInfiniteUserVisitList,
+  useMonthVisitDetailList,
   useDeleteVisitMutation,
 } from '@features/visit/index';
 import { useModal } from '@shared/hooks/useModal';
 import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
+import { MonthVisitModal } from '@widgets/visit/ui/monthVisitModal';
 
 const UserVisitList = () => {
   const deleteConfirmModal = useModal();
-  const monthVisitModal = useModal();
+  const [monthModalOpen, setMonthModalOpen] = useState(false);
+  const [monthFilter, setMonthFilter] = useState<{
+    year: number;
+    month: number;
+  } | null>(null);
 
   const {
     data,
     fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-  } = useInfiniteUserVisitList();
+    hasNextPage: hasNextAll,
+    isFetchingNextPage: isFetchingNextAll,
+    isLoading: isLoadingAll,
+    error: errorAll,
+  } = useInfiniteUserVisitList({ enabled: monthFilter === null });
 
-  const { mutate: deleteMutate, isPending: isDeleting } =
-    useDeleteVisitMutation();
+  const monthDetail = useMonthVisitDetailList(
+    monthFilter?.year ?? 0,
+    monthFilter?.month ?? 1,
+    { enabled: monthFilter !== null }
+  );
+
+  const isLoading = monthFilter ? monthDetail.isLoading : isLoadingAll;
+  const error = monthFilter ? monthDetail.error : errorAll;
 
   const visits = useMemo(() => {
+    if (monthFilter) {
+      return monthDetail.data?.slice?.content ?? [];
+    }
     if (!data?.pages) return [];
 
     return data.pages.flatMap((page: any) => {
       return page?.content || [];
     });
-  }, [data]);
+  }, [monthFilter, data, monthDetail.data]);
+
+  const hasNextPage = !monthFilter && hasNextAll;
+  const isFetchingNextPage = !monthFilter && isFetchingNextAll;
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -61,6 +79,9 @@ const UserVisitList = () => {
       }
     };
   }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const { mutate: deleteMutate, isPending: isDeleting } =
+    useDeleteVisitMutation();
 
   const handleDelete = (id: number, name: string | null) => {
     if (isDeleting) return;
@@ -127,8 +148,13 @@ const UserVisitList = () => {
           <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
         )}
         <MonthVisitButtonWrapper>
-          <MonthVisitButton onClick={() => {}} />
+          <MonthVisitButton onClick={() => setMonthModalOpen(true)} />
         </MonthVisitButtonWrapper>
+        <MonthVisitModal
+          isOpen={monthModalOpen}
+          onClose={() => setMonthModalOpen(false)}
+          onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
+        />
         {visits.map((visit: any) => {
           if (!visit) return null;
 
@@ -181,6 +207,7 @@ const ContentWrapper = styled.div`
   gap: 1.25rem;
   box-sizing: border-box;
   overflow-y: scroll;
+  overflow-x: hidden;
 `;
 
 const EmptyMessage = styled.p`
