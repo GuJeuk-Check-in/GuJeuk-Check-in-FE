@@ -9,7 +9,7 @@ export const MonthVisitButton = ({ onClick }: MonthVisitButtonProps) => {
   return (
     <Button onClick={onClick}>
       <img src={monthVisit} />
-      <Text>월간 이용기록</Text>
+      <Text>월별 이용기록</Text>
     </Button>
   );
 };
