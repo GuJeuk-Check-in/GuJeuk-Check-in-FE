@@ -15,7 +15,7 @@ interface ServerError {
   message?: string;
 }
 
-export const useInfiniteUserVisitList = () => {
+export const useInfiniteUserVisitList = (options?: { enabled?: boolean }) => {
   return useInfiniteQuery<
     UserVisitListResponse,
     AxiosError,
@@ -26,6 +26,7 @@ export const useInfiniteUserVisitList = () => {
     queryKey: ['visitList'],
     queryFn: ({ pageParam = 0 }) => fetchUserVisitList(pageParam),
     staleTime: 5 * 60 * 1000,
+    enabled: options?.enabled !== false,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.last) return undefined;
       if (!lastPage.content?.length) return undefined;
@@ -40,10 +41,10 @@ export const useDeleteVisitMutation = () => {
 
   return useMutation<string, AxiosError<ServerError>, number>({
     mutationFn: (id: number) => deleteUserVisit(id),
-    onSuccess: () =>
-      queryClient.removeQueries({
-        queryKey: ['visitList'],
-      }),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['visitList'] });
+      queryClient.invalidateQueries({ queryKey: ['monthVisitList'] });
+    },
     onError: (error) =>
       alert(error.response?.data?.message || error.message || '삭제 실패'),
   });

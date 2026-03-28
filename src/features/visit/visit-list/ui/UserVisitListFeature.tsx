@@ -1,34 +1,56 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useRef, useEffect, useMemo, useState } from 'react';
+import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import styled from '@emotion/styled';
-import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { Modal } from '@shared/ui';
-import { useModal } from '@shared/hooks/useModal';
 import { UserVisitCard } from '@entities/visit';
+import { Modal } from '@shared/ui';
 import {
-  useDeleteVisitMutation,
   useInfiniteUserVisitList,
+  useMonthVisitDetailList,
+  useDeleteVisitMutation,
 } from '@features/visit/index';
+import { useModal } from '@shared/hooks/useModal';
+import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
+import { MonthVisitModal } from '@widgets/visit/ui/monthVisitModal';
 
 export const UserVisitListFeature = () => {
-  const modal = useModal();
+  const deleteConfirmModal = useModal();
+  const [monthModalOpen, setMonthModalOpen] = useState(false);
+  const [monthFilter, setMonthFilter] = useState<{
+    year: number;
+    month: number;
+  } | null>(null);
 
   const {
     data,
     fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-  } = useInfiniteUserVisitList();
+    hasNextPage: hasNextAll,
+    isFetchingNextPage: isFetchingNextAll,
+    isLoading: isLoadingAll,
+    error: errorAll,
+  } = useInfiniteUserVisitList({ enabled: monthFilter === null });
 
-  const { mutate: deleteMutate, isPending: isDeleting } =
-    useDeleteVisitMutation();
+  const monthDetail = useMonthVisitDetailList(
+    monthFilter?.year ?? 0,
+    monthFilter?.month ?? 1,
+    { enabled: monthFilter !== null }
+  );
+
+  const isLoading = monthFilter ? monthDetail.isLoading : isLoadingAll;
+  const error = monthFilter ? monthDetail.error : errorAll;
 
   const visits = useMemo(() => {
+    if (monthFilter) {
+      return monthDetail.data?.slice?.content ?? [];
+    }
     if (!data?.pages) return [];
 
-    return data.pages.flatMap((page: any) => page?.content || []);
-  }, [data]);
+    return data.pages.flatMap((page: any) => {
+      return page?.content || [];
+    });
+  }, [monthFilter, data, monthDetail.data]);
+
+  const hasNextPage = !monthFilter && hasNextAll;
+  const isFetchingNextPage = !monthFilter && isFetchingNextAll;
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -56,12 +78,15 @@ export const UserVisitListFeature = () => {
     };
   }, [isLoading, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const { mutate: deleteMutate, isPending: isDeleting } =
+    useDeleteVisitMutation();
+
   const handleDelete = (id: number, name: string | null) => {
     if (isDeleting) return;
 
     const displayName = name || '방문자';
 
-    modal.openModal({
+    deleteConfirmModal.openModal({
       icon: <FaExclamationTriangle size={48} color="#D88282" />,
       title: `정말 ${displayName}님의 기록을 삭제하시겠나요?`,
       subtitle: '한 번 삭제한 기록은 복구할 수 없습니다',
@@ -70,16 +95,16 @@ export const UserVisitListFeature = () => {
         {
           label: '아니요',
           variant: 'secondary',
-          onClick: modal.closeModal,
+          onClick: deleteConfirmModal.closeModal,
         },
         {
-          label: '네',
+          label: '네, 삭제합니다',
           variant: 'primary',
           bgColor: '#D88282',
           onClick: () => {
             deleteMutate(id, {
               onSuccess: () => {
-                modal.openModal({
+                deleteConfirmModal.openModal({
                   icon: <FaCheckCircle size={48} color="#0F50A0" />,
                   title: '삭제되었습니다',
                   subtitle: '목록을 갱신합니다.',
@@ -87,13 +112,14 @@ export const UserVisitListFeature = () => {
                   buttons: [
                     {
                       label: '확인',
-                      onClick: modal.closeModal,
+                      onClick: deleteConfirmModal.closeModal,
                     },
                   ],
                 });
               },
               onError: () => {
-                modal.closeModal();
+                deleteConfirmModal.closeModal();
+                alert('삭제 중 오류가 발생했습니다.');
               },
             });
           },
@@ -104,44 +130,53 @@ export const UserVisitListFeature = () => {
 
   return (
     <>
-      {isLoading && (
-        <LoadingOverlay>
-          <LoadingBox>
-            <p>데이터를 불러오는 중</p>
-            <p>잠시만 기다려주세요...</p>
-          </LoadingBox>
-        </LoadingOverlay>
-      )}
-      {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
-      {!isLoading && !error && visits.length === 0 && (
-        <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
-      )}
-      {visits.map((visit: any) => {
-        if (!visit) return null;
+        {isLoading && (
+          <LoadingOverlay>
+            <LoadingBox>
+              <p>데이터를 불러오는 중</p>
+              <p>잠시만 기다려주세요...</p>
+            </LoadingBox>
+          </LoadingOverlay>
+        )}
+        {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
+        {!isLoading && !error && visits.length === 0 && (
+          <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
+        )}
+        <MonthVisitButtonWrapper>
+          <MonthVisitButton onClick={() => setMonthModalOpen(true)} />
+        </MonthVisitButtonWrapper>
+        <MonthVisitModal
+          isOpen={monthModalOpen}
+          onClose={() => setMonthModalOpen(false)}
+          onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
+        />
+        {visits.map((visit: any) => {
+          if (!visit) return null;
 
-        return (
-          <UserVisitCard
-            key={visit.id}
-            id={visit.id}
-            name={visit.name}
-            male={visit.maleCount}
-            female={visit.femaleCount}
-            date={visit.visitDate}
-            onDelete={() => handleDelete(visit.id, visit.name)}
-          />
-        );
-      })}
-      {hasNextPage && <ObserverTarget ref={observerTarget} />}
-      {isFetchingNextPage && (
-        <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
-      )}
-      {!hasNextPage && visits.length > 0 && (
-        <InfoMessage>모든 기록을 불러왔습니다.</InfoMessage>
-      )}
+          return (
+            <UserVisitCard
+              key={visit.id}
+              id={visit.id}
+              name={visit.name}
+              male={visit.maleCount}
+              female={visit.femaleCount}
+              date={visit.visitDate}
+              onDelete={() => handleDelete(visit.id, visit.name)}
+            />
+          );
+        })}
+        {hasNextPage && <ObserverTarget ref={observerTarget} />}
+        {isFetchingNextPage && (
+          <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
+        )}
+        {!hasNextPage && visits.length > 0 && (
+          <InfoMessage>모든 기록을 불러왔습니다.</InfoMessage>
+        )}
+
       <Modal
-        isOpen={modal.isOpen}
-        config={modal.config}
-        onClose={modal.closeModal}
+        isOpen={deleteConfirmModal.isOpen}
+        config={deleteConfirmModal.config}
+        onClose={deleteConfirmModal.closeModal}
       />
     </>
   );
@@ -190,4 +225,11 @@ const InfoMessage = styled.p`
 const ObserverTarget = styled.div`
   width: 100%;
   height: 1px;
+`;
+
+const MonthVisitButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 10rem;
 `;

@@ -47,6 +47,25 @@ export interface UserVisitListResponse {
   empty: boolean;
 }
 
+export interface MonthVisitListResponse {
+  totalCount: number;
+  slice: {
+    content: UserVisit[];
+    pageable: Pageable;
+    size: number;
+    number: number;
+    sort: {
+      empty: boolean;
+      unsorted: boolean;
+      sorted: boolean;
+    };
+    numberOfElements: number;
+    last: boolean;
+    first: boolean;
+    empty: boolean;
+  };
+}
+
 export interface UserVisitDetailResponse {
   id: number;
   name: string | null;
