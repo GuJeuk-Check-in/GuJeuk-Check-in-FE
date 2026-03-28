@@ -53,7 +53,7 @@ export interface UserInformation {
   name: string;
   userId: string;
   phone: string;
-  gender: 'MALE' | 'FEMALE';
+  gender: 'MAN' | 'WOMAN';
   birthYMD: string;
   residence: string;
   privacyAgreed: boolean;

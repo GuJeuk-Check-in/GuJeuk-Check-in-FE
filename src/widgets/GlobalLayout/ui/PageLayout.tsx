@@ -1,21 +1,22 @@
 import styled from '@emotion/styled';
-import { UseBackground } from '@shared/ui/Background/index';
-import { Header } from '@widgets/GlobalLayout/index';
-import { UserListWithSearch } from '@widgets/user/userSearch/UserListSearch';
+import { ReactNode } from 'react';
+import { UseBackground } from '@shared/ui/Background';
+import { Header } from '@widgets/GlobalLayout';
 
-const UserInformation = () => {
+interface PageLayoutProps {
+  children: ReactNode;
+  showHeader?: boolean;
+}
+
+export const PageLayout = ({ children, showHeader = true }: PageLayoutProps) => {
   return (
     <Container>
       <UseBackground />
-      <Header />
-      <ContentWrapper>
-        <UserListWithSearch totalCountText="총" />
-      </ContentWrapper>
+      {showHeader && <Header />}
+      <ContentWrapper>{children}</ContentWrapper>
     </Container>
   );
 };
-
-export default UserInformation;
 
 const Container = styled.div`
   flex: 1;
@@ -26,6 +27,7 @@ const Container = styled.div`
 `;
 
 const ContentWrapper = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

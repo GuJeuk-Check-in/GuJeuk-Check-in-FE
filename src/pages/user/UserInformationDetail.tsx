@@ -1,183 +1,46 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { Header } from '@widgets/GlobalLayout/index';
 import { UseBackground } from '@shared/ui/Background/index';
-import { UserInformationDetailCard } from '@entities/user';
-import { Modal } from '../../shared/ui/modal/Modal';
-import { useModal } from '@shared/hooks/useModal';
-import { useFetchUserInformation } from '../../entities/user/model/useFetchUser';
-import { useUpdateUserInformation } from '../../features/user/user-update/model/useUpdateUser';
-
-interface UserInformationData {
-  id: number;
-  name: string;
-  userId: string;
-  phone: string;
-  gender: 'MALE' | 'FEMALE';
-  birthYMD: string;
-  residence: string;
-  privacyAgreed: boolean;
-}
+import { useUserDetail } from '@features/user';
+import { UserInformationDetailActions } from '@features/user';
 
 const UserInformationDetail = () => {
   const { userId: userIdParam } = useParams<{ userId: string }>();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState<UserInformationData | null>(null);
+  const { userData, isLoading, isError, error, refetch, isNotFound } =
+    useUserDetail(userIdParam);
 
-  const modal = useModal();
-
-  const {
-    data: userInfo,
-    isLoading: isUserLoading,
-    isError: isUserError,
-    error,
-    refetch,
-  } = useFetchUserInformation(userIdParam);
-
-  const updateMutation = useUpdateUserInformation();
-
-  useEffect(() => {
-    if (userInfo) {
-      setUserData({
-        id: userInfo.id || parseInt(userIdParam || '0', 10),
-        name: userInfo.name || '',
-        userId: userInfo.userId || '',
-        phone: userInfo.phone || '',
-        gender: userInfo.gender || 'MALE',
-        birthYMD: userInfo.birthYMD || '',
-        residence: userInfo.residence || '',
-        privacyAgreed: userInfo.privacyAgreed || false,
-      });
-    }
-  }, [userInfo, userIdParam]);
-
-  const handleSave = (formData: UserInformationData) => {
-    if (
-      !formData.name ||
-      !formData.phone ||
-      !formData.birthYMD ||
-      !formData.residence
-    ) {
-      modal.openModal({
-        icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '필수 입력 항목을 모두 채워주세요.',
-        theme: 'warning',
-        buttons: [{ label: '확인', onClick: modal.closeModal }],
-      });
-      return;
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingText>사용자 정보를 불러오는 중...</LoadingText>;
     }
 
-    const dataToUpdate = {
-      id: formData.id,
-      userId: formData.userId,
-      name: formData.name,
-      phone: formData.phone,
-      gender: formData.gender,
-      birthYMD: formData.birthYMD,
-      residence: formData.residence,
-      privacyAgreed: formData.privacyAgreed,
-    };
+    if (isError) {
+      return (
+        <ErrorText>
+          사용자 정보 조회에 실패했습니다:
+          {error?.message || '알 수 없는 오류가 발생했습니다.'}
+        </ErrorText>
+      );
+    }
 
-    updateMutation.mutate(dataToUpdate, {
-      onSuccess: async () => {
-        await refetch();
-        modal.openModal({
-          icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-          title: '수정 완료',
-          subtitle: '사용자 정보가 성공적으로 수정되었습니다.',
-          theme: 'info',
-          buttons: [
-            {
-              label: '확인',
-              variant: 'primary',
-              bgColor: '#0F50A0',
-              onClick: () => {
-                modal.closeModal();
-                setIsEditing(false);
-                window.location.reload();
-              },
-            },
-          ],
-        });
-      },
-      onError: (err) => {
-        modal.openModal({
-          icon: <FaExclamationTriangle size={48} color="#D88282" />,
-          title: '수정 실패',
-          subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
-          theme: 'warning',
-          buttons: [{ label: '닫기', onClick: modal.closeModal }],
-        });
-      },
-    });
+    if (isNotFound) {
+      return <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>;
+    }
+
+    return (
+      <UserInformationDetailActions
+        userData={userData!}
+        refetchUserInformation={refetch}
+      />
+    );
   };
-
-  if (isUserLoading) {
-    return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <LoadingText>사용자 정보를 불러오는 중...</LoadingText>
-        </Wrapper>
-      </Container>
-    );
-  }
-
-  if (isUserError) {
-    return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <ErrorText>
-            사용자 정보 조회에 실패했습니다:{' '}
-            {error?.message || '알 수 없는 오류가 발생했습니다.'}
-          </ErrorText>
-        </Wrapper>
-      </Container>
-    );
-  }
-
-  if (!userData) {
-    return (
-      <Container>
-        <UseBackground />
-        <Header />
-        <Wrapper>
-          <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>
-        </Wrapper>
-      </Container>
-    );
-  }
 
   return (
     <Container>
       <UseBackground />
       <Header />
-      <Wrapper>
-        <UserInformationDetailCard
-          id={userData.id}
-          name={userData.name}
-          userId={userData.userId}
-          phone={userData.phone}
-          gender={userData.gender}
-          birthYMD={userData.birthYMD}
-          residence={userData.residence}
-          privacyAgreed={userData.privacyAgreed}
-          onSave={handleSave}
-          onEditStateChange={setIsEditing}
-        />
-      </Wrapper>
-
-      <Modal
-        isOpen={modal.isOpen}
-        config={modal.config}
-        onClose={modal.closeModal}
-      />
+      <Wrapper>{renderContent()}</Wrapper>
     </Container>
   );
 };

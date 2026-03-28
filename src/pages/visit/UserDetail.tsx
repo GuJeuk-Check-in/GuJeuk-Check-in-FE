@@ -1,29 +1,16 @@
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
 import { Header } from '@widgets/GlobalLayout/index';
 import VisitForm from '@widgets/visit/ui/VisitForm';
 import { UseBackground } from '@shared/ui/Background/index';
 import { Modal } from '@shared/ui';
-import { useCreateUserVisit } from '@features/visit/index';
-import { CreateUserVisitRequest } from '@entities/visit';
+import { useCreateUserVisit } from '@features/visit';
 
 const UserDetail = () => {
-  const navigate = useNavigate();
   const {
     mutateAsync,
     isPending: isLoading,
-    isError,
-    error,
     modal,
-  } = useCreateUserVisit({
-    onSuccessCallback: () => {
-      navigate('/log');
-    },
-  });
-
-  const handleSubmit = async (dataToSend: CreateUserVisitRequest) => {
-    await mutateAsync(dataToSend);
-  };
+  } = useCreateUserVisit();
 
   return (
     <Container>
@@ -32,10 +19,8 @@ const UserDetail = () => {
 
       <ContentWrapper>
         <VisitForm
-          onSubmit={handleSubmit}
+          onSubmit={mutateAsync}
           isLoading={isLoading}
-          isError={isError}
-          error={error}
         />
       </ContentWrapper>
 
