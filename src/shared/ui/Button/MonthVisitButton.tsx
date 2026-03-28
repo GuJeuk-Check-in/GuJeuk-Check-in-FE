@@ -24,6 +24,7 @@ const Button = styled.button`
   border-radius: 1rem;
   justify-self: flex-end;
   cursor: pointer;
+  border: none;
 `;
 
 const Text = styled.span`
