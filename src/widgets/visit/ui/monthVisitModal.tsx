@@ -115,15 +115,17 @@ const DateHeaderTitle = styled.span`
   color: #2E2E32;
 `
 
-const PrevYearButton = styled.div`
+const NextYearButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 2rem;
   height: 2rem;
   cursor: pointer;
-  rotate: 180deg;
+  background: none;
+  border: none;
 `
 
-const NextYearButton = styled.div`
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
+const PrevYearButton = styled(NextYearButton)`
+  rotate: 180deg;
 `

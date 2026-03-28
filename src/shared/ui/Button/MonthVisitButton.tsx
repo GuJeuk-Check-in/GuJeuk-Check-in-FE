@@ -14,7 +14,7 @@ export const MonthVisitButton = ({ onClick }: MonthVisitButtonProps) => {
   );
 };
 
-const Button = styled.div`
+const Button = styled.button`
   display: flex;
   gap: 0.625rem;
   align-items: center;
