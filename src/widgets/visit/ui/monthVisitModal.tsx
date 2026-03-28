@@ -19,7 +19,7 @@ export const MonthVisitModal = ({
 }: MonthVisitModalProps) => {
   const [year, setYear] = useState(new Date().getFullYear());
 
-  const monthsInfo = useMonthVisitList(year);
+  const monthsInfo = useMonthVisitList(year, { enabled: isOpen });
 
   const handlePrevYear = () => setYear(year => year - 1);
   const handleNextYear = () => setYear(year => year + 1);

@@ -8,7 +8,10 @@ export interface MonthVisitCountItem {
   visitorCount: number;
 }
 
-export const useMonthVisitList = (year: number) => {
+export const useMonthVisitList = (
+  year: number,
+  options?: { enabled?: boolean }
+) => {
   const monthQueries = useQueries({
     queries: Array.from({ length: 12 }, (_, index) => {
       const month = (index + 1) as MonthNumber;
@@ -17,6 +20,7 @@ export const useMonthVisitList = (year: number) => {
         queryKey: ['monthVisitList', year, month],
         queryFn: () => fetchMonthVisitList(year, month),
         staleTime: 5 * 60 * 1000,
+        enabled: options?.enabled ?? true,
       };
     }),
   });
