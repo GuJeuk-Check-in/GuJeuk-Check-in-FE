@@ -8,7 +8,7 @@ import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useResidenceStore } from '@entities/residence';
+import { useResidenceStore, useResidenceList } from '@entities/residence';
 
 type GenderType = 'MAN' | 'WOMAN';
 
@@ -60,6 +60,8 @@ export const UserInformationDetailCard = ({
 }: UserInformationDetailCardProps) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+
+  useResidenceList();
 
   const [formData, setFormData] = useState<UserInformationData>({
     id,
