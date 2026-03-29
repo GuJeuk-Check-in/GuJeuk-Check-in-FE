@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { keyframes } from '@emotion/react';
 
@@ -37,6 +37,12 @@ export const SimpleDropdown = ({
 }: SimpleDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [otherValue, setOtherValue] = useState('');
+
+  useEffect(() => {
+    if (disabled) {
+      setIsOpen(false);
+    }
+  }, [disabled]);
 
   const handleToggle = () => {
     if (disabled) return;
@@ -155,7 +161,7 @@ const DropdownValue = styled.span`
 const ArrowIcon = styled.div`
   display: flex;
   align-items: center;
-  color: #2e2e32;
+  color: inherit;
 `;
 
 const DropdownList = styled.div`
