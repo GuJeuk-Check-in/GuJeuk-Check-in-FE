@@ -17,11 +17,14 @@ export const MonthVisitCard = ({ month, visitors, children }: MonthVisitCardProp
 };
 
 const Container = styled.div`
-  box-sizing: border-box;
   display: flex;
+  height: 10rem;
+  @media (min-height: 1090px) {
+    height: 12rem;
+  }
+  padding: 1.4rem;
   flex-direction: column;
   align-items: center;
-  padding: 1.4rem;
   border-radius: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 `;
