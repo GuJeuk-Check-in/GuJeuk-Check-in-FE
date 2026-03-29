@@ -10,7 +10,7 @@ import {
 } from '@features/visit/index';
 import { useModal } from '@shared/hooks/useModal';
 import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
-import { MonthVisitModal } from '@widgets/visit/ui/monthVisitModal';
+import { MonthVisitModal } from '@widgets/visit/ui/MonthVisitModal';
 
 export const UserVisitListFeature = () => {
   const deleteConfirmModal = useModal();
