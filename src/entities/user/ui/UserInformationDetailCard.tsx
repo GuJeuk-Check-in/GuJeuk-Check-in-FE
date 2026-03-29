@@ -8,7 +8,7 @@ import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useResidenceStore } from '@entities/residence';
+import { useResidenceStore, useResidenceList } from '@entities/residence';
 
 type GenderType = 'MAN' | 'WOMAN';
 
@@ -60,6 +60,9 @@ export const UserInformationDetailCard = ({
 }: UserInformationDetailCardProps) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+
+  const { isLoading: isResidenceLoading, isError: isResidenceError } =
+    useResidenceList();
 
   const [formData, setFormData] = useState<UserInformationData>({
     id,
@@ -220,18 +223,27 @@ export const UserInformationDetailCard = ({
       )}
 
       {isEditing ? (
-        <SimpleDropdown
-          label="거주지"
-          options={LocationData}
-          value={formData.residence}
-          hasOther={true}
-          onChange={(residence) => {
-            setFormData((prev) => ({
-              ...prev,
-              residence: residence,
-            }));
-          }}
-        />
+        <>
+          <SimpleDropdown
+            label="거주지"
+            options={LocationData}
+            value={formData.residence}
+            hasOther={true}
+            disabled={isResidenceLoading}
+            placeholder={
+              isResidenceLoading ? '데이터를 불러오는 중...' : '거주지 선택'
+            }
+            onChange={(residence) => {
+              setFormData((prev) => ({
+                ...prev,
+                residence: residence,
+              }));
+            }}
+          />
+          {isResidenceError && (
+            <ErrorText>거주지 목록을 불러오는데 실패했습니다.</ErrorText>
+          )}
+        </>
       ) : (
         <VisitDetailInput
           label="거주지"
@@ -289,6 +301,13 @@ const BackButton = styled.button`
   &:hover {
     transform: translateX(-0.25rem);
   }
+`;
+
+const ErrorText = styled.span`
+  color: #d88282;
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-left: 0.5rem;
 `;
 
 const ButtonWrapper = styled.div`

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { keyframes } from '@emotion/react';
 
@@ -22,6 +22,7 @@ interface SimpleDropdownProps {
   placeholder?: string;
   width?: string;
   hasOther?: boolean;
+  disabled?: boolean;
 }
 
 export const SimpleDropdown = ({
@@ -32,11 +33,19 @@ export const SimpleDropdown = ({
   placeholder,
   width = '100%',
   hasOther = false,
+  disabled = false,
 }: SimpleDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [otherValue, setOtherValue] = useState('');
 
+  useEffect(() => {
+    if (disabled) {
+      setIsOpen(false);
+    }
+  }, [disabled]);
+
   const handleToggle = () => {
+    if (disabled) return;
     setIsOpen((prev) => !prev);
   };
 
@@ -65,7 +74,7 @@ export const SimpleDropdown = ({
     <Container style={{ width }}>
       {label && <Label>{label}</Label>}
       <DropdownWrapper>
-        <DropdownHeader onClick={handleToggle}>
+        <DropdownHeader onClick={handleToggle} disabled={disabled}>
           <DropdownValue>
             {displayValue || placeholder || `${label} 선택`}
           </DropdownValue>
@@ -129,7 +138,7 @@ const DropdownWrapper = styled.div`
   width: 100%;
 `;
 
-const DropdownHeader = styled.div`
+const DropdownHeader = styled.div<{ disabled?: boolean }>`
   width: 100%;
   height: 3.5rem;
   border: 0.0625rem solid #404040;
@@ -139,9 +148,9 @@ const DropdownHeader = styled.div`
   justify-content: space-between;
   padding: 0 1rem;
   font-size: 1.25rem;
-  color: #2e2e32;
-  cursor: pointer;
-  background-color: #fff;
+  color: ${({ disabled }) => (disabled ? '#a0a0a0' : '#2e2e32')};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  background-color: ${({ disabled }) => (disabled ? '#f5f5f5' : '#fff')};
   box-sizing: border-box;
 `;
 
@@ -152,7 +161,7 @@ const DropdownValue = styled.span`
 const ArrowIcon = styled.div`
   display: flex;
   align-items: center;
-  color: #2e2e32;
+  color: inherit;
 `;
 
 const DropdownList = styled.div`

@@ -15,7 +15,7 @@ export const useUpdateUserInformation = () => {
     }) => updateUserInformation(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ['user', data.userId],
+        queryKey: ['user', String(data.id)],
       });
     },
   });
