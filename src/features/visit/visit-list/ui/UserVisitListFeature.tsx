@@ -130,48 +130,48 @@ export const UserVisitListFeature = () => {
 
   return (
     <>
-        {isLoading && (
-          <LoadingOverlay>
-            <LoadingBox>
-              <p>데이터를 불러오는 중</p>
-              <p>잠시만 기다려주세요...</p>
-            </LoadingBox>
-          </LoadingOverlay>
-        )}
-        {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
-        {!isLoading && !error && visits.length === 0 && (
-          <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
-        )}
-        <MonthVisitButtonWrapper>
-          <MonthVisitButton onClick={() => setMonthModalOpen(true)} />
-        </MonthVisitButtonWrapper>
-        <MonthVisitModal
-          isOpen={monthModalOpen}
-          onClose={() => setMonthModalOpen(false)}
-          onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
-        />
-        {visits.map((visit: any) => {
-          if (!visit) return null;
+      {isLoading && (
+        <LoadingOverlay>
+          <LoadingBox>
+            <p>데이터를 불러오는 중</p>
+            <p>잠시만 기다려주세요...</p>
+          </LoadingBox>
+        </LoadingOverlay>
+      )}
+      {error && <ErrorMessage>오류 발생: {error.message}</ErrorMessage>}
+      {!isLoading && !error && visits.length === 0 && (
+        <EmptyMessage>이용 기록이 없습니다.</EmptyMessage>
+      )}
+      <MonthVisitButtonWrapper>
+        <MonthVisitButton onClick={() => setMonthModalOpen(true)} />
+      </MonthVisitButtonWrapper>
+      <MonthVisitModal
+        isOpen={monthModalOpen}
+        onClose={() => setMonthModalOpen(false)}
+        onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
+      />
+      {visits.map((visit: any) => {
+        if (!visit) return null;
 
-          return (
-            <UserVisitCard
-              key={visit.id}
-              id={visit.id}
-              name={visit.name}
-              male={visit.maleCount}
-              female={visit.femaleCount}
-              date={visit.visitDate}
-              onDelete={() => handleDelete(visit.id, visit.name)}
-            />
-          );
-        })}
-        {hasNextPage && <ObserverTarget ref={observerTarget} />}
-        {isFetchingNextPage && (
-          <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
-        )}
-        {!hasNextPage && visits.length > 0 && (
-          <InfoMessage>모든 기록을 불러왔습니다.</InfoMessage>
-        )}
+        return (
+          <UserVisitCard
+            key={visit.id}
+            id={visit.id}
+            name={visit.name}
+            male={visit.maleCount}
+            female={visit.femaleCount}
+            date={visit.visitDate}
+            onDelete={() => handleDelete(visit.id, visit.name)}
+          />
+        );
+      })}
+      {hasNextPage && <ObserverTarget ref={observerTarget} />}
+      {isFetchingNextPage && (
+        <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>
+      )}
+      {!hasNextPage && visits.length > 0 && (
+        <InfoMessage>모든 기록을 불러왔습니다.</InfoMessage>
+      )}
 
       <Modal
         isOpen={deleteConfirmModal.isOpen}
@@ -203,12 +203,10 @@ const LoadingOverlay = styled.div`
 `;
 
 const LoadingBox = styled.div`
-  background: white;
-  border-radius: 1rem;
-  padding: 1.5rem 2rem;
-  text-align: center;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
-  color: #111;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 30px 50px;
+  border-radius: 10px;
+  color: #fff;
 `;
 
 const ErrorMessage = styled.p`
