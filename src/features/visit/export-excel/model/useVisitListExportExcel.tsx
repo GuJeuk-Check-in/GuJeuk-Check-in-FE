@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { exportVisitListToExcel } from '@entities/visit/index';
 import { UseModalReturn } from '@shared/hooks/useModal';
