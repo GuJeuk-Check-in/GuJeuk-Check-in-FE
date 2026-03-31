@@ -269,7 +269,7 @@ export const UserInformationDetailCard = ({
 };
 
 const Container = styled.div`
-  width: 100%;
+  width: 88%;
   max-width: 80rem;
   margin: 2.5rem auto;
   background-color: #ffffff;
