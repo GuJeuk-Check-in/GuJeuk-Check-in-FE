@@ -45,36 +45,22 @@ export const UserInformationDetailActions = ({
       privacyAgreed: formData.privacyAgreed,
     };
 
-    updateMutation.mutate(
-      {
-        id: dataToUpdate.id,
-        data: {
-          name: dataToUpdate.name,
-          userId: dataToUpdate.userId,
-          phone: dataToUpdate.phone,
-          gender: dataToUpdate.gender,
-          birthYMD: dataToUpdate.birthYMD,
-          residence: dataToUpdate.residence,
-          privacyAgreed: dataToUpdate.privacyAgreed,
-        },
-      },
-      {
-        onSuccess: async () => {
-          await refetchUserInformation();
-          modal.openModal({
-            icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
-            title: '수정 완료',
-            subtitle: '사용자 정보가 성공적으로 수정되었습니다.',
-            theme: 'info',
-            buttons: [
-              {
-                label: '확인',
-                variant: 'primary',
-                bgColor: '#0F50A0',
-                onClick: () => {
-                  modal.closeModal();
-                  window.location.reload();
-                },
+    updateMutation.mutate(dataToUpdate, {
+      onSuccess: async () => {
+        await refetchUserInformation();
+        modal.openModal({
+          icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
+          title: '수정 완료',
+          subtitle: '사용자 정보가 성공적으로 수정되었습니다.',
+          theme: 'info',
+          buttons: [
+            {
+              label: '확인',
+              variant: 'primary',
+              bgColor: '#0F50A0',
+              onClick: () => {
+                modal.closeModal();
+                window.location.reload();
               },
             ],
           });
