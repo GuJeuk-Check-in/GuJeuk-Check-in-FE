@@ -135,27 +135,6 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
           disable={isLoading || isPurposeLoading || purposeOptions.length === 0}
         />
 
-        <ToggleSelect
-          label="거주지"
-          options={
-            isResidenceLoading
-              ? ['불러오는 중...']
-              : residences && residences.length > 0
-              ? residences.map((r) => `${r.residence}`)
-              : ['데이터 없음']
-          }
-          placeholder="거주지를 선택해주세요"
-          value={residence}
-          onChange={setResidence}
-          icon={<FaLocationDot size={24} />}
-          disable={
-            isLoading ||
-            isResidenceLoading ||
-            !residences ||
-            residences.length === 0
-          }
-        />
-
         <CountVisitorWrapper>
           <CountVisitor
             label="방문 남성 수"
