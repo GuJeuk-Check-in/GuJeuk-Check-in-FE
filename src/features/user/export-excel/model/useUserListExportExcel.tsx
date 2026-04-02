@@ -1,18 +1,13 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { exportVisitListToExcel } from '@entities/visit/index';
+import { exportUserListToExcel } from '@entities/user';
 import { UseModalReturn } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 
-type ExportExcelVariables = {
-  year: number;
-  month: number;
-};
-
-export const useVisitListExportExcel = (
+export const useUserListExportExcel = (
   modal: UseModalReturn
-): UseMutationResult<string, Error, ExportExcelVariables> => {
-  return useMutation<string, Error, ExportExcelVariables>({
-    mutationFn: exportVisitListToExcel,
+): UseMutationResult<string, Error, void> => {
+  return useMutation<string, Error, void>({
+    mutationFn: exportUserListToExcel,
     onSuccess: () => {
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,

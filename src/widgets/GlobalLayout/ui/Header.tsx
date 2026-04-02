@@ -16,9 +16,9 @@ export const Header = () => {
   const modal = useModal();
 
   const { mutate: visitExcelMutate, isPending: isVisitExporting } =
-    useVisitListExportExcel();
+    useVisitListExportExcel(modal);
   const { mutate: userExcelMutate, isPending: isUserExporting } =
-    useUserListExportExcel();
+    useUserListExportExcel(modal);
 
   const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
@@ -89,13 +89,18 @@ export const Header = () => {
         />
         {isVisitExporting && (
           <ExportLoadingMessage>
-            엑셀 파일을 준비 중입니다... (
-            {getExportingPeriodMessage(exportingDate)})
+            <LoadingBox>
+              <p>엑셀 파일을 준비 중</p>
+              <p>잠시만 기다려주세요...</p>
+            </LoadingBox>
           </ExportLoadingMessage>
         )}
         {isUserExporting && (
           <ExportLoadingMessage>
-            엑셀 파일을 준비 중입니다...
+            <LoadingBox>
+              <p>엑셀 파일을 준비 중</p>
+              <p>잠시만 기다려주세요...</p>
+            </LoadingBox>
           </ExportLoadingMessage>
         )}
         <DateExportModal
@@ -129,10 +134,25 @@ const Container = styled.div`
   padding: 2rem 0;
 `;
 
-const ExportLoadingMessage = styled.p`
-  margin-left: 0.625rem;
-  color: #3f51b5;
-  white-space: nowrap;
+const ExportLoadingMessage = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingBox = styled.div`
+  background: rgba(255, 255, 255, 0.3);
+  padding: 30px 50px;
+  border-radius: 10px;
+  color: #fff;
 `;
 
 const LogoImage = styled.img`
