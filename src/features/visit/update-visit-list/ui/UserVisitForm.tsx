@@ -162,12 +162,6 @@ export const UserVisitForm = ({
         value={formData.purpose}
         onChange={(v) => setFormData((p) => ({ ...p, purpose: v }))}
       />
-      <ToggleSelect
-        label="거주지"
-        options={isResidenceLoading ? ['로딩 중...'] : residenceOptions}
-        value={formData.residence}
-        onChange={(v) => setFormData((p) => ({ ...p, residence: v }))}
-      />
       <VisitDatePicker
         value={formData.visitDate}
         onChange={(v) => setFormData((p) => ({ ...p, visitDate: v }))}
@@ -193,7 +187,7 @@ export const UserVisitForm = ({
 
       <CustomInputGroup>
         <CustomLabel>개인 정보 수집 동의</CustomLabel>
-        <PrivacyConsentWrapper isEditable={true}>
+        <PrivacyConsentWrapper>
           <Checkbox
             type="checkbox"
             name="privacyAgreed"
@@ -251,21 +245,40 @@ const CustomLabel = styled.label`
   color: #2e2e32;
   font-weight: 500;
 `;
-const Checkbox = styled.input`
-  width: 1.5rem;
-  height: 1.5rem;
-`;
-const PrivacyConsentWrapper = styled.label<{ isEditable: boolean }>`
+const PrivacyConsentWrapper = styled.label`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0 1rem;
-  height: 3.5rem;
-  border: 0.0625rem solid #404040;
-  border-radius: 0.5rem;
-  cursor: ${({ isEditable }) => (isEditable ? 'pointer' : 'default')};
+  cursor: pointer;
 `;
+
+const Checkbox = styled.input`
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
+  border: 0.125rem solid #d1d8e0;
+  border-radius: 0.25rem;
+  background-color: #f8f9fa;
+  position: relative;
+  cursor: pointer;
+
+  &:checked {
+    background-color: #3f73b3;
+    border-color: #3f73b3;
+  }
+
+  &:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 1rem;
+  }
+`;
+
 const ConsentText = styled.span<{ $checked: boolean }>`
-  font-size: 1.125rem;
-  color: ${({ $checked }) => ($checked ? '#2e2e32' : '#888')};
+  font-size: 1rem;
+  color: #6e7680;
 `;
