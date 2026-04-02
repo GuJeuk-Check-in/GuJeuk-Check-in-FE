@@ -74,11 +74,6 @@ export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
         isEditable={false}
       />
       <VisitDetailInput
-        label="거주지"
-        value={visit.residence}
-        isEditable={false}
-      />
-      <VisitDetailInput
         label="방문 날짜"
         value={visit.visitDate}
         isEditable={false}
@@ -129,6 +124,7 @@ const DetailWrapper = styled.div`
   flex-direction: column;
   gap: 1.25rem;
 `;
+
 const InputRow = styled.div`
   display: flex;
   gap: 1.25rem;
@@ -136,41 +132,65 @@ const InputRow = styled.div`
     flex: 1;
   }
 `;
+
 const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 1.25rem;
 `;
+
 const CenterText = styled.p`
   text-align: center;
   margin: 3rem 0;
   color: ${(props) => props.color || '#777'};
 `;
+
 const CustomInputGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 `;
+
 const CustomLabel = styled.label`
   font-size: 1.25rem;
   color: #2e2e32;
   font-weight: 500;
 `;
-const Checkbox = styled.input`
-  width: 1.5rem;
-  height: 1.5rem;
-`;
-const PrivacyConsentWrapper = styled.div<{ isEditable?: boolean }>`
+
+const PrivacyConsentWrapper = styled.label`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0 1rem;
-  height: 3.5rem;
-  border: 0.0625rem solid #404040;
-  border-radius: 0.5rem;
-  background: #f9f9f9;
+  cursor: pointer;
 `;
+
+const Checkbox = styled.input`
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
+  border: 0.125rem solid #d1d8e0;
+  border-radius: 0.25rem;
+  background-color: #f8f9fa;
+  position: relative;
+  cursor: pointer;
+
+  &:checked {
+    background-color: #3f73b3;
+    border-color: #3f73b3;
+  }
+
+  &:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 1rem;
+  }
+`;
+
 const ConsentText = styled.span<{ $checked: boolean }>`
-  font-size: 1.125rem;
-  color: ${({ $checked }) => ($checked ? '#2e2e32' : '#888')};
+  font-size: 1rem;
+  color: #6e7680;
 `;
