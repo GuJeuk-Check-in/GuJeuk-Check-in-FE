@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
@@ -8,9 +8,9 @@ import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useResidenceStore } from '@entities/residence';
+import { useResidenceStore, useResidenceList } from '@entities/residence';
 
-type GenderType = 'MALE' | 'FEMALE';
+type GenderType = 'MAN' | 'WOMAN';
 
 interface UserInformationData {
   id: number;
@@ -36,28 +36,14 @@ interface UserInformationDetailCardProps {
   onEditStateChange?: (isEditing: boolean) => void;
 }
 
-interface VisitDetailInputProps {
-  label: string;
-  value: any;
-  width?: string;
-  isEditable?: boolean;
-  name?: string;
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  type?: string;
-  options?: Array<{ value: string; label: string }>;
-  placeholder?: string;
-}
-
 const GENDER_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'MALE', label: '남성' },
-  { value: 'FEMALE', label: '여성' },
+  { value: 'MAN', label: '남성' },
+  { value: 'WOMAN', label: '여성' },
 ];
 
 const GENDER_DISPLAY_MAP: Record<GenderType, string> = {
-  MALE: '남성',
-  FEMALE: '여성',
+  MAN: '남성',
+  WOMAN: '여성',
 };
 
 export const UserInformationDetailCard = ({
@@ -74,7 +60,11 @@ export const UserInformationDetailCard = ({
 }: UserInformationDetailCardProps) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+
+  const { isLoading: isResidenceLoading, isError: isResidenceError } =
+    useResidenceList();
+
+  const [formData, setFormData] = useState<UserInformationData>({
     id,
     name,
     userId,
@@ -84,11 +74,26 @@ export const UserInformationDetailCard = ({
     residence,
     privacyAgreed,
   });
+
+  useEffect(() => {
+    setFormData({
+      id,
+      name,
+      userId,
+      phone,
+      gender,
+      birthYMD,
+      residence,
+      privacyAgreed,
+    });
+  }, [id, name, userId, phone, gender, birthYMD, residence, privacyAgreed]);
+
   const { residences } = useResidenceStore();
 
   const LocationData = [
     ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
   ];
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -178,9 +183,10 @@ export const UserInformationDetailCard = ({
           onChange={(label) => {
             const selected = GENDER_OPTIONS.find((opt) => opt.label === label);
             if (selected) {
-              handleChange({
-                target: { name: 'gender', value: selected.value },
-              } as React.ChangeEvent<HTMLInputElement>);
+              setFormData((prev) => ({
+                ...prev,
+                gender: selected.value as GenderType,
+              }));
             }
           }}
           icon={<FaUser size={24} />}
@@ -200,9 +206,10 @@ export const UserInformationDetailCard = ({
           label="생년월일"
           value={formData.birthYMD}
           onChange={(dateString) => {
-            handleChange({
-              target: { name: 'birthYMD', value: dateString },
-            } as React.ChangeEvent<HTMLInputElement>);
+            setFormData((prev) => ({
+              ...prev,
+              birthYMD: dateString,
+            }));
           }}
         />
       ) : (
@@ -216,16 +223,27 @@ export const UserInformationDetailCard = ({
       )}
 
       {isEditing ? (
-        <SimpleDropdown
-          label="거주지"
-          options={LocationData}
-          value={formData.residence}
-          onChange={(residence) => {
-            handleChange({
-              target: { name: 'residence', value: residence },
-            } as React.ChangeEvent<HTMLInputElement>);
-          }}
-        />
+        <>
+          <SimpleDropdown
+            label="거주지"
+            options={LocationData}
+            value={formData.residence}
+            hasOther={true}
+            disabled={isResidenceLoading}
+            placeholder={
+              isResidenceLoading ? '데이터를 불러오는 중...' : '거주지 선택'
+            }
+            onChange={(residence) => {
+              setFormData((prev) => ({
+                ...prev,
+                residence: residence,
+              }));
+            }}
+          />
+          {isResidenceError && (
+            <ErrorText>거주지 목록을 불러오는데 실패했습니다.</ErrorText>
+          )}
+        </>
       ) : (
         <VisitDetailInput
           label="거주지"
@@ -251,7 +269,7 @@ export const UserInformationDetailCard = ({
 };
 
 const Container = styled.div`
-  width: 100%;
+  width: 88%;
   max-width: 80rem;
   margin: 2.5rem auto;
   background-color: #ffffff;
@@ -261,6 +279,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    margin: 1rem auto;
+  }
 `;
 
 const CardHeader = styled.div`
@@ -278,6 +301,13 @@ const BackButton = styled.button`
   &:hover {
     transform: translateX(-0.25rem);
   }
+`;
+
+const ErrorText = styled.span`
+  color: #d88282;
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+  margin-left: 0.5rem;
 `;
 
 const ButtonWrapper = styled.div`

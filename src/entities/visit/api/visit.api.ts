@@ -11,6 +11,12 @@ export const fetchUserVisitList = async (page = 0) => {
   return response.data;
 };
 
+export const fetchMonthVisitList = async (year: number, month: number) => {
+  const formattedMonth = String(month).padStart(2, '0');
+  const response = await axiosInstance.get(`/log/date/${year}-${formattedMonth}`);
+  return response.data;
+};
+
 export const deleteUserVisit = async (
   id: number
 ): Promise<DeleteUserVisitResponse> => {

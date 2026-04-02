@@ -7,7 +7,7 @@ import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
 
-const PurposeAddBox = () => {
+export const PurposeAddBox = () => {
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { isOpen, config, openModal, closeModal } = useModal();
 
@@ -131,8 +131,6 @@ const PurposeAddBox = () => {
     </>
   );
 };
-
-export default PurposeAddBox;
 
 interface ContainerProps {
   $isAddButton?: boolean;

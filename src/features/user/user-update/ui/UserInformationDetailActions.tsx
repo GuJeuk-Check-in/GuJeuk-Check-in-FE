@@ -21,6 +21,7 @@ export const UserInformationDetailActions = ({
       !formData.name ||
       !formData.phone ||
       !formData.birthYMD ||
+      !formData.gender ||
       !formData.residence
     ) {
       modal.openModal({
@@ -61,20 +62,20 @@ export const UserInformationDetailActions = ({
                 modal.closeModal();
                 window.location.reload();
               },
-            },
-          ],
-        });
-      },
-      onError: (err) => {
-        modal.openModal({
-          icon: <FaExclamationTriangle size={48} color="#D88282" />,
-          title: '수정 실패',
-          subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
-          theme: 'warning',
-          buttons: [{ label: '닫기', onClick: modal.closeModal }],
-        });
-      },
-    });
+            ],
+          });
+        },
+        onError: (err) => {
+          modal.openModal({
+            icon: <FaExclamationTriangle size={48} color="#D88282" />,
+            title: '수정 실패',
+            subtitle: err.message || '알 수 없는 오류가 발생했습니다.',
+            theme: 'warning',
+            buttons: [{ label: '닫기', onClick: modal.closeModal }],
+          });
+        },
+      }
+    );
   };
 
   return (
