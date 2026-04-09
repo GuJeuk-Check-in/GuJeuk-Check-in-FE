@@ -45,7 +45,7 @@ export const UserInformationDetailActions = ({
       privacyAgreed: formData.privacyAgreed,
     };
 
-    updateMutation.mutate(dataToUpdate, {
+    updateMutation.mutate({ id: formData.id, data: dataToUpdate }, {
       onSuccess: async () => {
         await refetchUserInformation();
         modal.openModal({
@@ -62,7 +62,8 @@ export const UserInformationDetailActions = ({
                 modal.closeModal();
                 window.location.reload();
               },
-            ],
+            },
+          ],
           });
         },
         onError: (err) => {
