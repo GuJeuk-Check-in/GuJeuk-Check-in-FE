@@ -11,9 +11,13 @@ export const fetchUserVisitList = async (page = 0) => {
   return response.data;
 };
 
-export const fetchMonthVisitList = async (year: number, month: number) => {
+export const fetchMonthVisitList = async (
+  year: number,
+  month: number,
+  page = 0
+) => {
   const formattedMonth = String(month).padStart(2, '0');
-  const response = await axiosInstance.get(`/log/date/${year}-${formattedMonth}`);
+  const response = await axiosInstance.get(`/log/date/${year}-${formattedMonth}?page=${page}`);
   return response.data;
 };
 
