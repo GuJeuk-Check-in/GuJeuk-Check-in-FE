@@ -44,6 +44,7 @@ export const useDeleteVisitMutation = () => {
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ['visitList'] });
       queryClient.invalidateQueries({ queryKey: ['monthVisitList'] });
+      queryClient.invalidateQueries({ queryKey: ['monthVisitDetailList'] });
     },
     onError: (error) =>
       alert(error.response?.data?.message || error.message || '삭제 실패'),
