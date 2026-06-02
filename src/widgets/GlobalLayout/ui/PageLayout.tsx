@@ -8,7 +8,10 @@ interface PageLayoutProps {
   showHeader?: boolean;
 }
 
-export const PageLayout = ({ children, showHeader = true }: PageLayoutProps) => {
+export const PageLayout = ({
+  children,
+  showHeader = true,
+}: PageLayoutProps) => {
   return (
     <Container>
       <UseBackground />

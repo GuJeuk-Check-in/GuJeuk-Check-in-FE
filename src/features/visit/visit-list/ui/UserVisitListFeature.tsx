@@ -22,7 +22,7 @@ export const UserVisitListFeature = () => {
 
   const {
     data,
-    fetchNextPage,
+    fetchNextPage: fetchNextAll,
     hasNextPage: hasNextAll,
     isFetchingNextPage: isFetchingNextAll,
     isLoading: isLoadingAll,
@@ -40,7 +40,7 @@ export const UserVisitListFeature = () => {
 
   const visits = useMemo(() => {
     if (monthFilter) {
-      return monthDetail.data?.slice?.content ?? [];
+      return monthDetail.data?.pages.flatMap((page) => page.slice?.content ?? []) ?? [];
     }
     if (!data?.pages) return [];
 
@@ -49,8 +49,11 @@ export const UserVisitListFeature = () => {
     });
   }, [monthFilter, data, monthDetail.data]);
 
-  const hasNextPage = !monthFilter && hasNextAll;
-  const isFetchingNextPage = !monthFilter && isFetchingNextAll;
+  const fetchNextPage = monthFilter ? monthDetail.fetchNextPage : fetchNextAll;
+  const hasNextPage = monthFilter ? monthDetail.hasNextPage : hasNextAll;
+  const isFetchingNextPage = monthFilter
+    ? monthDetail.isFetchingNextPage
+    : isFetchingNextAll;
 
   const observerTarget = useRef<HTMLDivElement>(null);
 

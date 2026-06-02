@@ -17,6 +17,7 @@ export const UserFilter = ({
   const LocationData = [
     '전체 지역',
     ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
+    '기타 지역',
   ];
   const [isOpen, setIsOpen] = useState(false);
 
