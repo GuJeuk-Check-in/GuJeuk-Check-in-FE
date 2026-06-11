@@ -72,7 +72,6 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay],
       phone: phoneInput.value,
-      residence: residence,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,
