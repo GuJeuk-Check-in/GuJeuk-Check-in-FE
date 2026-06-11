@@ -13,7 +13,6 @@ import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
-import { useResidenceList } from '@entities/residence';
 import { CreateUserVisitRequest } from '@entities/visit';
 
 interface VisitFormProps {
@@ -32,6 +31,8 @@ const AGE_MAP = {
 
 type AgeDisplayType = keyof typeof AGE_MAP;
 
+const DEFAULT_RESIDENCE = '미입력';
+
 const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const nameInput = useInput('');
   const phoneInput = useInput('');
@@ -41,12 +42,9 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const femaleCounter = useCounter(0);
   const [date, setDate] = useState('');
   const privacyCheck = useCheck(true);
-  const [residence, setResidence] = useState('');
   const [visitTime, setVisitTime] = useState('');
 
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
-  const { data: residences, isLoading: isResidenceLoading } =
-    useResidenceList();
 
   const handleSubmit = async () => {
     const trimmedPurpose = purpose.trim();
@@ -72,6 +70,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay],
       phone: phoneInput.value,
+      residence: DEFAULT_RESIDENCE,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,

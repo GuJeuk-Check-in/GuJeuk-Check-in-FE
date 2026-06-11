@@ -6,7 +6,7 @@ import { RightLayout } from '@widgets/auth';
 interface AuthPageLayoutProps {
   title: string;
   children: ReactNode;
-  spacer?: number;
+  spacer?: 40 | 70;
 }
 
 export const AuthPageLayout = ({
