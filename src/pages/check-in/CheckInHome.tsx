@@ -1,15 +1,20 @@
 import styled from '@emotion/styled';
 import { Logo } from '@shared/assets';
 import { PasswordBackground } from '@shared/ui/Background';
+import { useNavigate } from 'react-router-dom';
 
 const CheckInHome = () => {
+  const navigate = useNavigate();
+
   return (
     <Page>
       <PasswordBackground />
       <Content>
         <LogoImage src={Logo} alt="구즉 청소년문화의집" />
         <GuideText>시설을 이용하려면 아래 버튼을 눌러줘</GuideText>
-        <StartButton type="button">시설 이용하기</StartButton>
+        <StartButton type="button" onClick={() => navigate('/check-in/form')}>
+          시설 이용하기
+        </StartButton>
       </Content>
     </Page>
   );
