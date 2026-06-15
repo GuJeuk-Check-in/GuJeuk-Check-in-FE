@@ -8,6 +8,7 @@ import UserInformation from '@pages/user/UserInformation';
 import PurposeCustom from '@pages/purpose/PurposeCustom';
 import UserInformationDetail from '@pages/user/UserInformationDetail';
 import ResidenceCustom from '@pages/residence/ResidenceCustom';
+import CheckInHome from '@pages/check-in/CheckInHome';
 
 export const Router = () => {
   return (
@@ -21,6 +22,7 @@ export const Router = () => {
       <Route path="/organ/user/:userId" element={<UserInformationDetail />} />
       <Route path="/purpose/all" element={<PurposeCustom />} />
       <Route path="/residence/all" element={<ResidenceCustom />} />
+      <Route path="/check-in" element={<CheckInHome />} />
     </Routes>
   );
 };
