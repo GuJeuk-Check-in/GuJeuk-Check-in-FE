@@ -84,7 +84,6 @@ export interface CreateUserVisitRequest {
   name: string | null;
   age: AgeType;
   phone: string;
-  residence: string;
   maleCount: number;
   femaleCount: number;
   purpose: string;
@@ -95,6 +94,7 @@ export interface CreateUserVisitRequest {
 
 export interface UpdateUserVisitRequest extends CreateUserVisitRequest {
   id: number;
+  residence: string;
 }
 
 export interface DeleteUserVisitRequest {
