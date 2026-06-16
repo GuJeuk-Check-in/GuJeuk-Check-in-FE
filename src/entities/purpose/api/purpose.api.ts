@@ -1,4 +1,4 @@
-import { axiosInstance, publicAxiosInstance } from '@shared/api';
+import { axiosInstance } from '@shared/api';
 import {
   CreatePurposeRequest,
   PurposeResponse,
@@ -7,8 +7,7 @@ import {
 } from '../model/types';
 
 export const purposeList = async (): Promise<PurposeResponse[]> => {
-  const response =
-    await publicAxiosInstance.get<PurposeResponse[]>('/purpose/all');
+  const response = await axiosInstance.get<PurposeResponse[]>('/purpose/all');
   return response.data;
 };
 
