@@ -1,10 +1,14 @@
-import { axiosInstance } from '@shared/api';
+import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import {
+  CreateUserVisitRequest,
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   UpdateUserVisitRequest,
 } from '../model/types';
+
+const PUBLIC_USER_VISIT_ENDPOINT =
+  import.meta.env.VITE_USER_CHECK_IN_ENDPOINT || '/user/check-in';
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);
@@ -17,7 +21,9 @@ export const fetchMonthVisitList = async (
   page = 0
 ) => {
   const formattedMonth = String(month).padStart(2, '0');
-  const response = await axiosInstance.get(`/log/date/${year}-${formattedMonth}?page=${page}`);
+  const response = await axiosInstance.get(
+    `/log/date/${year}-${formattedMonth}?page=${page}`
+  );
   return response.data;
 };
 
@@ -28,8 +34,20 @@ export const deleteUserVisit = async (
   return response.data;
 };
 
-export const createUserVisit = async (visitData) => {
+export const createUserVisit = async (
+  visitData: CreateUserVisitRequest
+): Promise<UserVisitDetailResponse> => {
   const response = await axiosInstance.post(`/log`, visitData);
+  return response.data;
+};
+
+export const createPublicUserVisit = async (
+  visitData: CreateUserVisitRequest
+): Promise<UserVisitDetailResponse> => {
+  const response = await publicAxiosInstance.post(
+    PUBLIC_USER_VISIT_ENDPOINT,
+    visitData
+  );
   return response.data;
 };
 
