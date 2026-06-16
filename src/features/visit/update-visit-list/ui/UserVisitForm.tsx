@@ -8,7 +8,6 @@ import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { VisitDatePicker, VisitTimePicker } from '@shared/ui';
 import { useUpdateAdminItem } from '../model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
-import { useResidenceList } from '@entities/residence';
 import { UserVisitDetailResponse } from '@entities/visit/index';
 import { UseModalReturn } from '@shared/hooks/useModal';
 
@@ -53,14 +52,9 @@ export const UserVisitForm = ({
   const updateMutation = useUpdateAdminItem();
   const { data: purposes = [], isPending: isPurposesLoading } =
     usePurposeList();
-  const { data: residences = [], isPending: isResidenceLoading } =
-    useResidenceList();
 
   const purposeOptions = Array.isArray(purposes)
     ? purposes.map((p) => p.purpose)
-    : [];
-  const residenceOptions = Array.isArray(residences)
-    ? residences.map((r) => r.residence)
     : [];
 
   const handleChange = (
