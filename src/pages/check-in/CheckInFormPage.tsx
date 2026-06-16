@@ -1,7 +1,15 @@
 import styled from '@emotion/styled';
+import { PurposeResponse, usePurposeList } from '@entities/purpose';
+import { createPublicUserVisit } from '@entities/visit';
+import { AgeType, CreateUserVisitRequest } from '@entities/visit';
+import { useMutation } from '@tanstack/react-query';
 import { PasswordBackground } from '@shared/ui/Background';
-import { useState } from 'react';
+import { Modal } from '@shared/ui';
+import { useModal } from '@shared/hooks/useModal';
+import { useEffect, useMemo, useState } from 'react';
 import {
+  FaCheckCircle,
+  FaExclamationTriangle,
   FaGraduationCap,
   FaMars,
   FaRegCheckSquare,
@@ -12,32 +20,200 @@ import { FiMinus, FiPhone, FiPlus, FiUser, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
 
 const ageOptions = [
-  { label: '1~7세', tone: 'peach', icon: <FaRegSmile /> },
-  { label: '8 ~ 13세', tone: 'mint', icon: <FaRegSmile /> },
-  { label: '14 ~ 16세', tone: 'blue', icon: <FaGraduationCap /> },
-  { label: '17 ~ 19세', tone: 'peach', icon: <FaRegSmile /> },
-  { label: '20세 이상', tone: 'mint', icon: <FaRegSmile /> },
-] as const;
-
-const purposeOptions = [
-  { label: '천친마루(게임, 독서 등)', tone: 'peach' },
-  { label: '난장마루(노래방 최대 4명)', tone: 'mint' },
-  { label: '잔치마루(노래방 최대 8명)', tone: 'blue' },
-  { label: '천친마루(게임, 독서 등)', tone: 'peach' },
-  { label: '창작마루(방송실)', tone: 'mint' },
-  { label: '통통마루(댄스연습실)', tone: 'peach' },
-  { label: '난장마루(노래방 최대 4명)', tone: 'mint' },
+  { label: '1~7세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
+  { label: '8 ~ 13세', value: 'AGE_9_13', tone: 'mint', icon: <FaRegSmile /> },
+  {
+    label: '14 ~ 16세',
+    value: 'AGE_14_16',
+    tone: 'blue',
+    icon: <FaGraduationCap />,
+  },
+  {
+    label: '17 ~ 19세',
+    value: 'AGE_17_19',
+    tone: 'peach',
+    icon: <FaRegSmile />,
+  },
+  { label: '20세 이상', value: 'ADULT', tone: 'mint', icon: <FaRegSmile /> },
 ] as const;
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
+const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
+const PURPOSE_CACHE_KEY = 'gujeuk:last-success-purposes';
+
+const readCachedPurposes = (): PurposeResponse[] => {
+  try {
+    const cached = localStorage.getItem(PURPOSE_CACHE_KEY);
+    if (!cached) return [];
+
+    const parsed = JSON.parse(cached);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.filter(
+      (item): item is PurposeResponse =>
+        typeof item?.id === 'number' && typeof item?.purpose === 'string'
+    );
+  } catch {
+    return [];
+  }
+};
+
+const writeCachedPurposes = (purposes: PurposeResponse[]) => {
+  localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
+};
+
+const formatVisitDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}년${month}월${day}일`;
+};
+
+const formatVisitTime = (date: Date) => {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${hours}:${minutes}`;
+};
 
 const CheckInFormPage = () => {
-  const [gender, setGender] = useState<'남자' | '여자' | null>(null);
-  const [age, setAge] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [age, setAge] = useState<AgeType | ''>('');
   const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [cachedPurposes, setCachedPurposes] = useState<PurposeResponse[]>(
+    readCachedPurposes
+  );
+  const modal = useModal();
+  const {
+    data: purposes = [],
+    isLoading: isPurposeLoading,
+    isError: isPurposeError,
+  } = usePurposeList();
+
+  useEffect(() => {
+    if (purposes.length > 0) {
+      setCachedPurposes(purposes);
+      writeCachedPurposes(purposes);
+    }
+  }, [purposes]);
+
+  const visiblePurposes = purposes.length > 0 ? purposes : cachedPurposes;
+
+  const purposeOptions = useMemo(
+    () =>
+      visiblePurposes.map((purpose, index) => ({
+        label: purpose.purpose,
+        tone: purposeTones[index % purposeTones.length],
+      })),
+    [visiblePurposes]
+  );
+
+  useEffect(() => {
+    if (
+      purposeIndex !== null &&
+      (purposeIndex < 0 || purposeIndex >= purposeOptions.length)
+    ) {
+      setPurposeIndex(null);
+    }
+  }, [purposeIndex, purposeOptions.length]);
+
+  const resetForm = () => {
+    setName('');
+    setPhone('');
+    setAge('');
+    setPurposeIndex(null);
+    setMaleCount(0);
+    setFemaleCount(0);
+    setPrivacyAgreed(false);
+  };
+
+  const checkInMutation = useMutation({
+    mutationFn: createPublicUserVisit,
+    onSuccess: () => {
+      modal.openModal({
+        icon: <FaCheckCircle size={48} color="#0F50A0" />,
+        title: '체크인 완료',
+        subtitle: '시설 이용 신청이 완료되었습니다.',
+        theme: 'info',
+        buttons: [
+          {
+            label: '확인',
+            variant: 'primary',
+            bgColor: '#0F50A0',
+            onClick: () => {
+              modal.closeModal();
+              resetForm();
+            },
+          },
+        ],
+      });
+    },
+    onError: (error) => {
+      const message =
+        error instanceof Error
+          ? error.message
+          : '체크인 중 알 수 없는 오류가 발생했습니다.';
+
+      modal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '체크인 실패',
+        subtitle: message,
+        theme: 'warning',
+        buttons: [
+          {
+            label: '확인',
+            variant: 'secondary',
+            onClick: modal.closeModal,
+          },
+        ],
+      });
+    },
+  });
+
+  const handleSubmit = () => {
+    const selectedPurpose =
+      purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
+    const trimmedName = name.trim();
+    const trimmedPhone = phone.trim();
+
+    if (
+      !trimmedName ||
+      !trimmedPhone ||
+      !age ||
+      !selectedPurpose ||
+      !privacyAgreed ||
+      maleCount + femaleCount <= 0
+    ) {
+      modal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '입력 확인',
+        subtitle: '필수 항목을 모두 입력하고 개인정보 수집에 동의해주세요.',
+        theme: 'warning',
+        buttons: [{ label: '확인', onClick: modal.closeModal }],
+      });
+      return;
+    }
+
+    const now = new Date();
+    const payload: CreateUserVisitRequest = {
+      name: trimmedName,
+      age,
+      phone: trimmedPhone,
+      maleCount,
+      femaleCount,
+      purpose: selectedPurpose,
+      visitDate: formatVisitDate(now),
+      visitTime: formatVisitTime(now),
+      privacyAgreed,
+    };
+
+    checkInMutation.mutate(payload);
+  };
 
   return (
     <Page>
@@ -56,45 +232,24 @@ const CheckInFormPage = () => {
               <FiUser aria-hidden="true" />
               이름이 뭐야?
             </FieldLabel>
-            <TextInput placeholder="친구의 이름을 알려줘" />
+            <TextInput
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="친구의 이름을 알려줘"
+            />
           </FieldBlock>
 
-          <TwoColumn>
-            <FieldBlock>
-              <FieldLabel>
-                <FiPhone aria-hidden="true" />
-                전화번호가 뭐야?
-              </FieldLabel>
-              <TextInput placeholder="010-0000-0000" />
-            </FieldBlock>
-
-            <FieldBlock>
-              <FieldLabel>
-                <FiUsers aria-hidden="true" />
-                성별이 뭐야?
-              </FieldLabel>
-              <SegmentGroup>
-                <SegmentButton
-                  type="button"
-                  $tone="mint"
-                  $selected={gender === '남자'}
-                  onClick={() => setGender('남자')}
-                >
-                  <FaMars aria-hidden="true" />
-                  남자
-                </SegmentButton>
-                <SegmentButton
-                  type="button"
-                  $tone="pink"
-                  $selected={gender === '여자'}
-                  onClick={() => setGender('여자')}
-                >
-                  <FaVenus aria-hidden="true" />
-                  여자
-                </SegmentButton>
-              </SegmentGroup>
-            </FieldBlock>
-          </TwoColumn>
+          <FieldBlock>
+            <FieldLabel>
+              <FiPhone aria-hidden="true" />
+              전화번호가 뭐야?
+            </FieldLabel>
+            <TextInput
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="010-0000-0000"
+            />
+          </FieldBlock>
 
           <FieldBlock>
             <FieldLabel>
@@ -107,8 +262,8 @@ const CheckInFormPage = () => {
                   key={option.label}
                   type="button"
                   $tone={option.tone}
-                  $selected={age === option.label}
-                  onClick={() => setAge(option.label)}
+                  $selected={age === option.value}
+                  onClick={() => setAge(option.value)}
                 >
                   <OptionIcon $tone={option.tone}>{option.icon}</OptionIcon>
                   <span>{option.label}</span>
@@ -122,19 +277,29 @@ const CheckInFormPage = () => {
               <IoRocketOutline aria-hidden="true" />
               오늘은 무엇을 하러 왔어?
             </FieldLabel>
-            <OptionGrid $columns={5}>
-              {purposeOptions.map((option, index) => (
-                <PurposeCard
-                  key={`${option.label}-${index}`}
-                  type="button"
-                  $tone={option.tone}
-                  $selected={purposeIndex === index}
-                  onClick={() => setPurposeIndex(index)}
-                >
-                  {option.label}
-                </PurposeCard>
-              ))}
-            </OptionGrid>
+            {purposeOptions.length > 0 ? (
+              <OptionGrid $columns={5}>
+                {purposeOptions.map((option, index) => (
+                  <PurposeCard
+                    key={`${option.label}-${index}`}
+                    type="button"
+                    $tone={option.tone}
+                    $selected={purposeIndex === index}
+                    onClick={() => setPurposeIndex(index)}
+                  >
+                    {option.label}
+                  </PurposeCard>
+                ))}
+              </OptionGrid>
+            ) : (
+              <PurposeNotice>
+                {isPurposeLoading
+                  ? '방문 목적을 불러오는 중입니다.'
+                  : isPurposeError
+                  ? '방문 목적을 불러오지 못했습니다.'
+                  : '등록된 방문 목적이 없습니다.'}
+              </PurposeNotice>
+            )}
           </FieldBlock>
 
           <FieldBlock>
@@ -210,13 +375,24 @@ const CheckInFormPage = () => {
               />
             </AgreementTitle>
             <AgreementDetail>
-              (이름,생년월일,연락처,방문 목적,성별,cctv 촬영,거주지)
+              (이름, 연령, 연락처, 방문 목적, 방문 인원, CCTV 촬영)
             </AgreementDetail>
           </Agreement>
 
-          <SubmitButton type="button">다 했어요! 🎉</SubmitButton>
+          <SubmitButton
+            type="button"
+            onClick={handleSubmit}
+            disabled={checkInMutation.isPending}
+          >
+            {checkInMutation.isPending ? '등록 중...' : '다 했어요! 🎉'}
+          </SubmitButton>
         </FormBody>
       </Panel>
+      <Modal
+        isOpen={modal.isOpen}
+        config={modal.config}
+        onClose={modal.closeModal}
+      />
       <Footer>made by Busurker</Footer>
     </Page>
   );
@@ -319,22 +495,6 @@ const TextInput = styled.input`
   }
 `;
 
-const TwoColumn = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-
-  @media (max-width: 760px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const SegmentGroup = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-`;
-
 const toneShadow = {
   peach: '#f7d9be',
   mint: '#c5dedb',
@@ -362,34 +522,6 @@ const selectedRing = {
   blue: 'rgba(40, 104, 216, 0.18)',
   pink: 'rgba(239, 75, 117, 0.18)',
 } as const;
-
-const SegmentButton = styled.button<{ $tone: Tone; $selected?: boolean }>`
-  height: 4rem;
-  border: 0.15rem solid
-    ${({ $selected, $tone }) => ($selected ? toneColor[$tone] : 'transparent')};
-  border-radius: 2rem;
-  background-color: ${({ $selected, $tone }) =>
-    $selected ? selectedBackground[$tone] : '#fbfbff'};
-  box-shadow:
-    0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
-    ${({ $selected, $tone }) =>
-      $selected
-        ? `0 0 0 0.22rem ${selectedRing[$tone]}`
-        : '0 0 0 0 transparent'};
-  color: #222831;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  font-size: 1rem;
-  font-weight: 700;
-
-  svg {
-    color: ${({ $tone }) => toneColor[$tone]};
-    font-size: 1.25rem;
-  }
-`;
 
 const OptionGrid = styled.div<{ $columns: number }>`
   display: grid;
@@ -456,6 +588,21 @@ const PurposeCard = styled.button<{ $tone: Tone; $selected?: boolean }>`
   padding: 0 0.5rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const PurposeNotice = styled.p`
+  min-height: 4rem;
+  border-radius: 1.3rem;
+  background-color: #fbfbff;
+  box-shadow: 0 0.35rem 0 #ccd9ea;
+  color: #26364c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
 `;
 
 const CounterGrid = styled.div`
@@ -585,6 +732,11 @@ const SubmitButton = styled.button`
   cursor: pointer;
   font-family: 'Jua', 'Pretendard', sans-serif;
   font-size: clamp(1.6rem, 3vw, 2.2rem);
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 `;
 
 const Footer = styled.footer`
