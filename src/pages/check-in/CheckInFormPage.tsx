@@ -20,8 +20,8 @@ import { FiMinus, FiPhone, FiPlus, FiUser, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
 
 const ageOptions = [
-  { label: '1~7세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
-  { label: '8 ~ 13세', value: 'AGE_9_13', tone: 'mint', icon: <FaRegSmile /> },
+  { label: '1~8세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
+  { label: '9 ~ 13세', value: 'AGE_9_13', tone: 'mint', icon: <FaRegSmile /> },
   {
     label: '14 ~ 16세',
     value: 'AGE_14_16',
@@ -59,7 +59,9 @@ const readCachedPurposes = (): PurposeResponse[] => {
 };
 
 const writeCachedPurposes = (purposes: PurposeResponse[]) => {
-  localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
+  try {
+    localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
+  } catch {}
 };
 
 const formatVisitDate = (date: Date) => {
@@ -85,9 +87,8 @@ const CheckInFormPage = () => {
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
-  const [cachedPurposes, setCachedPurposes] = useState<PurposeResponse[]>(
-    readCachedPurposes
-  );
+  const [cachedPurposes, setCachedPurposes] =
+    useState<PurposeResponse[]>(readCachedPurposes);
   const modal = useModal();
   const {
     data: purposes = [],
@@ -253,8 +254,7 @@ const CheckInFormPage = () => {
 
           <FieldBlock>
             <FieldLabel>
-              <FaRegCheckSquare aria-hidden="true" />
-              몇 살이야?
+              <FaRegCheckSquare aria-hidden="true" />몇 살이야?
             </FieldLabel>
             <OptionGrid $columns={5}>
               {ageOptions.map((option) => (
@@ -544,8 +544,7 @@ const OptionCard = styled.button<{ $tone: Tone; $selected?: boolean }>`
   border-radius: 1.3rem;
   background-color: ${({ $selected, $tone }) =>
     $selected ? selectedBackground[$tone] : '#fbfbff'};
-  box-shadow:
-    0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
+  box-shadow: 0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
     ${({ $selected, $tone }) =>
       $selected
         ? `0 0 0 0.22rem ${selectedRing[$tone]}`
@@ -572,8 +571,7 @@ const PurposeCard = styled.button<{ $tone: Tone; $selected?: boolean }>`
   border-radius: 1.3rem;
   background-color: ${({ $selected, $tone }) =>
     $selected ? selectedBackground[$tone] : '#fbfbff'};
-  box-shadow:
-    0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
+  box-shadow: 0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
     ${({ $selected, $tone }) =>
       $selected
         ? `0 0 0 0.22rem ${selectedRing[$tone]}`
