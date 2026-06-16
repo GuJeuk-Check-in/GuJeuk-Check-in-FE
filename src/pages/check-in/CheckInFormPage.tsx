@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
-import { createPublicUserVisit } from '@entities/visit';
+import { enqueueCheckIn } from '@entities/visit';
 import { AgeType, CreateUserVisitRequest } from '@entities/visit';
-import { useMutation } from '@tanstack/react-query';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
@@ -87,6 +86,7 @@ const CheckInFormPage = () => {
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [cachedPurposes, setCachedPurposes] =
     useState<PurposeResponse[]>(readCachedPurposes);
   const modal = useModal();
@@ -133,50 +133,45 @@ const CheckInFormPage = () => {
     setPrivacyAgreed(false);
   };
 
-  const checkInMutation = useMutation({
-    mutationFn: createPublicUserVisit,
-    onSuccess: () => {
-      modal.openModal({
-        icon: <FaCheckCircle size={48} color="#0F50A0" />,
-        title: '체크인 완료',
-        subtitle: '시설 이용 신청이 완료되었습니다.',
-        theme: 'info',
-        buttons: [
-          {
-            label: '확인',
-            variant: 'primary',
-            bgColor: '#0F50A0',
-            onClick: () => {
-              modal.closeModal();
-              resetForm();
-            },
+  const openSuccessModal = () => {
+    modal.openModal({
+      icon: <FaCheckCircle size={48} color="#0F50A0" />,
+      title: '체크인 완료',
+      subtitle: '시설 이용 신청이 완료되었습니다.',
+      theme: 'info',
+      buttons: [
+        {
+          label: '확인',
+          variant: 'primary',
+          bgColor: '#0F50A0',
+          onClick: () => {
+            modal.closeModal();
+            resetForm();
           },
-        ],
-      });
-    },
-    onError: (error) => {
-      const message =
-        error instanceof Error
-          ? error.message
-          : '체크인 중 알 수 없는 오류가 발생했습니다.';
+        },
+      ],
+    });
+  };
 
-      modal.openModal({
-        icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '체크인 실패',
-        subtitle: message,
-        theme: 'warning',
-        buttons: [
-          {
-            label: '확인',
-            variant: 'secondary',
-            onClick: modal.closeModal,
-          },
-        ],
-      });
-    },
-  });
+  const openErrorModal = (message: string) => {
+    modal.openModal({
+      icon: <FaExclamationTriangle size={48} color="#D88282" />,
+      title: '체크인 실패',
+      subtitle: message,
+      theme: 'warning',
+      buttons: [
+        {
+          label: '확인',
+          variant: 'secondary',
+          onClick: modal.closeModal,
+        },
+      ],
+    });
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (isSaving) return;
+
     const selectedPurpose =
       purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
     const trimmedName = name.trim();
@@ -213,7 +208,19 @@ const CheckInFormPage = () => {
       privacyAgreed,
     };
 
-    checkInMutation.mutate(payload);
+    try {
+      setIsSaving(true);
+      await enqueueCheckIn(payload);
+      openSuccessModal();
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : '체크인 정보를 기기에 저장하지 못했습니다.';
+      openErrorModal(message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -382,9 +389,9 @@ const CheckInFormPage = () => {
           <SubmitButton
             type="button"
             onClick={handleSubmit}
-            disabled={checkInMutation.isPending}
+            disabled={isSaving}
           >
-            {checkInMutation.isPending ? '등록 중...' : '다 했어요! 🎉'}
+            {isSaving ? '저장 중...' : '다 했어요! 🎉'}
           </SubmitButton>
         </FormBody>
       </Panel>
