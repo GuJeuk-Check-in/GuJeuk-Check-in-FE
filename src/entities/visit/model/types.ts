@@ -94,7 +94,6 @@ export interface CreateUserVisitRequest {
 
 export interface UpdateUserVisitRequest extends CreateUserVisitRequest {
   id: number;
-  residence: string;
 }
 
 export interface DeleteUserVisitRequest {
