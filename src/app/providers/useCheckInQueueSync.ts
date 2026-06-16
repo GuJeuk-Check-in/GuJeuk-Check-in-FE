@@ -8,7 +8,7 @@ import {
   recoverSyncingCheckIns,
 } from '@entities/visit';
 
-const SYNC_INTERVAL_MS = 60 * 1000;
+const SYNC_INTERVAL_MS = 10 * 60 * 1000;
 
 let isSyncing = false;
 
@@ -25,6 +25,8 @@ const syncCheckInQueue = async () => {
   isSyncing = true;
 
   try {
+    await recoverSyncingCheckIns();
+
     const retryableItems = await getRetryableCheckIns();
 
     for (const item of retryableItems) {
@@ -44,10 +46,6 @@ const syncCheckInQueue = async () => {
 
 export const useCheckInQueueSync = () => {
   useEffect(() => {
-    recoverSyncingCheckIns().catch((error) => {
-      console.error('체크인 동기화 상태 복구 실패:', error);
-    });
-
     const intervalId = window.setInterval(syncCheckInQueue, SYNC_INTERVAL_MS);
 
     return () => {
