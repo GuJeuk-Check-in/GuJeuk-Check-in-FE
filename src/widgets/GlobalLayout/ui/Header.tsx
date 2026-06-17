@@ -22,6 +22,7 @@ export const Header = () => {
   const [exportingDate, setExportingDate] = useState('');
   const [performancePreviewData, setPerformancePreviewData] =
     useState<VisitStatisticsResponse | null>(null);
+  const [performanceExportingDate, setPerformanceExportingDate] = useState('');
   const modal = useModal();
 
   const { mutate: visitExcelMutate, isPending: isVisitExporting } =
@@ -62,7 +63,7 @@ export const Header = () => {
     month: number
   ) => {
     const dataString = `${year}-${month}`;
-    setExportingDate(dataString);
+    setPerformanceExportingDate(dataString);
 
     performanceReportMutate(
       { year, month },
@@ -72,7 +73,7 @@ export const Header = () => {
           setIsPerformanceDateModalOpen(false);
         },
         onSettled: () => {
-          setExportingDate('');
+          setPerformanceExportingDate('');
         },
       }
     );
@@ -147,7 +148,7 @@ export const Header = () => {
           <ExportLoadingMessage>
             <LoadingBox>
               <p>월별 실적 데이터를 불러오는 중</p>
-              <p>{getExportingPeriodMessage(exportingDate)}</p>
+              <p>{getExportingPeriodMessage(performanceExportingDate)}</p>
               <p>잠시만 기다려주세요...</p>
             </LoadingBox>
           </ExportLoadingMessage>
