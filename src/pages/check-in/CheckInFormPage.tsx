@@ -229,7 +229,7 @@ const CheckInFormPage = () => {
       <Panel>
         <Header>
           <Title>
-            <Highlight>구즉</Highlight> 청소년문화의 집에 온걸 환영해~!
+            <Highlight>구즉</Highlight> 청소년 문화의 집에 온 걸 환영해~!
           </Title>
           <Subtitle>시설을 이용하려면 작성해줘</Subtitle>
         </Header>

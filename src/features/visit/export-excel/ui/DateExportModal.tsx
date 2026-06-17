@@ -6,17 +6,19 @@ interface DateExportModalProps {
   isVisible: boolean;
   onClose: () => void;
   onExport: (year: number, month: number) => void;
+  title?: string;
+  exportButtonLabel?: string;
+  isSubmitting?: boolean;
 }
 
 const DateExportModal = ({
   isVisible,
   onClose,
   onExport,
+  title = '추출할 기간 선택',
+  exportButtonLabel = '내보내기',
+  isSubmitting = false,
 }: DateExportModalProps) => {
-  if (!isVisible) {
-    return null;
-  }
-
   const today = new Date();
   const currentYear = today.getFullYear();
   const currentMonth = today.getMonth() + 1;
@@ -41,10 +43,14 @@ const DateExportModal = ({
     setSelectedMonth(parseInt(e.target.value, 10));
   };
 
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <ModalOverlay onClick={onClose}>
       <Container onClick={(e) => e.stopPropagation()}>
-        <Title>추출할 기간 선택</Title>
+        <Title>{title}</Title>
         <DateSelectorWrapper>
           <StyledSelectWrapper>
             <StyledSelect value={selectedYear} onChange={handleYearChange}>
@@ -68,7 +74,9 @@ const DateExportModal = ({
           <Label>월</Label>
         </DateSelectorWrapper>
         <ButtonWrapper>
-          <ExportButton onClick={handleExport}>내보내기</ExportButton>
+          <ExportButton onClick={handleExport} disabled={isSubmitting}>
+            {isSubmitting ? '불러오는 중...' : exportButtonLabel}
+          </ExportButton>
         </ButtonWrapper>
       </Container>
     </ModalOverlay>
@@ -193,6 +201,13 @@ const ExportButton = styled.button`
     background-color: #0a4085;
     box-shadow: 0 6px 8px rgba(15, 80, 160, 0.3);
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
   }
 
   &:active {
