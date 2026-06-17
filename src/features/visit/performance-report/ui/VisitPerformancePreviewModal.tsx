@@ -224,14 +224,13 @@ const ReportPage = styled.article`
   margin: 0 auto;
   padding: 2.5rem 3rem 3rem;
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-  font-family:
-    'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
 `;
 
 const ReportTitle = styled.h1`
   margin: 0 0 2rem;
   border-bottom: 0.25rem solid #102a43;
-  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-size: clamp(1.8rem, 3.2vw, 3rem);
   font-weight: 800;
   letter-spacing: -0.06em;
   line-height: 1.2;
@@ -240,13 +239,13 @@ const ReportTitle = styled.h1`
 
 const SectionLine = styled.p`
   margin: 0 0 1rem;
-  font-size: 1.3rem;
+  font-size: 1.55rem;
   font-weight: 700;
 `;
 
 const SubSectionLine = styled.p`
   margin: 1.4rem 0 2rem 2rem;
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 700;
 `;
 
@@ -256,48 +255,57 @@ const TableWrapper = styled.div`
 
 const ReportTable = styled.table`
   width: 100%;
-  min-width: 74rem;
+  min-width: 76rem;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 1.15rem;
+  border: 2px solid #555555;
+  font-size: 1.55rem;
+
+  .category-column {
+    width: 10.5%;
+  }
+
+  .total-column {
+    width: 8.8%;
+  }
+
+  .count-column {
+    width: 8.15%;
+  }
 `;
 
 const BaseCell = styled.th`
-  border: 2px solid #111827;
-  padding: 0.8rem 0.45rem;
+  border: 1.5px solid #555555;
+  padding: 0.35rem 0.4rem;
   text-align: center;
   vertical-align: middle;
   word-break: keep-all;
 `;
 
 const HeaderCell = styled(BaseCell)`
-  background-color: #ffffff;
+  background-color: #f1f1f1;
   font-weight: 800;
+  height: 2.8rem;
+  font-size: 1.7rem;
 `;
 
-const YouthHeader = styled(HeaderCell)`
-  color: #b7791f;
-`;
-
-const OtherHeader = styled(HeaderCell)`
-  color: #553c9a;
+const HeaderDividerCell = styled(HeaderCell)`
+  border-bottom: 4px double #555555;
 `;
 
 const RowHeader = styled(BaseCell)`
   font-weight: 800;
-  width: 8rem;
+  font-size: 1.75rem;
 `;
 
 const ValueCell = styled.td`
-  border: 2px solid #111827;
-  padding: 1rem 0.45rem;
+  border: 1.5px solid #555555;
+  height: 3.1rem;
+  padding: 0.3rem 0.4rem;
   text-align: center;
   vertical-align: middle;
-  font-size: 1.25rem;
-`;
-
-const EmptyCell = styled(ValueCell)`
-  color: transparent;
+  font-size: 1.75rem;
+  line-height: 1.1;
 `;
 
 const PRINT_PAGE_STYLE = `
