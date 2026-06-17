@@ -32,6 +32,13 @@ export const formatDateToISOString = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+export const formatDateToKoreanDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}년${month}월${day}일`;
+};
+
 const safeDateConvert = (dateString) => {
   if (!dateString) return null;
 
@@ -69,7 +76,7 @@ export const VisitDatePicker = ({ value, onChange, label = '방문 날짜' }) =>
 
   const handleDateSelect = (value: CalendarValue) => {
     if (value instanceof Date) {
-      const formattedDate = formatDateToISOString(value);
+      const formattedDate = formatDateToKoreanDate(value);
       onChange(formattedDate);
       setIsOpen(false);
     }
