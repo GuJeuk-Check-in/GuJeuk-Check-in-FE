@@ -66,7 +66,9 @@ export const VisitPerformancePreviewModal = ({
 
         <ReportPage id="visit-performance-report-preview">
           <ReportTitle>{reportTitle}</ReportTitle>
-          <SectionLine>1. 시&nbsp;&nbsp;설&nbsp;&nbsp;명 : {FACILITY_NAME}</SectionLine>
+          <SectionLine>
+            1. 시&nbsp;&nbsp;설&nbsp;&nbsp;명 : {FACILITY_NAME}
+          </SectionLine>
           <SectionLine>2. 일반현황</SectionLine>
           <SubSectionLine>
             가. 청소년이용률 (연간청소년이용자수÷연간전체이용자수×100)
@@ -74,69 +76,84 @@ export const VisitPerformancePreviewModal = ({
 
           <TableWrapper>
             <ReportTable>
+              <colgroup>
+                <col className="category-column" />
+                <col className="total-column" />
+                <col span={4} className="count-column" />
+                <col className="total-column" />
+                <col span={4} className="count-column" />
+              </colgroup>
               <thead>
                 <tr>
-                  <HeaderCell rowSpan={3}>구 분</HeaderCell>
-                  <HeaderCell colSpan={7}>누계</HeaderCell>
-                  <HeaderCell colSpan={7}>{data.month}월</HeaderCell>
+                  <HeaderDividerCell rowSpan={3}>구 분</HeaderDividerCell>
+                  <HeaderCell colSpan={5}>누계</HeaderCell>
+                  <HeaderCell colSpan={5}>{data.month}월</HeaderCell>
                 </tr>
                 <tr>
-                  <HeaderCell rowSpan={2}>계</HeaderCell>
-                  <YouthHeader colSpan={3}>청소년</YouthHeader>
-                  <OtherHeader colSpan={3}>기타</OtherHeader>
-                  <HeaderCell rowSpan={2}>계</HeaderCell>
-                  <YouthHeader colSpan={3}>청소년</YouthHeader>
-                  <OtherHeader colSpan={3}>기타</OtherHeader>
+                  <HeaderDividerCell rowSpan={2}>계</HeaderDividerCell>
+                  <HeaderCell colSpan={2}>청소년</HeaderCell>
+                  <HeaderCell colSpan={2}>기타</HeaderCell>
+                  <HeaderDividerCell rowSpan={2}>계</HeaderDividerCell>
+                  <HeaderCell colSpan={2}>청소년</HeaderCell>
+                  <HeaderCell colSpan={2}>기타</HeaderCell>
                 </tr>
                 <tr>
-                  <HeaderCell>남</HeaderCell>
-                  <HeaderCell>여</HeaderCell>
-                  <HeaderCell>계</HeaderCell>
-                  <HeaderCell>남</HeaderCell>
-                  <HeaderCell>여</HeaderCell>
-                  <HeaderCell>계</HeaderCell>
-                  <HeaderCell>남</HeaderCell>
-                  <HeaderCell>여</HeaderCell>
-                  <HeaderCell>계</HeaderCell>
-                  <HeaderCell>남</HeaderCell>
-                  <HeaderCell>여</HeaderCell>
-                  <HeaderCell>계</HeaderCell>
+                  <HeaderDividerCell>남</HeaderDividerCell>
+                  <HeaderDividerCell>여</HeaderDividerCell>
+                  <HeaderDividerCell>남</HeaderDividerCell>
+                  <HeaderDividerCell>여</HeaderDividerCell>
+                  <HeaderDividerCell>남</HeaderDividerCell>
+                  <HeaderDividerCell>여</HeaderDividerCell>
+                  <HeaderDividerCell>남</HeaderDividerCell>
+                  <HeaderDividerCell>여</HeaderDividerCell>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <RowHeader>{visitorCountRow.label}</RowHeader>
-                  <ValueCell>{visitorCountRow.cumulativeTotal}</ValueCell>
+                  <RowHeader rowSpan={2}>{visitorCountRow.label}</RowHeader>
+                  <ValueCell rowSpan={2}>
+                    {visitorCountRow.cumulativeTotal}
+                  </ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeYouthMale}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeYouthFemale}</ValueCell>
-                  <ValueCell>{visitorCountRow.cumulativeYouthTotal}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeOtherMale}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeOtherFemale}</ValueCell>
-                  <ValueCell>{visitorCountRow.cumulativeOtherTotal}</ValueCell>
-                  <ValueCell>{visitorCountRow.monthlyTotal}</ValueCell>
+                  <ValueCell rowSpan={2}>{visitorCountRow.monthlyTotal}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyYouthMale}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyYouthFemale}</ValueCell>
-                  <ValueCell>{visitorCountRow.monthlyYouthTotal}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyOtherMale}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyOtherFemale}</ValueCell>
-                  <ValueCell>{visitorCountRow.monthlyOtherTotal}</ValueCell>
+                </tr>
+                <tr>
+                  <ValueCell colSpan={2}>
+                    {visitorCountRow.cumulativeYouthTotal}
+                  </ValueCell>
+                  <ValueCell colSpan={2}>
+                    {visitorCountRow.cumulativeOtherTotal}
+                  </ValueCell>
+                  <ValueCell colSpan={2}>
+                    {visitorCountRow.monthlyYouthTotal}
+                  </ValueCell>
+                  <ValueCell colSpan={2}>
+                    {visitorCountRow.monthlyOtherTotal}
+                  </ValueCell>
                 </tr>
                 <tr>
                   <RowHeader>{usageRateRow.label}</RowHeader>
                   <ValueCell>{usageRateRow.cumulativeTotal}</ValueCell>
-                  <EmptyCell />
-                  <EmptyCell />
-                  <ValueCell>{usageRateRow.cumulativeYouthTotal}</ValueCell>
-                  <EmptyCell />
-                  <EmptyCell />
-                  <ValueCell>{usageRateRow.cumulativeOtherTotal}</ValueCell>
+                  <ValueCell colSpan={2}>
+                    {usageRateRow.cumulativeYouthTotal}
+                  </ValueCell>
+                  <ValueCell colSpan={2}>
+                    {usageRateRow.cumulativeOtherTotal}
+                  </ValueCell>
                   <ValueCell>{usageRateRow.monthlyTotal}</ValueCell>
-                  <EmptyCell />
-                  <EmptyCell />
-                  <ValueCell>{usageRateRow.monthlyYouthTotal}</ValueCell>
-                  <EmptyCell />
-                  <EmptyCell />
-                  <ValueCell>{usageRateRow.monthlyOtherTotal}</ValueCell>
+                  <ValueCell colSpan={2}>
+                    {usageRateRow.monthlyYouthTotal}
+                  </ValueCell>
+                  <ValueCell colSpan={2}>
+                    {usageRateRow.monthlyOtherTotal}
+                  </ValueCell>
                 </tr>
               </tbody>
             </ReportTable>
