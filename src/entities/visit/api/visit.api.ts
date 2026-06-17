@@ -5,6 +5,8 @@ import {
   UserVisitDetailResponse,
   ExportVisitListRequest,
   UpdateUserVisitRequest,
+  VisitStatisticsRequest,
+  VisitStatisticsResponse,
 } from '../model/types';
 
 const PUBLIC_USER_VISIT_ENDPOINT =
@@ -130,4 +132,18 @@ export const exportVisitListToExcel = async ({
 
     throw new Error(errorMessage);
   }
+};
+
+export const fetchVisitStatistics = async ({
+  year,
+  month,
+}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => {
+  const response = await axiosInstance.get('/organ/statistics/visits', {
+    params: {
+      year,
+      month,
+    },
+  });
+
+  return response.data;
 };
