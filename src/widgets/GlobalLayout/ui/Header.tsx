@@ -8,23 +8,38 @@ import { useVisitListExportExcel } from '@features/visit/export-excel/model/useV
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { useUserListExportExcel } from '@features/user/export-excel';
+import {
+  useVisitPerformanceReport,
+  VisitPerformancePreviewModal,
+} from '@features/visit/performance-report';
+import type { VisitStatisticsResponse } from '@entities/visit';
 
 export const Header = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPerformanceDateModalOpen, setIsPerformanceDateModalOpen] =
+    useState(false);
   const [exportingDate, setExportingDate] = useState('');
+  const [performancePreviewData, setPerformancePreviewData] =
+    useState<VisitStatisticsResponse | null>(null);
+  const [performanceExportingDate, setPerformanceExportingDate] = useState('');
   const modal = useModal();
 
   const { mutate: visitExcelMutate, isPending: isVisitExporting } =
     useVisitListExportExcel(modal);
   const { mutate: userExcelMutate, isPending: isUserExporting } =
     useUserListExportExcel(modal);
+  const { mutate: performanceReportMutate, isPending: isPerformanceLoading } =
+    useVisitPerformanceReport(modal);
 
   const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
   };
   const handleUserListExcelExportClick = () => {
     userExcelMutate();
+  };
+  const handlePerformanceReportClick = () => {
+    setIsPerformanceDateModalOpen(true);
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
@@ -41,6 +56,27 @@ export const Header = () => {
     );
 
     setIsModalOpen(false);
+  };
+
+  const handlePerformanceReportConfirmedWithDate = (
+    year: number,
+    month: number
+  ) => {
+    const dataString = `${year}-${month}`;
+    setPerformanceExportingDate(dataString);
+
+    performanceReportMutate(
+      { year, month },
+      {
+        onSuccess: (data) => {
+          setPerformancePreviewData(data);
+          setIsPerformanceDateModalOpen(false);
+        },
+        onSettled: () => {
+          setPerformanceExportingDate('');
+        },
+      }
+    );
   };
 
   const getExportingPeriodMessage = (dateString: string) => {
@@ -83,6 +119,11 @@ export const Header = () => {
           label="기록 엑셀 추출하기"
         />
         <ExcelButton
+          onClick={handlePerformanceReportClick}
+          disabled={isPerformanceLoading}
+          label="월별 실적 미리보기"
+        />
+        <ExcelButton
           onClick={handleUserListExcelExportClick}
           disabled={isUserExporting}
           label="사용자 엑셀 추출하기"
@@ -103,10 +144,32 @@ export const Header = () => {
             </LoadingBox>
           </ExportLoadingMessage>
         )}
+        {isPerformanceLoading && (
+          <ExportLoadingMessage>
+            <LoadingBox>
+              <p>월별 실적 데이터를 불러오는 중</p>
+              <p>{getExportingPeriodMessage(performanceExportingDate)}</p>
+              <p>잠시만 기다려주세요...</p>
+            </LoadingBox>
+          </ExportLoadingMessage>
+        )}
         <DateExportModal
           isVisible={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onExport={handleExportConfirmedWithDate}
+        />
+        <DateExportModal
+          isVisible={isPerformanceDateModalOpen}
+          onClose={() => setIsPerformanceDateModalOpen(false)}
+          onExport={handlePerformanceReportConfirmedWithDate}
+          title="월별 실적 기간 선택"
+          exportButtonLabel="미리보기"
+          isSubmitting={isPerformanceLoading}
+        />
+        <VisitPerformancePreviewModal
+          isOpen={Boolean(performancePreviewData)}
+          data={performancePreviewData}
+          onClose={() => setPerformancePreviewData(null)}
         />
 
         <Modal

@@ -84,7 +84,6 @@ export interface CreateUserVisitRequest {
   name: string | null;
   age: AgeType;
   phone: string;
-  residence: string;
   maleCount: number;
   femaleCount: number;
   purpose: string;
@@ -106,4 +105,31 @@ export type DeleteUserVisitResponse = string;
 export interface ExportVisitListRequest {
   year: number;
   month: number;
+}
+
+export interface VisitStatisticsRequest {
+  year: number;
+  month: number;
+}
+
+export interface VisitStatisticsGroup {
+  male: number;
+  female: number;
+  total: number;
+  rate: number;
+}
+
+export interface VisitStatisticsResponse {
+  year: number;
+  month: number;
+  cumulative: {
+    total: number;
+    youth: VisitStatisticsGroup;
+    other: VisitStatisticsGroup;
+  };
+  monthly: {
+    total: number;
+    youth: VisitStatisticsGroup;
+    other: VisitStatisticsGroup;
+  };
 }

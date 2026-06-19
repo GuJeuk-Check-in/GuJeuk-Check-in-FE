@@ -1,5 +1,7 @@
 export * from './auth/OrganLogin';
 export * from './auth/OrganChange';
+export { default as CheckInFormPage } from './check-in/CheckInFormPage';
+export { default as CheckInHome } from './check-in/CheckInHome';
 export * from './purpose/PurposeCustom';
 export * from './user/UserInformationDetail';
 export * from './user/UserInformation';

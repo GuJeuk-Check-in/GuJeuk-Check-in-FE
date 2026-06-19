@@ -1,10 +1,13 @@
-import { axiosInstance } from '@shared/api';
+import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import {
+  CreateUserVisitRequest,
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   CreateUserVisitRequest,
   UpdateUserVisitRequest,
+  VisitStatisticsRequest,
+  VisitStatisticsResponse,
 } from '../model/types';
 
 const DEFAULT_RESIDENCE = '미입력';
@@ -20,7 +23,9 @@ export const fetchMonthVisitList = async (
   page = 0
 ) => {
   const formattedMonth = String(month).padStart(2, '0');
-  const response = await axiosInstance.get(`/log/date/${year}-${formattedMonth}?page=${page}`);
+  const response = await axiosInstance.get(
+    `/log/date/${year}-${formattedMonth}?page=${page}`
+  );
   return response.data;
 };
 
@@ -38,6 +43,16 @@ export const createUserVisit = async (
     ...visitData,
     residence: visitData.residence?.trim() || DEFAULT_RESIDENCE,
   });
+  return response.data;
+};
+
+export const createPublicUserVisit = async (
+  visitData: CreateUserVisitRequest
+): Promise<UserVisitDetailResponse> => {
+  const response = await publicAxiosInstance.post(
+    PUBLIC_USER_VISIT_ENDPOINT,
+    visitData
+  );
   return response.data;
 };
 
@@ -120,4 +135,18 @@ export const exportVisitListToExcel = async ({
 
     throw new Error(errorMessage);
   }
+};
+
+export const fetchVisitStatistics = async ({
+  year,
+  month,
+}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => {
+  const response = await axiosInstance.get('/organ/statistics/visits', {
+    params: {
+      year,
+      month,
+    },
+  });
+
+  return response.data;
 };
