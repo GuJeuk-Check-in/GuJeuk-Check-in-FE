@@ -8,7 +8,7 @@ import {
   recoverSyncingCheckIns,
 } from '@entities/visit';
 
-const SYNC_INTERVAL_MS = 10 * 60 * 1000;
+const SYNC_INTERVAL_MS = 60 * 1000;
 
 let isSyncing = false;
 

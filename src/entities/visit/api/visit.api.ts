@@ -4,13 +4,12 @@ import {
   DeleteUserVisitResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
-  CreateUserVisitRequest,
   UpdateUserVisitRequest,
   VisitStatisticsRequest,
   VisitStatisticsResponse,
 } from '../model/types';
 
-const DEFAULT_RESIDENCE = '미입력';
+const USER_CHECK_IN_ENDPOINT = '/check-in';
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);
@@ -41,7 +40,6 @@ export const createUserVisit = async (
 ): Promise<UserVisitDetailResponse> => {
   const response = await axiosInstance.post(`/log`, {
     ...visitData,
-    residence: visitData.residence?.trim() || DEFAULT_RESIDENCE,
   });
   return response.data;
 };
@@ -50,7 +48,7 @@ export const createPublicUserVisit = async (
   visitData: CreateUserVisitRequest
 ): Promise<UserVisitDetailResponse> => {
   const response = await publicAxiosInstance.post(
-    PUBLIC_USER_VISIT_ENDPOINT,
+    USER_CHECK_IN_ENDPOINT,
     visitData
   );
   return response.data;
