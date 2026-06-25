@@ -31,8 +31,6 @@ const AGE_MAP = {
 
 type AgeDisplayType = keyof typeof AGE_MAP;
 
-const DEFAULT_RESIDENCE = '미입력';
-
 const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const nameInput = useInput('');
   const phoneInput = useInput('');
@@ -70,7 +68,6 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
       name: nameInput.value,
       age: AGE_MAP[ageDisplay],
       phone: phoneInput.value,
-      residence: DEFAULT_RESIDENCE,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,

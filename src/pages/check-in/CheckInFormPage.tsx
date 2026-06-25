@@ -17,6 +17,7 @@ import {
 } from 'react-icons/fa';
 import { FiMinus, FiPhone, FiPlus, FiUser, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const ageOptions = [
   { label: '1~8세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
@@ -79,6 +80,7 @@ const formatVisitTime = (date: Date) => {
 };
 
 const CheckInFormPage = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [age, setAge] = useState<AgeType | ''>('');
@@ -147,6 +149,7 @@ const CheckInFormPage = () => {
           onClick: () => {
             modal.closeModal();
             resetForm();
+            navigate('/check-in');
           },
         },
       ],
