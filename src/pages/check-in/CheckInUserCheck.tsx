@@ -1,0 +1,186 @@
+import styled from '@emotion/styled';
+import { PasswordBackground } from '@shared/ui/Background';
+import { useState } from 'react';
+import { FiArrowRight, FiPhone, FiUser } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+
+const CheckInUserCheck = () => {
+  const navigate = useNavigate();
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+
+  return (
+    <Page>
+      <PasswordBackground />
+      <Panel>
+        <Header>
+          <Title>반가워! 청소년문화의집에 다시 와줘서 고마워</Title>
+          <Subtitle>시설을 이용하려면 작성해줘</Subtitle>
+        </Header>
+
+        <FormBody aria-label="재방문 정보 입력">
+          <FieldBlock>
+            <FieldLabel>
+              <FiUser aria-hidden="true" />
+              이름이 뭐야?
+            </FieldLabel>
+            <TextInput
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="친구의 이름을 알려줘"
+            />
+          </FieldBlock>
+
+          <FieldBlock>
+            <FieldLabel>
+              <FiPhone aria-hidden="true" />
+              전화번호가 뭐야?
+            </FieldLabel>
+            <TextInput
+              value={phone}
+              onChange={(event) => setPhone(event.target.value)}
+              placeholder="010-0000-0000"
+            />
+          </FieldBlock>
+
+          <NextButton type="button" onClick={() => navigate('/check-in/form')}>
+            넘어가기!
+            <FiArrowRight aria-hidden="true" />
+          </NextButton>
+        </FormBody>
+      </Panel>
+      <Footer>made by Busurker</Footer>
+    </Page>
+  );
+};
+
+export default CheckInUserCheck;
+
+const Page = styled.main`
+  position: relative;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem 6rem;
+`;
+
+const Panel = styled.section`
+  position: relative;
+  z-index: 1;
+  width: min(100%, 65rem);
+  box-sizing: border-box;
+  padding: clamp(2rem, 4vw, 3.5rem);
+  border: 0.125rem solid #e7eaf3;
+  border-radius: 1.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 1.5rem 2.75rem rgba(24, 48, 88, 0.15);
+`;
+
+const Header = styled.header`
+  text-align: center;
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  color: #2868d8;
+  font-family: 'Jua', 'Pretendard', sans-serif;
+  font-size: clamp(1.4rem, 2.1vw, 2rem);
+  font-weight: 400;
+  line-height: 1.2;
+  word-break: keep-all;
+`;
+
+const Subtitle = styled.p`
+  margin: 0.75rem 0 0;
+  color: #2868d8;
+  font-family: 'Jua', 'Pretendard', sans-serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+`;
+
+const FormBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2.1rem;
+  margin-top: 2.5rem;
+`;
+
+const FieldBlock = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+`;
+
+const FieldLabel = styled.h2`
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  color: #26364c;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  svg {
+    color: #1f63b7;
+  }
+`;
+
+const TextInput = styled.input`
+  width: 100%;
+  height: 4rem;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 2rem;
+  background-color: #fbfbff;
+  box-shadow: 0 0.35rem 0 #d6e2ef;
+  color: #26364c;
+  font-size: 1rem;
+  outline: none;
+  padding: 0 1.8rem;
+
+  &::placeholder {
+    color: #747b86;
+  }
+
+  &:focus {
+    box-shadow: 0 0.35rem 0 #9fc4e7;
+  }
+`;
+
+const NextButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 4.6rem;
+  margin-top: clamp(2rem, 5vh, 3.5rem);
+  border: 0;
+  border-radius: 2.3rem;
+  background-color: #145cad;
+  box-shadow: 0 0.35rem 0 #c9d7e8;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: 'Jua', 'Pretendard', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+
+  svg {
+    font-size: 1.6rem;
+  }
+`;
+
+const Footer = styled.footer`
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  color: #1f63b7;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+`;
