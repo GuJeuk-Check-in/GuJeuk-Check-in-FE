@@ -420,7 +420,7 @@ const CheckInSignupFormPage = () => {
               />
             </AgreementTitle>
             <AgreementDetail>
-              (이름, 연령, 연락처, 방문 목적, 방문 인원, CCTV 촬영)
+              (이름, 연령, 연락처, 거주지, 방문 목적, 방문 인원, CCTV 촬영)
             </AgreementDetail>
           </Agreement>
 
