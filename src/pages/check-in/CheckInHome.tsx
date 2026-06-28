@@ -12,7 +12,10 @@ const CheckInHome = () => {
       <Content>
         <LogoImage src={Logo} alt="구즉 청소년문화의집" />
         <GuideText>시설을 이용하려면 아래 버튼을 눌러줘</GuideText>
-        <StartButton type="button" onClick={() => navigate('/check-in/form')}>
+        <StartButton
+          type="button"
+          onClick={() => navigate('/check-in/user-check')}
+        >
           시설 이용하기
         </StartButton>
       </Content>

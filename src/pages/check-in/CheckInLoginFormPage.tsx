@@ -1,41 +1,15 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import { enqueueCheckIn } from '@entities/visit';
-import { AgeType, CreateUserVisitRequest } from '@entities/visit';
+import { CreateUserVisitRequest } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  FaCheckCircle,
-  FaExclamationTriangle,
-  FaGraduationCap,
-  FaMars,
-  FaRegCheckSquare,
-  FaRegSmile,
-  FaVenus,
-} from 'react-icons/fa';
-import { FiMinus, FiPhone, FiPlus, FiUser, FiUsers } from 'react-icons/fi';
+import { FaExclamationTriangle, FaMars, FaVenus } from 'react-icons/fa';
+import { FiArrowLeft, FiMinus, FiPlus, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
-
-const ageOptions = [
-  { label: '1~8세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
-  { label: '9 ~ 13세', value: 'AGE_9_13', tone: 'mint', icon: <FaRegSmile /> },
-  {
-    label: '14 ~ 16세',
-    value: 'AGE_14_16',
-    tone: 'blue',
-    icon: <FaGraduationCap />,
-  },
-  {
-    label: '17 ~ 19세',
-    value: 'AGE_17_19',
-    tone: 'peach',
-    icon: <FaRegSmile />,
-  },
-  { label: '20세 이상', value: 'ADULT', tone: 'mint', icon: <FaRegSmile /> },
-] as const;
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
@@ -79,15 +53,18 @@ const formatVisitTime = (date: Date) => {
   return `${hours}:${minutes}`;
 };
 
-const CheckInFormPage = () => {
+interface LocationState {
+  name?: string;
+  phone?: string;
+}
+
+const CheckInLoginFormPage = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [age, setAge] = useState<AgeType | ''>('');
+  const location = useLocation();
+  const locationState = (location.state ?? {}) as LocationState;
   const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
-  const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [cachedPurposes, setCachedPurposes] =
     useState<PurposeResponse[]>(readCachedPurposes);
@@ -105,7 +82,7 @@ const CheckInFormPage = () => {
     }
   }, [purposes]);
 
-  const visiblePurposes = purposes.length > 0 ? purposes : cachedPurposes;
+  const visiblePurposes = isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -126,34 +103,14 @@ const CheckInFormPage = () => {
   }, [purposeIndex, purposeOptions.length]);
 
   const resetForm = () => {
-    setName('');
-    setPhone('');
-    setAge('');
     setPurposeIndex(null);
     setMaleCount(0);
     setFemaleCount(0);
-    setPrivacyAgreed(false);
   };
 
-  const openSuccessModal = () => {
-    modal.openModal({
-      icon: <FaCheckCircle size={48} color="#0F50A0" />,
-      title: '체크인 완료',
-      subtitle: '시설 이용 신청이 완료되었습니다.',
-      theme: 'info',
-      buttons: [
-        {
-          label: '확인',
-          variant: 'primary',
-          bgColor: '#0F50A0',
-          onClick: () => {
-            modal.closeModal();
-            resetForm();
-            navigate('/check-in');
-          },
-        },
-      ],
-    });
+  const goToComplete = () => {
+    resetForm();
+    navigate('/check-in/complete');
   };
 
   const openErrorModal = (message: string) => {
@@ -177,21 +134,12 @@ const CheckInFormPage = () => {
 
     const selectedPurpose =
       purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
-    const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
 
-    if (
-      !trimmedName ||
-      !trimmedPhone ||
-      !age ||
-      !selectedPurpose ||
-      !privacyAgreed ||
-      maleCount + femaleCount <= 0
-    ) {
+    if (!selectedPurpose || maleCount + femaleCount <= 0) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
         title: '입력 확인',
-        subtitle: '필수 항목을 모두 입력하고 개인정보 수집에 동의해주세요.',
+        subtitle: '방문 목적과 인원을 입력해주세요.',
         theme: 'warning',
         buttons: [{ label: '확인', onClick: modal.closeModal }],
       });
@@ -200,21 +148,21 @@ const CheckInFormPage = () => {
 
     const now = new Date();
     const payload: CreateUserVisitRequest = {
-      name: trimmedName,
-      age,
-      phone: trimmedPhone,
+      name: locationState.name ?? null,
+      age: 'ADULT',
+      phone: locationState.phone ?? '',
       maleCount,
       femaleCount,
       purpose: selectedPurpose,
       visitDate: formatVisitDate(now),
       visitTime: formatVisitTime(now),
-      privacyAgreed,
+      privacyAgreed: true,
     };
 
     try {
       setIsSaving(true);
       await enqueueCheckIn(payload);
-      openSuccessModal();
+      goToComplete();
     } catch (error) {
       const message =
         error instanceof Error
@@ -231,57 +179,16 @@ const CheckInFormPage = () => {
       <PasswordBackground />
       <Panel>
         <Header>
-          <Title>
-            <Highlight>구즉</Highlight> 청소년 문화의 집에 온 걸 환영해~!
-          </Title>
+          <TitleRow>
+            <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
+              <FiArrowLeft />
+            </BackButton>
+            <Title>반가워! 청소년문화의집에 다시 와줘서 고마워</Title>
+          </TitleRow>
           <Subtitle>시설을 이용하려면 작성해줘</Subtitle>
         </Header>
 
         <FormBody aria-label="시설 이용 정보 입력">
-          <FieldBlock>
-            <FieldLabel>
-              <FiUser aria-hidden="true" />
-              이름이 뭐야?
-            </FieldLabel>
-            <TextInput
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="친구의 이름을 알려줘"
-            />
-          </FieldBlock>
-
-          <FieldBlock>
-            <FieldLabel>
-              <FiPhone aria-hidden="true" />
-              전화번호가 뭐야?
-            </FieldLabel>
-            <TextInput
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              placeholder="010-0000-0000"
-            />
-          </FieldBlock>
-
-          <FieldBlock>
-            <FieldLabel>
-              <FaRegCheckSquare aria-hidden="true" />몇 살이야?
-            </FieldLabel>
-            <OptionGrid $columns={5}>
-              {ageOptions.map((option) => (
-                <OptionCard
-                  key={option.label}
-                  type="button"
-                  $tone={option.tone}
-                  $selected={age === option.value}
-                  onClick={() => setAge(option.value)}
-                >
-                  <OptionIcon $tone={option.tone}>{option.icon}</OptionIcon>
-                  <span>{option.label}</span>
-                </OptionCard>
-              ))}
-            </OptionGrid>
-          </FieldBlock>
-
           <FieldBlock>
             <FieldLabel>
               <IoRocketOutline aria-hidden="true" />
@@ -374,21 +281,6 @@ const CheckInFormPage = () => {
             </CounterGrid>
           </FieldBlock>
 
-          <Agreement>
-            <AgreementTitle>
-              개인정보 수집 및 이용 동의
-              <AgreementCheckbox
-                type="checkbox"
-                checked={privacyAgreed}
-                onChange={(event) => setPrivacyAgreed(event.target.checked)}
-                aria-label="개인정보 수집 및 이용 동의"
-              />
-            </AgreementTitle>
-            <AgreementDetail>
-              (이름, 연령, 연락처, 방문 목적, 방문 인원, CCTV 촬영)
-            </AgreementDetail>
-          </Agreement>
-
           <SubmitButton
             type="button"
             onClick={handleSubmit}
@@ -408,7 +300,7 @@ const CheckInFormPage = () => {
   );
 };
 
-export default CheckInFormPage;
+export default CheckInLoginFormPage;
 
 const Page = styled.main`
   position: relative;
@@ -435,6 +327,14 @@ const Header = styled.header`
   text-align: center;
 `;
 
+const TitleRow = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+`;
+
 const Title = styled.h1`
   margin: 0;
   color: #2f66ad;
@@ -442,10 +342,6 @@ const Title = styled.h1`
   font-size: clamp(1.8rem, 3vw, 2.7rem);
   font-weight: 400;
   line-height: 1.2;
-`;
-
-const Highlight = styled.span`
-  color: #f3b000;
 `;
 
 const Subtitle = styled.p`
@@ -480,28 +376,6 @@ const FieldLabel = styled.h2`
 
   svg {
     color: #1f63b7;
-  }
-`;
-
-const TextInput = styled.input`
-  width: 100%;
-  height: 4rem;
-  box-sizing: border-box;
-  border: 0;
-  border-radius: 2rem;
-  background-color: #fbfbff;
-  box-shadow: 0 0.35rem 0 #d6e2ef;
-  color: #26364c;
-  font-size: 1rem;
-  outline: none;
-  padding: 0 1.8rem;
-
-  &::placeholder {
-    color: #747b86;
-  }
-
-  &:focus {
-    box-shadow: 0 0.35rem 0 #9fc4e7;
   }
 `;
 
@@ -545,33 +419,6 @@ const OptionGrid = styled.div<{ $columns: number }>`
   @media (max-width: 560px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-`;
-
-const OptionCard = styled.button<{ $tone: Tone; $selected?: boolean }>`
-  min-height: 6.6rem;
-  border: 0.15rem solid
-    ${({ $selected, $tone }) => ($selected ? toneColor[$tone] : 'transparent')};
-  border-radius: 1.3rem;
-  background-color: ${({ $selected, $tone }) =>
-    $selected ? selectedBackground[$tone] : '#fbfbff'};
-  box-shadow: 0 0.35rem 0 ${({ $tone }) => toneShadow[$tone]},
-    ${({ $selected, $tone }) =>
-      $selected
-        ? `0 0 0 0.22rem ${selectedRing[$tone]}`
-        : '0 0 0 0 transparent'};
-  color: #222831;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-`;
-
-const OptionIcon = styled.span<{ $tone: Tone }>`
-  color: ${({ $tone }) => toneColor[$tone]};
-  font-size: 1rem;
 `;
 
 const PurposeCard = styled.button<{ $tone: Tone; $selected?: boolean }>`
@@ -677,61 +524,10 @@ const CounterValue = styled.span`
   text-align: center;
 `;
 
-const Agreement = styled.div`
-  text-align: center;
-`;
-
-const AgreementTitle = styled.label`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #222831;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 700;
-`;
-
-const AgreementCheckbox = styled.input`
-  width: 1.05rem;
-  height: 1.05rem;
-  appearance: none;
-  border: 0.1rem solid #c8d5e6;
-  border-radius: 0.15rem;
-  background-color: #ffffff;
-  cursor: pointer;
-  position: relative;
-
-  &:checked {
-    border-color: #37c4f4;
-    background-color: #37c4f4;
-  }
-
-  &:checked::after {
-    content: '✓';
-    position: absolute;
-    inset: 0;
-    color: #ffffff;
-    font-size: 0.75rem;
-    font-weight: 800;
-    line-height: 1.05rem;
-    text-align: center;
-  }
-
-  &:focus-visible {
-    outline: 0.2rem solid rgba(55, 196, 244, 0.28);
-    outline-offset: 0.15rem;
-  }
-`;
-
-const AgreementDetail = styled.p`
-  margin: 0.65rem 0 0;
-  color: #7f8793;
-  font-size: 0.9rem;
-`;
-
 const SubmitButton = styled.button`
   width: 100%;
   min-height: 4.6rem;
+  margin-top: 2.5rem;
   border: 0;
   border-radius: 2.3rem;
   background-color: #145cad;
@@ -744,6 +540,28 @@ const SubmitButton = styled.button`
   &:disabled {
     cursor: not-allowed;
     opacity: 0.7;
+  }
+`;
+
+const BackButton = styled.button`
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #2f66ad;
+  cursor: pointer;
+  font-size: 1.4rem;
+
+  &:hover {
+    background: #f0f4fb;
   }
 `;
 

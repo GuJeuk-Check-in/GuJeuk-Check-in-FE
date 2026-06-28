@@ -9,7 +9,10 @@ import PurposeCustom from '@pages/purpose/PurposeCustom';
 import UserInformationDetail from '@pages/user/UserInformationDetail';
 import ResidenceCustom from '@pages/residence/ResidenceCustom';
 import CheckInHome from '@pages/check-in/CheckInHome';
-import CheckInFormPage from '@pages/check-in/CheckInFormPage';
+import CheckInUserCheck from '@pages/check-in/CheckInUserCheck';
+import CheckInSignupFormPage from '@pages/check-in/CheckInSignupFormPage';
+import CheckInLoginFormPage from '@pages/check-in/CheckInLoginFormPage';
+import CheckInCompletePage from '@pages/check-in/CheckInCompletePage';
 
 export const Router = () => {
   return (
@@ -24,7 +27,10 @@ export const Router = () => {
       <Route path="/purpose/all" element={<PurposeCustom />} />
       <Route path="/residence/all" element={<ResidenceCustom />} />
       <Route path="/check-in" element={<CheckInHome />} />
-      <Route path="/check-in/form" element={<CheckInFormPage />} />
+      <Route path="/check-in/user-check" element={<CheckInUserCheck />} />
+      <Route path="/check-in/signup-form" element={<CheckInSignupFormPage />} />
+      <Route path="/check-in/login-form" element={<CheckInLoginFormPage />} />
+      <Route path="/check-in/complete" element={<CheckInCompletePage />} />
     </Routes>
   );
 };
