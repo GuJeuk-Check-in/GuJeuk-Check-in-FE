@@ -84,6 +84,7 @@ export interface CreateUserVisitRequest {
   name: string | null;
   age: AgeType;
   phone: string;
+  residence?: string;
   maleCount: number;
   femaleCount: number;
   purpose: string;

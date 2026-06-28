@@ -6,6 +6,7 @@ import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   FaCheckCircle,
   FaExclamationTriangle,
@@ -15,8 +16,18 @@ import {
   FaRegSmile,
   FaVenus,
 } from 'react-icons/fa';
-import { FiMinus, FiPhone, FiPlus, FiUser, FiUsers } from 'react-icons/fi';
+import {
+  FiArrowLeft,
+  FiHome,
+  FiMinus,
+  FiPhone,
+  FiPlus,
+  FiSearch,
+  FiUser,
+  FiUsers,
+} from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
+import { useResidenceList } from '@entities/residence';
 import { useNavigate } from 'react-router-dom';
 
 const ageOptions = [
@@ -85,10 +96,29 @@ const CheckInFormPage = () => {
   const [phone, setPhone] = useState('');
   const [age, setAge] = useState<AgeType | ''>('');
   const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
+  const [residence, setResidence] = useState('');
+  const [residenceModalOpen, setResidenceModalOpen] = useState(false);
+  const [residenceSearch, setResidenceSearch] = useState('');
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const { data: apiResidences = [] } = useResidenceList();
+  const residences =
+    apiResidences.length > 0
+      ? apiResidences
+      : [
+          { id: 1, residence: '구즉동' },
+          { id: 2, residence: '관저동' },
+          { id: 3, residence: '도안동' },
+          { id: 4, residence: '둔산동' },
+          { id: 5, residence: '문화동' },
+          { id: 6, residence: '봉명동' },
+          { id: 7, residence: '서구' },
+          { id: 8, residence: '유성구' },
+          { id: 9, residence: '중구' },
+          { id: 10, residence: '대덕구' },
+        ];
   const [cachedPurposes, setCachedPurposes] =
     useState<PurposeResponse[]>(readCachedPurposes);
   const modal = useModal();
@@ -129,6 +159,7 @@ const CheckInFormPage = () => {
     setName('');
     setPhone('');
     setAge('');
+    setResidence('');
     setPurposeIndex(null);
     setMaleCount(0);
     setFemaleCount(0);
@@ -203,6 +234,7 @@ const CheckInFormPage = () => {
       name: trimmedName,
       age,
       phone: trimmedPhone,
+      residence: residence || undefined,
       maleCount,
       femaleCount,
       purpose: selectedPurpose,
@@ -230,6 +262,9 @@ const CheckInFormPage = () => {
     <Page>
       <PasswordBackground />
       <Panel>
+        <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
+          <FiArrowLeft />
+        </BackButton>
         <Header>
           <Title>
             <Highlight>구즉</Highlight> 청소년 문화의 집에 온 걸 환영해~!
@@ -238,6 +273,36 @@ const CheckInFormPage = () => {
         </Header>
 
         <FormBody aria-label="시설 이용 정보 입력">
+          <FieldBlock>
+            <FieldLabel>
+              <IoRocketOutline aria-hidden="true" />
+              오늘은 무엇을 하러 왔어?
+            </FieldLabel>
+            {purposeOptions.length > 0 ? (
+              <OptionGrid $columns={5}>
+                {purposeOptions.map((option, index) => (
+                  <PurposeCard
+                    key={`${option.label}-${index}`}
+                    type="button"
+                    $tone={option.tone}
+                    $selected={purposeIndex === index}
+                    onClick={() => setPurposeIndex(index)}
+                  >
+                    {option.label}
+                  </PurposeCard>
+                ))}
+              </OptionGrid>
+            ) : (
+              <PurposeNotice>
+                {isPurposeLoading
+                  ? '방문 목적을 불러오는 중입니다.'
+                  : isPurposeError
+                  ? '방문 목적을 불러오지 못했습니다.'
+                  : '등록된 방문 목적이 없습니다.'}
+              </PurposeNotice>
+            )}
+          </FieldBlock>
+
           <FieldBlock>
             <FieldLabel>
               <FiUser aria-hidden="true" />
@@ -284,32 +349,17 @@ const CheckInFormPage = () => {
 
           <FieldBlock>
             <FieldLabel>
-              <IoRocketOutline aria-hidden="true" />
-              오늘은 무엇을 하러 왔어?
+              <FiHome aria-hidden="true" />
+              어디 살아?
             </FieldLabel>
-            {purposeOptions.length > 0 ? (
-              <OptionGrid $columns={5}>
-                {purposeOptions.map((option, index) => (
-                  <PurposeCard
-                    key={`${option.label}-${index}`}
-                    type="button"
-                    $tone={option.tone}
-                    $selected={purposeIndex === index}
-                    onClick={() => setPurposeIndex(index)}
-                  >
-                    {option.label}
-                  </PurposeCard>
-                ))}
-              </OptionGrid>
-            ) : (
-              <PurposeNotice>
-                {isPurposeLoading
-                  ? '방문 목적을 불러오는 중입니다.'
-                  : isPurposeError
-                  ? '방문 목적을 불러오지 못했습니다.'
-                  : '등록된 방문 목적이 없습니다.'}
-              </PurposeNotice>
-            )}
+            <ResidenceButton
+              type="button"
+              $hasValue={!!residence}
+              onClick={() => { setResidenceSearch(''); setResidenceModalOpen(true); }}
+            >
+              <FiSearch aria-hidden="true" />
+              <span>{residence || '너가 살고 있는 동네를 알려줘'}</span>
+            </ResidenceButton>
           </FieldBlock>
 
           <FieldBlock>
@@ -403,6 +453,45 @@ const CheckInFormPage = () => {
         config={modal.config}
         onClose={modal.closeModal}
       />
+      {residenceModalOpen && createPortal(
+        <ResidenceOverlay onClick={() => setResidenceModalOpen(false)}>
+          <ResidencePanel onClick={(e) => e.stopPropagation()}>
+            <ResidenceHeader>
+              <ResidenceModalTitle>
+                <FiHome aria-hidden="true" /> 어디 살아?
+              </ResidenceModalTitle>
+              <ResidenceSearchRow>
+                <ResidenceSearchInput
+                  autoFocus
+                  value={residenceSearch}
+                  onChange={(e) => setResidenceSearch(e.target.value)}
+                  placeholder="너가 살고 있는 동네 이름이 뭐야?"
+                />
+                <FiSearch aria-hidden="true" />
+              </ResidenceSearchRow>
+            </ResidenceHeader>
+            <ResidenceList>
+              {residences
+                .filter((r) => r.residence.includes(residenceSearch))
+                .map((r) => (
+                  <ResidenceItem
+                    key={r.id}
+                    type="button"
+                    $selected={residence === r.residence}
+                    onClick={() => {
+                      setResidence(r.residence);
+                      setResidenceModalOpen(false);
+                    }}
+                  >
+                    <span>{r.residence}</span>
+                    {residence === r.residence && <ResidenceItemDot />}
+                  </ResidenceItem>
+                ))}
+            </ResidenceList>
+          </ResidencePanel>
+        </ResidenceOverlay>,
+        document.body
+      )}
       <Footer>made by Busurker</Footer>
     </Page>
   );
@@ -745,6 +834,166 @@ const SubmitButton = styled.button`
     cursor: not-allowed;
     opacity: 0.7;
   }
+`;
+
+const BackButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-bottom: 0.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #2f66ad;
+  cursor: pointer;
+  font-size: 1.4rem;
+
+  &:hover {
+    background: #f0f4fb;
+  }
+`;
+
+const ResidenceButton = styled.button<{ $hasValue: boolean }>`
+  width: 100%;
+  height: 4rem;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 2rem;
+  background-color: #fbfbff;
+  box-shadow: 0 0.35rem 0 #d6e2ef;
+  color: ${({ $hasValue }) => ($hasValue ? '#26364c' : '#747b86')};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0 1.8rem;
+  text-align: left;
+
+  svg {
+    color: #1f63b7;
+    flex-shrink: 0;
+  }
+`;
+
+const ResidenceOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+`;
+
+const ResidencePanel = styled.div`
+  width: min(100%, 28rem);
+  max-height: 70dvh;
+  border-radius: 1.5rem;
+  background: #ffffff;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const ResidenceHeader = styled.div`
+  background: #eef3fb;
+  padding: 1.4rem 1.6rem 1.5rem;
+`;
+
+const ResidenceModalTitle = styled.h2`
+  margin: 0 0 0.9rem;
+  color: #26364c;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  svg {
+    color: #1f63b7;
+    flex-shrink: 0;
+  }
+`;
+
+const ResidenceSearchRow = styled.div`
+  position: relative;
+
+  svg {
+    position: absolute;
+    right: 1.2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1f63b7;
+    font-size: 1.2rem;
+    pointer-events: none;
+  }
+`;
+
+const ResidenceSearchInput = styled.input`
+  width: 100%;
+  height: 3.1rem;
+  box-sizing: border-box;
+  border: 1px solid #c9dcf2;
+  border-radius: 1.55rem;
+  background: #ffffff;
+  color: #26364c;
+  font-family: inherit;
+  font-size: 0.875rem;
+  outline: none;
+  padding: 0 2.8rem 0 1.3rem;
+
+  &::placeholder {
+    color: #9aa4b2;
+  }
+
+  &:focus {
+    border-color: #1f63b7;
+  }
+`;
+
+const ResidenceList = styled.div`
+  overflow-y: auto;
+  padding: 0;
+`;
+
+const ResidenceItem = styled.button<{ $selected: boolean }>`
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #f0f2f5;
+  background: transparent;
+  color: #26364c;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: ${({ $selected }) => ($selected ? 600 : 400)};
+  padding: 0.85rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    background: #f5f8ff;
+  }
+`;
+
+const ResidenceItemDot = styled.span`
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #e64d8c;
+  flex-shrink: 0;
 `;
 
 const Footer = styled.footer`
