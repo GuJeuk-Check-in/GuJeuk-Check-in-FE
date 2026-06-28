@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaMars, FaVenus } from 'react-icons/fa';
 import { FiArrowLeft, FiMinus, FiPlus, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
@@ -53,8 +53,15 @@ const formatVisitTime = (date: Date) => {
   return `${hours}:${minutes}`;
 };
 
+interface LocationState {
+  name?: string;
+  phone?: string;
+}
+
 const CheckInLoginFormPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = (location.state ?? {}) as LocationState;
   const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
@@ -75,7 +82,7 @@ const CheckInLoginFormPage = () => {
     }
   }, [purposes]);
 
-  const visiblePurposes = purposes.length > 0 ? purposes : cachedPurposes;
+  const visiblePurposes = isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -141,9 +148,9 @@ const CheckInLoginFormPage = () => {
 
     const now = new Date();
     const payload: CreateUserVisitRequest = {
-      name: null,
+      name: locationState.name ?? null,
       age: 'ADULT',
-      phone: '',
+      phone: locationState.phone ?? '',
       maleCount,
       femaleCount,
       purpose: selectedPurpose,

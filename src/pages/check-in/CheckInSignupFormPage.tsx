@@ -134,7 +134,7 @@ const CheckInSignupFormPage = () => {
     }
   }, [purposes]);
 
-  const visiblePurposes = purposes.length > 0 ? purposes : cachedPurposes;
+  const visiblePurposes = isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
 
   const purposeOptions = useMemo(
     () =>

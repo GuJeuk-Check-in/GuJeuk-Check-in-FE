@@ -11,7 +11,7 @@ const CheckInCompletePage = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/check-in');
+      navigate('/check-in', { replace: true });
     }, AUTO_REDIRECT_MS);
 
     return () => clearTimeout(timer);
@@ -26,7 +26,7 @@ const CheckInCompletePage = () => {
         </CheckIcon>
         <Title>시설 이용 신청이 끝났어</Title>
         <Subtitle>우리 시설을 바로 이용해도 좋아~!</Subtitle>
-        <DoneButton type="button" onClick={() => navigate('/check-in')}>
+        <DoneButton type="button" onClick={() => navigate('/check-in', { replace: true })}>
           다 했어요! 🎉
         </DoneButton>
       </Panel>
