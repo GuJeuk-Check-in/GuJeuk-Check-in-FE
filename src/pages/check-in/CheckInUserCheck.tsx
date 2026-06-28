@@ -43,7 +43,7 @@ const CheckInUserCheck = () => {
             />
           </FieldBlock>
 
-          <NextButton type="button" onClick={() => navigate('/check-in/form')}>
+          <NextButton type="button" onClick={() => navigate('/check-in/signup-form')}>
             넘어가기!
             <FiArrowRight aria-hidden="true" />
           </NextButton>

@@ -8,7 +8,6 @@ import { useModal } from '@shared/hooks/useModal';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  FaCheckCircle,
   FaExclamationTriangle,
   FaGraduationCap,
   FaMars,
@@ -90,7 +89,7 @@ const formatVisitTime = (date: Date) => {
   return `${hours}:${minutes}`;
 };
 
-const CheckInFormPage = () => {
+const CheckInSignupFormPage = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -166,25 +165,9 @@ const CheckInFormPage = () => {
     setPrivacyAgreed(false);
   };
 
-  const openSuccessModal = () => {
-    modal.openModal({
-      icon: <FaCheckCircle size={48} color="#0F50A0" />,
-      title: '체크인 완료',
-      subtitle: '시설 이용 신청이 완료되었습니다.',
-      theme: 'info',
-      buttons: [
-        {
-          label: '확인',
-          variant: 'primary',
-          bgColor: '#0F50A0',
-          onClick: () => {
-            modal.closeModal();
-            resetForm();
-            navigate('/check-in');
-          },
-        },
-      ],
-    });
+  const goToComplete = () => {
+    resetForm();
+    navigate('/check-in/complete');
   };
 
   const openErrorModal = (message: string) => {
@@ -246,7 +229,7 @@ const CheckInFormPage = () => {
     try {
       setIsSaving(true);
       await enqueueCheckIn(payload);
-      openSuccessModal();
+      goToComplete();
     } catch (error) {
       const message =
         error instanceof Error
@@ -262,13 +245,15 @@ const CheckInFormPage = () => {
     <Page>
       <PasswordBackground />
       <Panel>
-        <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
-          <FiArrowLeft />
-        </BackButton>
         <Header>
-          <Title>
-            <Highlight>구즉</Highlight> 청소년 문화의 집에 온 걸 환영해~!
-          </Title>
+          <TitleRow>
+            <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
+              <FiArrowLeft />
+            </BackButton>
+            <Title>
+              <Highlight>구즉</Highlight> 청소년 문화의 집에 온 걸 환영해~!
+            </Title>
+          </TitleRow>
           <Subtitle>시설을 이용하려면 작성해줘</Subtitle>
         </Header>
 
@@ -497,7 +482,7 @@ const CheckInFormPage = () => {
   );
 };
 
-export default CheckInFormPage;
+export default CheckInSignupFormPage;
 
 const Page = styled.main`
   position: relative;
@@ -522,6 +507,14 @@ const Panel = styled.section`
 
 const Header = styled.header`
   text-align: center;
+`;
+
+const TitleRow = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
 `;
 
 const Title = styled.h1`
@@ -837,12 +830,15 @@ const SubmitButton = styled.button`
 `;
 
 const BackButton = styled.button`
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.4rem;
   height: 2.4rem;
-  margin-bottom: 0.5rem;
   border: 0;
   border-radius: 50%;
   background: transparent;

@@ -14,7 +14,7 @@ const CheckInHome = () => {
         <GuideText>시설을 이용하려면 아래 버튼을 눌러줘</GuideText>
         <StartButton
           type="button"
-          onClick={() => navigate('/check-in/welcome-back')}
+          onClick={() => navigate('/check-in/user-check')}
         >
           시설 이용하기
         </StartButton>
