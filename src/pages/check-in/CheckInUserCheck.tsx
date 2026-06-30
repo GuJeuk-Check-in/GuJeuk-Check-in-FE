@@ -27,7 +27,7 @@ const CheckInUserCheck = () => {
     });
   };
 
-  const openFirstVisitModal = () => {
+  const openFirstVisitModal = (checkedName: string, checkedPhone: string) => {
     modal.openModal({
       icon: <PiHandWavingBold size={52} color="#0F50A0" />,
       title: '시설에 혹시 처음 방문했니?',
@@ -47,8 +47,8 @@ const CheckInUserCheck = () => {
             modal.closeModal();
             navigate('/check-in/signup-form', {
               state: {
-                name: name.trim(),
-                phone: phone.trim(),
+                name: checkedName,
+                phone: checkedPhone,
               },
             });
           },
@@ -75,7 +75,15 @@ const CheckInUserCheck = () => {
         phone: trimmedPhone,
       });
 
-      if (response.userExists && typeof response.userId === 'number') {
+      if (response.userExists) {
+        if (typeof response.userId !== 'number') {
+          openWarningModal(
+            '회원 확인 실패',
+            '회원 정보를 확인하지 못했습니다. 다시 시도해주세요.'
+          );
+          return;
+        }
+
         navigate('/check-in/login-form', {
           state: {
             userId: response.userId,
@@ -86,7 +94,7 @@ const CheckInUserCheck = () => {
         return;
       }
 
-      openFirstVisitModal();
+      openFirstVisitModal(trimmedName, trimmedPhone);
     } catch (error) {
       openWarningModal(
         '회원 확인 실패',
