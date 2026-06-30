@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import { enqueueCheckIn } from '@entities/visit';
-import { CreateUserVisitRequest } from '@entities/visit';
+import { ExistingUserCheckInRequest } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
@@ -38,22 +38,8 @@ const writeCachedPurposes = (purposes: PurposeResponse[]) => {
   } catch {}
 };
 
-const formatVisitDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}년${month}월${day}일`;
-};
-
-const formatVisitTime = (date: Date) => {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${hours}:${minutes}`;
-};
-
 interface LocationState {
+  userId?: number;
   name?: string;
   phone?: string;
 }
@@ -135,6 +121,22 @@ const CheckInLoginFormPage = () => {
     const selectedPurpose =
       purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
 
+    if (typeof locationState.userId !== 'number') {
+      modal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '회원 확인 필요',
+        subtitle: '처음 화면에서 이름과 전화번호를 다시 확인해주세요.',
+        theme: 'warning',
+        buttons: [
+          {
+            label: '확인',
+            onClick: () => navigate('/check-in/user-check', { replace: true }),
+          },
+        ],
+      });
+      return;
+    }
+
     if (!selectedPurpose || maleCount + femaleCount <= 0) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
@@ -146,22 +148,20 @@ const CheckInLoginFormPage = () => {
       return;
     }
 
-    const now = new Date();
-    const payload: CreateUserVisitRequest = {
-      name: locationState.name ?? null,
-      age: 'ADULT',
-      phone: locationState.phone ?? '',
+    const payload: ExistingUserCheckInRequest = {
+      userId: locationState.userId,
       maleCount,
       femaleCount,
       purpose: selectedPurpose,
-      visitDate: formatVisitDate(now),
-      visitTime: formatVisitTime(now),
-      privacyAgreed: true,
+      visitTime: new Date().toISOString(),
     };
 
     try {
       setIsSaving(true);
-      await enqueueCheckIn(payload);
+      await enqueueCheckIn({
+        kind: 'existing-user-check-in',
+        payload,
+      });
       goToComplete();
     } catch (error) {
       const message =

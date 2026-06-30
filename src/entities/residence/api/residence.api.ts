@@ -1,4 +1,4 @@
-import { axiosInstance } from '@shared/api';
+import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import {
   CreateResidenceRequest,
   UpdateResidenceRequest,
@@ -8,6 +8,13 @@ import {
 
 export const residenceList = async (): Promise<ResidenceResponse[]> => {
   const response = await axiosInstance.get<ResidenceResponse[]>(
+    '/residence/all'
+  );
+  return response.data;
+};
+
+export const publicResidenceList = async (): Promise<ResidenceResponse[]> => {
+  const response = await publicAxiosInstance.get<ResidenceResponse[]>(
     '/residence/all'
   );
   return response.data;

@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback } from 'react';
 import { User, UserSearchFilters } from '@entities/user/index';
+import { matchesKoreanSearch } from '@shared/lib';
 
 export const useSearchUser = (allUsers: User[], filters: UserSearchFilters) => {
   const [searchName, setSearchName] = useState('');
 
   const filteredUsers = useMemo(() => {
     return allUsers.filter((user) => {
-      if (searchName && !user.name.includes(searchName)) {
+      if (searchName && !matchesKoreanSearch(user.name, searchName)) {
         return false;
       }
       if (filters.residence && user.residence !== filters.residence) {

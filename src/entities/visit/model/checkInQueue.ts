@@ -1,10 +1,10 @@
-import { CreateUserVisitRequest } from './types';
+import { CheckInQueuePayload, CreateUserVisitRequest } from './types';
 
 export type CheckInQueueStatus = 'pending' | 'syncing' | 'failed';
 
 export interface CheckInQueueItem {
   id: string;
-  payload: CreateUserVisitRequest;
+  payload: CheckInQueuePayload;
   status: CheckInQueueStatus;
   attemptCount: number;
   lastError?: string;
@@ -14,7 +14,7 @@ export interface CheckInQueueItem {
 }
 
 const DB_NAME = 'gujeuk-check-in';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'checkInQueue';
 
 const createQueueId = () => {
@@ -76,7 +76,7 @@ const runQueueTransaction = async <T>(
 };
 
 export const enqueueCheckIn = async (
-  payload: CreateUserVisitRequest
+  payload: CheckInQueuePayload
 ): Promise<CheckInQueueItem> => {
   const now = getNow();
   const item: CheckInQueueItem = {
@@ -91,6 +91,11 @@ export const enqueueCheckIn = async (
   await runQueueTransaction('readwrite', (store) => store.add(item));
   return item;
 };
+
+export const enqueueLegacyPublicVisit = async (
+  payload: CreateUserVisitRequest
+): Promise<CheckInQueueItem> =>
+  enqueueCheckIn({ kind: 'legacy-public-visit', payload });
 
 export const getRetryableCheckIns = async (): Promise<CheckInQueueItem[]> => {
   const items = await runQueueTransaction<CheckInQueueItem[]>('readonly', (store) =>

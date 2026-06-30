@@ -159,14 +159,6 @@ export const UserInformationDetailCard = ({
       />
 
       <VisitDetailInput
-        label="사용자 ID"
-        name="userId"
-        value={isEditing ? formData.userId : userId}
-        onChange={isEditing ? handleChange : null}
-        isEditable={isEditing}
-      />
-
-      <VisitDetailInput
         label="연락처"
         name="phone"
         value={isEditing ? formData.phone : phone}
