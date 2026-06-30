@@ -151,6 +151,10 @@ const ProgressBar = styled.div`
   overflow: hidden;
   border-radius: 999px;
   background: #edf4ff;
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
 `;
 
 const ProgressFill = styled.span`
