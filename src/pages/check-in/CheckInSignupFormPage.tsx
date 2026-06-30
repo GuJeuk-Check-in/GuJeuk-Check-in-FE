@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import { enqueueCheckIn } from '@entities/visit';
-import { AgeType, CreateUserVisitRequest } from '@entities/visit';
+import { GenderType, NewUserSignUpRequest } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
+import { matchesKoreanSearch } from '@shared/lib';
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  FaBirthdayCake,
   FaExclamationTriangle,
-  FaGraduationCap,
   FaMars,
   FaRegCheckSquare,
-  FaRegSmile,
   FaVenus,
 } from 'react-icons/fa';
 import {
@@ -26,25 +26,12 @@ import {
   FiUsers,
 } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
-import { useResidenceList } from '@entities/residence';
-import { useNavigate } from 'react-router-dom';
+import { usePublicResidenceList } from '@entities/residence';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const ageOptions = [
-  { label: '1~8세', value: 'BABY', tone: 'peach', icon: <FaRegSmile /> },
-  { label: '9 ~ 13세', value: 'AGE_9_13', tone: 'mint', icon: <FaRegSmile /> },
-  {
-    label: '14 ~ 16세',
-    value: 'AGE_14_16',
-    tone: 'blue',
-    icon: <FaGraduationCap />,
-  },
-  {
-    label: '17 ~ 19세',
-    value: 'AGE_17_19',
-    tone: 'peach',
-    icon: <FaRegSmile />,
-  },
-  { label: '20세 이상', value: 'ADULT', tone: 'mint', icon: <FaRegSmile /> },
+const genderOptions = [
+  { label: '남자', value: 'MAN', tone: 'mint', icon: <FaMars /> },
+  { label: '여자', value: 'WOMAN', tone: 'pink', icon: <FaVenus /> },
 ] as const;
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
@@ -74,26 +61,57 @@ const writeCachedPurposes = (purposes: PurposeResponse[]) => {
   } catch {}
 };
 
-const formatVisitDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+const getDigitsOnly = (value: string, maxLength: number) =>
+  value.replace(/\D/g, '').slice(0, maxLength);
 
-  return `${year}년${month}월${day}일`;
+const createBirthYMD = (
+  yearValue: string,
+  monthValue: string,
+  dayValue: string
+) => {
+  if (yearValue.length !== 4 || !monthValue || !dayValue) return null;
+
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+  const day = Number(dayValue);
+  const birthDate = new Date(year, month - 1, day);
+  const today = new Date();
+
+  if (
+    !Number.isInteger(year) ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31 ||
+    birthDate.getFullYear() !== year ||
+    birthDate.getMonth() !== month - 1 ||
+    birthDate.getDate() !== day ||
+    birthDate > today
+  ) {
+    return null;
+  }
+
+  return `${yearValue}-${String(month).padStart(2, '0')}-${String(day).padStart(
+    2,
+    '0'
+  )}`;
 };
 
-const formatVisitTime = (date: Date) => {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${hours}:${minutes}`;
-};
+interface LocationState {
+  name?: string;
+  phone?: string;
+}
 
 const CheckInSignupFormPage = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [age, setAge] = useState<AgeType | ''>('');
+  const location = useLocation();
+  const locationState = (location.state ?? {}) as LocationState;
+  const [name, setName] = useState(locationState.name ?? '');
+  const [phone, setPhone] = useState(locationState.phone ?? '');
+  const [gender, setGender] = useState<GenderType | ''>('');
+  const [birthYear, setBirthYear] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay, setBirthDay] = useState('');
   const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
   const [residence, setResidence] = useState('');
   const [residenceModalOpen, setResidenceModalOpen] = useState(false);
@@ -102,22 +120,14 @@ const CheckInSignupFormPage = () => {
   const [femaleCount, setFemaleCount] = useState(0);
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const { data: apiResidences = [] } = useResidenceList();
-  const residences =
-    apiResidences.length > 0
-      ? apiResidences
-      : [
-          { id: 1, residence: '구즉동' },
-          { id: 2, residence: '관저동' },
-          { id: 3, residence: '도안동' },
-          { id: 4, residence: '둔산동' },
-          { id: 5, residence: '문화동' },
-          { id: 6, residence: '봉명동' },
-          { id: 7, residence: '서구' },
-          { id: 8, residence: '유성구' },
-          { id: 9, residence: '중구' },
-          { id: 10, residence: '대덕구' },
-        ];
+  const {
+    data: residences = [],
+    isLoading: isResidenceLoading,
+    isError: isResidenceError,
+  } = usePublicResidenceList();
+  const filteredResidences = residences.filter((r) =>
+    matchesKoreanSearch(r.residence, residenceSearch)
+  );
   const [cachedPurposes, setCachedPurposes] =
     useState<PurposeResponse[]>(readCachedPurposes);
   const modal = useModal();
@@ -134,7 +144,8 @@ const CheckInSignupFormPage = () => {
     }
   }, [purposes]);
 
-  const visiblePurposes = isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
+  const visiblePurposes =
+    isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -157,7 +168,10 @@ const CheckInSignupFormPage = () => {
   const resetForm = () => {
     setName('');
     setPhone('');
-    setAge('');
+    setGender('');
+    setBirthYear('');
+    setBirthMonth('');
+    setBirthDay('');
     setResidence('');
     setPurposeIndex(null);
     setMaleCount(0);
@@ -193,11 +207,16 @@ const CheckInSignupFormPage = () => {
       purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
     const trimmedName = name.trim();
     const trimmedPhone = phone.trim();
+    const birthYMD = createBirthYMD(birthYear, birthMonth, birthDay);
 
     if (
       !trimmedName ||
       !trimmedPhone ||
-      !age ||
+      !gender ||
+      !birthYear ||
+      !birthMonth ||
+      !birthDay ||
+      !residence ||
       !selectedPurpose ||
       !privacyAgreed ||
       maleCount + femaleCount <= 0
@@ -212,23 +231,36 @@ const CheckInSignupFormPage = () => {
       return;
     }
 
-    const now = new Date();
-    const payload: CreateUserVisitRequest = {
+    if (!birthYMD) {
+      modal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '생년월일 확인',
+        subtitle: '생년월일을 올바르게 입력해주세요. 예: 2011년 1월 19일',
+        theme: 'warning',
+        buttons: [{ label: '확인', onClick: modal.closeModal }],
+      });
+      return;
+    }
+
+    const payload: NewUserSignUpRequest = {
       name: trimmedName,
-      age,
+      gender,
       phone: trimmedPhone,
-      residence: residence || undefined,
       maleCount,
       femaleCount,
+      birthYMD,
+      residence,
       purpose: selectedPurpose,
-      visitDate: formatVisitDate(now),
-      visitTime: formatVisitTime(now),
+      visitTime: new Date().toISOString(),
       privacyAgreed,
     };
 
     try {
       setIsSaving(true);
-      await enqueueCheckIn(payload);
+      await enqueueCheckIn({
+        kind: 'new-user-sign-up',
+        payload,
+      });
       goToComplete();
     } catch (error) {
       const message =
@@ -247,7 +279,11 @@ const CheckInSignupFormPage = () => {
       <Panel>
         <Header>
           <TitleRow>
-            <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
+            <BackButton
+              type="button"
+              onClick={() => navigate(-1)}
+              aria-label="뒤로 가기"
+            >
               <FiArrowLeft />
             </BackButton>
             <Title>
@@ -314,22 +350,76 @@ const CheckInSignupFormPage = () => {
 
           <FieldBlock>
             <FieldLabel>
-              <FaRegCheckSquare aria-hidden="true" />몇 살이야?
+              <FaRegCheckSquare aria-hidden="true" />
+              성별을 알려줘
             </FieldLabel>
-            <OptionGrid $columns={5}>
-              {ageOptions.map((option) => (
+            <OptionGrid $columns={2}>
+              {genderOptions.map((option) => (
                 <OptionCard
                   key={option.label}
                   type="button"
                   $tone={option.tone}
-                  $selected={age === option.value}
-                  onClick={() => setAge(option.value)}
+                  $selected={gender === option.value}
+                  onClick={() => setGender(option.value)}
                 >
                   <OptionIcon $tone={option.tone}>{option.icon}</OptionIcon>
                   <span>{option.label}</span>
                 </OptionCard>
               ))}
             </OptionGrid>
+          </FieldBlock>
+
+          <FieldBlock>
+            <FieldLabel id="birth-date-label">
+              <FaBirthdayCake aria-hidden="true" />
+              언제 태어났어?
+            </FieldLabel>
+            <BirthDateGroup aria-labelledby="birth-date-label">
+              <BirthDateGrid>
+                <BirthInputLabel>
+                  <BirthInputText>연도</BirthInputText>
+                  <BirthInput
+                    value={birthYear}
+                    onChange={(event) =>
+                      setBirthYear(getDigitsOnly(event.target.value, 4))
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="bday-year"
+                    placeholder="2011"
+                    aria-label="태어난 연도"
+                  />
+                </BirthInputLabel>
+                <BirthInputLabel>
+                  <BirthInputText>월</BirthInputText>
+                  <BirthInput
+                    value={birthMonth}
+                    onChange={(event) =>
+                      setBirthMonth(getDigitsOnly(event.target.value, 2))
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="bday-month"
+                    placeholder="1"
+                    aria-label="태어난 월"
+                  />
+                </BirthInputLabel>
+                <BirthInputLabel>
+                  <BirthInputText>일</BirthInputText>
+                  <BirthInput
+                    value={birthDay}
+                    onChange={(event) =>
+                      setBirthDay(getDigitsOnly(event.target.value, 2))
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="bday-day"
+                    placeholder="19"
+                    aria-label="태어난 일"
+                  />
+                </BirthInputLabel>
+              </BirthDateGrid>
+            </BirthDateGroup>
           </FieldBlock>
 
           <FieldBlock>
@@ -340,7 +430,10 @@ const CheckInSignupFormPage = () => {
             <ResidenceButton
               type="button"
               $hasValue={!!residence}
-              onClick={() => { setResidenceSearch(''); setResidenceModalOpen(true); }}
+              onClick={() => {
+                setResidenceSearch('');
+                setResidenceModalOpen(true);
+              }}
             >
               <FiSearch aria-hidden="true" />
               <span>{residence || '너가 살고 있는 동네를 알려줘'}</span>
@@ -438,45 +531,54 @@ const CheckInSignupFormPage = () => {
         config={modal.config}
         onClose={modal.closeModal}
       />
-      {residenceModalOpen && createPortal(
-        <ResidenceOverlay onClick={() => setResidenceModalOpen(false)}>
-          <ResidencePanel onClick={(e) => e.stopPropagation()}>
-            <ResidenceHeader>
-              <ResidenceModalTitle>
-                <FiHome aria-hidden="true" /> 어디 살아?
-              </ResidenceModalTitle>
-              <ResidenceSearchRow>
-                <ResidenceSearchInput
-                  autoFocus
-                  value={residenceSearch}
-                  onChange={(e) => setResidenceSearch(e.target.value)}
-                  placeholder="너가 살고 있는 동네 이름이 뭐야?"
-                />
-                <FiSearch aria-hidden="true" />
-              </ResidenceSearchRow>
-            </ResidenceHeader>
-            <ResidenceList>
-              {residences
-                .filter((r) => r.residence.includes(residenceSearch))
-                .map((r) => (
-                  <ResidenceItem
-                    key={r.id}
-                    type="button"
-                    $selected={residence === r.residence}
-                    onClick={() => {
-                      setResidence(r.residence);
-                      setResidenceModalOpen(false);
-                    }}
-                  >
-                    <span>{r.residence}</span>
-                    {residence === r.residence && <ResidenceItemDot />}
-                  </ResidenceItem>
-                ))}
-            </ResidenceList>
-          </ResidencePanel>
-        </ResidenceOverlay>,
-        document.body
-      )}
+      {residenceModalOpen &&
+        createPortal(
+          <ResidenceOverlay onClick={() => setResidenceModalOpen(false)}>
+            <ResidencePanel onClick={(e) => e.stopPropagation()}>
+              <ResidenceHeader>
+                <ResidenceModalTitle>
+                  <FiHome aria-hidden="true" /> 어디 살아?
+                </ResidenceModalTitle>
+                <ResidenceSearchRow>
+                  <ResidenceSearchInput
+                    autoFocus
+                    value={residenceSearch}
+                    onChange={(e) => setResidenceSearch(e.target.value)}
+                    placeholder="눌러서 거주지를 검색해줘"
+                  />
+                  <FiSearch aria-hidden="true" />
+                </ResidenceSearchRow>
+              </ResidenceHeader>
+              <ResidenceList>
+                {isResidenceLoading ? (
+                  <ResidenceNotice>거주지를 불러오는 중입니다.</ResidenceNotice>
+                ) : isResidenceError ? (
+                  <ResidenceNotice>
+                    거주지를 불러오지 못했습니다.
+                  </ResidenceNotice>
+                ) : filteredResidences.length > 0 ? (
+                  filteredResidences.map((r) => (
+                    <ResidenceItem
+                      key={r.id}
+                      type="button"
+                      $selected={residence === r.residence}
+                      onClick={() => {
+                        setResidence(r.residence);
+                        setResidenceModalOpen(false);
+                      }}
+                    >
+                      <span>{r.residence}</span>
+                      {residence === r.residence && <ResidenceItemDot />}
+                    </ResidenceItem>
+                  ))
+                ) : (
+                  <ResidenceNotice>검색된 거주지가 없습니다.</ResidenceNotice>
+                )}
+              </ResidenceList>
+            </ResidencePanel>
+          </ResidenceOverlay>,
+          document.body
+        )}
       <Footer>made by Busurker</Footer>
     </Page>
   );
@@ -580,6 +682,56 @@ const TextInput = styled.input`
 
   &::placeholder {
     color: #747b86;
+  }
+
+  &:focus {
+    box-shadow: 0 0.35rem 0 #9fc4e7;
+  }
+`;
+
+const BirthDateGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+const BirthDateGrid = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.9rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const BirthInputLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+`;
+
+const BirthInputText = styled.span`
+  color: #26364c;
+  font-size: 0.86rem;
+`;
+
+const BirthInput = styled.input`
+  width: 100%;
+  height: 4rem;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 1.25rem;
+  background-color: #fbfbff;
+  box-shadow: 0 0.35rem 0 #d6e2ef;
+  color: #26364c;
+  font-size: 1rem;
+  outline: none;
+  padding: 0 1.2rem;
+
+  &::placeholder {
+    color: #8b95a3;
   }
 
   &:focus {
@@ -958,6 +1110,15 @@ const ResidenceSearchInput = styled.input`
 const ResidenceList = styled.div`
   overflow-y: auto;
   padding: 0;
+`;
+
+const ResidenceNotice = styled.p`
+  margin: 0;
+  color: #5d6878;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 1.2rem 1.6rem;
+  text-align: center;
 `;
 
 const ResidenceItem = styled.button<{ $selected: boolean }>`
