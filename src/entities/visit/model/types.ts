@@ -6,6 +6,60 @@ export type AgeType =
   | 'AGE_20_24'
   | 'ADULT';
 
+export type GenderType = 'MAN' | 'WOMAN';
+
+export interface ApiErrorResponse {
+  message?: string;
+  status?: number;
+  timestamp?: string;
+  description?: string;
+}
+
+export interface CheckUserRequest {
+  name: string;
+  phone: string;
+}
+
+export interface CheckUserResponse {
+  userExists: boolean;
+  userId: number | null;
+}
+
+export interface ExistingUserCheckInRequest {
+  userId: number;
+  maleCount: number;
+  femaleCount: number;
+  purpose: string;
+  visitTime: string;
+}
+
+export interface NewUserSignUpRequest {
+  name: string;
+  gender: GenderType;
+  phone: string;
+  maleCount: number;
+  femaleCount: number;
+  birthYMD: string;
+  residence: string;
+  privacyAgreed: boolean;
+  purpose: string;
+  visitTime: string;
+}
+
+export type CheckInQueuePayload =
+  | {
+      kind: 'legacy-public-visit';
+      payload: CreateUserVisitRequest;
+    }
+  | {
+      kind: 'existing-user-check-in';
+      payload: ExistingUserCheckInRequest;
+    }
+  | {
+      kind: 'new-user-sign-up';
+      payload: NewUserSignUpRequest;
+    };
+
 export interface UserVisit {
   id: number;
   name: string | null;
