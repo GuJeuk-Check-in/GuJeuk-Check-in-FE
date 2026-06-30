@@ -120,5 +120,11 @@ const StartButton = styled.button`
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
   }
 `;
