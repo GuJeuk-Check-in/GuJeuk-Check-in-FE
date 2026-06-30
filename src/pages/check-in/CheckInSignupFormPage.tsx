@@ -24,6 +24,7 @@ import {
   FiSearch,
   FiUser,
   FiUsers,
+  FiX,
 } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
 import { usePublicResidenceList } from '@entities/residence';
@@ -164,6 +165,22 @@ const CheckInSignupFormPage = () => {
       setPurposeIndex(null);
     }
   }, [purposeIndex, purposeOptions.length]);
+
+  useEffect(() => {
+    if (!residenceModalOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setResidenceModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [residenceModalOpen]);
 
   const resetForm = () => {
     setName('');
@@ -513,7 +530,7 @@ const CheckInSignupFormPage = () => {
               />
             </AgreementTitle>
             <AgreementDetail>
-              (이름, 연령, 연락처, 거주지, 방문 목적, 방문 인원, CCTV 촬영)
+              {`(이름, 성별, 생년월일, 연락처, 거주지, 방문 목적, 방문 인원, CCTV 촬영)`}
             </AgreementDetail>
           </Agreement>
 
@@ -536,9 +553,18 @@ const CheckInSignupFormPage = () => {
           <ResidenceOverlay onClick={() => setResidenceModalOpen(false)}>
             <ResidencePanel onClick={(e) => e.stopPropagation()}>
               <ResidenceHeader>
-                <ResidenceModalTitle>
-                  <FiHome aria-hidden="true" /> 어디 살아?
-                </ResidenceModalTitle>
+                <ResidenceTitleRow>
+                  <ResidenceModalTitle>
+                    <FiHome aria-hidden="true" /> 어디 살아?
+                  </ResidenceModalTitle>
+                  <ResidenceCloseButton
+                    type="button"
+                    onClick={() => setResidenceModalOpen(false)}
+                    aria-label="거주지 선택 닫기"
+                  >
+                    <FiX aria-hidden="true" />
+                  </ResidenceCloseButton>
+                </ResidenceTitleRow>
                 <ResidenceSearchRow>
                   <ResidenceSearchInput
                     autoFocus
@@ -1055,8 +1081,16 @@ const ResidenceHeader = styled.div`
   padding: 1.4rem 1.6rem 1.5rem;
 `;
 
+const ResidenceTitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+`;
+
 const ResidenceModalTitle = styled.h2`
-  margin: 0 0 0.9rem;
+  margin: 0;
   color: #26364c;
   font-family: 'Pretendard', sans-serif;
   font-size: 0.95rem;
@@ -1068,6 +1102,26 @@ const ResidenceModalTitle = styled.h2`
   svg {
     color: #1f63b7;
     flex-shrink: 0;
+  }
+`;
+
+const ResidenceCloseButton = styled.button`
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1f63b7;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.15rem;
+
+  &:focus-visible {
+    outline: 0.2rem solid rgba(31, 99, 183, 0.28);
+    outline-offset: 0.12rem;
   }
 `;
 
