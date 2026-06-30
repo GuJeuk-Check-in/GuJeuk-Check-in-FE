@@ -26,6 +26,10 @@ const CheckInCompletePage = () => {
         </CheckIcon>
         <Title>시설 이용 신청이 끝났어</Title>
         <Subtitle>우리 시설을 바로 이용해도 좋아~!</Subtitle>
+        <ReturnNotice>잠시 후 처음 화면으로 돌아갈게</ReturnNotice>
+        <ProgressBar aria-hidden="true">
+          <ProgressFill />
+        </ProgressBar>
         <DoneButton type="button" onClick={() => navigate('/check-in', { replace: true })}>
           다 했어요! 🎉
         </DoneButton>
@@ -63,12 +67,59 @@ const Panel = styled.section`
   flex-direction: column;
   align-items: center;
   text-align: center;
+  animation: panelEnter 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes panelEnter {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 const CheckIcon = styled.span`
   display: inline-flex;
   color: #2f66ad;
   font-size: 2.6rem;
+  animation: checkPop 0.72s cubic-bezier(0.2, 1.45, 0.45, 1) both,
+    checkFloat 2.4s ease-in-out 0.72s infinite;
+
+  @keyframes checkPop {
+    0% {
+      opacity: 0;
+      transform: scale(0.35) rotate(-18deg);
+    }
+    64% {
+      opacity: 1;
+      transform: scale(1.14) rotate(6deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(0);
+    }
+  }
+
+  @keyframes checkFloat {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-0.28rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 const Title = styled.h1`
@@ -84,6 +135,45 @@ const Subtitle = styled.p`
   margin: 0.7rem 0 0;
   color: #7f8793;
   font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+`;
+
+const ReturnNotice = styled.p`
+  margin: 1.2rem 0 0;
+  color: #2f66ad;
+  font-size: 0.95rem;
+  font-weight: 700;
+`;
+
+const ProgressBar = styled.div`
+  width: min(100%, 18rem);
+  height: 0.42rem;
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf4ff;
+`;
+
+const ProgressFill = styled.span`
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3ab9ff, #145cad);
+  transform-origin: left center;
+  animation: redirectProgress ${AUTO_REDIRECT_MS}ms linear forwards;
+
+  @keyframes redirectProgress {
+    from {
+      transform: scaleX(1);
+    }
+    to {
+      transform: scaleX(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 const DoneButton = styled.button`
