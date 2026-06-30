@@ -76,21 +76,49 @@ const StartButton = styled.button`
   font-size: clamp(1rem, 2vw, 2rem);
   font-weight: 400;
   line-height: 1;
+  transform-origin: center bottom;
+  animation: balloonWiggle 3.2s ease-in-out infinite;
   transition: background-color 0.2s ease, transform 0.2s ease,
     box-shadow 0.2s ease;
 
   &:hover {
     background-color: #4aadeb;
     box-shadow: 0 0.55rem 1.5rem rgba(60, 154, 217, 0.42);
-    transform: translateY(-0.125rem);
+    animation-play-state: paused;
+    transform: translateY(-0.18rem) scale(1.03);
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(0.08rem) scale(0.98);
   }
 
   &:focus-visible {
     outline: 0.25rem solid rgba(15, 80, 160, 0.28);
     outline-offset: 0.25rem;
+  }
+
+  @keyframes balloonWiggle {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg) scale(1);
+      box-shadow: 0 0.45rem 1.25rem rgba(60, 154, 217, 0.35);
+    }
+    18% {
+      transform: translateY(-0.2rem) rotate(-1.5deg) scale(1.025);
+      box-shadow: 0 0.6rem 1.45rem rgba(60, 154, 217, 0.38);
+    }
+    36% {
+      transform: translateY(0.05rem) rotate(1.2deg) scale(0.995);
+    }
+    52% {
+      transform: translateY(-0.12rem) rotate(-0.7deg) scale(1.012);
+    }
+    68% {
+      transform: translateY(0) rotate(0.45deg) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;
