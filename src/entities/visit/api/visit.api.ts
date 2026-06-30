@@ -1,15 +1,39 @@
 import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import {
+  CheckUserRequest,
+  CheckUserResponse,
   CreateUserVisitRequest,
   DeleteUserVisitResponse,
+  ExistingUserCheckInRequest,
   UserVisitDetailResponse,
   ExportVisitListRequest,
+  NewUserSignUpRequest,
   UpdateUserVisitRequest,
   VisitStatisticsRequest,
   VisitStatisticsResponse,
 } from '../model/types';
 
-const USER_CHECK_IN_ENDPOINT = '/check-in';
+export const checkUserExists = async (
+  payload: CheckUserRequest
+): Promise<CheckUserResponse> => {
+  const response = await publicAxiosInstance.post<CheckUserResponse>(
+    '/user',
+    payload
+  );
+  return response.data;
+};
+
+export const signUpPublicUser = async (
+  payload: NewUserSignUpRequest
+): Promise<void> => {
+  await publicAxiosInstance.post('/user/sign-up', payload);
+};
+
+export const createExistingUserCheckIn = async (
+  payload: ExistingUserCheckInRequest
+): Promise<void> => {
+  await publicAxiosInstance.post('/user/check-in', payload);
+};
 
 export const fetchUserVisitList = async (page = 0) => {
   const response = await axiosInstance.get(`/log?page=${page}`);
@@ -47,10 +71,7 @@ export const createUserVisit = async (
 export const createPublicUserVisit = async (
   visitData: CreateUserVisitRequest
 ): Promise<UserVisitDetailResponse> => {
-  const response = await publicAxiosInstance.post(
-    USER_CHECK_IN_ENDPOINT,
-    visitData
-  );
+  const response = await publicAxiosInstance.post('/check-in', visitData);
   return response.data;
 };
 
