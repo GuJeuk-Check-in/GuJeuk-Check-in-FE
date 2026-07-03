@@ -1,22 +1,42 @@
 import { useEffect } from 'react';
 import {
+  createExistingUserCheckIn,
   createPublicUserVisit,
+  CreateUserVisitRequest,
   deleteQueuedCheckIn,
   getRetryableCheckIns,
   markCheckInFailed,
   markCheckInSyncing,
   recoverSyncingCheckIns,
+  signUpPublicUser,
 } from '@entities/visit';
+import { getApiErrorMessage } from '@shared/api';
 
 const SYNC_INTERVAL_MS = 60 * 1000;
 
 let isSyncing = false;
 
-const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message;
+const submitQueuedCheckIn = async (
+  item: Awaited<ReturnType<typeof markCheckInSyncing>>
+) => {
+  if (!('kind' in item.payload)) {
+    await createPublicUserVisit(item.payload as CreateUserVisitRequest);
+    return;
   }
-  return '알 수 없는 동기화 오류가 발생했습니다.';
+
+  switch (item.payload.kind) {
+    case 'existing-user-check-in':
+      await createExistingUserCheckIn(item.payload.payload);
+      return;
+    case 'new-user-sign-up':
+      await signUpPublicUser(item.payload.payload);
+      return;
+    case 'legacy-public-visit':
+      await createPublicUserVisit(item.payload.payload);
+      return;
+    default:
+      throw new Error('지원하지 않는 체크인 대기 항목입니다.');
+  }
 };
 
 const syncCheckInQueue = async () => {
@@ -33,10 +53,10 @@ const syncCheckInQueue = async () => {
       const syncingItem = await markCheckInSyncing(item);
 
       try {
-        await createPublicUserVisit(syncingItem.payload);
+        await submitQueuedCheckIn(syncingItem);
         await deleteQueuedCheckIn(syncingItem.id);
       } catch (error) {
-        await markCheckInFailed(syncingItem, getErrorMessage(error));
+        await markCheckInFailed(syncingItem, getApiErrorMessage(error));
       }
     }
   } finally {
