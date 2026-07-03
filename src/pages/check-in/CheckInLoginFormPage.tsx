@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
-import { enqueueCheckIn } from '@entities/visit';
-import { ExistingUserCheckInRequest } from '@entities/visit';
+import {
+  createExistingUserCheckIn,
+  ExistingUserCheckInRequest,
+} from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
+import { getApiErrorMessage } from '@shared/api';
 import { useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaMars, FaVenus } from 'react-icons/fa';
 import { FiArrowLeft, FiMinus, FiPlus, FiUsers } from 'react-icons/fi';
@@ -158,17 +161,12 @@ const CheckInLoginFormPage = () => {
 
     try {
       setIsSaving(true);
-      await enqueueCheckIn({
-        kind: 'existing-user-check-in',
-        payload,
-      });
+      await createExistingUserCheckIn(payload);
       goToComplete();
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : '체크인 정보를 기기에 저장하지 못했습니다.';
-      openErrorModal(message);
+      openErrorModal(
+        getApiErrorMessage(error, '체크인 정보를 서버에 전송하지 못했습니다.')
+      );
     } finally {
       setIsSaving(false);
     }

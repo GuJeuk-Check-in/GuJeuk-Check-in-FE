@@ -46,20 +46,6 @@ export interface NewUserSignUpRequest {
   visitTime: string;
 }
 
-export type CheckInQueuePayload =
-  | {
-      kind: 'legacy-public-visit';
-      payload: CreateUserVisitRequest;
-    }
-  | {
-      kind: 'existing-user-check-in';
-      payload: ExistingUserCheckInRequest;
-    }
-  | {
-      kind: 'new-user-sign-up';
-      payload: NewUserSignUpRequest;
-    };
-
 export interface UserVisit {
   id: number;
   name: string | null;
