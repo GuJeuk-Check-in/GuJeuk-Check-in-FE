@@ -12,7 +12,7 @@ import {
 } from '@entities/visit';
 import { getApiErrorMessage } from '@shared/api';
 
-const SYNC_INTERVAL_MS = 60 * 1000;
+const SYNC_INTERVAL_MS = 1000;
 
 let isSyncing = false;
 
