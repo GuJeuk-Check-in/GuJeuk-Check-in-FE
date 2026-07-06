@@ -1,11 +1,11 @@
 import { Global, css } from '@emotion/react';
 import { Router } from '@app/router';
 import { useTokenRefresher } from './providers/useTokenRefresher';
-import { useCheckInQueueSync } from './providers/useCheckInQueueSync';
+import { useCheckInQueueDrain } from './providers/useCheckInQueueDrain';
 
 const App = () => {
   useTokenRefresher();
-  useCheckInQueueSync();
+  useCheckInQueueDrain();
 
   return (
     <>
