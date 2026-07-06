@@ -3,7 +3,7 @@ import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import {
   GenderType,
   NewUserSignUpRequest,
-  signUpPublicUser,
+  submitNewUserSignUpWithFallback,
 } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
@@ -278,7 +278,7 @@ const CheckInSignupFormPage = () => {
 
     try {
       setIsSaving(true);
-      await signUpPublicUser(payload);
+      await submitNewUserSignUpWithFallback(payload);
       goToComplete();
     } catch (error) {
       openErrorModal(
