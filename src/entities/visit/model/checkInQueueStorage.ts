@@ -6,8 +6,9 @@ import {
 } from './checkInQueueTypes';
 
 const DB_NAME = 'gujeuk-check-in';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'checkInQueue';
+export const CHECK_IN_QUEUE_DRAIN_LOCK_STORE_NAME = 'checkInQueueDrainLock';
 const INITIAL_RETRY_DELAY_MS = 30_000;
 const STALE_SYNCING_MS = 2 * 60_000;
 
@@ -78,7 +79,7 @@ const createQueueId = () => {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 };
 
-const openCheckInQueueDb = (): Promise<IDBDatabase> =>
+export const openCheckInQueueDb = (): Promise<IDBDatabase> =>
   new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -96,6 +97,12 @@ const openCheckInQueueDb = (): Promise<IDBDatabase> =>
 
       if (!store.indexNames.contains('nextRetryAt')) {
         store.createIndex('nextRetryAt', 'nextRetryAt', { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains(CHECK_IN_QUEUE_DRAIN_LOCK_STORE_NAME)) {
+        db.createObjectStore(CHECK_IN_QUEUE_DRAIN_LOCK_STORE_NAME, {
+          keyPath: 'id',
+        });
       }
     };
 

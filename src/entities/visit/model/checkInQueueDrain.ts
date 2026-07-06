@@ -7,6 +7,7 @@ import {
   getNextRetryAt,
   isRetryableCheckInError,
 } from './checkInRetryPolicy';
+import { withCheckInQueueDrainLock } from './checkInQueueDrainLock';
 import {
   deleteCheckInQueueRecord,
   getDueCheckInQueueRecords,
@@ -19,6 +20,10 @@ import {
 } from './checkInQueueTypes';
 
 const DRAIN_BATCH_LIMIT = 5;
+const LOCKED_DRAIN_RESULT: CheckInQueueDrainResult = {
+  sentCount: 0,
+  stoppedOnError: false,
+};
 
 export type CheckInQueueDrainResult = {
   readonly sentCount: number;
@@ -42,6 +47,7 @@ const runDrain = async (): Promise<CheckInQueueDrainResult> => {
   const now = Date.now();
   const dueRecords = await getDueCheckInQueueRecords(now, DRAIN_BATCH_LIMIT);
   let sentCount = 0;
+  let stoppedOnError = false;
 
   for (const record of dueRecords) {
     await markCheckInQueueRecordSyncing(record, Date.now());
@@ -64,17 +70,20 @@ const runDrain = async (): Promise<CheckInQueueDrainResult> => {
         failedAt
       );
 
-      return { sentCount, stoppedOnError: true };
+      stoppedOnError = true;
     }
   }
 
-  return { sentCount, stoppedOnError: false };
+  return { sentCount, stoppedOnError };
 };
 
 export const drainCheckInQueue = (): Promise<CheckInQueueDrainResult> => {
   if (activeDrain) return activeDrain;
 
-  activeDrain = runDrain().finally(() => {
+  activeDrain = withCheckInQueueDrainLock(
+    runDrain,
+    LOCKED_DRAIN_RESULT
+  ).finally(() => {
     activeDrain = null;
   });
 
