@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import {
-  createExistingUserCheckIn,
   ExistingUserCheckInRequest,
+  submitExistingUserCheckInWithFallback,
 } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
@@ -161,7 +161,7 @@ const CheckInLoginFormPage = () => {
 
     try {
       setIsSaving(true);
-      await createExistingUserCheckIn(payload);
+      await submitExistingUserCheckInWithFallback(payload);
       goToComplete();
     } catch (error) {
       openErrorModal(
