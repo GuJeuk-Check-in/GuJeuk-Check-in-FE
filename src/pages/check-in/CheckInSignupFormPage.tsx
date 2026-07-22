@@ -3,7 +3,7 @@ import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import {
   GenderType,
   NewUserSignUpRequest,
-  signUpPublicUser,
+  submitNewUserSignUpWithFallback,
 } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
@@ -33,6 +33,7 @@ import {
 import { IoRocketOutline } from 'react-icons/io5';
 import { usePublicResidenceList } from '@entities/residence';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
 const genderOptions = [
   { label: '남자', value: 'MAN', tone: 'mint', icon: <FaMars /> },
@@ -272,13 +273,15 @@ const CheckInSignupFormPage = () => {
       birthYMD,
       residence,
       purpose: selectedPurpose,
-      visitTime: new Date().toISOString(),
+      visitTime: DateTime.now()
+        .setZone('Asia/Seoul')
+        .toISO({ includeOffset: false }),
       privacyAgreed,
     };
 
     try {
       setIsSaving(true);
-      await signUpPublicUser(payload);
+      await submitNewUserSignUpWithFallback(payload);
       goToComplete();
     } catch (error) {
       openErrorModal(
