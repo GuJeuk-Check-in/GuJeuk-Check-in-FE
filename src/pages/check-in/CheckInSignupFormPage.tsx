@@ -33,6 +33,7 @@ import {
 import { IoRocketOutline } from 'react-icons/io5';
 import { usePublicResidenceList } from '@entities/residence';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
 const genderOptions = [
   { label: '남자', value: 'MAN', tone: 'mint', icon: <FaMars /> },
@@ -272,7 +273,9 @@ const CheckInSignupFormPage = () => {
       birthYMD,
       residence,
       purpose: selectedPurpose,
-      visitTime: new Date().toISOString(),
+      visitTime: DateTime.now()
+        .setZone('Asia/Seoul')
+        .toISO({ includeOffset: false }),
       privacyAgreed,
     };
 

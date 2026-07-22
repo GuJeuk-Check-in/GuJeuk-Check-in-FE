@@ -13,6 +13,7 @@ import { FaExclamationTriangle, FaMars, FaVenus } from 'react-icons/fa';
 import { FiArrowLeft, FiMinus, FiPlus, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DateTime } from 'luxon';
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
@@ -71,7 +72,8 @@ const CheckInLoginFormPage = () => {
     }
   }, [purposes]);
 
-  const visiblePurposes = isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
+  const visiblePurposes =
+    isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -156,7 +158,9 @@ const CheckInLoginFormPage = () => {
       maleCount,
       femaleCount,
       purpose: selectedPurpose,
-      visitTime: new Date().toISOString(),
+      visitTime: DateTime.now()
+        .setZone('Asia/Seoul')
+        .toISO({ includeOffset: false }),
     };
 
     try {
@@ -178,7 +182,11 @@ const CheckInLoginFormPage = () => {
       <Panel>
         <Header>
           <TitleRow>
-            <BackButton type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
+            <BackButton
+              type="button"
+              onClick={() => navigate(-1)}
+              aria-label="뒤로 가기"
+            >
               <FiArrowLeft />
             </BackButton>
             <Title>반가워! 청소년문화의집에 다시 와줘서 고마워</Title>
