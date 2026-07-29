@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { checkUserExists } from '@entities/visit';
+import { checkUserExists, isRetryableCheckInError } from '@entities/visit';
 import { useModal } from '@shared/hooks/useModal';
 import { getApiErrorMessage } from '@shared/api';
 import { Modal } from '@shared/ui';
@@ -9,6 +9,7 @@ import { FaExclamationTriangle } from 'react-icons/fa';
 import { FiArrowRight, FiPhone, FiUser } from 'react-icons/fi';
 import { PiHandWavingBold } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
+import { createHighAvailabilityRouteState } from './checkInRouteState';
 
 const CheckInUserCheck = () => {
   const navigate = useNavigate();
@@ -96,6 +97,13 @@ const CheckInUserCheck = () => {
 
       openFirstVisitModal(trimmedName, trimmedPhone);
     } catch (error) {
+      if (isRetryableCheckInError(error)) {
+        navigate('/check-in/signup-form', {
+          state: createHighAvailabilityRouteState(trimmedName, trimmedPhone),
+        });
+        return;
+      }
+
       openWarningModal(
         '회원 확인 실패',
         getApiErrorMessage(error, '회원 정보를 확인하지 못했습니다.')

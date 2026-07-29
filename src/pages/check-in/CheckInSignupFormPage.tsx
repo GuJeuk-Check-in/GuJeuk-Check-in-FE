@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
-import { PurposeResponse, usePurposeList } from '@entities/purpose';
+import { usePurposeList } from '@entities/purpose';
 import {
   GenderType,
   NewUserSignUpRequest,
+  submitHighAvailabilityCheckIn,
   submitNewUserSignUpWithFallback,
 } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
@@ -34,6 +35,16 @@ import { IoRocketOutline } from 'react-icons/io5';
 import { usePublicResidenceList } from '@entities/residence';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import {
+  readPurposeCache,
+  readResidenceCache,
+  writePurposeCache,
+  writeResidenceCache,
+} from './checkInOptionCache';
+import {
+  CHECK_IN_SUBMISSION_MODES,
+  parseCheckInSignupRouteState,
+} from './checkInRouteState';
 
 const genderOptions = [
   { label: '남자', value: 'MAN', tone: 'mint', icon: <FaMars /> },
@@ -42,30 +53,6 @@ const genderOptions = [
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
-const PURPOSE_CACHE_KEY = 'gujeuk:last-success-purposes';
-
-const readCachedPurposes = (): PurposeResponse[] => {
-  try {
-    const cached = localStorage.getItem(PURPOSE_CACHE_KEY);
-    if (!cached) return [];
-
-    const parsed = JSON.parse(cached);
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.filter(
-      (item): item is PurposeResponse =>
-        typeof item?.id === 'number' && typeof item?.purpose === 'string'
-    );
-  } catch {
-    return [];
-  }
-};
-
-const writeCachedPurposes = (purposes: PurposeResponse[]) => {
-  try {
-    localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
-  } catch {}
-};
 
 const getDigitsOnly = (value: string, maxLength: number) =>
   value.replace(/\D/g, '').slice(0, maxLength);
@@ -103,17 +90,12 @@ const createBirthYMD = (
   )}`;
 };
 
-interface LocationState {
-  name?: string;
-  phone?: string;
-}
-
 const CheckInSignupFormPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const locationState = (location.state ?? {}) as LocationState;
-  const [name, setName] = useState(locationState.name ?? '');
-  const [phone, setPhone] = useState(locationState.phone ?? '');
+  const locationState = parseCheckInSignupRouteState(location.state);
+  const [name, setName] = useState(locationState.name);
+  const [phone, setPhone] = useState(locationState.phone);
   const [gender, setGender] = useState<GenderType | ''>('');
   const [birthYear, setBirthYear] = useState('');
   const [birthMonth, setBirthMonth] = useState('');
@@ -131,11 +113,12 @@ const CheckInSignupFormPage = () => {
     isLoading: isResidenceLoading,
     isError: isResidenceError,
   } = usePublicResidenceList();
-  const filteredResidences = residences.filter((r) =>
+  const [cachedResidences, setCachedResidences] = useState(readResidenceCache);
+  const visibleResidences = residences.length > 0 ? residences : cachedResidences;
+  const filteredResidences = visibleResidences.filter((r) =>
     matchesKoreanSearch(r.residence, residenceSearch)
   );
-  const [cachedPurposes, setCachedPurposes] =
-    useState<PurposeResponse[]>(readCachedPurposes);
+  const [cachedPurposes, setCachedPurposes] = useState(readPurposeCache);
   const modal = useModal();
   const {
     data: purposes = [],
@@ -146,12 +129,21 @@ const CheckInSignupFormPage = () => {
   useEffect(() => {
     if (purposes.length > 0) {
       setCachedPurposes(purposes);
-      writeCachedPurposes(purposes);
+      writePurposeCache(purposes);
     }
   }, [purposes]);
 
+  useEffect(() => {
+    if (residences.length > 0) {
+      setCachedResidences(residences);
+      writeResidenceCache(residences);
+    }
+  }, [residences]);
+
   const visiblePurposes =
-    isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
+    isPurposeLoading || isPurposeError || purposes.length === 0
+      ? cachedPurposes
+      : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -281,7 +273,14 @@ const CheckInSignupFormPage = () => {
 
     try {
       setIsSaving(true);
-      await submitNewUserSignUpWithFallback(payload);
+      if (
+        locationState.submissionMode ===
+        CHECK_IN_SUBMISSION_MODES.HIGH_AVAILABILITY
+      ) {
+        await submitHighAvailabilityCheckIn(payload);
+      } else {
+        await submitNewUserSignUpWithFallback(payload);
+      }
       goToComplete();
     } catch (error) {
       openErrorModal(
@@ -578,13 +577,7 @@ const CheckInSignupFormPage = () => {
                 </ResidenceSearchRow>
               </ResidenceHeader>
               <ResidenceList>
-                {isResidenceLoading ? (
-                  <ResidenceNotice>거주지를 불러오는 중입니다.</ResidenceNotice>
-                ) : isResidenceError ? (
-                  <ResidenceNotice>
-                    거주지를 불러오지 못했습니다.
-                  </ResidenceNotice>
-                ) : filteredResidences.length > 0 ? (
+                {filteredResidences.length > 0 ? (
                   filteredResidences.map((r) => (
                     <ResidenceItem
                       key={r.id}
@@ -599,6 +592,12 @@ const CheckInSignupFormPage = () => {
                       {residence === r.residence && <ResidenceItemDot />}
                     </ResidenceItem>
                   ))
+                ) : isResidenceLoading ? (
+                  <ResidenceNotice>거주지를 불러오는 중입니다.</ResidenceNotice>
+                ) : isResidenceError ? (
+                  <ResidenceNotice>
+                    거주지를 불러오지 못했습니다.
+                  </ResidenceNotice>
                 ) : (
                   <ResidenceNotice>검색된 거주지가 없습니다.</ResidenceNotice>
                 )}
@@ -645,6 +644,11 @@ const TitleRow = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 2.4rem;
+
+  @media (max-width: 560px) {
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
 `;
 
 const Title = styled.h1`
@@ -895,6 +899,11 @@ const CounterCard = styled.div<{ $tone: Tone }>`
   justify-content: space-between;
   gap: 1rem;
   padding: 0 1.5rem;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    padding: 0 0.9rem;
+  }
 `;
 
 const CounterLabel = styled.div`
@@ -902,7 +911,9 @@ const CounterLabel = styled.div`
   align-items: center;
   gap: 0.55rem;
   color: #222831;
+  flex-shrink: 0;
   font-weight: 700;
+  white-space: nowrap;
 
   svg {
     color: #00a89d;
@@ -914,6 +925,10 @@ const CounterControls = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+  }
 `;
 
 const CounterButton = styled.button<{ $primary?: boolean }>`
@@ -1028,6 +1043,11 @@ const BackButton = styled.button`
 
   &:hover {
     background: #f0f4fb;
+  }
+
+  @media (max-width: 560px) {
+    top: 0;
+    transform: none;
   }
 `;
 
