@@ -1,11 +1,13 @@
 import type {
   ExistingUserCheckInRequest,
   NewUserSignUpRequest,
+  UnknownUserHighAvailabilityQueueRequest,
 } from './types';
 
 export const CHECK_IN_QUEUE_KINDS = {
   EXISTING_USER_CHECK_IN: 'existing-user-check-in',
   NEW_USER_SIGN_UP: 'new-user-sign-up',
+  HIGH_AVAILABILITY_CHECK_IN: 'high-availability-check-in',
 } as const;
 
 export type CheckInQueueKind =
@@ -30,9 +32,15 @@ export type NewUserSignUpQueuePayload = {
   readonly payload: NewUserSignUpRequest;
 };
 
+export type HighAvailabilityCheckInQueuePayload = {
+  readonly kind: typeof CHECK_IN_QUEUE_KINDS.HIGH_AVAILABILITY_CHECK_IN;
+  readonly payload: UnknownUserHighAvailabilityQueueRequest;
+};
+
 export type CheckInQueuePayload =
   | ExistingUserCheckInQueuePayload
-  | NewUserSignUpQueuePayload;
+  | NewUserSignUpQueuePayload
+  | HighAvailabilityCheckInQueuePayload;
 
 export type CheckInQueueRecord = CheckInQueuePayload & {
   readonly id: string;
