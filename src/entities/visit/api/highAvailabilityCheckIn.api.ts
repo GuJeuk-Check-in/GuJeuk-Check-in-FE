@@ -13,5 +13,5 @@ export const createExistingUserHighAvailabilityLogs = async (
 export const createUnknownUserHighAvailabilitySignUps = async (
   payload: readonly UnknownUserHighAvailabilitySignUpRequest[]
 ): Promise<void> => {
-  await publicAxiosInstance.post('/user/ha-sing-up', payload);
+  await publicAxiosInstance.post('/user/ha-sign-up', payload);
 };
