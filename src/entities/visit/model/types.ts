@@ -46,6 +46,39 @@ export interface NewUserSignUpRequest {
   visitTime: string;
 }
 
+export const READY_HEALTH_VALUES = {
+  UP: 'UP',
+  DOWN: 'DOWN',
+} as const;
+
+export type ReadyHealthValue =
+  (typeof READY_HEALTH_VALUES)[keyof typeof READY_HEALTH_VALUES];
+
+export type ReadyHealthResponse = {
+  readonly status: ReadyHealthValue;
+  readonly db: ReadyHealthValue;
+};
+
+export type UnknownUserHighAvailabilityQueueRequest = Readonly<
+  NewUserSignUpRequest & {
+    clientRecordId: string;
+  }
+>;
+
+export type ExistingUserHighAvailabilityLogRequest = {
+  readonly id: number;
+  readonly purpose: string;
+  readonly maleCount: number;
+  readonly femaleCount: number;
+  readonly visitTime: string;
+};
+
+export type UnknownUserHighAvailabilitySignUpRequest = Readonly<
+  NewUserSignUpRequest & {
+    age: AgeType;
+  }
+>;
+
 export interface UserVisit {
   id: number;
   name: string | null;
