@@ -26,7 +26,7 @@ import {
 } from './highAvailabilityPayload';
 import type {
   ExistingUserHighAvailabilityLogRequest,
-  NewUserSignUpRequest,
+  UnknownUserHighAvailabilitySignUpRequest,
 } from './types';
 
 const DRAIN_BATCH_LIMIT = 5;
@@ -64,13 +64,13 @@ const assertNever = (value: never): never => {
   throw new UnexpectedCheckInQueueKindError();
 };
 
-const createPreparedBatches = (
+const createPreparedBatches = async (
   records: readonly CheckInQueueRecord[]
-): readonly PreparedBatch[] => {
+): Promise<readonly PreparedBatch[]> => {
   const existingRecords: CheckInQueueRecord[] = [];
   const existingPayloads: ExistingUserHighAvailabilityLogRequest[] = [];
   const unknownRecords: CheckInQueueRecord[] = [];
-  const unknownPayloads: NewUserSignUpRequest[] = [];
+  const unknownPayloads: UnknownUserHighAvailabilitySignUpRequest[] = [];
 
   for (const record of records) {
     switch (record.kind) {
@@ -82,8 +82,23 @@ const createPreparedBatches = (
         break;
       case CHECK_IN_QUEUE_KINDS.NEW_USER_SIGN_UP:
       case CHECK_IN_QUEUE_KINDS.HIGH_AVAILABILITY_CHECK_IN:
-        unknownRecords.push(record);
-        unknownPayloads.push(record.payload);
+        try {
+          unknownPayloads.push(
+            createUnknownUserHighAvailabilityPayload(record.payload)
+          );
+          unknownRecords.push(record);
+        } catch (error) {
+          if (!(error instanceof HighAvailabilityPayloadContractError)) {
+            throw error;
+          }
+
+          await markCheckInQueueRecordFailed(
+            record,
+            getCheckInQueueErrorMessage(error),
+            null,
+            Date.now()
+          );
+        }
         break;
       default:
         assertNever(record);
@@ -103,9 +118,7 @@ const createPreparedBatches = (
     batches.push({
       records: unknownRecords,
       send: () =>
-        createUnknownUserHighAvailabilitySignUps(
-          unknownPayloads.map(createUnknownUserHighAvailabilityPayload)
-        ),
+        createUnknownUserHighAvailabilitySignUps(unknownPayloads),
     });
   }
 
@@ -137,7 +150,6 @@ const runBatch = async (batch: PreparedBatch): Promise<BatchDrainResult> => {
     if (
       !serverAccepted &&
       !axios.isAxiosError(error) &&
-      !(error instanceof HighAvailabilityPayloadContractError) &&
       !(error instanceof DOMException)
     ) {
       throw error;
@@ -170,7 +182,7 @@ const runDrain = async (): Promise<CheckInQueueDrainResult> => {
     Date.now(),
     DRAIN_BATCH_LIMIT
   );
-  const batches = createPreparedBatches(dueRecords);
+  const batches = await createPreparedBatches(dueRecords);
   let sentCount = 0;
   let stoppedOnError = false;
 
