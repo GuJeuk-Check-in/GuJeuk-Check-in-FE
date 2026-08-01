@@ -1,6 +1,12 @@
 import axios from 'axios';
 
 const RETRYABLE_HTTP_STATUS_START = 500;
+const RETRYABLE_AXIOS_ERROR_CODES = new Set([
+  'ECONNABORTED',
+  'ECONNRESET',
+  'ERR_BAD_RESPONSE',
+  'ERR_NETWORK',
+]);
 
 type ApiErrorBody = {
   readonly description?: string;
@@ -14,12 +20,18 @@ export const isRetryableCheckInError = (error: unknown): boolean => {
 
   const status = error.response?.status;
 
-  if (status !== undefined) {
-    return status >= RETRYABLE_HTTP_STATUS_START;
+  if (
+    error.code &&
+    RETRYABLE_AXIOS_ERROR_CODES.has(error.code) &&
+    (status === undefined ||
+      status < 400 ||
+      status >= RETRYABLE_HTTP_STATUS_START)
+  ) {
+    return true;
   }
 
-  if (error.code === 'ECONNABORTED' || error.code === 'ERR_NETWORK') {
-    return true;
+  if (status !== undefined) {
+    return status >= RETRYABLE_HTTP_STATUS_START;
   }
 
   if (error.request !== undefined) {
