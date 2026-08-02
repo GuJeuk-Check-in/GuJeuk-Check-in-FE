@@ -4,8 +4,8 @@ import type {
   UnknownUserHighAvailabilitySignUpRequest,
 } from '../model/types';
 
-export const createExistingUserHighAvailabilityLogs = async (
-  payload: readonly ExistingUserHighAvailabilityLogRequest[]
+export const createExistingUserHighAvailabilityLog = async (
+  payload: ExistingUserHighAvailabilityLogRequest
 ): Promise<void> => {
   await publicAxiosInstance.post('/user/ha-log', payload);
 };

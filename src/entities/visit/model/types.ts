@@ -66,6 +66,7 @@ export type UnknownUserHighAvailabilityQueueRequest = Readonly<
 >;
 
 export type ExistingUserHighAvailabilityLogRequest = {
+  readonly clientRecordId: string;
   readonly id: number;
   readonly purpose: string;
   readonly maleCount: number;
