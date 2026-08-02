@@ -76,6 +76,7 @@ export type ExistingUserHighAvailabilityLogRequest = {
 
 export type UnknownUserHighAvailabilitySignUpRequest = Readonly<
   NewUserSignUpRequest & {
+    clientRecordId: string;
     age: AgeType;
   }
 >;

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {
   createExistingUserHighAvailabilityLog,
-  createUnknownUserHighAvailabilitySignUps,
+  createUnknownUserHighAvailabilitySignUp,
 } from '../api/highAvailabilityCheckIn.api';
 import {
   getCheckInQueueErrorMessage,
@@ -24,7 +24,6 @@ import {
   createUnknownUserHighAvailabilityPayload,
   HighAvailabilityPayloadContractError,
 } from './highAvailabilityPayload';
-import type { UnknownUserHighAvailabilitySignUpRequest } from './types';
 
 const DRAIN_BATCH_LIMIT = 5;
 const LOCKED_DRAIN_RESULT: CheckInQueueDrainResult = {
@@ -65,8 +64,6 @@ const createPreparedBatches = async (
   records: readonly CheckInQueueRecord[]
 ): Promise<readonly PreparedBatch[]> => {
   const batches: PreparedBatch[] = [];
-  const unknownRecords: CheckInQueueRecord[] = [];
-  const unknownPayloads: UnknownUserHighAvailabilitySignUpRequest[] = [];
 
   for (const record of records) {
     switch (record.kind) {
@@ -85,10 +82,15 @@ const createPreparedBatches = async (
       case CHECK_IN_QUEUE_KINDS.NEW_USER_SIGN_UP:
       case CHECK_IN_QUEUE_KINDS.HIGH_AVAILABILITY_CHECK_IN:
         try {
-          unknownPayloads.push(
-            createUnknownUserHighAvailabilityPayload(record.payload)
+          const payload = createUnknownUserHighAvailabilityPayload(
+            record.id,
+            record.payload
           );
-          unknownRecords.push(record);
+
+          batches.push({
+            records: [record],
+            send: () => createUnknownUserHighAvailabilitySignUp(payload),
+          });
         } catch (error) {
           if (!(error instanceof HighAvailabilityPayloadContractError)) {
             throw error;
@@ -105,13 +107,6 @@ const createPreparedBatches = async (
       default:
         assertNever(record);
     }
-  }
-
-  if (unknownRecords.length > 0) {
-    batches.push({
-      records: unknownRecords,
-      send: () => createUnknownUserHighAvailabilitySignUps(unknownPayloads),
-    });
   }
 
   return batches.sort((left, right) => {

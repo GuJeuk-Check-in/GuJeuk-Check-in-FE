@@ -49,6 +49,7 @@ export const createExistingUserHighAvailabilityPayload = (
 });
 
 export const createUnknownUserHighAvailabilityPayload = (
+  clientRecordId: string,
   payload: NewUserSignUpRequest
 ): UnknownUserHighAvailabilitySignUpRequest => {
   const birthYear = parseYear(payload.birthYMD);
@@ -66,6 +67,7 @@ export const createUnknownUserHighAvailabilityPayload = (
   }
 
   return {
+    clientRecordId,
     name: payload.name,
     phone: payload.phone,
     gender: payload.gender,
