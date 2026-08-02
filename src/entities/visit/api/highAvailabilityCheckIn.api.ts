@@ -4,14 +4,14 @@ import type {
   UnknownUserHighAvailabilitySignUpRequest,
 } from '../model/types';
 
-export const createExistingUserHighAvailabilityLogs = async (
-  payload: readonly ExistingUserHighAvailabilityLogRequest[]
+export const createExistingUserHighAvailabilityLog = async (
+  payload: ExistingUserHighAvailabilityLogRequest
 ): Promise<void> => {
   await publicAxiosInstance.post('/user/ha-log', payload);
 };
 
-export const createUnknownUserHighAvailabilitySignUps = async (
-  payload: readonly UnknownUserHighAvailabilitySignUpRequest[]
+export const createUnknownUserHighAvailabilitySignUp = async (
+  payload: UnknownUserHighAvailabilitySignUpRequest
 ): Promise<void> => {
   await publicAxiosInstance.post('/user/ha-sign-up', payload);
 };

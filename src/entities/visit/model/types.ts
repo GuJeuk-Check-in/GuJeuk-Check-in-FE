@@ -66,6 +66,7 @@ export type UnknownUserHighAvailabilityQueueRequest = Readonly<
 >;
 
 export type ExistingUserHighAvailabilityLogRequest = {
+  readonly clientRecordId: string;
   readonly id: number;
   readonly purpose: string;
   readonly maleCount: number;
@@ -75,6 +76,7 @@ export type ExistingUserHighAvailabilityLogRequest = {
 
 export type UnknownUserHighAvailabilitySignUpRequest = Readonly<
   NewUserSignUpRequest & {
+    clientRecordId: string;
     age: AgeType;
   }
 >;

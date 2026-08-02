@@ -37,8 +37,10 @@ const getAgeType = (koreanAge: number): AgeType => {
 };
 
 export const createExistingUserHighAvailabilityPayload = (
+  clientRecordId: string,
   payload: ExistingUserCheckInRequest
 ): ExistingUserHighAvailabilityLogRequest => ({
+  clientRecordId,
   id: payload.userId,
   purpose: payload.purpose,
   maleCount: payload.maleCount,
@@ -47,6 +49,7 @@ export const createExistingUserHighAvailabilityPayload = (
 });
 
 export const createUnknownUserHighAvailabilityPayload = (
+  clientRecordId: string,
   payload: NewUserSignUpRequest
 ): UnknownUserHighAvailabilitySignUpRequest => {
   const birthYear = parseYear(payload.birthYMD);
@@ -64,6 +67,7 @@ export const createUnknownUserHighAvailabilityPayload = (
   }
 
   return {
+    clientRecordId,
     name: payload.name,
     phone: payload.phone,
     gender: payload.gender,
