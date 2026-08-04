@@ -1,8 +1,13 @@
-import { publicAxiosInstance } from '@shared/api';
+import axios from 'axios';
 import {
   READY_HEALTH_VALUES,
   type ReadyHealthResponse,
 } from '../model/types';
+
+const readyHealthAxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10000,
+});
 
 const isRecordObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -28,8 +33,9 @@ const parseReadyHealthResponse = (value: unknown): ReadyHealthResponse => {
 };
 
 export const fetchReadyHealth = async (): Promise<ReadyHealthResponse> => {
-  const response = await publicAxiosInstance.get<unknown>(
-    '/common/health/ready'
+  const response = await readyHealthAxiosInstance.get<unknown>(
+    '/common/health/ready',
+    { params: { checkedAt: Date.now() } }
   );
 
   return parseReadyHealthResponse(response.data);
