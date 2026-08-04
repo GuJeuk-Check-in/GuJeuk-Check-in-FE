@@ -29,7 +29,16 @@ const parseReadyHealthResponse = (value: unknown): ReadyHealthResponse => {
 
 export const fetchReadyHealth = async (): Promise<ReadyHealthResponse> => {
   const response = await publicAxiosInstance.get<unknown>(
-    '/common/health/ready'
+    '/common/health/ready',
+    {
+      headers: {
+        'Cache-Control': 'no-cache',
+        Pragma: 'no-cache',
+      },
+      params: {
+        checkedAt: Date.now(),
+      },
+    }
   );
 
   return parseReadyHealthResponse(response.data);
