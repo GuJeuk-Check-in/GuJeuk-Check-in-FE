@@ -11,6 +11,7 @@ import {
 import { useEffect } from 'react';
 
 const READY_HEALTH_POLL_INTERVAL_MS = 60_000;
+const READY_HEALTH_RECOVERY_POLL_INTERVAL_MS = 5_000;
 const REMOTE_SYNC_QUERY_KEYS = [
   ['purposeList'],
   ['residenceList'],
@@ -44,12 +45,33 @@ export const useReadyHealthMonitor = (): void => {
     let requestInFlight = false;
     let disposed = false;
     let wasReadyForRemoteSync = false;
+    let pollIntervalMs = READY_HEALTH_POLL_INTERVAL_MS;
+    let timeoutId: number | null = null;
+
+    const clearScheduledCheck = () => {
+      if (timeoutId === null) return;
+
+      window.clearTimeout(timeoutId);
+      timeoutId = null;
+    };
+
+    const scheduleNextCheck = () => {
+      clearScheduledCheck();
+
+      if (disposed) return;
+
+      timeoutId = window.setTimeout(
+        () => void checkReadiness(),
+        pollIntervalMs
+      );
+    };
 
     const applyReadyState = async (readyForRemoteSync: boolean) => {
       if (disposed) return;
 
       if (!readyForRemoteSync) {
         wasReadyForRemoteSync = false;
+        pollIntervalMs = READY_HEALTH_RECOVERY_POLL_INTERVAL_MS;
         setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.UNREADY);
         await cancelRemoteSyncQueries(queryClient);
         return;
@@ -57,6 +79,7 @@ export const useReadyHealthMonitor = (): void => {
 
       const recovered = !wasReadyForRemoteSync;
       wasReadyForRemoteSync = true;
+      pollIntervalMs = READY_HEALTH_POLL_INTERVAL_MS;
       setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.READY);
 
       if (recovered) {
@@ -68,6 +91,7 @@ export const useReadyHealthMonitor = (): void => {
 
     const checkReadiness = async (): Promise<void> => {
       if (requestInFlight || disposed) return;
+      clearScheduledCheck();
       requestInFlight = true;
 
       try {
@@ -75,20 +99,17 @@ export const useReadyHealthMonitor = (): void => {
         await applyReadyState(health !== null && isReadyForRemoteSync(health));
       } finally {
         requestInFlight = false;
+        scheduleNextCheck();
       }
     };
 
     void checkReadiness();
-    const intervalId = window.setInterval(
-      () => void checkReadiness(),
-      READY_HEALTH_POLL_INTERVAL_MS
-    );
     const checkOnOnline = () => void checkReadiness();
     window.addEventListener('online', checkOnOnline);
 
     return () => {
       disposed = true;
-      window.clearInterval(intervalId);
+      clearScheduledCheck();
       window.removeEventListener('online', checkOnOnline);
     };
   }, [queryClient]);
