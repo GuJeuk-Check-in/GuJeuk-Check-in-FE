@@ -73,7 +73,9 @@ const CheckInLoginFormPage = () => {
   }, [purposes]);
 
   const visiblePurposes =
-    isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
+    isPurposeLoading || isPurposeError || purposes.length === 0
+      ? cachedPurposes
+      : purposes;
 
   const purposeOptions = useMemo(
     () =>
