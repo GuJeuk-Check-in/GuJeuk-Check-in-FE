@@ -3,26 +3,79 @@ import {
   fetchReadyHealth,
   isReadyForRemoteSync,
 } from '@entities/visit';
+import { useQueryClient, type QueryClient } from '@tanstack/react-query';
+import {
+  REMOTE_SYNC_AVAILABILITY,
+  setRemoteSyncAvailability,
+} from '@shared/lib';
 import { useEffect } from 'react';
 
 const READY_HEALTH_POLL_INTERVAL_MS = 60_000;
+const REMOTE_SYNC_QUERY_KEYS = [
+  ['purposeList'],
+  ['residenceList'],
+  ['publicResidenceList'],
+] as const;
+
+const cancelRemoteSyncQueries = async (
+  queryClient: QueryClient
+): Promise<void> => {
+  await Promise.all(
+    REMOTE_SYNC_QUERY_KEYS.map((queryKey) =>
+      queryClient.cancelQueries({ queryKey })
+    )
+  );
+};
+
+const invalidateRemoteSyncQueries = async (
+  queryClient: QueryClient
+): Promise<void> => {
+  await Promise.all(
+    REMOTE_SYNC_QUERY_KEYS.map((queryKey) =>
+      queryClient.invalidateQueries({ queryKey })
+    )
+  );
+};
 
 export const useReadyHealthMonitor = (): void => {
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     let requestInFlight = false;
     let disposed = false;
+    let wasReadyForRemoteSync = false;
+
+    const applyReadyState = async (readyForRemoteSync: boolean) => {
+      if (disposed) return;
+
+      if (!readyForRemoteSync) {
+        wasReadyForRemoteSync = false;
+        setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.UNREADY);
+        await cancelRemoteSyncQueries(queryClient);
+        return;
+      }
+
+      const recovered = !wasReadyForRemoteSync;
+      wasReadyForRemoteSync = true;
+      setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.READY);
+
+      if (recovered) {
+        await invalidateRemoteSyncQueries(queryClient);
+      }
+
+      await drainCheckInQueue().catch(() => undefined);
+    };
 
     const checkReadiness = async (): Promise<void> => {
       if (requestInFlight || disposed) return;
       requestInFlight = true;
 
-      const health = await fetchReadyHealth().catch(() => null);
-
-      if (health && !disposed && isReadyForRemoteSync(health)) {
-        await drainCheckInQueue().catch(() => undefined);
+      try {
+        const health = await fetchReadyHealth().catch(() => null);
+        await applyReadyState(health !== null && isReadyForRemoteSync(health));
+      } finally {
+        requestInFlight = false;
       }
-
-      requestInFlight = false;
     };
 
     void checkReadiness();
@@ -38,5 +91,5 @@ export const useReadyHealthMonitor = (): void => {
       window.clearInterval(intervalId);
       window.removeEventListener('online', checkOnOnline);
     };
-  }, []);
+  }, [queryClient]);
 };
