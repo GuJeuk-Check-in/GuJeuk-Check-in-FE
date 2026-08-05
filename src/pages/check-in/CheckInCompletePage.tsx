@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
+import { completeCheckInFunnelSession } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { useEffect } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { createCheckInHomeRouteState } from './checkInRouteState';
 
 const AUTO_REDIRECT_MS = 3000;
 
@@ -10,8 +12,13 @@ const CheckInCompletePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    completeCheckInFunnelSession();
+
     const timer = setTimeout(() => {
-      navigate('/check-in', { replace: true });
+      navigate('/check-in', {
+        replace: true,
+        state: createCheckInHomeRouteState(),
+      });
     }, AUTO_REDIRECT_MS);
 
     return () => clearTimeout(timer);
@@ -30,7 +37,15 @@ const CheckInCompletePage = () => {
         <ProgressBar aria-hidden="true">
           <ProgressFill />
         </ProgressBar>
-        <DoneButton type="button" onClick={() => navigate('/check-in', { replace: true })}>
+        <DoneButton
+          type="button"
+          onClick={() =>
+            navigate('/check-in', {
+              replace: true,
+              state: createCheckInHomeRouteState(),
+            })
+          }
+        >
           다 했어요! 🎉
         </DoneButton>
       </Panel>

@@ -1,8 +1,11 @@
 import styled from '@emotion/styled';
 import { usePurposeList } from '@entities/purpose';
 import {
+  CHECK_IN_FUNNEL_EVENT_NAMES,
   GenderType,
   NewUserSignUpRequest,
+  getAgeGroupFromBirthYMD,
+  recordCheckInFunnelEvent,
   submitHighAvailabilityCheckIn,
   submitNewUserSignUpWithFallback,
 } from '@entities/visit';
@@ -125,6 +128,13 @@ const CheckInSignupFormPage = () => {
     isLoading: isPurposeLoading,
     isError: isPurposeError,
   } = usePurposeList();
+
+  useEffect(() => {
+    recordCheckInFunnelEvent({
+      eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_FORM_VIEW,
+      isExistingUser: false,
+    });
+  }, []);
 
   useEffect(() => {
     if (purposes.length > 0) {
@@ -270,8 +280,16 @@ const CheckInSignupFormPage = () => {
         .toISO({ includeOffset: false }),
       privacyAgreed,
     };
+    const ageGroup = getAgeGroupFromBirthYMD(birthYMD, payload.visitTime);
 
     try {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_SUBMITTED,
+        ageGroup,
+        isExistingUser: false,
+        visitCountBucket: 'FIRST_VISIT',
+        purpose: selectedPurpose,
+      });
       setIsSaving(true);
       if (
         locationState.submissionMode ===
@@ -281,8 +299,23 @@ const CheckInSignupFormPage = () => {
       } else {
         await submitNewUserSignUpWithFallback(payload);
       }
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_SUCCEEDED,
+        ageGroup,
+        isExistingUser: false,
+        visitCountBucket: 'FIRST_VISIT',
+        purpose: selectedPurpose,
+      });
       goToComplete();
     } catch (error) {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
+        ageGroup,
+        isExistingUser: false,
+        visitCountBucket: 'FIRST_VISIT',
+        purpose: selectedPurpose,
+        failureReason: 'new_user_check_in_failed',
+      });
       openErrorModal(
         getApiErrorMessage(error, '체크인 정보를 서버에 전송하지 못했습니다.')
       );
@@ -325,7 +358,15 @@ const CheckInSignupFormPage = () => {
                     type="button"
                     $tone={option.tone}
                     $selected={purposeIndex === index}
-                    onClick={() => setPurposeIndex(index)}
+                    onClick={() => {
+                      setPurposeIndex(index);
+                      recordCheckInFunnelEvent({
+                        eventName:
+                          CHECK_IN_FUNNEL_EVENT_NAMES.PURPOSE_SELECTED,
+                        isExistingUser: false,
+                        purpose: option.label,
+                      });
+                    }}
                   >
                     {option.label}
                   </PurposeCard>

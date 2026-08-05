@@ -1,17 +1,32 @@
 import styled from '@emotion/styled';
 import { Logo } from '@shared/assets';
 import { PasswordBackground } from '@shared/ui/Background';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { fetchReadyHealth, isReadyForRemoteSync } from '@entities/visit';
-import { createHighAvailabilityRouteState } from './checkInRouteState';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import {
+  beginCheckInFunnelSession,
+  ensureCheckInFunnelSession,
+  fetchReadyHealth,
+  isReadyForRemoteSync,
+} from '@entities/visit';
+import {
+  createHighAvailabilityRouteState,
+  shouldSkipCheckInFunnelPageView,
+} from './checkInRouteState';
 
 const CheckInHome = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
+
+  useEffect(() => {
+    if (shouldSkipCheckInFunnelPageView(location.state)) return;
+    beginCheckInFunnelSession();
+  }, [location.state]);
 
   const handleStartCheckIn = async () => {
     if (isCheckingReadiness) return;
+    ensureCheckInFunnelSession();
     setIsCheckingReadiness(true);
 
     const health = await fetchReadyHealth().catch(() => null);
