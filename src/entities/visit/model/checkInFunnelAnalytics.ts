@@ -124,6 +124,11 @@ const appendEvent = (event: CheckInFunnelEventRecord): void => {
   writeStoredCheckInFunnelEvents([...readStoredCheckInFunnelEvents(), event]);
 };
 
+const hasSessionTimedOut = (
+  session: ActiveCheckInFunnelSession,
+  nowMs: number
+): boolean => nowMs - session.startedAtMs > CHECK_IN_FUNNEL_TIMEOUT_MS;
+
 const createEventRecord = (
   session: ActiveCheckInFunnelSession,
   input: RecordCheckInFunnelEventInput,
@@ -159,19 +164,9 @@ const mergeContext = (
   purpose: input.purpose ?? current.purpose,
 });
 
-export const beginCheckInFunnelSession = (): void => {
-  const previousSession = readActiveCheckInFunnelSession();
-
-  if (previousSession) {
-    appendEvent(
-      createEventRecord(previousSession, {
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_ABANDONED,
-        failureReason: 'new_session_started',
-      })
-    );
-  }
-
-  const nowMs = Date.now();
+const writeNewCheckInFunnelSession = (
+  nowMs: number
+): ActiveCheckInFunnelSession => {
   const session: ActiveCheckInFunnelSession = {
     sessionId: createSessionId(),
     startedAt: new Date(nowMs).toISOString(),
@@ -187,11 +182,71 @@ export const beginCheckInFunnelSession = (): void => {
       nowMs
     )
   );
+
+  return session;
+};
+
+const recordSessionAbandoned = (
+  session: ActiveCheckInFunnelSession,
+  failureReason: string,
+  nowMs = Date.now()
+): void => {
+  appendEvent(
+    createEventRecord(
+      session,
+      {
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_ABANDONED,
+        failureReason,
+      },
+      nowMs
+    )
+  );
+  clearActiveCheckInFunnelSession();
+};
+
+const recordEventForSession = (
+  session: ActiveCheckInFunnelSession,
+  input: RecordCheckInFunnelEventInput,
+  nowMs: number
+): void => {
+  const event = createEventRecord(session, input, nowMs);
+  appendEvent(event);
+
+  writeActiveCheckInFunnelSession({
+    ...session,
+    context: mergeContext(parseContext(session.context), input),
+  });
+};
+
+const shouldRecordEventAfterTimeout = (
+  eventName: CheckInFunnelEventName
+): boolean =>
+  eventName !== CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_COMPLETED_VIEW &&
+  eventName !== CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_ABANDONED;
+
+export const beginCheckInFunnelSession = (): void => {
+  const previousSession = readActiveCheckInFunnelSession();
+  const nowMs = Date.now();
+
+  if (previousSession) {
+    recordSessionAbandoned(previousSession, 'new_session_started', nowMs);
+  }
+
+  writeNewCheckInFunnelSession(nowMs);
 };
 
 export const ensureCheckInFunnelSession = (): void => {
-  if (readActiveCheckInFunnelSession()) return;
-  beginCheckInFunnelSession();
+  const session = readActiveCheckInFunnelSession();
+  if (!session) {
+    beginCheckInFunnelSession();
+    return;
+  }
+
+  const nowMs = Date.now();
+  if (!hasSessionTimedOut(session, nowMs)) return;
+
+  recordSessionAbandoned(session, 'timeout_over_7m', nowMs);
+  writeNewCheckInFunnelSession(nowMs);
 };
 
 export const recordCheckInFunnelEvent = (
@@ -202,28 +257,16 @@ export const recordCheckInFunnelEvent = (
 
   const nowMs = Date.now();
 
-  if (nowMs - session.startedAtMs > CHECK_IN_FUNNEL_TIMEOUT_MS) {
-    appendEvent(
-      createEventRecord(
-        session,
-        {
-          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_ABANDONED,
-          failureReason: 'timeout_over_7m',
-        },
-        nowMs
-      )
-    );
-    clearActiveCheckInFunnelSession();
+  if (hasSessionTimedOut(session, nowMs)) {
+    recordSessionAbandoned(session, 'timeout_over_7m', nowMs);
+    if (!shouldRecordEventAfterTimeout(input.eventName)) return;
+
+    const newSession = writeNewCheckInFunnelSession(nowMs);
+    recordEventForSession(newSession, input, nowMs);
     return;
   }
 
-  const event = createEventRecord(session, input, nowMs);
-  appendEvent(event);
-
-  writeActiveCheckInFunnelSession({
-    ...session,
-    context: mergeContext(parseContext(session.context), input),
-  });
+  recordEventForSession(session, input, nowMs);
 };
 
 export const completeCheckInFunnelSession = (): void => {
