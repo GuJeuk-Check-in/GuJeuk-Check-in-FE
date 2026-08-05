@@ -4,6 +4,7 @@ export * from './api/readyHealth.api';
 export * from './api/highAvailabilityCheckIn.api';
 export * from './model/checkInQueueDrain';
 export * from './model/checkInQueueEvents';
+export * from './model/checkInFunnelAnalytics';
 export * from './model/submitPublicCheckInWithFallback';
 export * from './model/submitHighAvailabilityCheckIn';
 export * from './model/checkInRetryPolicy';

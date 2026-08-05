@@ -1,10 +1,15 @@
 import styled from '@emotion/styled';
-import { checkUserExists, isRetryableCheckInError } from '@entities/visit';
+import {
+  CHECK_IN_FUNNEL_EVENT_NAMES,
+  checkUserExists,
+  isRetryableCheckInError,
+  recordCheckInFunnelEvent,
+} from '@entities/visit';
 import { useModal } from '@shared/hooks/useModal';
 import { getApiErrorMessage } from '@shared/api';
 import { Modal } from '@shared/ui';
 import { PasswordBackground } from '@shared/ui/Background';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { FiArrowRight, FiPhone, FiUser } from 'react-icons/fi';
 import { PiHandWavingBold } from 'react-icons/pi';
@@ -16,7 +21,19 @@ const CheckInUserCheck = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isChecking, setIsChecking] = useState(false);
+  const hasRecordedPhoneInputStartedRef = useRef(false);
   const modal = useModal();
+
+  const handlePhoneChange = (value: string) => {
+    if (!hasRecordedPhoneInputStartedRef.current) {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.PHONE_INPUT_STARTED,
+      });
+      hasRecordedPhoneInputStartedRef.current = true;
+    }
+
+    setPhone(value);
+  };
 
   const openWarningModal = (title: string, subtitle: string) => {
     modal.openModal({
@@ -46,6 +63,10 @@ const CheckInUserCheck = () => {
           bgColor: '#145cad',
           onClick: () => {
             modal.closeModal();
+            recordCheckInFunnelEvent({
+              eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
+              isExistingUser: false,
+            });
             navigate('/check-in/signup-form', {
               state: {
                 name: checkedName,
@@ -65,11 +86,18 @@ const CheckInUserCheck = () => {
     const trimmedPhone = phone.trim();
 
     if (!trimmedName || !trimmedPhone) {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+        failureReason: 'validation_missing_identity',
+      });
       openWarningModal('입력 확인', '이름과 전화번호를 모두 입력해주세요.');
       return;
     }
 
     try {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUBMITTED,
+      });
       setIsChecking(true);
       const response = await checkUserExists({
         name: trimmedName,
@@ -78,6 +106,10 @@ const CheckInUserCheck = () => {
 
       if (response.userExists) {
         if (typeof response.userId !== 'number') {
+          recordCheckInFunnelEvent({
+            eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+            failureReason: 'missing_existing_user_id',
+          });
           openWarningModal(
             '회원 확인 실패',
             '회원 정보를 확인하지 못했습니다. 다시 시도해주세요.'
@@ -85,6 +117,11 @@ const CheckInUserCheck = () => {
           return;
         }
 
+        recordCheckInFunnelEvent({
+          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
+          userId: response.userId,
+          isExistingUser: true,
+        });
         navigate('/check-in/login-form', {
           state: {
             userId: response.userId,
@@ -98,12 +135,20 @@ const CheckInUserCheck = () => {
       openFirstVisitModal(trimmedName, trimmedPhone);
     } catch (error) {
       if (isRetryableCheckInError(error)) {
+        recordCheckInFunnelEvent({
+          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+          failureReason: 'user_check_remote_unavailable',
+        });
         navigate('/check-in/signup-form', {
           state: createHighAvailabilityRouteState(trimmedName, trimmedPhone),
         });
         return;
       }
 
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+        failureReason: 'user_check_request_failed',
+      });
       openWarningModal(
         '회원 확인 실패',
         getApiErrorMessage(error, '회원 정보를 확인하지 못했습니다.')
@@ -142,7 +187,7 @@ const CheckInUserCheck = () => {
             </FieldLabel>
             <TextInput
               value={phone}
-              onChange={(event) => setPhone(event.target.value)}
+              onChange={(event) => handlePhoneChange(event.target.value)}
               placeholder="010-0000-0000"
             />
           </FieldBlock>

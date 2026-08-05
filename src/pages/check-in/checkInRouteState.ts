@@ -12,6 +12,10 @@ export type CheckInSignupRouteState = {
   readonly submissionMode: CheckInSubmissionMode;
 };
 
+export type CheckInHomeRouteState = {
+  readonly skipCheckInFunnelPageView: boolean;
+};
+
 const isRecordObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
@@ -44,3 +48,10 @@ export const createHighAvailabilityRouteState = (
   phone,
   submissionMode: CHECK_IN_SUBMISSION_MODES.HIGH_AVAILABILITY,
 });
+
+export const createCheckInHomeRouteState = (): CheckInHomeRouteState => ({
+  skipCheckInFunnelPageView: true,
+});
+
+export const shouldSkipCheckInFunnelPageView = (value: unknown): boolean =>
+  isRecordObject(value) && value.skipCheckInFunnelPageView === true;
