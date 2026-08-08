@@ -9,10 +9,12 @@ import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { useUserListExportExcel } from '@features/user/export-excel';
 import {
+  FacilityUsagePreviewModal,
+  useFacilityUsageReport,
   useVisitPerformanceReport,
   VisitPerformancePreviewModal,
 } from '@features/visit/performance-report';
-import type { VisitStatisticsResponse } from '@entities/visit';
+import type { FacilityUsageResponse, VisitStatisticsResponse } from '@entities/visit';
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -22,6 +24,8 @@ export const Header = () => {
   const [exportingDate, setExportingDate] = useState('');
   const [performancePreviewData, setPerformancePreviewData] =
     useState<VisitStatisticsResponse | null>(null);
+  const [facilityUsagePreviewData, setFacilityUsagePreviewData] =
+    useState<FacilityUsageResponse | null>(null);
   const [performanceExportingDate, setPerformanceExportingDate] = useState('');
   const modal = useModal();
 
@@ -31,6 +35,8 @@ export const Header = () => {
     useUserListExportExcel(modal);
   const { mutate: performanceReportMutate, isPending: isPerformanceLoading } =
     useVisitPerformanceReport(modal);
+  const { mutate: facilityUsageReportMutate, isPending: isFacilityUsageLoading } =
+    useFacilityUsageReport(modal);
 
   const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
@@ -40,6 +46,15 @@ export const Header = () => {
   };
   const handlePerformanceReportClick = () => {
     setIsPerformanceDateModalOpen(true);
+  };
+  const handleFacilityUsageReportClick = () => {
+    const currentYear = new Date().getFullYear();
+
+    facilityUsageReportMutate({ year: currentYear }, {
+      onSuccess: (data) => {
+        setFacilityUsagePreviewData(data);
+      },
+    });
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
@@ -124,6 +139,11 @@ export const Header = () => {
           label="월별 실적 미리보기"
         />
         <ExcelButton
+          onClick={handleFacilityUsageReportClick}
+          disabled={isFacilityUsageLoading}
+          label="시설 가동률 미리보기"
+        />
+        <ExcelButton
           onClick={handleUserListExcelExportClick}
           disabled={isUserExporting}
           label="사용자 엑셀 추출하기"
@@ -153,6 +173,14 @@ export const Header = () => {
             </LoadingBox>
           </ExportLoadingMessage>
         )}
+        {isFacilityUsageLoading && (
+          <ExportLoadingMessage>
+            <LoadingBox>
+              <p>시설 가동률 데이터를 불러오는 중</p>
+              <p>최신 집계를 확인하고 있습니다...</p>
+            </LoadingBox>
+          </ExportLoadingMessage>
+        )}
         <DateExportModal
           isVisible={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -170,6 +198,11 @@ export const Header = () => {
           isOpen={Boolean(performancePreviewData)}
           data={performancePreviewData}
           onClose={() => setPerformancePreviewData(null)}
+        />
+        <FacilityUsagePreviewModal
+          isOpen={Boolean(facilityUsagePreviewData)}
+          data={facilityUsagePreviewData}
+          onClose={() => setFacilityUsagePreviewData(null)}
         />
 
         <Modal
