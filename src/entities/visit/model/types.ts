@@ -209,3 +209,36 @@ export interface VisitStatisticsResponse {
     other: VisitStatisticsGroup;
   };
 }
+
+export const FACILITY_USAGE_MONTH_KEYS = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+] as const;
+
+export type FacilityUsageMonthKey =
+  (typeof FACILITY_USAGE_MONTH_KEYS)[number];
+
+export type FacilityUsageValue = {
+  readonly opDate: number | null;
+  readonly avgRate: number | null;
+};
+
+export type FacilityUsageRequest = {
+  readonly year: number;
+};
+
+export type FacilityUsageResponse = {
+  readonly total: FacilityUsageValue;
+} & {
+  readonly [MonthKey in FacilityUsageMonthKey]: FacilityUsageValue;
+};
