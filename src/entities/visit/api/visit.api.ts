@@ -4,7 +4,9 @@ import {
   CheckUserResponse,
   CreateUserVisitRequest,
   DeleteUserVisitResponse,
+  FacilityUsageRequest,
   ExistingUserCheckInRequest,
+  FacilityUsageResponse,
   UserVisitDetailResponse,
   ExportVisitListRequest,
   NewUserSignUpRequest,
@@ -164,6 +166,18 @@ export const fetchVisitStatistics = async ({
     params: {
       year,
       month,
+    },
+  });
+
+  return response.data;
+};
+
+export const fetchFacilityUsage = async ({
+  year,
+}: FacilityUsageRequest): Promise<FacilityUsageResponse> => {
+  const response = await axiosInstance.get('/organ/usage', {
+    params: {
+      year,
     },
   });
 
