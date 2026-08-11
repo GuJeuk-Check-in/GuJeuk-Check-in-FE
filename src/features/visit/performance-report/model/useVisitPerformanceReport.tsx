@@ -3,12 +3,15 @@ import { FaExclamationTriangle } from 'react-icons/fa';
 import { fetchVisitStatistics, VisitStatisticsRequest } from '@entities/visit';
 import { UseModalReturn } from '@shared/hooks/useModal';
 
+const hasHttpStatus = (error: Error): error is Error & { status: number } =>
+  'status' in error && typeof error.status === 'number';
+
 const getVisitPerformanceErrorMessage = (
   error: Error,
   request: VisitStatisticsRequest
 ) => {
   const isMissingMonthlyPerformance =
-    error.message.includes('400') ||
+    (hasHttpStatus(error) && error.status === 400) ||
     error.message.includes('유효하지 않은 날짜 형식');
 
   if (isMissingMonthlyPerformance) {
