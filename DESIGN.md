@@ -28,5 +28,6 @@ This app has two visual planes: public check-in forms and an admin management/re
 
 - `ExcelButton`: pill action button with export icon, primary border, stable min width, hover lift, and disabled state.
 - `DateExportModal`: centered selection dialog for year/month based exports.
+- Report month option: compact month select above a report preview; the month affects only the monthly performance section while yearly facility usage remains fixed.
 - Report preview modal: fixed overlay, action bar, white printable report page, print CSS that hides surrounding UI and prints only the report article.
 - Report table: collapsed bordered table, gray header cells, bold row labels, centered numeric cells, and dash placeholders for unavailable values.
