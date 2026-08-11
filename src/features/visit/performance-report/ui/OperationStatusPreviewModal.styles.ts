@@ -122,11 +122,11 @@ export const PerformanceTable = styled.table`
   }
 
   .total-column {
-    width: 8.8%;
+    width: 8.75%;
   }
 
   .count-column {
-    width: 8.15%;
+    width: 9%;
   }
 `;
 
