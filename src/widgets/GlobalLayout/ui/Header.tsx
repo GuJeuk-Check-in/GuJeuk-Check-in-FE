@@ -15,8 +15,19 @@ import {
   useVisitPerformanceReport,
 } from '@features/visit/performance-report';
 
-const REPORT_YEAR = 2026;
-const DEFAULT_REPORT_MONTH = new Date().getMonth() + 1;
+type ReportPeriod = {
+  readonly year: number;
+  readonly month: number;
+};
+
+const createDefaultReportPeriod = (): ReportPeriod => {
+  const currentDate = new Date();
+
+  return {
+    year: currentDate.getFullYear(),
+    month: currentDate.getMonth() + 1,
+  };
+};
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -24,8 +35,9 @@ export const Header = () => {
   const [exportingDate, setExportingDate] = useState('');
   const [operationPreviewData, setOperationPreviewData] =
     useState<OperationStatusPreviewData | null>(null);
-  const [selectedReportMonth, setSelectedReportMonth] =
-    useState(DEFAULT_REPORT_MONTH);
+  const [selectedReportPeriod, setSelectedReportPeriod] = useState(
+    createDefaultReportPeriod
+  );
   const [performanceExportingDate, setPerformanceExportingDate] = useState('');
   const modal = useModal();
 
@@ -61,16 +73,17 @@ export const Header = () => {
   };
 
   const openOperationStatusPreview = async (month: number) => {
-    const dataString = `${REPORT_YEAR}-${month}`;
+    const currentReportPeriod = createDefaultReportPeriod();
+    const dataString = `${currentReportPeriod.year}-${month}`;
     setPerformanceExportingDate(dataString);
 
     try {
       const [performance, facilityUsage] = await Promise.all([
-        fetchPerformanceReport({ year: REPORT_YEAR, month }),
-        fetchFacilityUsageReport({ year: REPORT_YEAR }),
+        fetchPerformanceReport({ year: currentReportPeriod.year, month }),
+        fetchFacilityUsageReport({ year: currentReportPeriod.year }),
       ]);
 
-      setSelectedReportMonth(month);
+      setSelectedReportPeriod({ year: currentReportPeriod.year, month });
       setOperationPreviewData({ performance, facilityUsage });
     } catch (error) {
       ignoreHandledRequestError(error);
@@ -80,20 +93,23 @@ export const Header = () => {
   };
 
   const handleOperationStatusPreviewClick = () => {
-    void openOperationStatusPreview(selectedReportMonth);
+    void openOperationStatusPreview(selectedReportPeriod.month);
   };
 
   const handleReportMonthChange = async (month: number) => {
-    const dataString = `${REPORT_YEAR}-${month}`;
+    const dataString = `${selectedReportPeriod.year}-${month}`;
     setPerformanceExportingDate(dataString);
 
     try {
       const performance = await fetchPerformanceReport({
-        year: REPORT_YEAR,
+        year: selectedReportPeriod.year,
         month,
       });
 
-      setSelectedReportMonth(month);
+      setSelectedReportPeriod((currentPeriod) => ({
+        ...currentPeriod,
+        month,
+      }));
       setOperationPreviewData((currentData) => {
         if (!currentData) {
           return currentData;
@@ -209,7 +225,7 @@ export const Header = () => {
         <OperationStatusPreviewModal
           isOpen={Boolean(operationPreviewData)}
           data={operationPreviewData}
-          selectedMonth={selectedReportMonth}
+          selectedMonth={selectedReportPeriod.month}
           isMonthLoading={isPerformanceLoading && Boolean(operationPreviewData)}
           onMonthChange={(month) => {
             void handleReportMonthChange(month);
