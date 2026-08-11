@@ -1,8 +1,5 @@
 import type { FacilityUsageResponse } from '@entities/visit';
-import {
-  FACILITY_USAGE_MONTH_KEYS,
-  type FacilityUsageMonthKey,
-} from '@entities/visit';
+import { type FacilityUsageMonthKey } from '@entities/visit';
 import { formatCount, formatRate } from './visitPerformanceReport';
 
 export const FACILITY_CAPACITY = 75;
@@ -55,23 +52,3 @@ export const createFacilityUsageRows = (
     ),
   },
 ];
-
-export const getLatestUsageMonthLabel = (
-  data: FacilityUsageResponse
-): string => {
-  const latestMonthKey = [...FACILITY_USAGE_MONTH_KEYS]
-    .reverse()
-    .find((monthKey) => data[monthKey].opDate !== null);
-
-  if (latestMonthKey === undefined) {
-    return '월별 집계 없음';
-  }
-
-  const column = FACILITY_USAGE_COLUMNS.find(
-    ({ key }) => key === latestMonthKey
-  );
-
-  return column?.label ?? '월별 집계 없음';
-};
-
-export const getFacilityUsageFileBaseName = () => '시설_가동률_집계';
