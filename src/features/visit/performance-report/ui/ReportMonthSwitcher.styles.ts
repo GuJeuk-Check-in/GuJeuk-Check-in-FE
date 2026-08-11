@@ -44,24 +44,34 @@ export const MonthOptionButton = styled.button`
     opacity: 0.78;
   }
 
-  &[data-position='previous']:hover,
-  &[data-position='previous']:focus-visible,
-  &[data-position='next']:hover,
-  &[data-position='next']:focus-visible {
+  &[data-position='previous']:not([aria-disabled='true']):hover,
+  &[data-position='next']:not([aria-disabled='true']):hover {
     background-color: #ffffff;
     border-color: #ffffff;
     box-shadow: 0 0.55rem 1rem rgba(0, 0, 0, 0.2);
     color: #0f50a0;
     opacity: 1;
-    outline: none;
     transform: scale(0.96);
   }
 
-  &[data-position='active']:disabled {
+  &[data-position='previous']:not([aria-disabled='true']):focus-visible,
+  &[data-position='next']:not([aria-disabled='true']):focus-visible {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    box-shadow: 0 0.55rem 1rem rgba(0, 0, 0, 0.2);
+    color: #0f50a0;
+    opacity: 1;
+    outline: 2px solid rgba(255, 255, 255, 0.92);
+    outline-offset: 0.18rem;
+    transform: scale(0.96);
+  }
+
+  &[data-position='active'][aria-disabled='true'] {
+    cursor: default;
     opacity: 1;
   }
 
-  &:disabled:not([data-position='active']) {
+  &[aria-disabled='true']:not([data-position='active']) {
     cursor: not-allowed;
     opacity: 0.55;
   }

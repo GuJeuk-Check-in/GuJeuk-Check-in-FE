@@ -49,15 +49,22 @@ export const ReportMonthSwitcher = ({
       {getVisibleMonths(selectedMonth).map((month) => {
         const monthPosition = getMonthPosition(month, selectedMonth);
         const isSelected = monthPosition === 'active';
+        const isDisabled = isLoading || isSelected;
 
         return (
           <MonthOptionButton
             key={month}
+            aria-disabled={isDisabled}
             aria-label={`${month}월 월별 실적 조회`}
             aria-pressed={isSelected}
             data-position={monthPosition}
-            disabled={isLoading || isSelected}
-            onClick={() => onMonthChange(month)}
+            onClick={() => {
+              if (isDisabled) {
+                return;
+              }
+
+              onMonthChange(month);
+            }}
             type="button"
           >
             {month}월
