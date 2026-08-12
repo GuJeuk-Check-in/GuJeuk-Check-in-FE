@@ -4,6 +4,8 @@ import {
   type CheckInQueuePayload,
   type CheckInQueueRecord,
 } from './checkInQueueTypes';
+import { isCheckInQueueRecord } from './checkInQueueRecordParser';
+import { createClientRecordId } from './clientRecordId';
 
 const DB_NAME = 'gujeuk-check-in';
 const DB_VERSION = 3;
@@ -12,72 +14,30 @@ export const CHECK_IN_QUEUE_DRAIN_LOCK_STORE_NAME = 'checkInQueueDrainLock';
 const INITIAL_RETRY_DELAY_MS = 30_000;
 const STALE_SYNCING_MS = 2 * 60_000;
 
-const isRecordObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null;
+class CheckInQueueTransactionError extends Error {
+  readonly name = 'CheckInQueueTransactionError';
 
-const isExistingUserPayload = (value: unknown) => {
-  if (!isRecordObject(value)) return false;
-
-  return (
-    typeof value.userId === 'number' &&
-    typeof value.maleCount === 'number' &&
-    typeof value.femaleCount === 'number' &&
-    typeof value.purpose === 'string' &&
-    typeof value.visitTime === 'string'
-  );
-};
-
-const isNewUserPayload = (value: unknown) => {
-  if (!isRecordObject(value)) return false;
-
-  return (
-    typeof value.name === 'string' &&
-    (value.gender === 'MAN' || value.gender === 'WOMAN') &&
-    typeof value.phone === 'string' &&
-    typeof value.maleCount === 'number' &&
-    typeof value.femaleCount === 'number' &&
-    typeof value.birthYMD === 'string' &&
-    typeof value.residence === 'string' &&
-    typeof value.privacyAgreed === 'boolean' &&
-    typeof value.purpose === 'string' &&
-    typeof value.visitTime === 'string'
-  );
-};
-
-const isCheckInQueueRecord = (value: unknown): value is CheckInQueueRecord => {
-  if (!isRecordObject(value)) return false;
-
-  const sharedShapeIsValid =
-    typeof value.id === 'string' &&
-    (value.status === CHECK_IN_QUEUE_STATUSES.PENDING ||
-      value.status === CHECK_IN_QUEUE_STATUSES.SYNCING ||
-      value.status === CHECK_IN_QUEUE_STATUSES.FAILED) &&
-    typeof value.attemptCount === 'number' &&
-    (typeof value.lastError === 'string' || value.lastError === null) &&
-    (typeof value.nextRetryAt === 'number' || value.nextRetryAt === null) &&
-    typeof value.createdAt === 'number' &&
-    typeof value.updatedAt === 'number';
-
-  if (!sharedShapeIsValid) return false;
-
-  if (value.kind === CHECK_IN_QUEUE_KINDS.EXISTING_USER_CHECK_IN) {
-    return isExistingUserPayload(value.payload);
+  constructor(readonly outcome: 'failed' | 'aborted') {
+    super(
+      outcome === 'failed'
+        ? 'IndexedDB 트랜잭션을 완료하지 못했습니다.'
+        : 'IndexedDB 트랜잭션이 중단되었습니다.'
+    );
   }
+}
 
-  if (value.kind === CHECK_IN_QUEUE_KINDS.NEW_USER_SIGN_UP) {
-    return isNewUserPayload(value.payload);
-  }
-
-  return false;
-};
-
-const createQueueId = () => {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-};
+const waitForTransaction = (transaction: IDBTransaction): Promise<void> =>
+  new Promise((resolve, reject) => {
+    transaction.oncomplete = () => {
+      resolve();
+    };
+    transaction.onerror = () => {
+      reject(transaction.error ?? new CheckInQueueTransactionError('failed'));
+    };
+    transaction.onabort = () => {
+      reject(transaction.error ?? new CheckInQueueTransactionError('aborted'));
+    };
+  });
 
 export const openCheckInQueueDb = (): Promise<IDBDatabase> =>
   new Promise((resolve, reject) => {
@@ -123,8 +83,10 @@ const withStore = async <T>(
 
   try {
     const transaction = db.transaction(STORE_NAME, mode);
+    const transactionCompleted = waitForTransaction(transaction);
     const store = transaction.objectStore(STORE_NAME);
-    return await action(store);
+    const [result] = await Promise.all([action(store), transactionCompleted]);
+    return result;
   } finally {
     db.close();
   }
@@ -145,13 +107,19 @@ export const enqueueCheckIn = async (
   queuePayload: CheckInQueuePayload
 ): Promise<CheckInQueueRecord> => {
   const now = Date.now();
+  const isHighAvailabilityRecord =
+    queuePayload.kind === CHECK_IN_QUEUE_KINDS.HIGH_AVAILABILITY_CHECK_IN;
   const record: CheckInQueueRecord = {
     ...queuePayload,
-    id: createQueueId(),
+    id: isHighAvailabilityRecord
+      ? queuePayload.payload.clientRecordId
+      : createClientRecordId(),
     status: CHECK_IN_QUEUE_STATUSES.PENDING,
     attemptCount: 0,
     lastError: null,
-    nextRetryAt: now + INITIAL_RETRY_DELAY_MS,
+    nextRetryAt: isHighAvailabilityRecord
+      ? now
+      : now + INITIAL_RETRY_DELAY_MS,
     createdAt: now,
     updatedAt: now,
   };
@@ -228,8 +196,10 @@ export const markCheckInQueueRecordFailed = async (
   });
 };
 
-export const deleteCheckInQueueRecord = async (id: string): Promise<void> => {
+export const deleteCheckInQueueRecords = async (
+  ids: readonly string[]
+): Promise<void> => {
   await withStore('readwrite', async (store) => {
-    await waitForRequest(store.delete(id));
+    await Promise.all(ids.map((id) => waitForRequest(store.delete(id))));
   });
 };

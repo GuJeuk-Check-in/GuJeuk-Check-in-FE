@@ -6,7 +6,6 @@ import {
   getCheckInQueueErrorMessage,
   isRetryableCheckInError,
 } from './checkInRetryPolicy';
-import { requestCheckInQueueDrain } from './checkInQueueEvents';
 import { enqueueCheckIn } from './checkInQueueStorage';
 import {
   CHECK_IN_QUEUE_KINDS,
@@ -33,7 +32,6 @@ const enqueueWithFallbackError = async (
 ): Promise<void> => {
   try {
     await enqueueCheckIn(queuePayload);
-    requestCheckInQueueDrain();
   } catch (error) {
     throw new CheckInFallbackStorageError(getCheckInQueueErrorMessage(error));
   }
@@ -44,7 +42,6 @@ export const submitExistingUserCheckInWithFallback = async (
 ): Promise<void> => {
   try {
     await createExistingUserCheckIn(payload);
-    requestCheckInQueueDrain();
   } catch (error) {
     if (!isRetryableCheckInError(error)) {
       throw error;
@@ -62,7 +59,6 @@ export const submitNewUserSignUpWithFallback = async (
 ): Promise<void> => {
   try {
     await signUpPublicUser(payload);
-    requestCheckInQueueDrain();
   } catch (error) {
     if (!isRetryableCheckInError(error)) {
       throw error;

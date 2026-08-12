@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import { PurposeResponse, usePurposeList } from '@entities/purpose';
 import {
+  CHECK_IN_FUNNEL_EVENT_NAMES,
   ExistingUserCheckInRequest,
+  recordCheckInFunnelEvent,
   submitExistingUserCheckInWithFallback,
 } from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
@@ -66,6 +68,14 @@ const CheckInLoginFormPage = () => {
   } = usePurposeList();
 
   useEffect(() => {
+    recordCheckInFunnelEvent({
+      eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_FORM_VIEW,
+      userId: locationState.userId,
+      isExistingUser: true,
+    });
+  }, [locationState.userId]);
+
+  useEffect(() => {
     if (purposes.length > 0) {
       setCachedPurposes(purposes);
       writeCachedPurposes(purposes);
@@ -73,7 +83,9 @@ const CheckInLoginFormPage = () => {
   }, [purposes]);
 
   const visiblePurposes =
-    isPurposeLoading || isPurposeError ? cachedPurposes : purposes;
+    isPurposeLoading || isPurposeError || purposes.length === 0
+      ? cachedPurposes
+      : purposes;
 
   const purposeOptions = useMemo(
     () =>
@@ -127,6 +139,10 @@ const CheckInLoginFormPage = () => {
       purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
 
     if (typeof locationState.userId !== 'number') {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
+        failureReason: 'missing_existing_user_id',
+      });
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
         title: '회원 확인 필요',
@@ -164,10 +180,29 @@ const CheckInLoginFormPage = () => {
     };
 
     try {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_SUBMITTED,
+        userId: locationState.userId,
+        isExistingUser: true,
+        purpose: selectedPurpose,
+      });
       setIsSaving(true);
       await submitExistingUserCheckInWithFallback(payload);
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_SUCCEEDED,
+        userId: locationState.userId,
+        isExistingUser: true,
+        purpose: selectedPurpose,
+      });
       goToComplete();
     } catch (error) {
+      recordCheckInFunnelEvent({
+        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
+        userId: locationState.userId,
+        isExistingUser: true,
+        purpose: selectedPurpose,
+        failureReason: 'existing_user_check_in_failed',
+      });
       openErrorModal(
         getApiErrorMessage(error, '체크인 정보를 서버에 전송하지 못했습니다.')
       );
@@ -208,7 +243,16 @@ const CheckInLoginFormPage = () => {
                     type="button"
                     $tone={option.tone}
                     $selected={purposeIndex === index}
-                    onClick={() => setPurposeIndex(index)}
+                    onClick={() => {
+                      setPurposeIndex(index);
+                      recordCheckInFunnelEvent({
+                        eventName:
+                          CHECK_IN_FUNNEL_EVENT_NAMES.PURPOSE_SELECTED,
+                        userId: locationState.userId,
+                        isExistingUser: true,
+                        purpose: option.label,
+                      });
+                    }}
                   >
                     {option.label}
                   </PurposeCard>
