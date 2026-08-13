@@ -16,21 +16,20 @@ export interface ApiErrorResponse {
 }
 
 export interface CheckUserRequest {
-  name: string;
-  phone: string;
+  readonly name: string;
 }
 
 export interface CheckUserResponse {
-  userExists: boolean;
-  userId: number | null;
+  readonly userExists: boolean;
+  readonly userIds: readonly number[];
 }
 
 export interface ExistingUserCheckInRequest {
-  userId: number;
-  maleCount: number;
-  femaleCount: number;
-  purpose: string;
-  visitTime: string;
+  readonly userId: number;
+  readonly maleCount: number;
+  readonly femaleCount: number;
+  readonly purpose: string;
+  readonly visitTime: string;
 }
 
 export interface NewUserSignUpRequest {
@@ -225,8 +224,7 @@ export const FACILITY_USAGE_MONTH_KEYS = [
   'december',
 ] as const;
 
-export type FacilityUsageMonthKey =
-  (typeof FACILITY_USAGE_MONTH_KEYS)[number];
+export type FacilityUsageMonthKey = (typeof FACILITY_USAGE_MONTH_KEYS)[number];
 
 export type FacilityUsageValue = {
   readonly opDate: number | null;
