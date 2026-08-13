@@ -1,7 +1,7 @@
 import type {
   ActiveCheckInFunnelSession,
   CheckInFunnelEventRecord,
-} from './checkInFunnelAnalytics';
+} from './checkInFunnelTypes';
 
 const ACTIVE_SESSION_STORAGE_KEY = 'gujeuk:check-in-funnel-active-session';
 const EVENT_STORAGE_KEY = 'gujeuk:check-in-funnel-events';
@@ -14,17 +14,103 @@ const isStorageRecoverableError = (error: unknown): boolean =>
 const isRecordObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-const isStoredCheckInFunnelEventRecord = (
+const isAgeType = (
   value: unknown
-): value is CheckInFunnelEventRecord => {
-  if (!isRecordObject(value)) return false;
+): value is CheckInFunnelEventRecord['ageGroup'] =>
+  value === null ||
+  value === 'BABY' ||
+  value === 'AGE_9_13' ||
+  value === 'AGE_14_16' ||
+  value === 'AGE_17_19' ||
+  value === 'AGE_20_24' ||
+  value === 'ADULT';
 
-  return (
-    typeof value.sessionId === 'string' &&
-    typeof value.eventName === 'string' &&
-    typeof value.occurredAt === 'string' &&
-    typeof value.elapsedMsFromStart === 'number'
-  );
+const isVisitCountBucket = (
+  value: unknown
+): value is CheckInFunnelEventRecord['visitCountBucket'] =>
+  value === null ||
+  value === 'FIRST_VISIT' ||
+  value === 'RETURNING_2_3' ||
+  value === 'RETURNING_4_9' ||
+  value === 'RETURNING_10_PLUS';
+
+const isCheckInFunnelEventName = (
+  value: unknown
+): value is CheckInFunnelEventRecord['eventName'] =>
+  value === 'check_in_page_view' ||
+  value === 'phone_input_started' ||
+  value === 'user_check_submitted' ||
+  value === 'user_check_succeeded' ||
+  value === 'user_check_failed' ||
+  value === 'check_in_form_view' ||
+  value === 'purpose_selected' ||
+  value === 'check_in_submitted' ||
+  value === 'check_in_api_succeeded' ||
+  value === 'check_in_api_failed' ||
+  value === 'check_in_completed_view' ||
+  value === 'check_in_abandoned';
+
+const createLegacyClientEventId = (
+  value: Record<string, unknown>
+): string | null => {
+  if (
+    typeof value.sessionId !== 'string' ||
+    typeof value.eventName !== 'string' ||
+    typeof value.occurredAt !== 'string' ||
+    typeof value.elapsedMsFromStart !== 'number'
+  ) {
+    return null;
+  }
+
+  return [
+    'legacy',
+    value.sessionId,
+    value.eventName,
+    value.occurredAt,
+    value.elapsedMsFromStart,
+  ].join(':');
+};
+
+const parseStoredCheckInFunnelEventRecord = (
+  value: unknown
+): CheckInFunnelEventRecord | null => {
+  if (!isRecordObject(value)) return null;
+
+  const clientEventId =
+    typeof value.clientEventId === 'string'
+      ? value.clientEventId
+      : createLegacyClientEventId(value);
+
+  const ageGroup = value.ageGroup ?? null;
+  const visitCountBucket = value.visitCountBucket ?? null;
+
+  if (
+    clientEventId === null ||
+    typeof value.sessionId !== 'string' ||
+    !isCheckInFunnelEventName(value.eventName) ||
+    typeof value.occurredAt !== 'string' ||
+    typeof value.elapsedMsFromStart !== 'number' ||
+    !isAgeType(ageGroup) ||
+    !isVisitCountBucket(visitCountBucket)
+  ) {
+    return null;
+  }
+
+  return {
+    clientEventId,
+    sessionId: value.sessionId,
+    eventName: value.eventName,
+    occurredAt: value.occurredAt,
+    elapsedMsFromStart: value.elapsedMsFromStart,
+    userId: typeof value.userId === 'number' ? value.userId : null,
+    ageGroup,
+    isExistingUser:
+      typeof value.isExistingUser === 'boolean' ? value.isExistingUser : null,
+    visitCountBucket,
+    purpose: typeof value.purpose === 'string' ? value.purpose : null,
+    failureReason:
+      typeof value.failureReason === 'string' ? value.failureReason : null,
+  };
 };
 
 const parseActiveSession = (
@@ -90,7 +176,9 @@ export const readStoredCheckInFunnelEvents =
       const parsed = JSON.parse(stored);
       if (!Array.isArray(parsed)) return [];
 
-      return parsed.filter(isStoredCheckInFunnelEventRecord);
+      return parsed
+        .map(parseStoredCheckInFunnelEventRecord)
+        .filter((event): event is CheckInFunnelEventRecord => event !== null);
     } catch (error) {
       if (isStorageRecoverableError(error)) return [];
       throw error;
@@ -106,4 +194,15 @@ export const writeStoredCheckInFunnelEvents = (
     if (isStorageRecoverableError(error)) return;
     throw error;
   }
+};
+
+export const removeStoredCheckInFunnelEvents = (
+  clientEventIds: readonly string[]
+): void => {
+  const removals = new Set(clientEventIds);
+  writeStoredCheckInFunnelEvents(
+    readStoredCheckInFunnelEvents().filter(
+      (event) => !removals.has(event.clientEventId)
+    )
+  );
 };
