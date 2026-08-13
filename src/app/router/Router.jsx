@@ -13,6 +13,7 @@ import CheckInUserCheck from '@pages/check-in/CheckInUserCheck';
 import CheckInSignupFormPage from '@pages/check-in/CheckInSignupFormPage';
 import CheckInLoginFormPage from '@pages/check-in/CheckInLoginFormPage';
 import CheckInCompletePage from '@pages/check-in/CheckInCompletePage';
+import CheckInFunnelAnalyticsPage from '@pages/check-in/CheckInFunnelAnalyticsPage';
 
 export const Router = () => {
   return (
@@ -31,6 +32,10 @@ export const Router = () => {
       <Route path="/check-in/signup-form" element={<CheckInSignupFormPage />} />
       <Route path="/check-in/login-form" element={<CheckInLoginFormPage />} />
       <Route path="/check-in/complete" element={<CheckInCompletePage />} />
+      <Route
+        path="/check-in/funnel-analytics"
+        element={<CheckInFunnelAnalyticsPage />}
+      />
     </Routes>
   );
 };
