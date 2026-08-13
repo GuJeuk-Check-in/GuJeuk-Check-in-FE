@@ -9,9 +9,9 @@ import { useModal } from '@shared/hooks/useModal';
 import { getApiErrorMessage } from '@shared/api';
 import { Modal } from '@shared/ui';
 import { PasswordBackground } from '@shared/ui/Background';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
-import { FiArrowRight, FiPhone, FiUser } from 'react-icons/fi';
+import { FiArrowRight, FiUser } from 'react-icons/fi';
 import { PiHandWavingBold } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 import { createHighAvailabilityRouteState } from './checkInRouteState';
@@ -19,21 +19,8 @@ import { createHighAvailabilityRouteState } from './checkInRouteState';
 const CheckInUserCheck = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
   const [isChecking, setIsChecking] = useState(false);
-  const hasRecordedPhoneInputStartedRef = useRef(false);
   const modal = useModal();
-
-  const handlePhoneChange = (value: string) => {
-    if (!hasRecordedPhoneInputStartedRef.current) {
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.PHONE_INPUT_STARTED,
-      });
-      hasRecordedPhoneInputStartedRef.current = true;
-    }
-
-    setPhone(value);
-  };
 
   const openWarningModal = (title: string, subtitle: string) => {
     modal.openModal({
@@ -45,7 +32,7 @@ const CheckInUserCheck = () => {
     });
   };
 
-  const openFirstVisitModal = (checkedName: string, checkedPhone: string) => {
+  const openFirstVisitModal = (checkedName: string) => {
     modal.openModal({
       icon: <PiHandWavingBold size={52} color="#0F50A0" />,
       title: '시설에 혹시 처음 방문했니?',
@@ -70,7 +57,7 @@ const CheckInUserCheck = () => {
             navigate('/check-in/signup-form', {
               state: {
                 name: checkedName,
-                phone: checkedPhone,
+                phone: '',
               },
             });
           },
@@ -83,14 +70,13 @@ const CheckInUserCheck = () => {
     if (isChecking) return;
 
     const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
 
-    if (!trimmedName || !trimmedPhone) {
+    if (!trimmedName) {
       recordCheckInFunnelEvent({
         eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
         failureReason: 'validation_missing_identity',
       });
-      openWarningModal('입력 확인', '이름과 전화번호를 모두 입력해주세요.');
+      openWarningModal('입력 확인', '이름을 입력해주세요.');
       return;
     }
 
@@ -101,11 +87,12 @@ const CheckInUserCheck = () => {
       setIsChecking(true);
       const response = await checkUserExists({
         name: trimmedName,
-        phone: trimmedPhone,
       });
 
       if (response.userExists) {
-        if (typeof response.userId !== 'number') {
+        const userId = response.userIds[0];
+
+        if (typeof userId !== 'number') {
           recordCheckInFunnelEvent({
             eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
             failureReason: 'missing_existing_user_id',
@@ -119,20 +106,20 @@ const CheckInUserCheck = () => {
 
         recordCheckInFunnelEvent({
           eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
-          userId: response.userId,
+          userId,
           isExistingUser: true,
         });
         navigate('/check-in/login-form', {
           state: {
-            userId: response.userId,
+            userId,
             name: trimmedName,
-            phone: trimmedPhone,
+            phone: '',
           },
         });
         return;
       }
 
-      openFirstVisitModal(trimmedName, trimmedPhone);
+      openFirstVisitModal(trimmedName);
     } catch (error) {
       if (isRetryableCheckInError(error)) {
         recordCheckInFunnelEvent({
@@ -140,7 +127,7 @@ const CheckInUserCheck = () => {
           failureReason: 'user_check_remote_unavailable',
         });
         navigate('/check-in/signup-form', {
-          state: createHighAvailabilityRouteState(trimmedName, trimmedPhone),
+          state: createHighAvailabilityRouteState(trimmedName),
         });
         return;
       }
@@ -177,18 +164,6 @@ const CheckInUserCheck = () => {
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="친구의 이름을 알려줘"
-            />
-          </FieldBlock>
-
-          <FieldBlock>
-            <FieldLabel>
-              <FiPhone aria-hidden="true" />
-              전화번호가 뭐야?
-            </FieldLabel>
-            <TextInput
-              value={phone}
-              onChange={(event) => handlePhoneChange(event.target.value)}
-              placeholder="010-0000-0000"
             />
           </FieldBlock>
 
