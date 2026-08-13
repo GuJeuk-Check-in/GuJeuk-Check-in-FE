@@ -57,7 +57,6 @@ const CheckInUserCheck = () => {
             navigate('/check-in/signup-form', {
               state: {
                 name: checkedName,
-                phone: '',
               },
             });
           },
@@ -90,9 +89,7 @@ const CheckInUserCheck = () => {
       });
 
       if (response.userExists) {
-        const userId = response.userIds[0];
-
-        if (typeof userId !== 'number') {
+        if (typeof response.userIds !== 'number') {
           recordCheckInFunnelEvent({
             eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
             failureReason: 'missing_existing_user_id',
@@ -106,14 +103,13 @@ const CheckInUserCheck = () => {
 
         recordCheckInFunnelEvent({
           eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
-          userId,
+          userId: response.userIds,
           isExistingUser: true,
         });
         navigate('/check-in/login-form', {
           state: {
-            userId,
+            userId: response.userIds,
             name: trimmedName,
-            phone: '',
           },
         });
         return;
