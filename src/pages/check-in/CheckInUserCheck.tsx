@@ -89,26 +89,28 @@ const CheckInUserCheck = () => {
       });
 
       if (response.userExists) {
-        if (typeof response.userIds !== 'number') {
+        const [userId] = response.userIds;
+
+        if (typeof userId !== 'number' || response.userIds.length !== 1) {
           recordCheckInFunnelEvent({
             eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
-            failureReason: 'missing_existing_user_id',
+            failureReason: 'ambiguous_existing_user_identity',
           });
           openWarningModal(
             '회원 확인 실패',
-            '회원 정보를 확인하지 못했습니다. 다시 시도해주세요.'
+            '회원 정보를 하나로 확인하지 못했습니다. 직원에게 문의해주세요.'
           );
           return;
         }
 
         recordCheckInFunnelEvent({
           eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
-          userId: response.userIds,
+          userId,
           isExistingUser: true,
         });
         navigate('/check-in/login-form', {
           state: {
-            userId: response.userIds,
+            userId,
             name: trimmedName,
           },
         });
