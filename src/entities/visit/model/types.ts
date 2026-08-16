@@ -21,7 +21,7 @@ export interface CheckUserRequest {
 
 export interface CheckUserResponse {
   readonly userExists: boolean;
-  readonly userIds: readonly number[];
+  readonly userId: number | null;
 }
 
 export interface ExistingUserCheckInRequest {

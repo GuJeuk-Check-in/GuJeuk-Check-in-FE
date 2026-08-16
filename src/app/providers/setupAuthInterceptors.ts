@@ -146,7 +146,7 @@ export const useAuthInterceptors = () => {
         }
       }
 
-      if (status === 401) {
+      if (status === 401 || status === 403) {
         redirectToLogin();
         return Promise.reject(new Error('다시 로그인을 진행해주세요.'));
       }
