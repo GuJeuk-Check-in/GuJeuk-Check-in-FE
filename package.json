@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "echo 'Lint Pass'",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "check": "yarn lint && yarn typecheck && yarn build",
     "preview": "vite preview"
   },
   "dependencies": {
