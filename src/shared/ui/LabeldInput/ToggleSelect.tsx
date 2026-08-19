@@ -17,7 +17,7 @@ to {
 
 interface ToggleSelectProps {
   label: string;
-  options: string[];
+  options: readonly string[];
   value: string;
   onChange: (option: string) => void;
   icon?: React.ReactNode;

@@ -23,6 +23,9 @@ export const getAgeLabel = (age: AgeType): string =>
 export const isAgeType = (value: unknown): value is AgeType =>
   AGE_OPTIONS.some((option) => option.value === value);
 
+export const isAgeLabel = (value: unknown): value is AgeLabel =>
+  AGE_OPTIONS.some((option) => option.label === value);
+
 export const getAgeTypeFromKoreanAge = (koreanAge: number): AgeType => {
   if (koreanAge <= 8) return 'BABY';
   if (koreanAge <= 13) return 'AGE_9_13';
