@@ -91,7 +91,7 @@ export const UserVisitForm = ({
       return;
     }
 
-    updateMutation.mutate(formData as any, {
+    updateMutation.mutate(formData, {
       onSuccess: () => {
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
