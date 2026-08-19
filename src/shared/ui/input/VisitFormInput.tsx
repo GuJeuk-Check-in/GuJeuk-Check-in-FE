@@ -12,7 +12,6 @@ interface VisitFormInputProps {
   isSelectable?: boolean;
   isOpen?: boolean;
   onClick?: () => void;
-  readOnly?: boolean;
 }
 
 export const VisitFormInput = ({
@@ -23,7 +22,6 @@ export const VisitFormInput = ({
   onChange,
   width = '100%',
   onClick,
-  readOnly = false,
 }: VisitFormInputProps) => {
   return (
     <Container width={width} onClick={onClick}>
