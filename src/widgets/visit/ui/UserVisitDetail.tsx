@@ -2,19 +2,10 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import { useFetchUserVisitDetail } from '@entities/visit/index';
+import { getAgeLabel, useFetchUserVisitDetail } from '@entities/visit/index';
 import { UserVisitForm } from '@features/visit/update-visit-list/ui/UserVisitForm';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
-
-const AGE_MAP = {
-  BABY: '0~8세',
-  AGE_9_13: '9~13세',
-  AGE_14_16: '14~16세',
-  AGE_17_19: '17~19세',
-  AGE_20_24: '20~24세',
-  ADULT: '성인',
-};
 
 interface UserVisitDetailProps {
   logId: string | undefined;
@@ -63,7 +54,7 @@ export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
         />
         <VisitDetailInput
           label="연령"
-          value={AGE_MAP[visit.age] || visit.age}
+          value={getAgeLabel(visit.age)}
           isEditable={false}
         />
       </InputRow>
