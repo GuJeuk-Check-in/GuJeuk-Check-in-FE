@@ -3,7 +3,6 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import {
   usePurposeList,
-  Purpose,
   PurposeCard,
   SortablePurposeItem,
 } from '@entities/purpose/index';
@@ -25,7 +24,7 @@ export const PurposeBoard = () => {
   } = usePurposeList();
   const { items, sensors, handleDragEnd } = useReorderPurpose(
     purposes || []
-  ) as { items: Purpose[]; sensors: any; handleDragEnd: (event: any) => void };
+  );
   const {
     handleUpdate,
     isLoading: isUpdating,
