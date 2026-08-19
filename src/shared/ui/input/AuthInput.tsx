@@ -10,7 +10,7 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type?: string;
-  [key: string]: any;
+  isError?: boolean;
   icon?: React.ReactNode;
 }
 
@@ -20,6 +20,7 @@ export const AuthInput = ({
   value,
   onChange,
   type = 'text',
+  isError,
   icon = <IoMdLock />,
   ...props
 }: AuthInputProps) => {
@@ -44,6 +45,7 @@ export const AuthInput = ({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          aria-invalid={isError || undefined}
           {...props}
         />
         {type === 'password' && (
