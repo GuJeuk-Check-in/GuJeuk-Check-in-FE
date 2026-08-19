@@ -16,6 +16,6 @@ export const useUpdateResidenceHandler = ({
 
   return {
     handleUpdate,
-    isLoading: mutation.isPending,
+    updatingId: mutation.isPending ? mutation.variables?.id ?? null : null,
   };
 };
