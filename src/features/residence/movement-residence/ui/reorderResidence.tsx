@@ -11,8 +11,9 @@ import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useUpdateResidenceMovement } from '../model/useUpdateResidenceMovement';
 import { useModal } from '@shared/hooks/useModal';
 import { FaExclamationTriangle } from 'react-icons/fa';
+import type { ResidenceResponse } from '@entities/residence';
 
-export const useReorderResidence = (initialItems: any[]) => {
+export const useReorderResidence = (initialItems: ResidenceResponse[]) => {
   const [items, setItems] = useState(initialItems);
 
   useEffect(() => {
