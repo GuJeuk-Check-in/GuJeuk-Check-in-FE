@@ -35,7 +35,7 @@ export const ToggleSelect = ({
 }: ToggleSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleSelect = (option: any) => {
+  const handleSelect = (option: string) => {
     onChange(option);
     setOpen(false);
   };
