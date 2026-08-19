@@ -1,4 +1,4 @@
-import { useModal, UseModalReturn } from '@shared/hooks/useModal';
+import type { UseModalReturn } from '@shared/hooks/useModal';
 import { useDeleteResidence } from '../model/useDeleteResidence';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { useState } from 'react';

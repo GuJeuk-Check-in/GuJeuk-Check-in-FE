@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 import { FaClock } from 'react-icons/fa6';
 
@@ -13,8 +13,6 @@ export const VisitTimePicker = ({
   onChange,
   label = '방문시간',
 }: VisitTimePickerProps) => {
-  const [error, setError] = useState<string>('');
-
   const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     onChange(input);
@@ -34,7 +32,6 @@ export const VisitTimePicker = ({
           placeholder="방문 시간을 입력해주세요 ex) 14:30"
         />
       </InputWrapper>
-      {error && <ErrorText>{error}</ErrorText>}
     </Container>
   );
 };
@@ -85,9 +82,4 @@ const Input = styled.input`
   &::placeholder {
     color: #999;
   }
-`;
-
-const ErrorText = styled.span`
-  font-size: 0.875rem;
-  color: #d32f2f;
 `;

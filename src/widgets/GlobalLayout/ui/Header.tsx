@@ -32,7 +32,6 @@ const createDefaultReportPeriod = (): ReportPeriod => {
 export const Header = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exportingDate, setExportingDate] = useState('');
   const [operationPreviewData, setOperationPreviewData] =
     useState<OperationStatusPreviewData | null>(null);
   const [selectedReportPeriod, setSelectedReportPeriod] = useState(
@@ -128,17 +127,7 @@ export const Header = () => {
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
-    const dataString = `${year}-${month}`;
-    setExportingDate(dataString);
-
-    visitExcelMutate(
-      { year, month },
-      {
-        onSettled: () => {
-          setExportingDate('');
-        },
-      }
-    );
+    visitExcelMutate({ year, month });
 
     setIsModalOpen(false);
   };

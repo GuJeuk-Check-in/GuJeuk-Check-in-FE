@@ -1,4 +1,4 @@
-import { useModal, UseModalReturn } from '@shared/hooks/useModal';
+import type { UseModalReturn } from '@shared/hooks/useModal';
 import { useUpdateResidence } from '../model/useUpdateResidence';
 
 interface UseUpdateResidenceHandlerParams {

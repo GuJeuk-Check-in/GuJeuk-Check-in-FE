@@ -25,9 +25,6 @@ type RecordCheckInFunnelEventInput = Partial<CheckInFunnelContext> & {
 };
 
 const YEAR_PREFIX_PATTERN = /^(\d{4})-/;
-const CHECK_IN_FUNNEL_EVENT_NAME_VALUES: readonly string[] = Object.values(
-  CHECK_IN_FUNNEL_EVENT_NAMES
-);
 
 const EMPTY_CONTEXT: CheckInFunnelContext = {
   userId: null,
@@ -78,12 +75,6 @@ const parseContext = (value: unknown): CheckInFunnelContext => {
     purpose: typeof value.purpose === 'string' ? value.purpose : null,
   };
 };
-
-const isCheckInFunnelEventName = (
-  value: unknown
-): value is CheckInFunnelEventName =>
-  typeof value === 'string' &&
-  CHECK_IN_FUNNEL_EVENT_NAME_VALUES.includes(value);
 
 const appendEvent = (event: CheckInFunnelEventRecord): void => {
   writeStoredCheckInFunnelEvents([...readStoredCheckInFunnelEvents(), event]);
