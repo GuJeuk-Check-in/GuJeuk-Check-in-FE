@@ -1,3 +1,4 @@
+export * from './model/age';
 export * from './model/types';
 export * from './api/visit.api';
 export * from './api/readyHealth.api';

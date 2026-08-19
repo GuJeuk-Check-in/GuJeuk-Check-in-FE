@@ -1,4 +1,8 @@
-import type { AgeType } from './types';
+import {
+  getAgeTypeFromKoreanAge,
+  isAgeType,
+  type AgeType,
+} from './age';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
   CHECK_IN_FUNNEL_TIMEOUT_MS,
@@ -46,14 +50,6 @@ const createClientEventId = (): string => createSessionId();
 
 const isRecordObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
-
-const isAgeType = (value: unknown): value is AgeType =>
-  value === 'BABY' ||
-  value === 'AGE_9_13' ||
-  value === 'AGE_14_16' ||
-  value === 'AGE_17_19' ||
-  value === 'AGE_20_24' ||
-  value === 'ADULT';
 
 const isVisitCountBucket = (value: unknown): value is CheckInVisitCountBucket =>
   value === 'FIRST_VISIT' ||
@@ -247,13 +243,7 @@ export const getAgeGroupFromBirthYMD = (
     return null;
   }
 
-  const koreanAge = visitYear - birthYear + 1;
-  if (koreanAge <= 8) return 'BABY';
-  if (koreanAge <= 13) return 'AGE_9_13';
-  if (koreanAge <= 16) return 'AGE_14_16';
-  if (koreanAge <= 19) return 'AGE_17_19';
-  if (koreanAge <= 24) return 'AGE_20_24';
-  return 'ADULT';
+  return getAgeTypeFromKoreanAge(visitYear - birthYear + 1);
 };
 
 const parseYear = (value: string): number | null => {

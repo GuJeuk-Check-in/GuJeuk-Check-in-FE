@@ -1,4 +1,4 @@
-import type { AgeType } from './types';
+import type { AgeType } from './age';
 
 export const CHECK_IN_FUNNEL_TIMEOUT_MS = 7 * 60 * 1000;
 
