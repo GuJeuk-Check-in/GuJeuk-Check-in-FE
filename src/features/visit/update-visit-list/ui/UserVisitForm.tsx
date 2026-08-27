@@ -13,6 +13,7 @@ import {
   getAgeLabel,
   getAgeTypeByLabel,
   type UserVisitDetailResponse,
+  VisitPrivacyAgreementField,
 } from '@entities/visit';
 import { UseModalReturn } from '@shared/hooks/useModal';
 
@@ -171,20 +172,11 @@ export const UserVisitForm = ({
         onChange={(v) => setFormData((p) => ({ ...p, visitTime: v }))}
       />
 
-      <CustomInputGroup>
-        <CustomLabel>개인 정보 수집 동의</CustomLabel>
-        <PrivacyConsentWrapper>
-          <Checkbox
-            type="checkbox"
-            name="privacyAgreed"
-            checked={formData.privacyAgreed}
-            onChange={handleChange}
-          />
-          <ConsentText $checked={formData.privacyAgreed}>
-            {formData.privacyAgreed ? '동의함' : '동의하지 않음'}
-          </ConsentText>
-        </PrivacyConsentWrapper>
-      </CustomInputGroup>
+      <VisitPrivacyAgreementField
+        name="privacyAgreed"
+        checked={formData.privacyAgreed}
+        onChange={handleChange}
+      />
 
       <ButtonWrapper>
         <PasswordButton
@@ -220,51 +212,4 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   gap: 0.625rem;
   margin-top: 1.25rem;
-`;
-const CustomInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-const CustomLabel = styled.label`
-  font-size: 1.25rem;
-  color: #2e2e32;
-  font-weight: 500;
-`;
-const PrivacyConsentWrapper = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 1.25rem;
-  height: 1.25rem;
-  appearance: none;
-  border: 0.125rem solid #d1d8e0;
-  border-radius: 0.25rem;
-  background-color: #f8f9fa;
-  position: relative;
-  cursor: pointer;
-
-  &:checked {
-    background-color: #3f73b3;
-    border-color: #3f73b3;
-  }
-
-  &:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 1rem;
-  }
-`;
-
-const ConsentText = styled.span<{ $checked: boolean }>`
-  font-size: 1rem;
-  color: #6e7680;
 `;

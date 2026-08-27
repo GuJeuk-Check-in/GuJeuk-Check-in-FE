@@ -19,6 +19,7 @@ import {
   isAgeLabel,
   type AgeLabel,
   type CreateUserVisitRequest,
+  VisitPrivacyAgreementField,
 } from '@entities/visit';
 
 interface VisitFormProps {
@@ -142,15 +143,13 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
         <VisitDatePicker value={date} onChange={setDate} />
         <VisitTimePicker value={visitTime} onChange={setVisitTime} />
 
-        <PrivacyConsentWrapper>
-          <Checkbox
-            type="checkbox"
-            checked={privacyCheck.checked}
-            onChange={privacyCheck.onChange}
-            disabled={isLoading}
-          />
-          <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
-        </PrivacyConsentWrapper>
+        <VisitPrivacyAgreementField
+          checked={privacyCheck.checked}
+          onChange={privacyCheck.onChange}
+          disabled={isLoading}
+          hideLabel
+          text="개인정보 수집 및 이용 동의"
+        />
       </InputGroup>
 
       <PasswordButton
@@ -192,44 +191,6 @@ const InputRow = styled.div`
   & > * {
     flex: 1;
   }
-`;
-
-const PrivacyConsentWrapper = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 1.25rem;
-  height: 1.25rem;
-  appearance: none;
-  border: 0.125rem solid #d1d8e0;
-  border-radius: 0.25rem;
-  background-color: #f8f9fa;
-  position: relative;
-  cursor: pointer;
-
-  &:checked {
-    background-color: #3f73b3;
-    border-color: #3f73b3;
-  }
-
-  &:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 1rem;
-  }
-`;
-
-const ConsentText = styled.span`
-  font-size: 1rem;
-  color: #6e7680;
 `;
 
 const CountVisitorWrapper = styled.div`
