@@ -1,6 +1,3 @@
-import styled from '@emotion/styled';
-import { DndContext, closestCenter } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import {
   usePurposeList,
   PurposeCard,
@@ -14,6 +11,7 @@ import {
 } from '@features/purpose/index';
 
 import { Modal } from '@shared/ui/modal/Modal';
+import { SortableBoardShell } from '@widgets/sortable-board';
 
 export const PurposeBoard = () => {
   const {
@@ -34,94 +32,41 @@ export const PurposeBoard = () => {
   const { handleDelete, deletingId, isOpen, config } =
     useDeletePurposeHandler();
 
-  if (isListLoading) {
-    return (
-      <LoadingOverlay>
-        <LoadingBox>
-          <p>데이터를 불러오는 중</p>
-          <p>잠시만 기다려주세요...</p>
-        </LoadingBox>
-      </LoadingOverlay>
-    );
-  }
-
-  if (isError) {
-    return (
-      <ErrorText>
-        데이터 로드 실패: {error instanceof Error ? error.message : '오류 발생'}
-      </ErrorText>
-    );
-  }
-
   return (
-    <DndContext
+    <SortableBoardShell
+      isLoading={isListLoading}
+      isError={isError}
+      error={error}
+      items={items}
       sensors={sensors}
-      collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
+      trailingSlot={<PurposeAddBox />}
+      afterGridSlot={
+        <>
+          {isOpen && config && <Modal isOpen={isOpen} config={config} />}
+          {isUpdateOpen && updateConfig && (
+            <Modal isOpen={isUpdateOpen} config={updateConfig} />
+          )}
+        </>
+      }
     >
-      <PurposeListGrid>
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((purpose, index) => (
-            <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
-              <PurposeCard
-                index={index + 1}
-                purpose={purpose}
-                onDelete={handleDelete}
-                onUpdate={({
-                  id,
-                  newPurpose,
-                }: {
-                  id: number;
-                  newPurpose: string;
-                }) => handleUpdate(id, newPurpose)}
-                isDeleting={deletingId === purpose.id || isUpdating}
-              />
-            </SortablePurposeItem>
-          ))}
-        </SortableContext>
-        <PurposeAddBox />
-      </PurposeListGrid>
-      {isOpen && config && <Modal isOpen={isOpen} config={config} />}
-      {isUpdateOpen && updateConfig && (
-        <Modal isOpen={isUpdateOpen} config={updateConfig} />
-      )}
-    </DndContext>
+      {items.map((purpose, index) => (
+        <SortablePurposeItem key={purpose.id} id={Number(purpose.id)}>
+          <PurposeCard
+            index={index + 1}
+            purpose={purpose}
+            onDelete={handleDelete}
+            onUpdate={({
+              id,
+              newPurpose,
+            }: {
+              id: number;
+              newPurpose: string;
+            }) => handleUpdate(id, newPurpose)}
+            isDeleting={deletingId === purpose.id || isUpdating}
+          />
+        </SortablePurposeItem>
+      ))}
+    </SortableBoardShell>
   );
 };
-
-const PurposeListGrid = styled.div`
-  width: 100%;
-  max-width: 75rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 9rem;
-  gap: 1.5rem;
-  justify-items: center;
-`;
-
-const ErrorText = styled.div`
-  text-align: center;
-  color: red;
-  margin-top: 2rem;
-`;
-
-const LoadingOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const LoadingBox = styled.div`
-  background: rgba(255, 255, 255, 0.3);
-  padding: 30px 50px;
-  border-radius: 10px;
-  color: #fff;
-`;
