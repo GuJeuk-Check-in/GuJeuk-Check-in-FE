@@ -1,5 +1,11 @@
-import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import {
+  axiosInstance,
+  downloadBlobFile,
+  publicAxiosInstance,
+  readErrorBodyPreview,
+} from '@shared/api';
+import { isAxiosError } from 'axios';
+import type {
   CheckUserRequest,
   CheckUserResponse,
   CreateUserVisitRequest,
@@ -7,7 +13,9 @@ import {
   FacilityUsageRequest,
   ExistingUserCheckInRequest,
   FacilityUsageResponse,
+  MonthVisitListResponse,
   UserVisitDetailResponse,
+  UserVisitListResponse,
   ExportVisitListRequest,
   NewUserSignUpRequest,
   UpdateUserVisitRequest,
@@ -37,8 +45,12 @@ export const createExistingUserCheckIn = async (
   await publicAxiosInstance.post('/user/check-in', payload);
 };
 
-export const fetchUserVisitList = async (page = 0) => {
-  const response = await axiosInstance.get(`/log?page=${page}`);
+export const fetchUserVisitList = async (
+  page = 0
+): Promise<UserVisitListResponse> => {
+  const response = await axiosInstance.get<UserVisitListResponse>(
+    `/log?page=${page}`
+  );
   return response.data;
 };
 
@@ -46,9 +58,9 @@ export const fetchMonthVisitList = async (
   year: number,
   month: number,
   page = 0
-) => {
+): Promise<MonthVisitListResponse> => {
   const formattedMonth = String(month).padStart(2, '0');
-  const response = await axiosInstance.get(
+  const response = await axiosInstance.get<MonthVisitListResponse>(
     `/log/date/${year}-${formattedMonth}?page=${page}`
   );
   return response.data;
@@ -105,52 +117,34 @@ export const exportVisitListToExcel = async ({
   try {
     const formattedMonth = String(month).padStart(2, '0');
 
-    const response = await axiosInstance.get(
+    const response = await axiosInstance.get<Blob>(
       `/organ/excel/log/${year}-${formattedMonth}`,
       {
         responseType: 'blob',
       }
     );
 
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute(
-      'download',
+    downloadBlobFile(
+      response.data,
       `시설이용목록_${year}-${formattedMonth}.xlsx`
     );
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
 
     return '엑셀 파일 다운로드 성공';
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('엑셀 파일 다운로드 실패:', error);
 
     let errorMessage = '엑셀 내보내기 중 알 수 없는 오류가 발생했습니다.';
 
-    if (error.response?.status) {
+    if (isAxiosError(error) && error.response?.status) {
       const status = error.response.status;
       errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
 
-      if (error.response.data) {
-        let errorBodyText = '';
+      const preview = await readErrorBodyPreview(error.response.data);
 
-        if (error.response.data instanceof Blob) {
-          errorBodyText = await error.response.data.text();
-        } else if (typeof error.response.data === 'string') {
-          errorBodyText = error.response.data;
-        }
-
-        if (errorBodyText) {
-          const preview =
-            errorBodyText.length > 50
-              ? errorBodyText.slice(0, 50) + '...'
-              : errorBodyText;
-          errorMessage += ` (서버 메시지: ${preview})`;
-        }
+      if (preview) {
+        errorMessage += ` (서버 메시지: ${preview})`;
       }
-    } else if (error.message) {
+    } else if (error instanceof Error && error.message) {
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
     }
 
