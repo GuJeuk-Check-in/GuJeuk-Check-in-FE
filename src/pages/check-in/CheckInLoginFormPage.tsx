@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { PurposeResponse, usePurposeList } from '@entities/purpose';
+import { usePurposeList } from '@entities/purpose';
+import type { PurposeResponse } from '@entities/purpose';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
   ExistingUserCheckInRequest,
@@ -16,35 +17,13 @@ import { FiArrowLeft, FiMinus, FiPlus, FiUsers } from 'react-icons/fi';
 import { IoRocketOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
+import {
+  readPurposeCacheOrEmpty,
+  writePurposeCache,
+} from './checkInOptionCache';
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
-const PURPOSE_CACHE_KEY = 'gujeuk:last-success-purposes';
-
-const readCachedPurposes = (): PurposeResponse[] => {
-  try {
-    const cached = localStorage.getItem(PURPOSE_CACHE_KEY);
-    if (!cached) return [];
-
-    const parsed = JSON.parse(cached);
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.filter(
-      (item): item is PurposeResponse =>
-        typeof item?.id === 'number' && typeof item?.purpose === 'string'
-    );
-  } catch {
-    return [];
-  }
-};
-
-const writeCachedPurposes = (purposes: PurposeResponse[]) => {
-  try {
-    localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
-  } catch {
-    return;
-  }
-};
 
 interface LocationState {
   userId?: number;
@@ -61,7 +40,7 @@ const CheckInLoginFormPage = () => {
   const [femaleCount, setFemaleCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [cachedPurposes, setCachedPurposes] =
-    useState<PurposeResponse[]>(readCachedPurposes);
+    useState<readonly PurposeResponse[]>(readPurposeCacheOrEmpty);
   const modal = useModal();
   const {
     data: purposes = [],
@@ -80,7 +59,7 @@ const CheckInLoginFormPage = () => {
   useEffect(() => {
     if (purposes.length > 0) {
       setCachedPurposes(purposes);
-      writeCachedPurposes(purposes);
+      writePurposeCache(purposes);
     }
   }, [purposes]);
 

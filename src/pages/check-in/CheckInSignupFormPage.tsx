@@ -39,8 +39,8 @@ import { usePublicResidenceList } from '@entities/residence';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import {
-  readPurposeCache,
-  readResidenceCache,
+  readPurposeCacheOrDefaults,
+  readResidenceCacheOrDefaults,
   writePurposeCache,
   writeResidenceCache,
 } from './checkInOptionCache';
@@ -116,13 +116,17 @@ const CheckInSignupFormPage = () => {
     isLoading: isResidenceLoading,
     isError: isResidenceError,
   } = usePublicResidenceList();
-  const [cachedResidences, setCachedResidences] = useState(readResidenceCache);
+  const [cachedResidences, setCachedResidences] = useState(
+    readResidenceCacheOrDefaults
+  );
   const visibleResidences =
     residences.length > 0 ? residences : cachedResidences;
   const filteredResidences = visibleResidences.filter((r) =>
     matchesKoreanSearch(r.residence, residenceSearch)
   );
-  const [cachedPurposes, setCachedPurposes] = useState(readPurposeCache);
+  const [cachedPurposes, setCachedPurposes] = useState(
+    readPurposeCacheOrDefaults
+  );
   const modal = useModal();
   const {
     data: purposes = [],
