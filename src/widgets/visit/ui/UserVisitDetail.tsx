@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import { getAgeLabel, useFetchUserVisitDetail } from '@entities/visit/index';
+import { getAgeLabel, useFetchUserVisitDetail } from '@entities/visit';
 import { UserVisitForm } from '@features/visit/update-visit-list/ui/UserVisitForm';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';

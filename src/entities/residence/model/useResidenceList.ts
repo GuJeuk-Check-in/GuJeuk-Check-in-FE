@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { publicResidenceList, residenceList } from '../index';
+import { publicResidenceList, residenceList } from '../api/residence.api';
 import { useResidenceStore } from './residenceStore';
 import { useEffect } from 'react';
 import { useIsRemoteSyncReady } from '@shared/lib';

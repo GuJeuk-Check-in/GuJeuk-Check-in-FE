@@ -1,10 +1,10 @@
-import { createResidence } from '@entities/residence/index';
+import { createResidence } from '@entities/residence';
 import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreateResidenceRequest,
   ResidenceResponse,
-} from '@entities/residence/index';
+} from '@entities/residence';
 
 export const useCreateResidence = () => {
   const queryClient = useQueryClient();

@@ -13,7 +13,7 @@ import {
   getAgeLabel,
   getAgeTypeByLabel,
   type UserVisitDetailResponse,
-} from '@entities/visit/index';
+} from '@entities/visit';
 import { UseModalReturn } from '@shared/hooks/useModal';
 
 interface UserVisitFormProps {
