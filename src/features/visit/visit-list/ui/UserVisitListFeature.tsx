@@ -1,16 +1,16 @@
 import { useRef, useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import styled from '@emotion/styled';
-import { UserVisitCard } from '@entities/visit';
+import { UserVisitCard, type UserVisit } from '@entities/visit';
 import { Modal } from '@shared/ui';
 import {
   useInfiniteUserVisitList,
-  useMonthVisitDetailList,
   useDeleteVisitMutation,
-} from '@features/visit/index';
+} from '../model/userVisitList';
+import { useMonthVisitDetailList } from '../model/useMonthVisitList';
 import { useModal } from '@shared/hooks/useModal';
 import { MonthVisitButton } from '@shared/ui/Button/MonthVisitButton';
-import { MonthVisitModal } from '@widgets/visit/ui/MonthVisitModal';
+import { MonthVisitModal } from './MonthVisitModal';
 
 export const UserVisitListFeature = () => {
   const deleteConfirmModal = useModal();
@@ -38,7 +38,7 @@ export const UserVisitListFeature = () => {
   const isLoading = monthFilter ? monthDetail.isLoading : isLoadingAll;
   const error = monthFilter ? monthDetail.error : errorAll;
 
-  const visits = useMemo(() => {
+  const visits = useMemo<UserVisit[]>(() => {
     if (monthFilter) {
       return monthDetail.data?.pages.flatMap((page) => page.slice?.content ?? []) ?? [];
     }
@@ -153,14 +153,13 @@ export const UserVisitListFeature = () => {
         onClose={() => setMonthModalOpen(false)}
         onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
       />
-      {visits.map((visit: any) => {
-        if (!visit) return null;
-
+      {visits.map((visit) => {
+        const displayName = visit.name || '방문자';
         return (
           <UserVisitCard
             key={visit.id}
             id={visit.id}
-            name={visit.name}
+            name={displayName}
             male={visit.maleCount}
             female={visit.femaleCount}
             date={visit.visitDate}

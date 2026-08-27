@@ -1,15 +1,15 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import closeButton from '@shared/assets/btn_left-arrow_default.png';
+import arrowRight from '@shared/assets/btn_right-arrow_default.png';
 import { DetailMonthVisitButton } from '@shared/ui/Button/DetailMonthVisitButton';
 import { MonthVisitCard } from '@shared/ui/Crad/MonthVisitCard';
-import { useState } from 'react';
-import { useMonthVisitList } from '@features/visit/month-visit-list';
-import arrowRight from '@shared/assets/btn_right-arrow_default.png';
+import { useMonthVisitList } from '../model/useMonthVisitList';
 
 interface MonthVisitModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSelectMonthForList?: (year: number, month: number) => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
+  readonly onSelectMonthForList?: (year: number, month: number) => void;
 }
 
 export const MonthVisitModal = ({
@@ -21,14 +21,14 @@ export const MonthVisitModal = ({
 
   const monthsInfo = useMonthVisitList(year, { enabled: isOpen });
 
-  const handlePrevYear = () => setYear(year => year - 1);
-  const handleNextYear = () => setYear(year => year + 1);
+  const handlePrevYear = () => setYear((currentYear) => currentYear - 1);
+  const handleNextYear = () => setYear((currentYear) => currentYear + 1);
 
   if (!isOpen) return null;
 
   return (
     <Overlay onClick={onClose}>
-      <Container onClick={(e) => e.stopPropagation()}>
+      <Container onClick={(event) => event.stopPropagation()}>
         <CloseButtonBox onClick={onClose}>
           <img src={closeButton} style={{ width: '2rem', height: '2rem' }} />
         </CloseButtonBox>
@@ -36,16 +36,18 @@ export const MonthVisitModal = ({
           <PrevYearButton onClick={handlePrevYear}>
             <img src={arrowRight} />
           </PrevYearButton>
-          <DateHeaderTitle>
-            {year}
-          </DateHeaderTitle>
+          <DateHeaderTitle>{year}</DateHeaderTitle>
           <NextYearButton onClick={handleNextYear}>
             <img src={arrowRight} />
           </NextYearButton>
         </DateHeader>
         <MonthVisitCardList>
           {monthsInfo.monthVisitCounts.map((month) => (
-            <MonthVisitCard key={month.month} month={month.month} visitors={month.visitorCount}>
+            <MonthVisitCard
+              key={month.month}
+              month={month.month}
+              visitors={month.visitorCount}
+            >
               <DetailMonthVisitButton
                 onClick={() => {
                   onSelectMonthForList?.(year, month.month);
@@ -94,7 +96,7 @@ const CloseButtonBox = styled.div`
   padding: 1.75rem;
   left: 0;
   top: 0;
-`
+`;
 
 const MonthVisitCardList = styled.div`
   display: grid;
@@ -108,13 +110,13 @@ const DateHeader = styled.div`
   align-items: center;
   width: 100%;
   gap: 4rem;
-`
+`;
 
 const DateHeaderTitle = styled.span`
   font-size: 28px;
   font-weight: 500;
-  color: #2E2E32;
-`
+  color: #2e2e32;
+`;
 
 const NextYearButton = styled.button`
   display: flex;
@@ -125,8 +127,8 @@ const NextYearButton = styled.button`
   cursor: pointer;
   background: none;
   border: none;
-`
+`;
 
 const PrevYearButton = styled(NextYearButton)`
   rotate: 180deg;
-`
+`;
