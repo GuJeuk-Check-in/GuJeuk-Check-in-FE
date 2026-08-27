@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { axiosInstance } from '@shared/api';
 import { UserListResponse, UserInformation } from '../model/types';
 
@@ -54,12 +55,12 @@ export const exportUserListToExcel = async (): Promise<string> => {
     link.remove();
 
     return '엑셀 파일 다운로드 성공';
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('엑셀 파일 다운로드 실패:', error);
 
     let errorMessage = '엑셀 내보내기 중 알 수 없는 오류가 발생했습니다.';
 
-    if (error.response?.status) {
+    if (axios.isAxiosError(error) && error.response?.status) {
       const status = error.response.status;
       errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
 
@@ -80,7 +81,7 @@ export const exportUserListToExcel = async (): Promise<string> => {
           errorMessage += ` (서버 메시지: ${preview})`;
         }
       }
-    } else if (error.message) {
+    } else if (error instanceof Error && error.message) {
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
     }
 

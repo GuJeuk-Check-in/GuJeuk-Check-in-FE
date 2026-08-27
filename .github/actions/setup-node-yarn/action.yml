@@ -1,0 +1,25 @@
+name: Setup Node & Yarn
+description: Node/Yarn 세팅 + 의존성 캐싱 + 잠금 파일 고정 설치를 수행하는 공통 step
+
+inputs:
+  node-version:
+    description: 사용할 Node.js 버전
+    required: false
+    default: '22'
+
+runs:
+  using: composite
+  steps:
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: yarn
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable
