@@ -1,25 +1,8 @@
 import styled from '@emotion/styled';
-import { usePurposeList } from '@entities/purpose';
-import type { GenderType } from '@entities/visit';
-import {
-  CHECK_IN_FUNNEL_EVENT_NAMES,
-  getAgeGroupFromBirthYMD,
-  recordCheckInFunnelEvent,
-  submitHighAvailabilityCheckIn,
-  submitNewUserSignUpWithFallback,
-} from '@entities/visit';
 import { PasswordBackground } from '@shared/ui/Background';
 import { Modal } from '@shared/ui';
-import { useModal } from '@shared/hooks/useModal';
-import { matchesKoreanSearch } from '@shared/lib';
-import { getApiErrorMessage } from '@shared/api';
-import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { FaExclamationTriangle } from 'react-icons/fa';
 import { FiArrowLeft, FiPhone, FiUser } from 'react-icons/fi';
-import { usePublicResidenceList } from '@entities/residence';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import {
   BirthDateInputsSection,
   GenderSelectionSection,
@@ -31,266 +14,10 @@ import {
   SignupSubmitButton,
   TextFieldSection,
 } from './CheckInSignupFormSections';
-import type { SignupPurposeTone } from './CheckInSignupFormSections';
-import {
-  readPurposeCacheOrDefaults,
-  readResidenceCacheOrDefaults,
-  writePurposeCache,
-  writeResidenceCache,
-} from './checkInOptionCache';
-import {
-  CHECK_IN_SUBMISSION_MODES,
-  parseCheckInSignupRouteState,
-} from './checkInRouteState';
-import {
-  buildNewUserSignUpPayload,
-  createBirthYMD,
-  hasCompleteSignupRequiredFields,
-  resolveSelectedPurpose,
-} from './checkInFormHelpers';
-
-const purposeTones: SignupPurposeTone[] = ['peach', 'mint', 'blue'];
-
-const getDigitsOnly = (value: string, maxLength: number) =>
-  value.replace(/\D/g, '').slice(0, maxLength);
+import { useCheckInSignupFormFlow } from './useCheckInSignupFormFlow';
 
 const CheckInSignupFormPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const locationState = parseCheckInSignupRouteState(location.state);
-  const [name, setName] = useState(locationState.name);
-  const [phone, setPhone] = useState(locationState.phone);
-  const [gender, setGender] = useState<GenderType | ''>('');
-  const [birthYear, setBirthYear] = useState('');
-  const [birthMonth, setBirthMonth] = useState('');
-  const [birthDay, setBirthDay] = useState('');
-  const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
-  const [residence, setResidence] = useState('');
-  const [residenceModalOpen, setResidenceModalOpen] = useState(false);
-  const [residenceSearch, setResidenceSearch] = useState('');
-  const [maleCount, setMaleCount] = useState(0);
-  const [femaleCount, setFemaleCount] = useState(0);
-  const [privacyAgreed, setPrivacyAgreed] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const {
-    data: residences = [],
-    isLoading: isResidenceLoading,
-    isError: isResidenceError,
-  } = usePublicResidenceList();
-  const [cachedResidences, setCachedResidences] = useState(
-    readResidenceCacheOrDefaults
-  );
-  const visibleResidences =
-    residences.length > 0 ? residences : cachedResidences;
-  const filteredResidences = visibleResidences.filter((r) =>
-    matchesKoreanSearch(r.residence, residenceSearch)
-  );
-  const [cachedPurposes, setCachedPurposes] = useState(
-    readPurposeCacheOrDefaults
-  );
-  const modal = useModal();
-  const {
-    data: purposes = [],
-    isLoading: isPurposeLoading,
-    isError: isPurposeError,
-  } = usePurposeList();
-
-  useEffect(() => {
-    recordCheckInFunnelEvent({
-      eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_FORM_VIEW,
-      isExistingUser: false,
-    });
-  }, []);
-
-  useEffect(() => {
-    if (purposes.length > 0) {
-      setCachedPurposes(purposes);
-      writePurposeCache(purposes);
-    }
-  }, [purposes]);
-
-  useEffect(() => {
-    if (residences.length > 0) {
-      setCachedResidences(residences);
-      writeResidenceCache(residences);
-    }
-  }, [residences]);
-
-  const visiblePurposes =
-    isPurposeLoading || isPurposeError || purposes.length === 0
-      ? cachedPurposes
-      : purposes;
-
-  const purposeOptions = useMemo(
-    () =>
-      visiblePurposes.map((purpose, index) => ({
-        label: purpose.purpose,
-        tone: purposeTones[index % purposeTones.length],
-      })),
-    [visiblePurposes]
-  );
-
-  useEffect(() => {
-    if (
-      purposeIndex !== null &&
-      (purposeIndex < 0 || purposeIndex >= purposeOptions.length)
-    ) {
-      setPurposeIndex(null);
-    }
-  }, [purposeIndex, purposeOptions.length]);
-
-  useEffect(() => {
-    if (!residenceModalOpen) return;
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setResidenceModalOpen(false);
-      }
-    };
-
-    window.addEventListener('keydown', closeOnEscape);
-
-    return () => {
-      window.removeEventListener('keydown', closeOnEscape);
-    };
-  }, [residenceModalOpen]);
-
-  const resetForm = () => {
-    setName('');
-    setPhone('');
-    setGender('');
-    setBirthYear('');
-    setBirthMonth('');
-    setBirthDay('');
-    setResidence('');
-    setPurposeIndex(null);
-    setMaleCount(0);
-    setFemaleCount(0);
-    setPrivacyAgreed(false);
-  };
-
-  const goToComplete = () => {
-    resetForm();
-    navigate('/check-in/complete');
-  };
-
-  const openErrorModal = (message: string) => {
-    modal.openModal({
-      icon: <FaExclamationTriangle size={48} color="#D88282" />,
-      title: '체크인 실패',
-      subtitle: message,
-      theme: 'warning',
-      buttons: [
-        {
-          label: '확인',
-          variant: 'secondary',
-          onClick: modal.closeModal,
-        },
-      ],
-    });
-  };
-
-  const handleSubmit = async () => {
-    if (isSaving) return;
-
-    const selectedPurpose = resolveSelectedPurpose(
-      purposeOptions,
-      purposeIndex
-    );
-    const birthYMD = createBirthYMD(birthYear, birthMonth, birthDay);
-    const requiredFields = {
-      name,
-      phone,
-      gender,
-      birthYear,
-      birthMonth,
-      birthDay,
-      residence,
-      selectedPurpose,
-      privacyAgreed,
-      maleCount,
-      femaleCount,
-    };
-
-    if (!hasCompleteSignupRequiredFields(requiredFields)) {
-      modal.openModal({
-        icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '필수 항목을 모두 입력하고 개인정보 수집에 동의해주세요.',
-        theme: 'warning',
-        buttons: [{ label: '확인', onClick: modal.closeModal }],
-      });
-      return;
-    }
-
-    if (!birthYMD) {
-      modal.openModal({
-        icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '생년월일 확인',
-        subtitle: '생년월일을 올바르게 입력해주세요. 예: 2011년 1월 19일',
-        theme: 'warning',
-        buttons: [{ label: '확인', onClick: modal.closeModal }],
-      });
-      return;
-    }
-
-    const payload = buildNewUserSignUpPayload({
-      name,
-      gender: requiredFields.gender,
-      phone,
-      maleCount,
-      femaleCount,
-      birthYMD,
-      residence,
-      selectedPurpose,
-      visitTime: DateTime.now()
-        .setZone('Asia/Seoul')
-        .toISO({ includeOffset: false }),
-      privacyAgreed,
-    });
-    const ageGroup = getAgeGroupFromBirthYMD(birthYMD, payload.visitTime);
-
-    try {
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_SUBMITTED,
-        ageGroup,
-        isExistingUser: false,
-        visitCountBucket: 'FIRST_VISIT',
-        purpose: selectedPurpose,
-      });
-      setIsSaving(true);
-      if (
-        locationState.submissionMode ===
-        CHECK_IN_SUBMISSION_MODES.HIGH_AVAILABILITY
-      ) {
-        await submitHighAvailabilityCheckIn(payload);
-      } else {
-        await submitNewUserSignUpWithFallback(payload);
-      }
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_SUCCEEDED,
-        ageGroup,
-        isExistingUser: false,
-        visitCountBucket: 'FIRST_VISIT',
-        purpose: selectedPurpose,
-      });
-      goToComplete();
-    } catch (error) {
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
-        ageGroup,
-        isExistingUser: false,
-        visitCountBucket: 'FIRST_VISIT',
-        purpose: selectedPurpose,
-        failureReason: 'new_user_check_in_failed',
-      });
-      openErrorModal(
-        getApiErrorMessage(error, '체크인 정보를 서버에 전송하지 못했습니다.')
-      );
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const flow = useCheckInSignupFormFlow();
 
   return (
     <Page>
@@ -300,7 +27,7 @@ const CheckInSignupFormPage = () => {
           <TitleRow>
             <BackButton
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={flow.navigateBack}
               aria-label="뒤로 가기"
             >
               <FiArrowLeft />
@@ -315,93 +42,70 @@ const CheckInSignupFormPage = () => {
 
         <FormBody aria-label="시설 이용 정보 입력">
           <PurposeSelectionSection
-            options={purposeOptions}
-            selectedIndex={purposeIndex}
-            isLoading={isPurposeLoading}
-            isError={isPurposeError}
-            onSelect={(index, label) => {
-              setPurposeIndex(index);
-              recordCheckInFunnelEvent({
-                eventName: CHECK_IN_FUNNEL_EVENT_NAMES.PURPOSE_SELECTED,
-                isExistingUser: false,
-                purpose: label,
-              });
-            }}
+            options={flow.purposeOptions}
+            selectedIndex={flow.purposeIndex}
+            isLoading={flow.isPurposeLoading}
+            isError={flow.isPurposeError}
+            onSelect={flow.selectPurpose}
           />
           <TextFieldSection
             icon={<FiUser aria-hidden="true" />}
             label="이름이 뭐야?"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            value={flow.name}
+            onChange={flow.setNameFromInput}
             placeholder="친구의 이름을 알려줘"
           />
           <TextFieldSection
             icon={<FiPhone aria-hidden="true" />}
             label="전화번호가 뭐야?"
-            value={phone}
-            onChange={(event) => setPhone(event.target.value)}
+            value={flow.phone}
+            onChange={flow.setPhoneFromInput}
             placeholder="010-0000-0000"
           />
-          <GenderSelectionSection value={gender} onSelect={setGender} />
+          <GenderSelectionSection value={flow.gender} onSelect={flow.setGender} />
           <BirthDateInputsSection
-            birthYear={birthYear}
-            birthMonth={birthMonth}
-            birthDay={birthDay}
-            onBirthYearChange={(event) =>
-              setBirthYear(getDigitsOnly(event.target.value, 4))
-            }
-            onBirthMonthChange={(event) =>
-              setBirthMonth(getDigitsOnly(event.target.value, 2))
-            }
-            onBirthDayChange={(event) =>
-              setBirthDay(getDigitsOnly(event.target.value, 2))
-            }
+            birthYear={flow.birthYear}
+            birthMonth={flow.birthMonth}
+            birthDay={flow.birthDay}
+            onBirthYearChange={flow.setBirthYearFromInput}
+            onBirthMonthChange={flow.setBirthMonthFromInput}
+            onBirthDayChange={flow.setBirthDayFromInput}
           />
           <ResidenceSelectorSection
-            residence={residence}
-            onOpen={() => {
-              setResidenceSearch('');
-              setResidenceModalOpen(true);
-            }}
+            residence={flow.residence}
+            onOpen={flow.openResidenceModal}
           />
           <ParticipantCountersSection
-            maleCount={maleCount}
-            femaleCount={femaleCount}
-            onDecreaseMale={() =>
-              setMaleCount((count) => Math.max(0, count - 1))
-            }
-            onIncreaseMale={() => setMaleCount((count) => count + 1)}
-            onDecreaseFemale={() =>
-              setFemaleCount((count) => Math.max(0, count - 1))
-            }
-            onIncreaseFemale={() => setFemaleCount((count) => count + 1)}
+            maleCount={flow.maleCount}
+            femaleCount={flow.femaleCount}
+            onDecreaseMale={flow.decreaseMaleCount}
+            onIncreaseMale={flow.increaseMaleCount}
+            onDecreaseFemale={flow.decreaseFemaleCount}
+            onIncreaseFemale={flow.increaseFemaleCount}
           />
           <PrivacyAgreementSection
-            checked={privacyAgreed}
-            onChange={(event) => setPrivacyAgreed(event.target.checked)}
+            checked={flow.privacyAgreed}
+            onChange={flow.setPrivacyAgreedFromInput}
           />
-          <SignupSubmitButton isSaving={isSaving} onClick={handleSubmit} />
+          <SignupSubmitButton isSaving={flow.isSaving} onClick={flow.submit} />
         </FormBody>
       </Panel>
       <Modal
-        isOpen={modal.isOpen}
-        config={modal.config}
-        onClose={modal.closeModal}
+        isOpen={flow.modal.isOpen}
+        config={flow.modal.config}
+        onClose={flow.modal.closeModal}
       />
-      {residenceModalOpen &&
+      {flow.residenceModalOpen &&
         createPortal(
           <ResidenceSelectionModal
-            residences={filteredResidences}
-            selectedResidence={residence}
-            search={residenceSearch}
-            isLoading={isResidenceLoading}
-            isError={isResidenceError}
-            onSearchChange={(event) => setResidenceSearch(event.target.value)}
-            onSelect={(selectedResidence) => {
-              setResidence(selectedResidence);
-              setResidenceModalOpen(false);
-            }}
-            onClose={() => setResidenceModalOpen(false)}
+            residences={flow.filteredResidences}
+            selectedResidence={flow.residence}
+            search={flow.residenceSearch}
+            isLoading={flow.isResidenceLoading}
+            isError={flow.isResidenceError}
+            onSearchChange={flow.setResidenceSearchFromInput}
+            onSelect={flow.selectResidence}
+            onClose={flow.closeResidenceModal}
           />,
           document.body
         )}
