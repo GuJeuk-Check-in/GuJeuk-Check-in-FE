@@ -9,6 +9,7 @@
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
+    "architecture:check": "node scripts/check-architecture.mjs",
     "check": "yarn lint && yarn typecheck && yarn build",
     "preview": "vite preview"
   },
