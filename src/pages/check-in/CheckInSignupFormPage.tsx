@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { usePurposeList } from '@entities/purpose';
+import type { GenderType } from '@entities/visit';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
-  GenderType,
-  NewUserSignUpRequest,
   getAgeGroupFromBirthYMD,
   recordCheckInFunnelEvent,
   submitHighAvailabilityCheckIn,
@@ -48,6 +47,12 @@ import {
   CHECK_IN_SUBMISSION_MODES,
   parseCheckInSignupRouteState,
 } from './checkInRouteState';
+import {
+  buildNewUserSignUpPayload,
+  createBirthYMD,
+  hasCompleteSignupRequiredFields,
+  resolveSelectedPurpose,
+} from './checkInFormHelpers';
 
 const genderOptions = [
   { label: '남자', value: 'MAN', tone: 'mint', icon: <FaMars /> },
@@ -59,39 +64,6 @@ const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
 
 const getDigitsOnly = (value: string, maxLength: number) =>
   value.replace(/\D/g, '').slice(0, maxLength);
-
-const createBirthYMD = (
-  yearValue: string,
-  monthValue: string,
-  dayValue: string
-) => {
-  if (yearValue.length !== 4 || !monthValue || !dayValue) return null;
-
-  const year = Number(yearValue);
-  const month = Number(monthValue);
-  const day = Number(dayValue);
-  const birthDate = new Date(year, month - 1, day);
-  const today = new Date();
-
-  if (
-    !Number.isInteger(year) ||
-    month < 1 ||
-    month > 12 ||
-    day < 1 ||
-    day > 31 ||
-    birthDate.getFullYear() !== year ||
-    birthDate.getMonth() !== month - 1 ||
-    birthDate.getDate() !== day ||
-    birthDate > today
-  ) {
-    return null;
-  }
-
-  return `${yearValue}-${String(month).padStart(2, '0')}-${String(day).padStart(
-    2,
-    '0'
-  )}`;
-};
 
 const CheckInSignupFormPage = () => {
   const navigate = useNavigate();
@@ -232,24 +204,26 @@ const CheckInSignupFormPage = () => {
   const handleSubmit = async () => {
     if (isSaving) return;
 
-    const selectedPurpose =
-      purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
-    const trimmedName = name.trim();
-    const trimmedPhone = phone.trim();
+    const selectedPurpose = resolveSelectedPurpose(
+      purposeOptions,
+      purposeIndex
+    );
     const birthYMD = createBirthYMD(birthYear, birthMonth, birthDay);
+    const requiredFields = {
+      name,
+      phone,
+      gender,
+      birthYear,
+      birthMonth,
+      birthDay,
+      residence,
+      selectedPurpose,
+      privacyAgreed,
+      maleCount,
+      femaleCount,
+    };
 
-    if (
-      !trimmedName ||
-      !trimmedPhone ||
-      !gender ||
-      !birthYear ||
-      !birthMonth ||
-      !birthDay ||
-      !residence ||
-      !selectedPurpose ||
-      !privacyAgreed ||
-      maleCount + femaleCount <= 0
-    ) {
+    if (!hasCompleteSignupRequiredFields(requiredFields)) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
         title: '입력 확인',
@@ -271,20 +245,20 @@ const CheckInSignupFormPage = () => {
       return;
     }
 
-    const payload: NewUserSignUpRequest = {
-      name: trimmedName,
-      gender,
-      phone: trimmedPhone,
+    const payload = buildNewUserSignUpPayload({
+      name,
+      gender: requiredFields.gender,
+      phone,
       maleCount,
       femaleCount,
       birthYMD,
       residence,
-      purpose: selectedPurpose,
+      selectedPurpose,
       visitTime: DateTime.now()
         .setZone('Asia/Seoul')
         .toISO({ includeOffset: false }),
       privacyAgreed,
-    };
+    });
     const ageGroup = getAgeGroupFromBirthYMD(birthYMD, payload.visitTime);
 
     try {

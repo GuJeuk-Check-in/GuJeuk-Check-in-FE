@@ -3,7 +3,6 @@ import { usePurposeList } from '@entities/purpose';
 import type { PurposeResponse } from '@entities/purpose';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
-  ExistingUserCheckInRequest,
   recordCheckInFunnelEvent,
   submitExistingUserCheckInWithFallback,
 } from '@entities/visit';
@@ -21,6 +20,11 @@ import {
   readPurposeCacheOrEmpty,
   writePurposeCache,
 } from './checkInOptionCache';
+import {
+  buildExistingUserCheckInPayload,
+  hasParticipants,
+  resolveSelectedPurpose,
+} from './checkInFormHelpers';
 
 type Tone = 'peach' | 'mint' | 'blue' | 'pink';
 const purposeTones: Tone[] = ['peach', 'mint', 'blue'];
@@ -116,8 +120,10 @@ const CheckInLoginFormPage = () => {
   const handleSubmit = async () => {
     if (isSaving) return;
 
-    const selectedPurpose =
-      purposeIndex === null ? '' : purposeOptions[purposeIndex]?.label || '';
+    const selectedPurpose = resolveSelectedPurpose(
+      purposeOptions,
+      purposeIndex
+    );
 
     if (typeof locationState.userId !== 'number') {
       recordCheckInFunnelEvent({
@@ -139,7 +145,7 @@ const CheckInLoginFormPage = () => {
       return;
     }
 
-    if (!selectedPurpose || maleCount + femaleCount <= 0) {
+    if (!selectedPurpose || !hasParticipants({ maleCount, femaleCount })) {
       modal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
         title: '입력 확인',
@@ -150,15 +156,15 @@ const CheckInLoginFormPage = () => {
       return;
     }
 
-    const payload: ExistingUserCheckInRequest = {
+    const payload = buildExistingUserCheckInPayload({
       userId: locationState.userId,
       maleCount,
       femaleCount,
-      purpose: selectedPurpose,
+      selectedPurpose,
       visitTime: DateTime.now()
         .setZone('Asia/Seoul')
         .toISO({ includeOffset: false }),
-    };
+    });
 
     try {
       recordCheckInFunnelEvent({
