@@ -1,12 +1,11 @@
 import {
-  drainCheckInQueue,
-  fetchReadyHealth,
-  isReadyForRemoteSync,
-} from '@entities/visit';
+  drainVisitCheckInQueueForBootSync,
+  fetchVisitReadyForBootSync,
+} from '@entities/visit/readyBootSync';
 import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import {
-  REMOTE_SYNC_AVAILABILITY,
-  setRemoteSyncAvailability,
+  markRemoteSyncBootReady,
+  markRemoteSyncBootUnready,
 } from '@shared/lib';
 import { useEffect } from 'react';
 
@@ -72,7 +71,7 @@ export const useReadyHealthMonitor = (): void => {
       if (!readyForRemoteSync) {
         wasReadyForRemoteSync = false;
         pollIntervalMs = READY_HEALTH_RECOVERY_POLL_INTERVAL_MS;
-        setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.UNREADY);
+        markRemoteSyncBootUnready();
         await cancelRemoteSyncQueries(queryClient);
         return;
       }
@@ -80,13 +79,13 @@ export const useReadyHealthMonitor = (): void => {
       const recovered = !wasReadyForRemoteSync;
       wasReadyForRemoteSync = true;
       pollIntervalMs = READY_HEALTH_POLL_INTERVAL_MS;
-      setRemoteSyncAvailability(REMOTE_SYNC_AVAILABILITY.READY);
+      markRemoteSyncBootReady();
 
       if (recovered) {
         await invalidateRemoteSyncQueries(queryClient);
       }
 
-      await drainCheckInQueue().catch(() => undefined);
+      await drainVisitCheckInQueueForBootSync().catch(() => undefined);
     };
 
     const checkReadiness = async (): Promise<void> => {
@@ -95,8 +94,10 @@ export const useReadyHealthMonitor = (): void => {
       requestInFlight = true;
 
       try {
-        const health = await fetchReadyHealth().catch(() => null);
-        await applyReadyState(health !== null && isReadyForRemoteSync(health));
+        const readyForRemoteSync = await fetchVisitReadyForBootSync().catch(
+          () => false
+        );
+        await applyReadyState(readyForRemoteSync);
       } finally {
         requestInFlight = false;
         scheduleNextCheck();
