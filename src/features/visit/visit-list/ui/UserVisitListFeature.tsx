@@ -153,14 +153,14 @@ export const UserVisitListFeature = () => {
         onClose={() => setMonthModalOpen(false)}
         onSelectMonthForList={(y, m) => setMonthFilter({ year: y, month: m })}
       />
-      {visits.map((visit: any) => {
+      {visits.map((visit) => {
         if (!visit) return null;
 
         return (
           <UserVisitCard
             key={visit.id}
             id={visit.id}
-            name={visit.name}
+            name={visit.name || '방문자'}
             male={visit.maleCount}
             female={visit.femaleCount}
             date={visit.visitDate}
