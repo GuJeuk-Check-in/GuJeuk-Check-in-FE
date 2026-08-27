@@ -1,22 +1,24 @@
 import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-import { useResidenceList } from '@entities/residence/index';
-import { ResidenceCard } from '@entities/residence/index';
+import { useResidenceList, ResidenceCard } from '@entities/residence';
 import { CreateResidenceModal } from '@features/residence/create-residence';
 import {
   useUpdateResidenceHandler,
   useDeleteResidenceHandler,
   useReorderResidence,
-} from '@features/residence/index';
+} from '@features/residence';
 import { SortablePurposeItem } from '@entities/purpose';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
+import type { ResidenceResponse } from '@entities/residence';
+
+const EMPTY_RESIDENCES: ResidenceResponse[] = [];
 
 export const ResidenceBoard = () => {
   const { data: residences, isLoading, isError, error } = useResidenceList();
   const { items, sensors, handleDragEnd } = useReorderResidence(
-    residences || []
+    residences ?? EMPTY_RESIDENCES
   );
   const { isOpen, config, openModal, closeModal } = useModal();
 
