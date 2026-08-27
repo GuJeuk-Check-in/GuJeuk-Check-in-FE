@@ -1,12 +1,7 @@
-import { PageLayout } from '@widgets/GlobalLayout';
-import { UserVisitListFeature } from '@features/visit/visit-list/ui/UserVisitListFeature';
+import { UserVisitListFeature } from '@features/visit/visit-list';
 
 const UserVisitList = () => {
-  return (
-    <PageLayout>
-      <UserVisitListFeature />
-    </PageLayout>
-  );
+  return <UserVisitListFeature />;
 };
 
 export default UserVisitList;

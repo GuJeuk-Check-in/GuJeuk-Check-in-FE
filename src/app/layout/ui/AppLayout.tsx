@@ -1,22 +1,16 @@
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { Outlet } from 'react-router-dom';
 import { UseBackground } from '@shared/ui/Background';
-import { Header } from '@widgets/GlobalLayout';
+import { AdminHeader } from '@widgets/admin-header';
 
-interface PageLayoutProps {
-  children: ReactNode;
-  showHeader?: boolean;
-}
-
-export const PageLayout = ({
-  children,
-  showHeader = true,
-}: PageLayoutProps) => {
+export const AppLayout = () => {
   return (
     <Container>
       <UseBackground />
-      {showHeader && <Header />}
-      <ContentWrapper>{children}</ContentWrapper>
+      <AdminHeader />
+      <ContentWrapper>
+        <Outlet />
+      </ContentWrapper>
     </Container>
   );
 };
@@ -25,11 +19,11 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
-  max-height: 100vh;
+  max-height: 100dvh;
   overflow-y: hidden;
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.main`
   flex: 1;
   display: flex;
   flex-direction: column;

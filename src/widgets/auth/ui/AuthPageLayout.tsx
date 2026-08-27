@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { PasswordBackground } from '@shared/ui/Background';
-import { RightLayout } from '@widgets/auth';
+import { RightLayout } from './RightLayout';
 
 interface AuthPageLayoutProps {
   title: string;

@@ -1,4 +1,3 @@
-import { PageLayout } from '@widgets/GlobalLayout';
 import { PurposeBoard } from '@widgets/purpose/ui/PurposeBoard';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
@@ -8,9 +7,7 @@ const PurposeCustom = () => {
 
   return (
     <>
-      <PageLayout showHeader={true}>
-        <PurposeBoard />
-      </PageLayout>
+      <PurposeBoard />
       <Modal isOpen={isOpen} config={config} onClose={closeModal} />
     </>
   );

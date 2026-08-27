@@ -14,19 +14,25 @@ import CheckInSignupFormPage from '@pages/check-in/CheckInSignupFormPage';
 import CheckInLoginFormPage from '@pages/check-in/CheckInLoginFormPage';
 import CheckInCompletePage from '@pages/check-in/CheckInCompletePage';
 import CheckInFunnelAnalyticsPage from '@pages/check-in/CheckInFunnelAnalyticsPage';
+import { AppLayout } from '@app/layout';
 
 export const Router = () => {
   return (
     <Routes>
       <Route path="/organ/login" element={<OrganLogin />}></Route>
       <Route path="/organ/change" element={<OrganChange />}></Route>
-      <Route path="/log" element={<UserVisitList />}></Route>
-      <Route path="/log/create" element={<UserDetail />}></Route>
-      <Route path="/log/:logId" element={<UserDetailView />} />
-      <Route path="/organ/user/all" element={<UserInformation />} />
-      <Route path="/organ/user/:userId" element={<UserInformationDetail />} />
-      <Route path="/purpose/all" element={<PurposeCustom />} />
-      <Route path="/residence/all" element={<ResidenceCustom />} />
+      <Route element={<AppLayout />}>
+        <Route path="/log" element={<UserVisitList />}></Route>
+        <Route path="/log/create" element={<UserDetail />}></Route>
+        <Route path="/log/:logId" element={<UserDetailView />} />
+        <Route path="/organ/user/all" element={<UserInformation />} />
+        <Route
+          path="/organ/user/:userId"
+          element={<UserInformationDetail />}
+        />
+        <Route path="/purpose/all" element={<PurposeCustom />} />
+        <Route path="/residence/all" element={<ResidenceCustom />} />
+      </Route>
       <Route path="/check-in" element={<CheckInHome />} />
       <Route path="/check-in/user-check" element={<CheckInUserCheck />} />
       <Route path="/check-in/signup-form" element={<CheckInSignupFormPage />} />

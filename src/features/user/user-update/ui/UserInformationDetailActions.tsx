@@ -7,11 +7,17 @@ import { useUpdateUserInformation } from '../model/useUpdateUser';
 interface Props {
   userData: UserInformation;
   refetchUserInformation: () => Promise<unknown> | void;
+  residenceOptions: readonly string[];
+  isResidenceLoading: boolean;
+  isResidenceError: boolean;
 }
 
 export const UserInformationDetailActions = ({
   userData,
   refetchUserInformation,
+  residenceOptions,
+  isResidenceLoading,
+  isResidenceError,
 }: Props) => {
   const modal = useModal();
   const updateMutation = useUpdateUserInformation();
@@ -90,6 +96,9 @@ export const UserInformationDetailActions = ({
         birthYMD={userData.birthYMD}
         residence={userData.residence}
         privacyAgreed={userData.privacyAgreed}
+        residenceOptions={residenceOptions}
+        isResidenceLoading={isResidenceLoading}
+        isResidenceError={isResidenceError}
         onSave={handleSave}
       />
       <Modal

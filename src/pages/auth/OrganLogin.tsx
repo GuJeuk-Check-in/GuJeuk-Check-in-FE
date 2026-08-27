@@ -1,4 +1,4 @@
-import { AuthPageLayout } from '@widgets/GlobalLayout';
+import { AuthPageLayout } from '@widgets/auth';
 import { LoginForm, useLoginPage } from '@features/auth/login';
 
 const OrganLogin = () => {
