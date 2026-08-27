@@ -8,7 +8,7 @@ interface VisitDetailInputOption {
 
 interface VisitDetailInputProps {
   label: string;
-  value: any;
+  value: string | number;
   width?: string;
   isEditable?: boolean;
   name?: string;

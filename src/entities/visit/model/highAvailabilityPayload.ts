@@ -1,10 +1,10 @@
 import type {
-  AgeType,
   ExistingUserCheckInRequest,
   ExistingUserHighAvailabilityLogRequest,
   NewUserSignUpRequest,
   UnknownUserHighAvailabilitySignUpRequest,
 } from './types';
+import { getAgeTypeFromKoreanAge } from './age';
 
 const YEAR_PREFIX_PATTERN = /^(\d{4})-/;
 
@@ -25,15 +25,6 @@ const parseYear = (value: string): number | null => {
 
   const year = Number(match[1]);
   return Number.isInteger(year) ? year : null;
-};
-
-const getAgeType = (koreanAge: number): AgeType => {
-  if (koreanAge <= 8) return 'BABY';
-  if (koreanAge <= 13) return 'AGE_9_13';
-  if (koreanAge <= 16) return 'AGE_14_16';
-  if (koreanAge <= 19) return 'AGE_17_19';
-  if (koreanAge <= 24) return 'AGE_20_24';
-  return 'ADULT';
 };
 
 export const createExistingUserHighAvailabilityPayload = (
@@ -72,7 +63,7 @@ export const createUnknownUserHighAvailabilityPayload = (
     phone: payload.phone,
     gender: payload.gender,
     birthYMD: payload.birthYMD,
-    age: getAgeType(visitYear - birthYear + 1),
+    age: getAgeTypeFromKoreanAge(visitYear - birthYear + 1),
     residence: payload.residence,
     privacyAgreed: payload.privacyAgreed,
     maleCount: payload.maleCount,

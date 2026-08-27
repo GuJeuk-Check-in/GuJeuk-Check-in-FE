@@ -41,7 +41,9 @@ const readCachedPurposes = (): PurposeResponse[] => {
 const writeCachedPurposes = (purposes: PurposeResponse[]) => {
   try {
     localStorage.setItem(PURPOSE_CACHE_KEY, JSON.stringify(purposes));
-  } catch {}
+  } catch {
+    return;
+  }
 };
 
 interface LocationState {

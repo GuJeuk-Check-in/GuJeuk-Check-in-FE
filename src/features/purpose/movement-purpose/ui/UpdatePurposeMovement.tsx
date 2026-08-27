@@ -16,8 +16,8 @@ type Item = {
   id: string | number;
 };
 
-export const useReorderPurpose = (initialItems?: Item[]) => {
-  const [items, setItems] = useState<Item[]>(() => initialItems ?? []);
+export const useReorderPurpose = <T extends Item>(initialItems?: T[]) => {
+  const [items, setItems] = useState<T[]>(() => initialItems ?? []);
   const prevIdsRef = useRef<string>('');
 
   useEffect(() => {

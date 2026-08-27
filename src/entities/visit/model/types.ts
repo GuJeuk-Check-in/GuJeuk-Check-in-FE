@@ -1,10 +1,4 @@
-export type AgeType =
-  | 'BABY'
-  | 'AGE_9_13'
-  | 'AGE_14_16'
-  | 'AGE_17_19'
-  | 'AGE_20_24'
-  | 'ADULT';
+import type { AgeType } from './age';
 
 export type GenderType = 'MAN' | 'WOMAN';
 

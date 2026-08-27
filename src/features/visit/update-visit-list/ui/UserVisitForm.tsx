@@ -8,19 +8,13 @@ import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { VisitDatePicker, VisitTimePicker } from '@shared/ui';
 import { useUpdateAdminItem } from '../model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
-import { UserVisitDetailResponse } from '@entities/visit/index';
+import {
+  AGE_LABELS,
+  getAgeLabel,
+  getAgeTypeByLabel,
+  type UserVisitDetailResponse,
+} from '@entities/visit/index';
 import { UseModalReturn } from '@shared/hooks/useModal';
-
-const AGE_OPTIONS = [
-  { value: 'BABY', label: '0~8세' },
-  { value: 'AGE_9_13', label: '9~13세' },
-  { value: 'AGE_14_16', label: '14~16세' },
-  { value: 'AGE_17_19', label: '17~19세' },
-  { value: 'AGE_20_24', label: '20~24세' },
-  { value: 'ADULT', label: '성인' },
-];
-
-const AGE_DISPLAY_LABELS = AGE_OPTIONS.map((opt) => opt.label);
 
 interface UserVisitFormProps {
   visit: UserVisitDetailResponse;
@@ -69,9 +63,10 @@ export const UserVisitForm = ({
   };
 
   const handleAgeChange = (ageLabel: string) => {
-    const ageEnum =
-      AGE_OPTIONS.find((opt) => opt.label === ageLabel)?.value || ageLabel;
-    setFormData((prev) => ({ ...prev, age: ageEnum as any }));
+    const age = getAgeTypeByLabel(ageLabel);
+    if (!age) return;
+
+    setFormData((prev) => ({ ...prev, age }));
   };
 
   const handleSave = () => {
@@ -91,7 +86,7 @@ export const UserVisitForm = ({
       return;
     }
 
-    updateMutation.mutate(formData as any, {
+    updateMutation.mutate(formData, {
       onSuccess: () => {
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
@@ -135,11 +130,8 @@ export const UserVisitForm = ({
         />
         <ToggleSelect
           label="연령"
-          options={AGE_DISPLAY_LABELS}
-          value={
-            AGE_OPTIONS.find((opt) => opt.value === formData.age)?.label ||
-            formData.age
-          }
+          options={AGE_LABELS}
+          value={getAgeLabel(formData.age)}
           onChange={handleAgeChange}
         />
       </InputRow>

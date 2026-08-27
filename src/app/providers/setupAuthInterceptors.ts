@@ -42,7 +42,7 @@ const redirectToLogin = () => {
   window.location.href = '/organ/login?error=expired';
 };
 
-export const useAuthInterceptors = () => {
+export const setupAuthInterceptors = () => {
   const axiosWithSetup = axiosInstance as AxiosInstanceWithSetup;
 
   if (axiosWithSetup.__authInterceptorsInstalled) {

@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "echo 'Lint Pass'",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "check": "yarn lint && yarn typecheck && yarn build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -38,6 +41,7 @@
     "globals": "^16.4.0",
     "msw": "^2.12.7",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.67.0",
     "vite": "npm:rolldown-vite@7.1.12"
   },
   "overrides": {

@@ -20,7 +20,7 @@ export const ResidenceBoard = () => {
   );
   const { isOpen, config, openModal, closeModal } = useModal();
 
-  const { handleUpdate, isLoading: updatingId } = useUpdateResidenceHandler({
+  const { handleUpdate, updatingId } = useUpdateResidenceHandler({
     modal: { isOpen, config, openModal, closeModal },
   });
 
@@ -69,7 +69,9 @@ export const ResidenceBoard = () => {
                     id: number;
                     newResidence: string;
                   }) => handleUpdate(id, newResidence)}
-                  isDeleting={deletingId === residence.id}
+                  isDeleting={
+                    deletingId === residence.id || updatingId === residence.id
+                  }
                 />
               </SortablePurposeItem>
             ))}

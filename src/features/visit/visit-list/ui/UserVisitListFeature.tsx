@@ -44,7 +44,7 @@ export const UserVisitListFeature = () => {
     }
     if (!data?.pages) return [];
 
-    return data.pages.flatMap((page: any) => {
+    return data.pages.flatMap((page) => {
       return page?.content || [];
     });
   }, [monthFilter, data, monthDetail.data]);
