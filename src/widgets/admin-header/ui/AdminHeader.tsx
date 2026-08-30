@@ -240,8 +240,10 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   min-width: 20vw;
-  height: 100dvh;
+  min-height: 100dvh;
   box-sizing: border-box;
+  align-self: stretch;
+  flex-shrink: 0;
   top: 0;
   left: 0;
   z-index: 1000;

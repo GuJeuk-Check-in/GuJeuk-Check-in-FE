@@ -31,11 +31,11 @@ const UserDetail = () => {
 export default UserDetail;
 
 const ContentWrapper = styled.div`
-  flex: 1;
+  flex: none;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: scroll;
-  padding: 60px 0;
+  box-sizing: border-box;
+  padding: 3.75rem 0;
 `;

@@ -19,8 +19,7 @@ const Container = styled.div`
   flex: 1;
   box-sizing: border-box;
   display: flex;
-  max-height: 100dvh;
-  overflow-y: hidden;
+  min-height: 100dvh;
 `;
 
 const ContentWrapper = styled.main`
@@ -32,5 +31,4 @@ const ContentWrapper = styled.main`
   padding: 3.5rem 3.75rem;
   gap: 1.25rem;
   box-sizing: border-box;
-  overflow-y: scroll;
 `;
