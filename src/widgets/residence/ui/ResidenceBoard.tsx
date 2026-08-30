@@ -38,7 +38,6 @@ export const ResidenceBoard = () => {
         sensors={sensors}
         onDragEnd={handleDragEnd}
         trailingSlot={<CreateResidenceModal />}
-        layout="scrollable-padded"
       >
         {items.map((residence, index) => (
           <SortablePurposeItem key={residence.id} id={residence.id}>
