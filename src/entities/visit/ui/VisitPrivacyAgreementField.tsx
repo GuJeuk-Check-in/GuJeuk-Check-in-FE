@@ -10,6 +10,7 @@ interface VisitPrivacyAgreementFieldProps {
   readonly label?: string;
   readonly hideLabel?: boolean;
   readonly text?: string;
+  readonly id?: string;
 }
 
 export const VisitPrivacyAgreementField = ({
@@ -21,14 +22,16 @@ export const VisitPrivacyAgreementField = ({
   label = '개인 정보 수집 동의',
   hideLabel = false,
   text,
+  id = 'visit-privacy-agreement',
 }: VisitPrivacyAgreementFieldProps) => {
   const consentText = text ?? (checked ? '동의함' : '동의하지 않음');
 
   return (
     <FieldGroup>
-      {!hideLabel && <FieldLabel>{label}</FieldLabel>}
+      {!hideLabel && <FieldLabel htmlFor={id}>{label}</FieldLabel>}
       <PrivacyConsentWrapper>
         <Checkbox
+          id={id}
           type="checkbox"
           name={name}
           checked={checked}
