@@ -12,18 +12,43 @@ export const CreateResidenceModal = () => {
   const { isOpen, config, openModal, closeModal } = useModal();
   const [isAdding, setIsAdding] = useState(false);
   const [newLabel, setNewLabel] = useState('');
+  const [shouldResetAddFormOnModalClose, setShouldResetAddFormOnModalClose] =
+    useState(false);
   const isDisabled = isPending;
+
+  const resetAddForm = () => {
+    setNewLabel('');
+    setIsAdding(false);
+  };
+
+  const closeSuccessModal = () => {
+    closeModal();
+    setShouldResetAddFormOnModalClose(false);
+    resetAddForm();
+  };
+
+  const closeCurrentModal = () => {
+    if (shouldResetAddFormOnModalClose) {
+      closeSuccessModal();
+      return;
+    }
+
+    closeModal();
+  };
 
   const handleAdd = () => {
     const trimmed = newLabel.trim();
 
     if (!trimmed) {
+      setShouldResetAddFormOnModalClose(false);
       openModal({
         icon: <FaExclamationTriangle color="#D88282" />,
         title: '입력 확인',
         subtitle: '거주지를 입력해주세요.',
         theme: 'warning',
-        buttons: [{ label: '확인', variant: 'primary', onClick: closeModal }],
+        buttons: [
+          { label: '확인', variant: 'primary', onClick: closeCurrentModal },
+        ],
       });
       return;
     }
@@ -33,7 +58,8 @@ export const CreateResidenceModal = () => {
     createMutate(
       { residenceName: trimmed },
       {
-        onSuccess: () =>
+        onSuccess: () => {
+          setShouldResetAddFormOnModalClose(true);
           openModal({
             icon: <FaCheckCircle color="#0F50A0" />,
             title: '생성 성공',
@@ -43,32 +69,30 @@ export const CreateResidenceModal = () => {
               {
                 label: '확인',
                 variant: 'secondary',
-                onClick: () => {
-                  closeModal();
-                  setNewLabel('');
-                  setIsAdding(false);
-                },
+                onClick: closeSuccessModal,
               },
             ],
-          }),
-        onError: (error) =>
+          });
+        },
+        onError: (error) => {
+          setShouldResetAddFormOnModalClose(false);
           openModal({
             icon: <FaExclamationTriangle color="#D88282" />,
             title: '생성 실패',
             subtitle: error.response?.data?.message ?? '생성 실패',
             theme: 'warning',
             buttons: [
-              { label: '닫기', variant: 'secondary', onClick: closeModal },
+              { label: '닫기', variant: 'secondary', onClick: closeCurrentModal },
             ],
-          }),
+          });
+        },
       }
     );
   };
 
   const handleCancel = () => {
     if (isDisabled) return;
-    setNewLabel('');
-    setIsAdding(false);
+    resetAddForm();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -131,7 +155,7 @@ export const CreateResidenceModal = () => {
         </IconSection>
       </Container>
       {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={closeModal} />
+        <Modal isOpen={isOpen} config={config} onClose={closeCurrentModal} />
       )}
     </>
   );
