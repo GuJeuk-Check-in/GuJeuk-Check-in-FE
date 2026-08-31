@@ -82,7 +82,11 @@ export const CreateResidenceModal = () => {
             subtitle: error.response?.data?.message ?? '생성 실패',
             theme: 'warning',
             buttons: [
-              { label: '닫기', variant: 'secondary', onClick: closeCurrentModal },
+              {
+                label: '닫기',
+                variant: 'secondary',
+                onClick: closeCurrentModal,
+              },
             ],
           });
         },
@@ -116,7 +120,11 @@ export const CreateResidenceModal = () => {
         $isDisabled={isDisabled}
         onClick={() => setIsAdding(true)}
       >
-        <MdAdd size={48} aria-hidden="true" />
+        <MdAdd
+          size={48}
+          aria-hidden="true"
+          color={isDisabled ? '#ccc' : '#3D72B3'}
+        />
       </AddButton>
     );
   }
