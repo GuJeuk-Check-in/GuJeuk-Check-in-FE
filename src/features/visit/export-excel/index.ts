@@ -1,2 +1,2 @@
 export * from './model/useVisitListExportExcel';
-export * from './ui/DateExportModal';
+export { default as DateExportModal } from './ui/DateExportModal';

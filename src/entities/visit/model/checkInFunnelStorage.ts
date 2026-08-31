@@ -2,6 +2,7 @@ import type {
   ActiveCheckInFunnelSession,
   CheckInFunnelEventRecord,
 } from './checkInFunnelTypes';
+import { isAgeType } from './age';
 
 const ACTIVE_SESSION_STORAGE_KEY = 'gujeuk:check-in-funnel-active-session';
 const EVENT_STORAGE_KEY = 'gujeuk:check-in-funnel-events';
@@ -14,16 +15,10 @@ const isStorageRecoverableError = (error: unknown): boolean =>
 const isRecordObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
-const isAgeType = (
+const isNullableAgeType = (
   value: unknown
 ): value is CheckInFunnelEventRecord['ageGroup'] =>
-  value === null ||
-  value === 'BABY' ||
-  value === 'AGE_9_13' ||
-  value === 'AGE_14_16' ||
-  value === 'AGE_17_19' ||
-  value === 'AGE_20_24' ||
-  value === 'ADULT';
+  value === null || isAgeType(value);
 
 const isVisitCountBucket = (
   value: unknown
@@ -90,7 +85,7 @@ const parseStoredCheckInFunnelEventRecord = (
     !isCheckInFunnelEventName(value.eventName) ||
     typeof value.occurredAt !== 'string' ||
     typeof value.elapsedMsFromStart !== 'number' ||
-    !isAgeType(ageGroup) ||
+    !isNullableAgeType(ageGroup) ||
     !isVisitCountBucket(visitCountBucket)
   ) {
     return null;

@@ -8,7 +8,6 @@ import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { SimpleDropdown } from '@shared/ui/LabeldInput/SimpleDropdown';
 import { FaUser } from 'react-icons/fa6';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useResidenceStore, useResidenceList } from '@entities/residence';
 
 type GenderType = 'MAN' | 'WOMAN';
 
@@ -32,6 +31,9 @@ interface UserInformationDetailCardProps {
   birthYMD: string;
   residence: string;
   privacyAgreed: boolean;
+  residenceOptions: readonly string[];
+  isResidenceLoading: boolean;
+  isResidenceError: boolean;
   onSave?: (formData: UserInformationData) => void;
   onEditStateChange?: (isEditing: boolean) => void;
 }
@@ -55,14 +57,14 @@ export const UserInformationDetailCard = ({
   birthYMD,
   residence,
   privacyAgreed,
+  residenceOptions,
+  isResidenceLoading,
+  isResidenceError,
   onSave,
   onEditStateChange,
 }: UserInformationDetailCardProps) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-
-  const { isLoading: isResidenceLoading, isError: isResidenceError } =
-    useResidenceList();
 
   const [formData, setFormData] = useState<UserInformationData>({
     id,
@@ -87,12 +89,6 @@ export const UserInformationDetailCard = ({
       privacyAgreed,
     });
   }, [id, name, userId, phone, gender, birthYMD, residence, privacyAgreed]);
-
-  const { residences } = useResidenceStore();
-
-  const LocationData = [
-    ...Array.from(new Set(residences.map((r) => r.residence).filter(Boolean))),
-  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -218,7 +214,7 @@ export const UserInformationDetailCard = ({
         <>
           <SimpleDropdown
             label="거주지"
-            options={LocationData}
+            options={[...residenceOptions]}
             value={formData.residence}
             hasOther={true}
             disabled={isResidenceLoading}

@@ -1,4 +1,4 @@
-import { useModal, UseModalReturn } from '@shared/hooks/useModal';
+import type { UseModalReturn } from '@shared/hooks/useModal';
 import { useUpdateResidence } from '../model/useUpdateResidence';
 
 interface UseUpdateResidenceHandlerParams {
@@ -16,6 +16,6 @@ export const useUpdateResidenceHandler = ({
 
   return {
     handleUpdate,
-    isLoading: mutation.isPending,
+    updatingId: mutation.isPending ? mutation.variables?.id ?? null : null,
   };
 };

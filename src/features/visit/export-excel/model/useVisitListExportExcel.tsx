@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { exportVisitListToExcel } from '@entities/visit/index';
+import { exportVisitListToExcel } from '@entities/visit';
 import { UseModalReturn } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 

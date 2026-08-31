@@ -8,19 +8,14 @@ import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { VisitDatePicker, VisitTimePicker } from '@shared/ui';
 import { useUpdateAdminItem } from '../model/useUpdateVisitList';
 import { usePurposeList } from '@entities/purpose/index';
-import { UserVisitDetailResponse } from '@entities/visit/index';
+import {
+  AGE_LABELS,
+  getAgeLabel,
+  getAgeTypeByLabel,
+  type UserVisitDetailResponse,
+  VisitPrivacyAgreementField,
+} from '@entities/visit';
 import { UseModalReturn } from '@shared/hooks/useModal';
-
-const AGE_OPTIONS = [
-  { value: 'BABY', label: '0~8세' },
-  { value: 'AGE_9_13', label: '9~13세' },
-  { value: 'AGE_14_16', label: '14~16세' },
-  { value: 'AGE_17_19', label: '17~19세' },
-  { value: 'AGE_20_24', label: '20~24세' },
-  { value: 'ADULT', label: '성인' },
-];
-
-const AGE_DISPLAY_LABELS = AGE_OPTIONS.map((opt) => opt.label);
 
 interface UserVisitFormProps {
   visit: UserVisitDetailResponse;
@@ -69,9 +64,10 @@ export const UserVisitForm = ({
   };
 
   const handleAgeChange = (ageLabel: string) => {
-    const ageEnum =
-      AGE_OPTIONS.find((opt) => opt.label === ageLabel)?.value || ageLabel;
-    setFormData((prev) => ({ ...prev, age: ageEnum as any }));
+    const age = getAgeTypeByLabel(ageLabel);
+    if (!age) return;
+
+    setFormData((prev) => ({ ...prev, age }));
   };
 
   const handleSave = () => {
@@ -91,7 +87,7 @@ export const UserVisitForm = ({
       return;
     }
 
-    updateMutation.mutate(formData as any, {
+    updateMutation.mutate(formData, {
       onSuccess: () => {
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
@@ -135,11 +131,8 @@ export const UserVisitForm = ({
         />
         <ToggleSelect
           label="연령"
-          options={AGE_DISPLAY_LABELS}
-          value={
-            AGE_OPTIONS.find((opt) => opt.value === formData.age)?.label ||
-            formData.age
-          }
+          options={AGE_LABELS}
+          value={getAgeLabel(formData.age)}
           onChange={handleAgeChange}
         />
       </InputRow>
@@ -179,20 +172,11 @@ export const UserVisitForm = ({
         onChange={(v) => setFormData((p) => ({ ...p, visitTime: v }))}
       />
 
-      <CustomInputGroup>
-        <CustomLabel>개인 정보 수집 동의</CustomLabel>
-        <PrivacyConsentWrapper>
-          <Checkbox
-            type="checkbox"
-            name="privacyAgreed"
-            checked={formData.privacyAgreed}
-            onChange={handleChange}
-          />
-          <ConsentText $checked={formData.privacyAgreed}>
-            {formData.privacyAgreed ? '동의함' : '동의하지 않음'}
-          </ConsentText>
-        </PrivacyConsentWrapper>
-      </CustomInputGroup>
+      <VisitPrivacyAgreementField
+        name="privacyAgreed"
+        checked={formData.privacyAgreed}
+        onChange={handleChange}
+      />
 
       <ButtonWrapper>
         <PasswordButton
@@ -228,51 +212,4 @@ const ButtonWrapper = styled.div`
   justify-content: center;
   gap: 0.625rem;
   margin-top: 1.25rem;
-`;
-const CustomInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-const CustomLabel = styled.label`
-  font-size: 1.25rem;
-  color: #2e2e32;
-  font-weight: 500;
-`;
-const PrivacyConsentWrapper = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 1.25rem;
-  height: 1.25rem;
-  appearance: none;
-  border: 0.125rem solid #d1d8e0;
-  border-radius: 0.25rem;
-  background-color: #f8f9fa;
-  position: relative;
-  cursor: pointer;
-
-  &:checked {
-    background-color: #3f73b3;
-    border-color: #3f73b3;
-  }
-
-  &:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 1rem;
-  }
-`;
-
-const ConsentText = styled.span<{ $checked: boolean }>`
-  font-size: 1rem;
-  color: #6e7680;
 `;

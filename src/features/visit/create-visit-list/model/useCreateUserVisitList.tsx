@@ -4,13 +4,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { createUserVisit } from '@entities/visit/index';
+import { createUserVisit } from '@entities/visit';
 import { useModal } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import {
   CreateUserVisitRequest,
   UserVisitDetailResponse,
-} from '@entities/visit/index';
+} from '@entities/visit';
 import { AxiosError } from 'axios';
 
 interface UseCreateUserVisitProps {

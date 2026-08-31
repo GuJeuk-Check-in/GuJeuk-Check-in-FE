@@ -13,28 +13,24 @@ import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
 import { useCheck } from '@shared/hooks/useCheck';
 import { useCounter } from '@shared/hooks/useCounter';
-import { CreateUserVisitRequest } from '@entities/visit';
+import {
+  AGE_LABELS,
+  getAgeTypeByLabel,
+  isAgeLabel,
+  type AgeLabel,
+  type CreateUserVisitRequest,
+  VisitPrivacyAgreementField,
+} from '@entities/visit';
 
 interface VisitFormProps {
   onSubmit: (data: CreateUserVisitRequest) => Promise<unknown>;
   isLoading: boolean;
 }
 
-const AGE_MAP = {
-  '0~8세': 'BABY',
-  '9~13세': 'AGE_9_13',
-  '14~16세': 'AGE_14_16',
-  '17~19세': 'AGE_17_19',
-  '20~24세': 'AGE_20_24',
-  성인: 'ADULT',
-} as const;
-
-type AgeDisplayType = keyof typeof AGE_MAP;
-
 const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const nameInput = useInput('');
   const phoneInput = useInput('');
-  const [ageDisplay, setAgeDisplay] = useState<AgeDisplayType | ''>('');
+  const [ageDisplay, setAgeDisplay] = useState<AgeLabel | ''>('');
   const [purpose, setPurpose] = useState('');
   const maleCounter = useCounter(0);
   const femaleCounter = useCounter(0);
@@ -46,13 +42,14 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
 
   const handleSubmit = async () => {
     const trimmedPurpose = purpose.trim();
+    const age = getAgeTypeByLabel(ageDisplay);
 
     if (
       !nameInput.value ||
       !phoneInput.value ||
       !trimmedPurpose ||
       !date ||
-      !ageDisplay ||
+      !age ||
       !visitTime
     ) {
       alert('모든 필수 필드를 입력해주세요.');
@@ -66,7 +63,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
 
     const dataToSend: CreateUserVisitRequest = {
       name: nameInput.value,
-      age: AGE_MAP[ageDisplay],
+      age,
       phone: phoneInput.value,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
@@ -87,8 +84,6 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     ? purposes.map((p) => `${p.purpose}`)
     : [];
 
-  const ageOptions = Object.keys(AGE_MAP) as AgeDisplayType[];
-
   return (
     <Container>
       <InputGroup>
@@ -100,9 +95,11 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
           />
           <ToggleSelect
             label="연령"
-            options={ageOptions}
+            options={AGE_LABELS}
             value={ageDisplay}
-            onChange={(value) => setAgeDisplay(value as AgeDisplayType)}
+            onChange={(value) => {
+              if (isAgeLabel(value)) setAgeDisplay(value);
+            }}
             icon={<PiStudentBold size={24} />}
           />
         </InputRow>
@@ -146,15 +143,13 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
         <VisitDatePicker value={date} onChange={setDate} />
         <VisitTimePicker value={visitTime} onChange={setVisitTime} />
 
-        <PrivacyConsentWrapper>
-          <Checkbox
-            type="checkbox"
-            checked={privacyCheck.checked}
-            onChange={privacyCheck.onChange}
-            disabled={isLoading}
-          />
-          <ConsentText>개인정보 수집 및 이용 동의</ConsentText>
-        </PrivacyConsentWrapper>
+        <VisitPrivacyAgreementField
+          checked={privacyCheck.checked}
+          onChange={privacyCheck.onChange}
+          disabled={isLoading}
+          hideLabel
+          text="개인정보 수집 및 이용 동의"
+        />
       </InputGroup>
 
       <PasswordButton
@@ -196,44 +191,6 @@ const InputRow = styled.div`
   & > * {
     flex: 1;
   }
-`;
-
-const PrivacyConsentWrapper = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 1.25rem;
-  height: 1.25rem;
-  appearance: none;
-  border: 0.125rem solid #d1d8e0;
-  border-radius: 0.25rem;
-  background-color: #f8f9fa;
-  position: relative;
-  cursor: pointer;
-
-  &:checked {
-    background-color: #3f73b3;
-    border-color: #3f73b3;
-  }
-
-  &:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 1rem;
-  }
-`;
-
-const ConsentText = styled.span`
-  font-size: 1rem;
-  color: #6e7680;
 `;
 
 const CountVisitorWrapper = styled.div`

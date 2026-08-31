@@ -30,9 +30,6 @@ export const UserInformationCard = ({
   const navigate = useNavigate();
   const displayCount = count !== null && count !== undefined ? count : 0;
 
-  const handleCardClick = () => {
-    navigate(`/user/${id}`);
-  };
   return (
     <Container>
       <LeftSection>

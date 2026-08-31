@@ -17,7 +17,7 @@ to {
 
 interface ToggleSelectProps {
   label: string;
-  options: string[];
+  options: readonly string[];
   value: string;
   onChange: (option: string) => void;
   icon?: React.ReactNode;
@@ -35,7 +35,7 @@ export const ToggleSelect = ({
 }: ToggleSelectProps) => {
   const [open, setOpen] = useState(false);
 
-  const handleSelect = (option: any) => {
+  const handleSelect = (option: string) => {
     onChange(option);
     setOpen(false);
   };

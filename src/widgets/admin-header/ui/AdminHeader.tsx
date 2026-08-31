@@ -3,8 +3,10 @@ import { ExcelButton, HeaderButton } from '@shared/ui/Button/index';
 import { Logo } from '@shared/assets';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import DateExportModal from '@features/visit/export-excel/ui/DateExportModal';
-import { useVisitListExportExcel } from '@features/visit/export-excel/model/useVisitListExportExcel';
+import {
+  DateExportModal,
+  useVisitListExportExcel,
+} from '@features/visit/export-excel';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { useUserListExportExcel } from '@features/user/export-excel';
@@ -29,10 +31,9 @@ const createDefaultReportPeriod = (): ReportPeriod => {
   };
 };
 
-export const Header = () => {
+export const AdminHeader = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [exportingDate, setExportingDate] = useState('');
   const [operationPreviewData, setOperationPreviewData] =
     useState<OperationStatusPreviewData | null>(null);
   const [selectedReportPeriod, setSelectedReportPeriod] = useState(
@@ -128,17 +129,7 @@ export const Header = () => {
   };
 
   const handleExportConfirmedWithDate = (year, month) => {
-    const dataString = `${year}-${month}`;
-    setExportingDate(dataString);
-
-    visitExcelMutate(
-      { year, month },
-      {
-        onSettled: () => {
-          setExportingDate('');
-        },
-      }
-    );
+    visitExcelMutate({ year, month });
 
     setIsModalOpen(false);
   };
@@ -249,12 +240,13 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   min-width: 20vw;
-  height: 100vh;
+  min-height: 100dvh;
   box-sizing: border-box;
+  align-self: stretch;
+  flex-shrink: 0;
   top: 0;
   left: 0;
   z-index: 1000;
-  box-sizing: border-box;
   padding: 2rem 0;
 `;
 

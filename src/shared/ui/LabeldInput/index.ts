@@ -1,9 +1,9 @@
 export { CountVisitor } from './CountVisitor';
+export { VisitDatePicker } from './VisitDatePicker';
 export {
-  VisitDatePicker,
   formatDateToISOString,
   formatDateToKoreanDate,
-} from './VisitDatePicker';
+} from './visitDateFormatters';
 export { VisitTimePicker } from './VisitTimePicker';
 export { ToggleSelect } from './ToggleSelect';
 export { SimpleDropdown } from './SimpleDropdown';

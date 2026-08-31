@@ -1,4 +1,4 @@
-import { AuthPageLayout } from '@widgets/GlobalLayout';
+import { AuthPageLayout } from '@widgets/auth';
 import { UpdatePasswordForm } from '@features/auth/update-password/ui/UpdatePasswordForm';
 
 const OrganChange = () => {
