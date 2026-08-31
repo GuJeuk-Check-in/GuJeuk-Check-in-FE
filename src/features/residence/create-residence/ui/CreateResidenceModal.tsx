@@ -84,13 +84,16 @@ export const CreateResidenceModal = () => {
 
   if (!isAdding) {
     return (
-      <Container
+      <AddButton
+        type="button"
+        aria-label="거주지 추가 입력 열기"
+        disabled={isDisabled}
         $isAddButton={true}
-        onClick={isDisabled ? undefined : () => setIsAdding(true)}
         $isDisabled={isDisabled}
+        onClick={() => setIsAdding(true)}
       >
-        <MdAdd size={48} color={isDisabled ? '#ccc' : '#007bff'} />
-      </Container>
+        <MdAdd size={48} aria-hidden="true" />
+      </AddButton>
     );
   }
 
@@ -107,18 +110,24 @@ export const CreateResidenceModal = () => {
           placeholder="거주지를 입력하세요"
         />
         <IconSection>
-          <MdCheck
-            size={26}
-            color={isDisabled ? '#ccc' : '#007bff'}
-            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+          <IconButton
+            type="button"
+            aria-label="거주지 추가 확인"
+            disabled={isDisabled}
+            $variant="confirm"
             onClick={handleAdd}
-          />
-          <MdClose
-            size={26}
-            color={isDisabled ? '#ccc' : '#dc3545'}
-            style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-            onClick={isDisabled ? undefined : handleCancel}
-          />
+          >
+            <MdCheck size={26} aria-hidden="true" />
+          </IconButton>
+          <IconButton
+            type="button"
+            aria-label="거주지 추가 취소"
+            disabled={isDisabled}
+            $variant="cancel"
+            onClick={handleCancel}
+          >
+            <MdClose size={26} aria-hidden="true" />
+          </IconButton>
         </IconSection>
       </Container>
       {isOpen && config && (
@@ -146,6 +155,7 @@ const Container = styled.div<ContainerProps>`
   border: ${({ $isAddButton }) =>
     $isAddButton ? '0.125rem dashed #6f95c4' : '0.0625rem solid #6f95c4'};
   box-sizing: border-box;
+  font: inherit;
   margin: 0 auto 0.9375rem auto;
   transition: 0.2s ease;
   opacity: ${(props) => (props.$isDisabled ? 0.6 : 1)};
@@ -155,14 +165,14 @@ const Container = styled.div<ContainerProps>`
       : props.$isAddButton
       ? 'pointer'
       : 'default'};
-  pointer-events: ${(props) =>
-    props.$isDisabled && !props.$isAddButton && 'none'};
 
   &:hover {
     background-color: ${({ $isAddButton, $isDisabled }) =>
       $isAddButton && !$isDisabled ? '#f9fbff' : '#ffffff'};
   }
 `;
+
+const AddButton = Container.withComponent('button');
 
 const AddInput = styled.input`
   font-size: 1.375rem;
@@ -183,4 +193,21 @@ const AddInput = styled.input`
 const IconSection = styled.div`
   display: flex;
   gap: 0.9375rem;
+`;
+
+const IconButton = styled.button<{ $variant: 'confirm' | 'cancel' }>`
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: ${({ $variant }) => ($variant === 'confirm' ? '#007bff' : '#dc3545')};
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  justify-content: center;
+  padding: 0;
+
+  &:disabled {
+    color: #cccccc;
+    cursor: not-allowed;
+  }
 `;
