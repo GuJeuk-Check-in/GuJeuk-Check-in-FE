@@ -15,7 +15,6 @@ import {
   buildNewUserSignUpPayload,
   createBirthYMD,
   hasCompleteSignupRequiredFields,
-  resolveSelectedPurpose,
 } from './checkInFormHelpers';
 import { useCheckInSignupOptions } from './useCheckInSignupOptions';
 import { useCheckInWarningModal } from './useCheckInWarningModal';
@@ -37,7 +36,7 @@ export const useCheckInSignupFormFlow = () => {
   const [birthYear, setBirthYear] = useState('');
   const [birthMonth, setBirthMonth] = useState('');
   const [birthDay, setBirthDay] = useState('');
-  const [purposeIndex, setPurposeIndex] = useState<number | null>(null);
+  const [selectedPurposeLabel, setSelectedPurposeLabel] = useState('');
   const [residence, setResidence] = useState('');
   const [residenceModalOpen, setResidenceModalOpen] = useState(false);
   const [residenceSearch, setResidenceSearch] = useState('');
@@ -69,12 +68,12 @@ export const useCheckInSignupFormFlow = () => {
 
   useEffect(() => {
     if (
-      purposeIndex !== null &&
-      (purposeIndex < 0 || purposeIndex >= purposeOptions.length)
+      selectedPurposeLabel &&
+      !purposeOptions.some((purpose) => purpose.label === selectedPurposeLabel)
     ) {
-      setPurposeIndex(null);
+      setSelectedPurposeLabel('');
     }
-  }, [purposeIndex, purposeOptions.length]);
+  }, [selectedPurposeLabel, purposeOptions]);
 
   useEffect(() => {
     if (!residenceModalOpen) return;
@@ -100,7 +99,7 @@ export const useCheckInSignupFormFlow = () => {
     setBirthMonth('');
     setBirthDay('');
     setResidence('');
-    setPurposeIndex(null);
+    setSelectedPurposeLabel('');
     setMaleCount(0);
     setFemaleCount(0);
     setPrivacyAgreed(false);
@@ -111,13 +110,17 @@ export const useCheckInSignupFormFlow = () => {
     navigate('/check-in/complete');
   };
 
+  const selectedPurposeIndex = selectedPurposeLabel
+    ? purposeOptions.findIndex(
+        (purpose) => purpose.label === selectedPurposeLabel
+      )
+    : -1;
+  const selectedPurpose =
+    selectedPurposeIndex >= 0 ? selectedPurposeLabel : '';
+
   const handleSubmit = async () => {
     if (isSaving) return;
 
-    const selectedPurpose = resolveSelectedPurpose(
-      purposeOptions,
-      purposeIndex
-    );
     const birthYMD = createBirthYMD(birthYear, birthMonth, birthDay);
     const requiredFields = {
       name,
@@ -209,7 +212,7 @@ export const useCheckInSignupFormFlow = () => {
     birthYear,
     birthMonth,
     birthDay,
-    purposeIndex,
+    purposeIndex: selectedPurposeIndex >= 0 ? selectedPurposeIndex : null,
     purposeOptions,
     residence,
     residenceModalOpen,
@@ -247,7 +250,7 @@ export const useCheckInSignupFormFlow = () => {
     },
     closeResidenceModal: () => setResidenceModalOpen(false),
     selectPurpose: (index: number, label: string) => {
-      setPurposeIndex(index);
+      setSelectedPurposeLabel(label);
       recordCheckInFunnelEvent({
         eventName: CHECK_IN_FUNNEL_EVENT_NAMES.PURPOSE_SELECTED,
         isExistingUser: false,
