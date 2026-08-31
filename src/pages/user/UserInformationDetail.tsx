@@ -1,13 +1,28 @@
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { Header } from '@widgets/GlobalLayout/index';
-import { UseBackground } from '@shared/ui/Background/index';
 import { useUserDetail, UserInformationDetailActions } from '@features/user';
+import { useResidenceList, useResidenceStore } from '@entities/residence';
 
 const UserInformationDetail = () => {
   const { userId: userIdParam } = useParams<{ userId: string }>();
   const { userData, isLoading, isError, error, refetch, isNotFound } =
     useUserDetail(userIdParam);
+  const { isLoading: isResidenceLoading, isError: isResidenceError } =
+    useResidenceList();
+  const residences = useResidenceStore((state) => state.residences);
+
+  const residenceOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          residences
+            .map(({ residence }) => residence)
+            .filter((residence) => residence.length > 0)
+        )
+      ),
+    [residences]
+  );
 
   const renderContent = () => {
     if (isLoading) {
@@ -27,39 +42,34 @@ const UserInformationDetail = () => {
       return <LoadingText>사용자 정보를 찾을 수 없습니다.</LoadingText>;
     }
 
+    if (!userData) {
+      return <LoadingText>사용자 정보를 불러오는 중...</LoadingText>;
+    }
+
     return (
       <UserInformationDetailActions
-        userData={userData!}
+        userData={userData}
         refetchUserInformation={refetch}
+        residenceOptions={residenceOptions}
+        isResidenceLoading={isResidenceLoading}
+        isResidenceError={isResidenceError}
       />
     );
   };
 
   return (
-    <Container>
-      <UseBackground />
-      <Header />
-      <Wrapper>{renderContent()}</Wrapper>
-    </Container>
+    <Wrapper>{renderContent()}</Wrapper>
   );
 };
 
 export default UserInformationDetail;
-
-const Container = styled.div`
-  flex: 1;
-  box-sizing: border-box;
-  display: flex;
-  max-height: 100vh;
-  overflow-y: hidden;
-`;
 
 const Wrapper = styled.div`
   width: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100dvh;
+  min-height: 100%;
   overflow-y: scroll;
 `;
 

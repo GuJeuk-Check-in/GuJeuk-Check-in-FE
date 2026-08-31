@@ -1,4 +1,4 @@
-import { deleteResidence } from '@entities/residence/index';
+import { deleteResidence } from '@entities/residence';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { UseModalReturn } from '@shared/hooks/useModal';

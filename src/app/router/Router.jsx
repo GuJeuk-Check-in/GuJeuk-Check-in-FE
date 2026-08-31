@@ -1,41 +1,76 @@
+import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import OrganLogin from '@pages/auth/OrganLogin';
-import OrganChange from '@pages/auth/OrganChange';
-import UserVisitList from '@pages/visit/UserVisitList';
-import UserDetail from '@pages/visit/UserDetail';
-import UserDetailView from '@pages/visit/UserDetailView';
-import UserInformation from '@pages/user/UserInformation';
-import PurposeCustom from '@pages/purpose/PurposeCustom';
-import UserInformationDetail from '@pages/user/UserInformationDetail';
-import ResidenceCustom from '@pages/residence/ResidenceCustom';
-import CheckInHome from '@pages/check-in/CheckInHome';
-import CheckInUserCheck from '@pages/check-in/CheckInUserCheck';
-import CheckInSignupFormPage from '@pages/check-in/CheckInSignupFormPage';
-import CheckInLoginFormPage from '@pages/check-in/CheckInLoginFormPage';
-import CheckInCompletePage from '@pages/check-in/CheckInCompletePage';
-import CheckInFunnelAnalyticsPage from '@pages/check-in/CheckInFunnelAnalyticsPage';
+import styled from '@emotion/styled';
+import { AppLayout } from '@app/layout';
+
+const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
+const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
+const UserVisitList = lazy(() => import('@pages/visit/UserVisitList'));
+const UserDetail = lazy(() => import('@pages/visit/UserDetail'));
+const UserDetailView = lazy(() => import('@pages/visit/UserDetailView'));
+const UserInformation = lazy(() => import('@pages/user/UserInformation'));
+const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
+const UserInformationDetail = lazy(
+  () => import('@pages/user/UserInformationDetail'),
+);
+const ResidenceCustom = lazy(() => import('@pages/residence/ResidenceCustom'));
+const CheckInHome = lazy(() => import('@pages/check-in/CheckInHome'));
+const CheckInUserCheck = lazy(() => import('@pages/check-in/CheckInUserCheck'));
+const CheckInSignupFormPage = lazy(
+  () => import('@pages/check-in/CheckInSignupFormPage'),
+);
+const CheckInLoginFormPage = lazy(
+  () => import('@pages/check-in/CheckInLoginFormPage'),
+);
+const CheckInCompletePage = lazy(
+  () => import('@pages/check-in/CheckInCompletePage'),
+);
+const CheckInFunnelAnalyticsPage = lazy(
+  () => import('@pages/check-in/CheckInFunnelAnalyticsPage'),
+);
+
+const RouteFallback = styled.div`
+  padding: 24px;
+  text-align: center;
+`;
+
+const routeFallback = (
+  <RouteFallback aria-live="polite" role="status">
+    페이지를 불러오는 중입니다.
+  </RouteFallback>
+);
 
 export const Router = () => {
   return (
-    <Routes>
-      <Route path="/organ/login" element={<OrganLogin />}></Route>
-      <Route path="/organ/change" element={<OrganChange />}></Route>
-      <Route path="/log" element={<UserVisitList />}></Route>
-      <Route path="/log/create" element={<UserDetail />}></Route>
-      <Route path="/log/:logId" element={<UserDetailView />} />
-      <Route path="/organ/user/all" element={<UserInformation />} />
-      <Route path="/organ/user/:userId" element={<UserInformationDetail />} />
-      <Route path="/purpose/all" element={<PurposeCustom />} />
-      <Route path="/residence/all" element={<ResidenceCustom />} />
-      <Route path="/check-in" element={<CheckInHome />} />
-      <Route path="/check-in/user-check" element={<CheckInUserCheck />} />
-      <Route path="/check-in/signup-form" element={<CheckInSignupFormPage />} />
-      <Route path="/check-in/login-form" element={<CheckInLoginFormPage />} />
-      <Route path="/check-in/complete" element={<CheckInCompletePage />} />
-      <Route
-        path="/check-in/funnel-analytics"
-        element={<CheckInFunnelAnalyticsPage />}
-      />
-    </Routes>
+    <Suspense fallback={routeFallback}>
+      <Routes>
+        <Route path="/organ/login" element={<OrganLogin />}></Route>
+        <Route path="/organ/change" element={<OrganChange />}></Route>
+        <Route element={<AppLayout />}>
+          <Route path="/log" element={<UserVisitList />}></Route>
+          <Route path="/log/create" element={<UserDetail />}></Route>
+          <Route path="/log/:logId" element={<UserDetailView />} />
+          <Route path="/organ/user/all" element={<UserInformation />} />
+          <Route
+            path="/organ/user/:userId"
+            element={<UserInformationDetail />}
+          />
+          <Route path="/purpose/all" element={<PurposeCustom />} />
+          <Route path="/residence/all" element={<ResidenceCustom />} />
+        </Route>
+        <Route path="/check-in" element={<CheckInHome />} />
+        <Route path="/check-in/user-check" element={<CheckInUserCheck />} />
+        <Route
+          path="/check-in/signup-form"
+          element={<CheckInSignupFormPage />}
+        />
+        <Route path="/check-in/login-form" element={<CheckInLoginFormPage />} />
+        <Route path="/check-in/complete" element={<CheckInCompletePage />} />
+        <Route
+          path="/check-in/funnel-analytics"
+          element={<CheckInFunnelAnalyticsPage />}
+        />
+      </Routes>
+    </Suspense>
   );
 };

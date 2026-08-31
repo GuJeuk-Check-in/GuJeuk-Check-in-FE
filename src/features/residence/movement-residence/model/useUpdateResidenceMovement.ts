@@ -1,7 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { updateResidenceMovement } from '@entities/residence/index';
-import { UpdateResidenceMovementRequest } from '@entities/residence/index';
+import {
+  updateResidenceMovement,
+  UpdateResidenceMovementRequest,
+} from '@entities/residence';
 
 export const useUpdateResidenceMovement = () => {
   const queryClient = useQueryClient();

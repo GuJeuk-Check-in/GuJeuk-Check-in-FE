@@ -2,14 +2,14 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
-  InfiniteData,
+  type InfiniteData,
 } from '@tanstack/react-query';
 import {
   fetchUserVisitList,
   deleteUserVisit,
-  UserVisitListResponse,
-} from '@entities/visit/index';
-import { AxiosError } from 'axios';
+  type UserVisitListResponse,
+} from '@entities/visit';
+import type { AxiosError } from 'axios';
 
 interface ServerError {
   message?: string;

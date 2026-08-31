@@ -2,7 +2,11 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
-import { getAgeLabel, useFetchUserVisitDetail } from '@entities/visit/index';
+import {
+  getAgeLabel,
+  useFetchUserVisitDetail,
+  VisitPrivacyAgreementField,
+} from '@entities/visit';
 import { UserVisitForm } from '@features/visit/update-visit-list/ui/UserVisitForm';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
@@ -87,15 +91,7 @@ export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
         isEditable={false}
       />
 
-      <CustomInputGroup>
-        <CustomLabel>개인 정보 수집 동의</CustomLabel>
-        <PrivacyConsentWrapper>
-          <Checkbox type="checkbox" checked={visit.privacyAgreed} readOnly />
-          <ConsentText $checked={visit.privacyAgreed}>
-            {visit.privacyAgreed ? '동의함' : '동의하지 않음'}
-          </ConsentText>
-        </PrivacyConsentWrapper>
-      </CustomInputGroup>
+      <VisitPrivacyAgreementField checked={visit.privacyAgreed} readOnly />
 
       <ButtonWrapper>
         <PasswordButton content="수정" onClick={() => setIsEditing(true)} />
@@ -134,54 +130,4 @@ const CenterText = styled.p`
   text-align: center;
   margin: 3rem 0;
   color: ${(props) => props.color || '#777'};
-`;
-
-const CustomInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const CustomLabel = styled.label`
-  font-size: 1.25rem;
-  color: #2e2e32;
-  font-weight: 500;
-`;
-
-const PrivacyConsentWrapper = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  cursor: pointer;
-`;
-
-const Checkbox = styled.input`
-  width: 1.25rem;
-  height: 1.25rem;
-  appearance: none;
-  border: 0.125rem solid #d1d8e0;
-  border-radius: 0.25rem;
-  background-color: #f8f9fa;
-  position: relative;
-  cursor: pointer;
-
-  &:checked {
-    background-color: #3f73b3;
-    border-color: #3f73b3;
-  }
-
-  &:checked::before {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ffffff;
-    font-size: 1rem;
-  }
-`;
-
-const ConsentText = styled.span<{ $checked: boolean }>`
-  font-size: 1rem;
-  color: #6e7680;
 `;

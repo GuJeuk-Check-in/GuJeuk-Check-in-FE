@@ -1,7 +1,5 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { Header } from '@widgets/GlobalLayout/index';
-import { UseBackground } from '@shared/ui/Background/index';
 import { UserVisitDetail } from '@widgets/visit/ui/UserVisitDetail';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
@@ -11,9 +9,7 @@ const UserDetailView = () => {
   const modal = useModal();
 
   return (
-    <Container>
-      <UseBackground />
-      <Header />
+    <>
       <Wrapper>
         <UserVisitDetail logId={logId} />
       </Wrapper>
@@ -23,19 +19,11 @@ const UserDetailView = () => {
         config={modal.config}
         onClose={modal.closeModal}
       />
-    </Container>
+    </>
   );
 };
 
 export default UserDetailView;
-
-const Container = styled.div`
-  flex: 1;
-  box-sizing: border-box;
-  display: flex;
-  max-height: 100vh;
-  overflow-y: hidden;
-`;
 
 const Wrapper = styled.div`
   width: 90%;

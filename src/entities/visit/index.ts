@@ -15,3 +15,4 @@ export * from './model/checkInRetryPolicy';
 export * from './model/useFetchUserVisitDetail';
 export * from './model/useVisitStore';
 export * from './ui/UserVisitCard';
+export * from './ui/VisitPrivacyAgreementField';

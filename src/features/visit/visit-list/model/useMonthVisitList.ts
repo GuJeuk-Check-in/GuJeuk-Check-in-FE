@@ -1,34 +1,36 @@
-import { InfiniteData, useInfiniteQuery, useQueries } from '@tanstack/react-query';
-import { fetchMonthVisitList, MonthVisitListResponse } from '@entities/visit';
+import {
+  useInfiniteQuery,
+  useQueries,
+  type InfiniteData,
+} from '@tanstack/react-query';
+import { fetchMonthVisitList, type MonthVisitListResponse } from '@entities/visit';
 
-type MonthNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+const MONTH_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
+
+type MonthNumber = (typeof MONTH_NUMBERS)[number];
 
 export interface MonthVisitCountItem {
-  month: MonthNumber;
-  visitorCount: number;
+  readonly month: MonthNumber;
+  readonly visitorCount: number;
 }
 
 export const useMonthVisitList = (
   year: number,
-  options?: { enabled?: boolean }
+  options?: { readonly enabled?: boolean }
 ) => {
   const monthQueries = useQueries({
-    queries: Array.from({ length: 12 }, (_, index) => {
-      const month = (index + 1) as MonthNumber;
-
-      return {
-        queryKey: ['monthVisitList', year, month],
-        queryFn: () => fetchMonthVisitList(year, month),
-        staleTime: 5 * 60 * 1000,
-        enabled: options?.enabled ?? true,
-      };
-    }),
+    queries: MONTH_NUMBERS.map((month) => ({
+      queryKey: ['monthVisitList', year, month],
+      queryFn: () => fetchMonthVisitList(year, month),
+      staleTime: 5 * 60 * 1000,
+      enabled: options?.enabled ?? true,
+    })),
   });
 
-  const monthVisitCounts: MonthVisitCountItem[] = monthQueries.map(
-    (query, index) => ({
-      month: (index + 1) as MonthNumber,
-      visitorCount: query.data?.totalCount ?? 0,
+  const monthVisitCounts: MonthVisitCountItem[] = MONTH_NUMBERS.map(
+    (month, index) => ({
+      month,
+      visitorCount: monthQueries[index]?.data?.totalCount ?? 0,
     })
   );
 
@@ -38,7 +40,7 @@ export const useMonthVisitList = (
 export const useMonthVisitDetailList = (
   year: number,
   month: number,
-  options?: { enabled?: boolean }
+  options?: { readonly enabled?: boolean }
 ) => {
   return useInfiniteQuery<
     MonthVisitListResponse,

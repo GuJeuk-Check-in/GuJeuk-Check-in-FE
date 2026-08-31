@@ -47,7 +47,10 @@ const isResidence = (value: unknown): value is ResidenceResponse =>
   typeof value.id === 'number' &&
   typeof value.residence === 'string';
 
-export const readPurposeCache = (): readonly PurposeResponse[] => {
+export const readPurposeCacheOrEmpty = (): readonly PurposeResponse[] =>
+  readArray(PURPOSE_CACHE_KEY, isPurpose);
+
+export const readPurposeCacheOrDefaults = (): readonly PurposeResponse[] => {
   const cached = readArray(PURPOSE_CACHE_KEY, isPurpose);
   return cached.length > 0 ? cached : DEFAULT_PURPOSES;
 };
@@ -55,7 +58,7 @@ export const readPurposeCache = (): readonly PurposeResponse[] => {
 export const writePurposeCache = (values: readonly PurposeResponse[]): void =>
   writeArray(PURPOSE_CACHE_KEY, values);
 
-export const readResidenceCache = (): readonly ResidenceResponse[] => {
+export const readResidenceCacheOrDefaults = (): readonly ResidenceResponse[] => {
   const cached = readArray(RESIDENCE_CACHE_KEY, isResidence);
   return cached.length > 0 ? cached : DEFAULT_RESIDENCES;
 };

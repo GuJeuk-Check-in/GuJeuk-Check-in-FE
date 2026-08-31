@@ -7,7 +7,7 @@ import {
   updateVisitList,
   UpdateUserVisitRequest,
   UserVisitDetailResponse,
-} from '@entities/visit/index';
+} from '@entities/visit';
 import { AxiosError } from 'axios';
 
 interface ServerError {

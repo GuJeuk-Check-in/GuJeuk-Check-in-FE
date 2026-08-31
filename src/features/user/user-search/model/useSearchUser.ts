@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { User, UserSearchFilters } from '@entities/user/index';
+import { User, UserSearchFilters } from '@entities/user';
 import { matchesKoreanSearch } from '@shared/lib';
 
 export const useSearchUser = (allUsers: User[], filters: UserSearchFilters) => {
