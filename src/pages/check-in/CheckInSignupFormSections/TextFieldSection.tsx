@@ -3,6 +3,7 @@ import { FieldBlock, FieldLabel, TextInput } from './shared';
 
 type TextFieldSectionProps = {
   readonly icon: ReactNode;
+  readonly id: string;
   readonly label: string;
   readonly value: string;
   readonly onChange: ChangeEventHandler<HTMLInputElement>;
@@ -11,16 +12,24 @@ type TextFieldSectionProps = {
 
 export const TextFieldSection = ({
   icon,
+  id,
   label,
   value,
   onChange,
   placeholder,
 }: TextFieldSectionProps) => (
   <FieldBlock>
-    <FieldLabel>
+    <TextInputLabel htmlFor={id}>
       {icon}
       {label}
-    </FieldLabel>
-    <TextInput value={value} onChange={onChange} placeholder={placeholder} />
+    </TextInputLabel>
+    <TextInput
+      id={id}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+    />
   </FieldBlock>
 );
+
+const TextInputLabel = FieldLabel.withComponent('label');

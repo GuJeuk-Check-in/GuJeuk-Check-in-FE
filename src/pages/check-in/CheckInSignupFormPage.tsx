@@ -50,6 +50,7 @@ const CheckInSignupFormPage = () => {
           />
           <TextFieldSection
             icon={<FiUser aria-hidden="true" />}
+            id="check-in-signup-name"
             label="이름이 뭐야?"
             value={flow.name}
             onChange={flow.setNameFromInput}
@@ -57,6 +58,7 @@ const CheckInSignupFormPage = () => {
           />
           <TextFieldSection
             icon={<FiPhone aria-hidden="true" />}
+            id="check-in-signup-phone"
             label="전화번호가 뭐야?"
             value={flow.phone}
             onChange={flow.setPhoneFromInput}
