@@ -92,7 +92,7 @@ export const PurposeAddBox = () => {
         onClick={isDisabled ? undefined : () => setIsAdding(true)}
         $isDisabled={isDisabled}
       >
-        <MdAdd size={48} color={isDisabled ? '#ccc' : '#007bff'} />
+        <MdAdd size={48} color={isDisabled ? '#ccc' : '#3D72B3'} />
       </Container>
     );
   }
