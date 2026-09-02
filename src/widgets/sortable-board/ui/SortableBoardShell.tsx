@@ -122,7 +122,8 @@ const BoardGrid = styled.div<{ readonly $layout: SortableBoardLayout }>`
   gap: 1.5rem;
   justify-items: center;
   overflow: hidden;
-  touch-action: none;
+  touch-action: ${({ $layout }) =>
+    $layout === 'scrollable-padded' ? 'pan-y' : 'none'};
   ${({ $layout }) =>
     $layout === 'scrollable-padded' ? 'padding: 2.5rem 7.5rem;' : ''}
 

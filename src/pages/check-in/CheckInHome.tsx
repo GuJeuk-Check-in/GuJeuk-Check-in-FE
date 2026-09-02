@@ -44,6 +44,7 @@ const CheckInHome = () => {
   useEffect(() => {
     const startOnEnter = (event: KeyboardEvent) => {
       if (event.key !== 'Enter' || event.repeat || event.isComposing) return;
+      event.preventDefault();
       void handleStartCheckIn();
     };
 
