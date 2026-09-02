@@ -16,16 +16,17 @@ export const AppLayout = () => {
 };
 
 const Container = styled.div`
+  --admin-sidebar-width: max(20vw, 17rem);
   flex: 1;
   box-sizing: border-box;
   display: flex;
-  align-items: flex-start;
   min-height: 100dvh;
 `;
 
 const ContentWrapper = styled.main`
   flex: 1;
   min-width: 0;
+  margin-left: var(--admin-sidebar-width);
   display: flex;
   flex-direction: column;
   align-items: center;

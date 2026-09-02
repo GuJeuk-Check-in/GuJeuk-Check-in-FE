@@ -235,18 +235,17 @@ export const AdminHeader = () => {
 };
 
 const Container = styled.header`
-  position: sticky;
-  top: 0;
-  left: 0;
+  position: fixed;
+  inset: 0 auto 0 0;
   z-index: 1000;
-  width: clamp(16rem, 20vw, 20rem);
-  max-height: 100dvh;
+  width: var(--admin-sidebar-width, max(20vw, 17rem));
+  min-width: var(--admin-sidebar-width, max(20vw, 17rem));
+  height: 100dvh;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  align-self: flex-start;
   flex-shrink: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -288,12 +287,12 @@ const LogoImage = styled.img`
 const ButtonWrapper = styled.nav`
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 2rem;
-  width: 100%;
+  flex: 1;
   min-width: 0;
-  overflow: visible;
+  flex-wrap: wrap;
+  overflow: hidden;
   font-size: 28px;
-  padding: 0 1.25rem;
-  box-sizing: border-box;
+  margin-right: 1.25rem;
 `;

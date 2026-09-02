@@ -9,7 +9,7 @@ import { useModal } from '@shared/hooks/useModal';
 import { getApiErrorMessage } from '@shared/api';
 import { Modal } from '@shared/ui';
 import { PasswordBackground } from '@shared/ui/Background';
-import { useState } from 'react';
+import { type FormEvent, type KeyboardEvent, useState } from 'react';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { FiArrowRight, FiUser } from 'react-icons/fi';
 import { PiHandWavingBold } from 'react-icons/pi';
@@ -141,6 +141,30 @@ const CheckInUserCheck = () => {
     }
   };
 
+  const handleNameKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    event.preventDefault();
+
+    if (event.nativeEvent.isComposing) {
+      return;
+    }
+
+    void handleCheckUser();
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isChecking) {
+      return;
+    }
+
+    void handleCheckUser();
+  };
+
   return (
     <Page>
       <PasswordBackground />
@@ -150,7 +174,7 @@ const CheckInUserCheck = () => {
           <Subtitle>시설을 이용하려면 작성해줘</Subtitle>
         </Header>
 
-        <FormBody aria-label="재방문 정보 입력">
+        <FormBody aria-label="재방문 정보 입력" onSubmit={handleSubmit}>
           <FieldBlock>
             <FieldLabel>
               <FiUser aria-hidden="true" />
@@ -159,15 +183,13 @@ const CheckInUserCheck = () => {
             <TextInput
               value={name}
               onChange={(event) => setName(event.target.value)}
+              onKeyDown={handleNameKeyDown}
               placeholder="친구의 이름을 알려줘"
+              disabled={isChecking}
             />
           </FieldBlock>
 
-          <NextButton
-            type="button"
-            onClick={handleCheckUser}
-            disabled={isChecking}
-          >
+          <NextButton type="submit" disabled={isChecking}>
             {isChecking ? '확인 중...' : '넘어가기!'}
             <FiArrowRight aria-hidden="true" />
           </NextButton>
@@ -230,7 +252,7 @@ const Subtitle = styled.p`
   font-size: clamp(1.1rem, 1.8vw, 1.5rem);
 `;
 
-const FormBody = styled.div`
+const FormBody = styled.form`
   display: flex;
   flex-direction: column;
   gap: 2.1rem;
