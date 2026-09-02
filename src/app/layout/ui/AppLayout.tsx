@@ -30,7 +30,7 @@ const ContentWrapper = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: calc(100% - var(--admin-sidebar-width));
   min-height: 100dvh;
   padding: clamp(1.5rem, 3.5vw, 3.5rem) clamp(1rem, 3.75vw, 3.75rem);
   gap: 1.25rem;

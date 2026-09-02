@@ -82,6 +82,14 @@ const Container = styled.div`
     box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
     transition: box-shadow 0.2s ease;
   }
+
+  @media (max-width: 64rem) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    min-height: auto;
+    padding: 1.5rem;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -90,6 +98,10 @@ const LeftSection = styled.div`
   align-items: flex-start;
   gap: 0.5rem;
   margin-left: 1.25rem;
+
+  @media (max-width: 64rem) {
+    margin-left: 0;
+  }
 `;
 
 const Location = styled.h2`
@@ -118,12 +130,21 @@ const Diver = styled.div`
   height: 1.25rem;
   background-color: #aaa;
   padding: 0;
+
+  @media (max-width: 40rem) {
+    display: none;
+  }
 `;
 
 const RightSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  min-width: 0;
+
+  @media (max-width: 64rem) {
+    width: 100%;
+  }
 `;
 
 const EditButton = styled.button`
@@ -161,9 +182,22 @@ const RightWrapper = styled.div`
   flex-direction: column;
   align-items: flex-end;
   gap: 1rem;
+  min-width: 0;
+
+  @media (max-width: 64rem) {
+    align-items: flex-start;
+    width: 100%;
+  }
 `;
 
 const InfoWrapper = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 0.9rem;
+  min-width: 0;
+
+  @media (max-width: 40rem) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;

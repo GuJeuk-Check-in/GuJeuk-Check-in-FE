@@ -61,17 +61,19 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   justify-content: flex-end;
+  width: 100%;
   box-sizing: border-box;
   z-index: 100;
 `;
 
 const DropdownWrapper = styled.div`
   position: relative;
+  width: 100%;
   min-width: 12.5rem;
 `;
 
 const LocationHeader = styled.div`
-  width: 70%;
+  width: 100%;
   height: 3.75rem;
   border-radius: 16px;
   display: flex;
@@ -82,17 +84,19 @@ const LocationHeader = styled.div`
   color: #2e2e32;
   cursor: pointer;
   background-color: #fff;
+  box-sizing: border-box;
 `;
 
 const LocationList = styled.div`
   position: absolute;
   top: 4rem;
-  width: 84%;
+  width: 100%;
   max-height: 13.75rem;
   overflow-y: auto;
   background-color: #ffffff;
   border: 0.0625rem solid #404040;
   border-radius: 12px;
+  box-sizing: border-box;
   box-shadow: 0 0.375rem 0.625rem rgba(0, 0, 0, 0.1);
   z-index: 1000;
 `;
