@@ -188,16 +188,16 @@ const ControlSection = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 16px;
-  width: min(100%, 22.25rem);
+  width: min(100%, 26rem);
   min-width: 0;
   margin-left: auto;
 
   > *:first-of-type {
-    flex: 0 1 12.5rem;
+    flex: 0 1 15rem;
   }
 
   > *:last-of-type {
-    flex: 0 0 8.75rem;
+    flex: 0 0 10rem;
   }
 
   @media (max-width: 64rem) {

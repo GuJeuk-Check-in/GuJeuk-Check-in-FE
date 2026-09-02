@@ -69,7 +69,7 @@ const Container = styled.div`
 const DropdownWrapper = styled.div`
   position: relative;
   width: 100%;
-  min-width: 8.75rem;
+  min-width: 10rem;
 `;
 
 const LocationHeader = styled.div`
