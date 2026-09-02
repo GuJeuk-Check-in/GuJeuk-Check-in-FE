@@ -31,3 +31,11 @@ This app has two visual planes: public check-in forms and an admin management/re
 - Report month option: compact month select above a report preview; the month affects only the monthly performance section while yearly facility usage remains fixed.
 - Report preview modal: fixed overlay, action bar, white printable report page, print CSS that hides surrounding UI and prints only the report article.
 - Report table: collapsed bordered table, gray header cells, bold row labels, centered numeric cells, and dash placeholders for unavailable values.
+
+
+## 6. Issue #133 Layout Amendments
+
+- Admin shell sidebar: fixed-sidenav shell using a sticky left header. The content area owns page scroll; the sidebar remains visible and uses its own vertical overflow only when its controls exceed the viewport.
+- Admin loading overlay: full-viewport dim overlay with a translucent white rounded box, white Korean status text, and `aria-live`/`role=status` for route loading states.
+- Sortable board: card grids keep drag transforms within the board bounds and use overflow-safe intrinsic columns so selected purpose/residence cards cannot visually escape the management area.
+- Facility usage record list: month filter button aligns to the right edge of the 80rem card measure on desktop, stretches on small screens, and visit cards reflow from row to stacked layout without horizontal overflow.

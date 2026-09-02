@@ -30,13 +30,29 @@ const CheckInFunnelAnalyticsPage = lazy(
 );
 
 const RouteFallback = styled.div`
-  padding: 24px;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+`;
+
+const RouteFallbackBox = styled.div`
+  border-radius: 0.625rem;
+  background: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  padding: 1.875rem 3.125rem;
   text-align: center;
 `;
 
 const routeFallback = (
   <RouteFallback aria-live="polite" role="status">
-    페이지를 불러오는 중입니다.
+    <RouteFallbackBox>
+      <p>페이지를 불러오는 중</p>
+      <p>잠시만 기다려주세요...</p>
+    </RouteFallbackBox>
   </RouteFallback>
 );
 
