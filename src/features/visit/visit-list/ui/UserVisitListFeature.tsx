@@ -120,9 +120,23 @@ export const UserVisitListFeature = () => {
                   ],
                 });
               },
-              onError: () => {
-                deleteConfirmModal.closeModal();
-                alert('삭제 중 오류가 발생했습니다.');
+              onError: (error) => {
+                deleteConfirmModal.openModal({
+                  icon: <FaExclamationTriangle size={48} color="#D88282" />,
+                  title: '삭제 실패',
+                  subtitle:
+                    error.response?.data?.message ||
+                    error.message ||
+                    '삭제 중 오류가 발생했습니다.',
+                  theme: 'warning',
+                  buttons: [
+                    {
+                      label: '확인',
+                      variant: 'secondary',
+                      onClick: deleteConfirmModal.closeModal,
+                    },
+                  ],
+                });
               },
             });
           },
@@ -230,6 +244,10 @@ const ObserverTarget = styled.div`
 const MonthVisitButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  width: 100%;
-  padding-right: 10rem;
+  width: min(100%, 80rem);
+  margin: 0 auto;
+
+  @media (max-width: 48rem) {
+    justify-content: stretch;
+  }
 `;

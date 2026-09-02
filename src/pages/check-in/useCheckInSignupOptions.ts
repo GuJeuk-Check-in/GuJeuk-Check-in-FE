@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { SignupPurposeTone } from './CheckInSignupFormSections';
 import {
   readPurposeCacheOrDefaults,
+  readPurposeCacheOrEmpty,
   readResidenceCacheOrDefaults,
   writePurposeCache,
   writeResidenceCache,
@@ -22,7 +23,7 @@ export const useCheckInSignupOptions = (residenceSearch: string) => {
     readResidenceCacheOrDefaults
   );
   const [cachedPurposes, setCachedPurposes] = useState(
-    readPurposeCacheOrDefaults
+    readPurposeCacheOrEmpty
   );
   const {
     data: purposes = [],
@@ -49,10 +50,21 @@ export const useCheckInSignupOptions = (residenceSearch: string) => {
   const filteredResidences = visibleResidences.filter((residenceOption) =>
     matchesKoreanSearch(residenceOption.residence, residenceSearch)
   );
-  const visiblePurposes =
-    isPurposeLoading || isPurposeError || purposes.length === 0
-      ? cachedPurposes
-      : purposes;
+  const visiblePurposes = useMemo(() => {
+    if (purposes.length > 0) {
+      return purposes;
+    }
+
+    if (cachedPurposes.length > 0) {
+      return cachedPurposes;
+    }
+
+    if (isPurposeLoading) {
+      return [];
+    }
+
+    return readPurposeCacheOrDefaults();
+  }, [cachedPurposes, isPurposeLoading, purposes]);
 
   const purposeOptions = useMemo(
     () =>

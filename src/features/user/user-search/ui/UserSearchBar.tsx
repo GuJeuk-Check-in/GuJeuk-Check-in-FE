@@ -39,6 +39,7 @@ const SearchContainer = styled.div`
   position: relative;
   min-width: 12.5rem;
   width: 100%;
+  height: 3.75rem;
 `;
 
 const SearchIconWrapper = styled.div`

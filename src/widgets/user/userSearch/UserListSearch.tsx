@@ -169,16 +169,51 @@ const FilterWrapper = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   gap: 16px;
-  width: 100%;
+  width: min(100%, 80rem);
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  @media (max-width: 64rem) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
-const InfoSection = styled.div``;
+const InfoSection = styled.div`
+  min-width: 0;
+`;
 
 const ControlSection = styled.div`
   display: flex;
-  gap: 16px;
+  justify-content: flex-end;
   align-items: center;
+  gap: 16px;
+  width: min(100%, 26rem);
+  min-width: 0;
   margin-left: auto;
+
+  > *:first-of-type {
+    flex: 0 1 15rem;
+  }
+
+  > *:last-of-type {
+    flex: 0 0 10rem;
+  }
+
+  @media (max-width: 64rem) {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  @media (max-width: 40rem) {
+    flex-direction: column;
+    align-items: stretch;
+
+    > * {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
 `;
 
 const TotalCountText = styled.p`

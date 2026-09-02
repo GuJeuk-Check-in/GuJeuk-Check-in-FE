@@ -52,41 +52,56 @@ export const UserVisitCard = ({
 };
 
 const Container = styled.div`
-  width: 100%;
-  max-width: 80rem;
+  width: min(100%, 80rem);
   min-height: 8.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 2rem;
+  gap: 1.5rem;
+  padding: clamp(1rem, 2vw, 1.25rem) clamp(1.25rem, 3vw, 2rem);
   background-color: #ffffff;
   border: 1px solid #6f95c4;
-  border-radius: 2.25rem;
+  border-radius: clamp(1.5rem, 3vw, 2.25rem);
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
   cursor: pointer;
   box-sizing: border-box;
-  margin: 0;
+  margin: 0 auto;
+
+  @media (max-width: 56rem) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 `;
 
 const LeftSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 3.75rem;
+  gap: clamp(1rem, 4vw, 3.75rem);
+  min-width: 0;
+
+  @media (max-width: 40rem) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 `;
 
 const Name = styled.h2`
-  font-size: 2rem;
-  font-weight: 600;
   color: #2e2e32;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  line-height: 1.2;
   margin: 0;
+  overflow-wrap: anywhere;
 `;
 
 const Info = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.5rem;
   color: #2e2e32;
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  white-space: nowrap;
 `;
 const Divider = styled.div`
   width: 0.0625rem;
@@ -98,11 +113,20 @@ const RightSection = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin-left: auto;
+  min-width: 0;
+
+  @media (max-width: 56rem) {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+  }
 `;
 
 const Date = styled.span`
-  font-size: 1.25rem;
   color: #969698;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  overflow-wrap: anywhere;
 `;
 
 const CloseButton = styled.button`
