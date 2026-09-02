@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import { PasswordButton } from '@shared/ui/Button/index';
 import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
 import { VisitTimePicker } from '@shared/ui/LabeldInput/VisitTimePicker';
@@ -12,6 +13,8 @@ import { usePurposeList } from '@entities/purpose/index';
 import { PiStudentBold } from 'react-icons/pi';
 import { useInput } from '@shared/hooks/useInput';
 import { useCheck } from '@shared/hooks/useCheck';
+import { useModal } from '@shared/hooks/useModal';
+import { Modal } from '@shared/ui';
 import { useCounter } from '@shared/hooks/useCounter';
 import {
   AGE_LABELS,
@@ -37,6 +40,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
   const [date, setDate] = useState('');
   const privacyCheck = useCheck(true);
   const [visitTime, setVisitTime] = useState('');
+  const validationModal = useModal();
 
   const { data: purposes, isLoading: isPurposeLoading } = usePurposeList();
 
@@ -52,12 +56,36 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
       !age ||
       !visitTime
     ) {
-      alert('모든 필수 필드를 입력해주세요.');
+      validationModal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '입력 확인',
+        subtitle: '모든 필수 필드를 입력해주세요.',
+        theme: 'warning',
+        buttons: [
+          {
+            label: '확인',
+            variant: 'secondary',
+            onClick: validationModal.closeModal,
+          },
+        ],
+      });
       return;
     }
 
     if (!privacyCheck.checked) {
-      alert('개인정보 수집 및 이용에 동의해야 합니다.');
+      validationModal.openModal({
+        icon: <FaExclamationTriangle size={48} color="#D88282" />,
+        title: '개인정보 동의 필요',
+        subtitle: '개인정보 수집 및 이용에 동의해야 합니다.',
+        theme: 'warning',
+        buttons: [
+          {
+            label: '확인',
+            variant: 'secondary',
+            onClick: validationModal.closeModal,
+          },
+        ],
+      });
       return;
     }
 
@@ -85,79 +113,88 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     : [];
 
   return (
-    <Container>
-      <InputGroup>
-        <InputRow>
+    <>
+      <Container>
+        <InputGroup>
+          <InputRow>
+            <VisitFormInput
+              label="이름"
+              placeholder="이름을 입력하세요"
+              {...nameInput}
+            />
+            <ToggleSelect
+              label="연령"
+              options={AGE_LABELS}
+              value={ageDisplay}
+              onChange={(value) => {
+                if (isAgeLabel(value)) setAgeDisplay(value);
+              }}
+              icon={<PiStudentBold size={24} />}
+            />
+          </InputRow>
+
           <VisitFormInput
-            label="이름"
-            placeholder="이름을 입력하세요"
-            {...nameInput}
+            label="연락처"
+            placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
+            icon={<IoIosCall size={24} />}
+            {...phoneInput}
           />
+
           <ToggleSelect
-            label="연령"
-            options={AGE_LABELS}
-            value={ageDisplay}
-            onChange={(value) => {
-              if (isAgeLabel(value)) setAgeDisplay(value);
-            }}
-            icon={<PiStudentBold size={24} />}
+            label="방문 목적"
+            options={
+              isPurposeLoading
+                ? ['불러오는 중...']
+                : purposeOptions.length > 0
+                ? purposeOptions
+                : ['기타']
+            }
+            placeholder="방문 목적을 선택해주세요"
+            value={purpose}
+            onChange={setPurpose}
+            icon={<FaLocationDot size={24} />}
+            disable={
+              isLoading || isPurposeLoading || purposeOptions.length === 0
+            }
           />
-        </InputRow>
 
-        <VisitFormInput
-          label="연락처"
-          placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
-          icon={<IoIosCall size={24} />}
-          {...phoneInput}
-        />
+          <CountVisitorWrapper>
+            <CountVisitor
+              label="방문 남성 수"
+              value={maleCounter.count}
+              onChange={maleCounter.setCount}
+            />
+            <CountVisitor
+              label="방문 여성 수"
+              value={femaleCounter.count}
+              onChange={femaleCounter.setCount}
+            />
+          </CountVisitorWrapper>
 
-        <ToggleSelect
-          label="방문 목적"
-          options={
-            isPurposeLoading
-              ? ['불러오는 중...']
-              : purposeOptions.length > 0
-              ? purposeOptions
-              : ['기타']
-          }
-          placeholder="방문 목적을 선택해주세요"
-          value={purpose}
-          onChange={setPurpose}
-          icon={<FaLocationDot size={24} />}
-          disable={isLoading || isPurposeLoading || purposeOptions.length === 0}
-        />
+          <VisitDatePicker value={date} onChange={setDate} />
+          <VisitTimePicker value={visitTime} onChange={setVisitTime} />
 
-        <CountVisitorWrapper>
-          <CountVisitor
-            label="방문 남성 수"
-            value={maleCounter.count}
-            onChange={maleCounter.setCount}
+          <VisitPrivacyAgreementField
+            checked={privacyCheck.checked}
+            onChange={privacyCheck.onChange}
+            disabled={isLoading}
+            hideLabel
+            text="개인정보 수집 및 이용 동의"
           />
-          <CountVisitor
-            label="방문 여성 수"
-            value={femaleCounter.count}
-            onChange={femaleCounter.setCount}
-          />
-        </CountVisitorWrapper>
+        </InputGroup>
 
-        <VisitDatePicker value={date} onChange={setDate} />
-        <VisitTimePicker value={visitTime} onChange={setVisitTime} />
-
-        <VisitPrivacyAgreementField
-          checked={privacyCheck.checked}
-          onChange={privacyCheck.onChange}
-          disabled={isLoading}
-          hideLabel
-          text="개인정보 수집 및 이용 동의"
+        <PasswordButton
+          content={isLoading ? '등록 중...' : '추가'}
+          onClick={handleSubmit}
+          disable={isLoading || isPurposeLoading}
         />
-      </InputGroup>
-
-      <PasswordButton
-        content={isLoading ? '등록 중...' : '추가'}
-        onClick={handleSubmit}
-        disable={isLoading || isPurposeLoading}
+      </Container>
+      <Modal
+        isOpen={validationModal.isOpen}
+        config={validationModal.config}
+        onClose={validationModal.closeModal}
       />
-    </Container>
+    </>
   );
 };
 

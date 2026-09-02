@@ -234,19 +234,22 @@ export const AdminHeader = () => {
   );
 };
 
-const Container = styled.div`
+const Container = styled.header`
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: clamp(16rem, 20vw, 20rem);
+  max-height: 100dvh;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 20vw;
-  min-height: 100dvh;
   box-sizing: border-box;
-  align-self: stretch;
+  align-self: flex-start;
   flex-shrink: 0;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 2rem 0;
 `;
 
@@ -282,15 +285,15 @@ const LogoImage = styled.img`
   flex-shrink: 0;
 `;
 
-const ButtonWrapper = styled.div`
+const ButtonWrapper = styled.nav`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 2rem;
-  flex: 1;
+  width: 100%;
   min-width: 0;
-  flex-wrap: wrap;
-  overflow: hidden;
+  overflow: visible;
   font-size: 28px;
-  margin-right: 1.25rem;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
 `;

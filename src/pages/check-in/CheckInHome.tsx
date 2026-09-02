@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Logo } from '@shared/assets';
 import { PasswordBackground } from '@shared/ui/Background';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   beginCheckInFunnelSession,
   ensureCheckInFunnelSession,
@@ -24,7 +24,7 @@ const CheckInHome = () => {
     beginCheckInFunnelSession();
   }, [location.state]);
 
-  const handleStartCheckIn = async () => {
+  const handleStartCheckIn = useCallback(async () => {
     if (isCheckingReadiness) return;
     ensureCheckInFunnelSession();
     setIsCheckingReadiness(true);
@@ -39,7 +39,20 @@ const CheckInHome = () => {
     navigate('/check-in/signup-form', {
       state: createHighAvailabilityRouteState(),
     });
-  };
+  }, [isCheckingReadiness, navigate]);
+
+  useEffect(() => {
+    const startOnEnter = (event: KeyboardEvent) => {
+      if (event.key !== 'Enter' || event.repeat || event.isComposing) return;
+      void handleStartCheckIn();
+    };
+
+    window.addEventListener('keydown', startOnEnter);
+
+    return () => {
+      window.removeEventListener('keydown', startOnEnter);
+    };
+  }, [handleStartCheckIn]);
 
   return (
     <Page>

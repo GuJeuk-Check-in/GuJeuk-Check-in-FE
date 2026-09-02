@@ -2,11 +2,40 @@ import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import type { ComponentProps, ReactNode } from 'react';
-import type { DndContextProps } from '@dnd-kit/core';
+import type { DndContextProps, Modifier, Modifiers } from '@dnd-kit/core';
 
 type SortableItems = ComponentProps<typeof SortableContext>['items'];
 
 type SortableBoardLayout = 'default' | 'scrollable-padded';
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max);
+
+const restrictToBoardBounds: Modifier = ({
+  transform,
+  draggingNodeRect,
+  containerNodeRect,
+}) => {
+  if (!draggingNodeRect || !containerNodeRect) {
+    return transform;
+  }
+
+  return {
+    ...transform,
+    x: clamp(
+      transform.x,
+      containerNodeRect.left - draggingNodeRect.left,
+      containerNodeRect.right - draggingNodeRect.right
+    ),
+    y: clamp(
+      transform.y,
+      containerNodeRect.top - draggingNodeRect.top,
+      containerNodeRect.bottom - draggingNodeRect.bottom
+    ),
+  };
+};
+
+const boardModifiers: Modifiers = [restrictToBoardBounds];
 
 type SortableBoardShellProps = {
   readonly isLoading: boolean;
@@ -56,6 +85,7 @@ export const SortableBoardShell = ({
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
+      modifiers={boardModifiers}
       onDragEnd={onDragEnd}
     >
       <BoardGrid $layout={layout}>
@@ -87,10 +117,12 @@ const BoardGrid = styled.div<{ readonly $layout: SortableBoardLayout }>`
   ${({ $layout }) => ($layout === 'scrollable-padded' ? 'height: 100%;' : '')}
   max-width: 75rem;
   display: grid;
-  grid-template-columns: repeat(3, minmax(14rem, 1fr));
+  grid-template-columns: repeat(3, minmax(min(14rem, 100%), 1fr));
   grid-auto-rows: 9rem;
   gap: 1.5rem;
   justify-items: center;
+  overflow: hidden;
+  touch-action: none;
   ${({ $layout }) =>
     $layout === 'scrollable-padded' ? 'padding: 2.5rem 7.5rem;' : ''}
 
@@ -100,11 +132,11 @@ const BoardGrid = styled.div<{ readonly $layout: SortableBoardLayout }>`
   }
 
   @media (max-width: 62rem) {
-    grid-template-columns: repeat(2, minmax(16rem, 1fr));
+    grid-template-columns: repeat(2, minmax(min(16rem, 100%), 1fr));
   }
 
   @media (max-width: 40rem) {
-    grid-template-columns: minmax(14rem, 1fr);
+    grid-template-columns: minmax(min(14rem, 100%), 1fr);
     ${({ $layout }) =>
       $layout === 'scrollable-padded' ? 'padding-inline: 1rem;' : ''}
   }
