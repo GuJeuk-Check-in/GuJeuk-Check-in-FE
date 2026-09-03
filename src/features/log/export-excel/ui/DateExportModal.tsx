@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 import { useState, useCallback, ChangeEvent, useEffect } from 'react';
+import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 
 interface DateExportModalProps {
   isVisible: boolean;
@@ -30,6 +31,7 @@ const DateExportModal = ({
 
   const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+  const dialogRef = useDialogFocusTrap(isVisible);
 
   const handleExport = useCallback(() => {
     onExport(selectedYear, selectedMonth);
@@ -65,7 +67,7 @@ const DateExportModal = ({
       aria-labelledby="date-export-title"
       onClick={onClose}
     >
-      <Container onClick={(e) => e.stopPropagation()}>
+      <Container ref={dialogRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <CloseButton type="button" onClick={onClose} aria-label="닫기">
           ×
         </CloseButton>

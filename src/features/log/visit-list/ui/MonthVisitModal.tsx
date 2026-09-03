@@ -5,6 +5,7 @@ import arrowRight from '@shared/assets/btn_right-arrow_default.png';
 import { DetailMonthVisitButton } from '@shared/ui/Button/DetailMonthVisitButton';
 import { MonthVisitCard } from '@shared/ui/Crad/MonthVisitCard';
 import { useMonthVisitList } from '../model/useMonthVisitList';
+import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 
 interface MonthVisitModalProps {
   readonly isOpen: boolean;
@@ -18,6 +19,7 @@ export const MonthVisitModal = ({
   onSelectMonthForList,
 }: MonthVisitModalProps) => {
   const [year, setYear] = useState(new Date().getFullYear());
+  const dialogRef = useDialogFocusTrap(isOpen);
 
   const monthsInfo = useMonthVisitList(year, { enabled: isOpen });
 
@@ -44,7 +46,7 @@ export const MonthVisitModal = ({
       aria-labelledby="month-visit-title"
       onClick={onClose}
     >
-      <Container onClick={(event) => event.stopPropagation()}>
+      <Container ref={dialogRef} tabIndex={-1} onClick={(event) => event.stopPropagation()}>
         <CloseButtonBox type="button" onClick={onClose} aria-label="닫기">
           <img src={closeButton} alt="" style={{ width: '2rem', height: '2rem' }} />
         </CloseButtonBox>
@@ -104,6 +106,12 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: space-between;
   overflow-y: auto;
+
+  @media (max-width: 48rem) {
+    width: calc(100% - 2rem);
+    height: auto;
+    padding: 3.5rem 1rem 1.5rem;
+  }
 `;
 
 const CloseButtonBox = styled.button`
@@ -120,6 +128,15 @@ const MonthVisitCardList = styled.div`
   display: grid;
   gap: 1.25rem;
   grid-template-columns: repeat(4, 1fr);
+
+  @media (max-width: 48rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 30rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 `;
 
 const DateHeader = styled.div`
@@ -128,6 +145,10 @@ const DateHeader = styled.div`
   align-items: center;
   width: 100%;
   gap: 4rem;
+
+  @media (max-width: 48rem) {
+    gap: 1rem;
+  }
 `;
 
 const DateHeaderTitle = styled.span`
@@ -145,6 +166,11 @@ const NextYearButton = styled.button`
   cursor: pointer;
   background: none;
   border: none;
+
+  @media (max-width: 30rem) {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
 `;
 
 const PrevYearButton = styled(NextYearButton)`
