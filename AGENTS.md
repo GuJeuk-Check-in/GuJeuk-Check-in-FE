@@ -18,26 +18,27 @@ This project uses Mixpanel for product analytics. Do not add another analytics S
 
 Mixpanel is initialized once in:
 
-`src/entities/visit/model/checkInFunnelMixpanel.ts`
+`src/entities/check-in/model/checkInFunnelMixpanel.ts`
 
 Use the exported funnel tracking path instead of importing Mixpanel directly in page components. Do not initialize Mixpanel in multiple files.
+Check-in funnel analytics are sent through Mixpanel only; do not add a separate analytics API call path.
 
 ## Current Quick Start Events
 
 | Mixpanel Event | Trigger | Key Properties | File |
 |---|---|---|---|
-| `check_in_started` | Check-in home flow starts | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `phone_input_started` | Visitor starts typing phone number | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `phone_check_submitted` | Visitor submits phone lookup | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `user_check_succeeded` | Existing-user lookup succeeds | `platform`, `session_id`, `is_existing_user`, `visit_count_bucket` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `user_check_failed` | Existing-user lookup fails | `platform`, `session_id`, `failure_reason` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `check_in_form_viewed` | Visitor reaches the check-in form | `platform`, `session_id`, `is_existing_user` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `purpose_selected` | Visitor selects visit purpose | `platform`, `session_id`, `purpose`, `is_existing_user` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `check_in_submitted` | Visitor submits the check-in form | `platform`, `session_id`, `age_group`, `purpose`, `visit_count_bucket` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `sign_up_completed` | A new public visitor signup/check-in API succeeds | `platform`, `sign_up_method`, `session_id`, `age_group`, `purpose` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `check_in_failed` | Check-in API fails | `platform`, `session_id`, `failure_reason`, `purpose` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `check_in_completed` | The check-in completion screen is reached | `platform`, `session_id`, `age_group`, `purpose`, `elapsed_ms_from_start` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
-| `check_in_abandoned` | A started session is replaced or times out before completion | `platform`, `session_id`, `failure_reason`, `elapsed_ms_from_start` | `src/entities/visit/model/checkInFunnelMixpanel.ts` |
+| `check_in_started` | Check-in home flow starts | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `phone_input_started` | Visitor starts typing phone number | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `phone_check_submitted` | Visitor submits phone lookup | `platform`, `session_id`, `elapsed_ms_from_start` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `user_check_succeeded` | Existing-user lookup succeeds | `platform`, `session_id`, `is_existing_user`, `visit_count_bucket` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `user_check_failed` | Existing-user lookup fails | `platform`, `session_id`, `failure_reason` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `check_in_form_viewed` | Visitor reaches the check-in form | `platform`, `session_id`, `is_existing_user` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `purpose_selected` | Visitor selects visit purpose | `platform`, `session_id`, `purpose`, `is_existing_user` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `check_in_submitted` | Visitor submits the check-in form | `platform`, `session_id`, `age_group`, `purpose`, `visit_count_bucket` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `sign_up_completed` | A new public visitor signup/check-in reaches a durable save outcome | `platform`, `sign_up_method`, `session_id`, `age_group`, `purpose` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `check_in_failed` | Check-in submission reaches a failure outcome | `platform`, `session_id`, `failure_reason`, `purpose` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `check_in_completed` | The check-in completion screen is reached after server save or local durable queue save | `platform`, `session_id`, `age_group`, `purpose`, `elapsed_ms_from_start` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
+| `check_in_abandoned` | A started session is replaced or times out before completion | `platform`, `session_id`, `failure_reason`, `elapsed_ms_from_start` | `src/entities/check-in/model/checkInFunnelMixpanel.ts` |
 
 ## Identity Notes
 

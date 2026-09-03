@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
-  checkUserExists,
-  isRetryableCheckInError,
+  CHECK_IN_USER_CHECK_OUTCOMES,
+  checkPublicUserForCheckIn,
   recordCheckInFunnelEvent,
-} from '@entities/visit';
+} from '@entities/check-in';
 import { useModal } from '@shared/hooks/useModal';
 import { getApiErrorMessage } from '@shared/api';
 import { Modal } from '@shared/ui';
@@ -79,17 +79,34 @@ const CheckInUserCheck = () => {
       return;
     }
 
-    try {
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUBMITTED,
-      });
-      setIsChecking(true);
-      const response = await checkUserExists({
-        name: trimmedName,
-      });
+    recordCheckInFunnelEvent({
+      eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUBMITTED,
+    });
+    setIsChecking(true);
 
-      if (response.userExists) {
-        if (typeof response.userId !== 'number') {
+    try {
+      const result = await checkPublicUserForCheckIn(trimmedName);
+
+      switch (result.outcome) {
+        case CHECK_IN_USER_CHECK_OUTCOMES.EXISTING_USER:
+          recordCheckInFunnelEvent({
+            eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
+            userId: result.userId,
+            isExistingUser: true,
+          });
+          navigate('/check-in/login-form', {
+            state: {
+              userId: result.userId,
+              name: trimmedName,
+            },
+          });
+          return;
+
+        case CHECK_IN_USER_CHECK_OUTCOMES.FIRST_VISIT_CANDIDATE:
+          openFirstVisitModal(trimmedName);
+          return;
+
+        case CHECK_IN_USER_CHECK_OUTCOMES.MISSING_EXISTING_USER_ID:
           recordCheckInFunnelEvent({
             eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
             failureReason: 'missing_existing_user_id',
@@ -99,43 +116,28 @@ const CheckInUserCheck = () => {
             '회원 정보를 확인하지 못했습니다. 직원에게 문의해주세요.'
           );
           return;
-        }
 
-        recordCheckInFunnelEvent({
-          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_SUCCEEDED,
-          userId: response.userId,
-          isExistingUser: true,
-        });
-        navigate('/check-in/login-form', {
-          state: {
-            userId: response.userId,
-            name: trimmedName,
-          },
-        });
-        return;
+        case CHECK_IN_USER_CHECK_OUTCOMES.REMOTE_UNAVAILABLE:
+          recordCheckInFunnelEvent({
+            eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+            failureReason: 'user_check_remote_unavailable',
+          });
+          navigate('/check-in/signup-form', {
+            state: createHighAvailabilityRouteState(trimmedName),
+          });
+          return;
+
+        case CHECK_IN_USER_CHECK_OUTCOMES.REQUEST_FAILED:
+          recordCheckInFunnelEvent({
+            eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
+            failureReason: 'user_check_request_failed',
+          });
+          openWarningModal(
+            '회원 확인 실패',
+            getApiErrorMessage(result.error, '회원 정보를 확인하지 못했습니다.')
+          );
+          return;
       }
-
-      openFirstVisitModal(trimmedName);
-    } catch (error) {
-      if (isRetryableCheckInError(error)) {
-        recordCheckInFunnelEvent({
-          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
-          failureReason: 'user_check_remote_unavailable',
-        });
-        navigate('/check-in/signup-form', {
-          state: createHighAvailabilityRouteState(trimmedName),
-        });
-        return;
-      }
-
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.USER_CHECK_FAILED,
-        failureReason: 'user_check_request_failed',
-      });
-      openWarningModal(
-        '회원 확인 실패',
-        getApiErrorMessage(error, '회원 정보를 확인하지 못했습니다.')
-      );
     } finally {
       setIsChecking(false);
     }

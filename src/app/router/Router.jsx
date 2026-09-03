@@ -5,9 +5,9 @@ import { AppLayout } from '@app/layout';
 
 const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
 const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
-const UserVisitList = lazy(() => import('@pages/visit/UserVisitList'));
-const UserDetail = lazy(() => import('@pages/visit/UserDetail'));
-const UserDetailView = lazy(() => import('@pages/visit/UserDetailView'));
+const UserVisitList = lazy(() => import('@pages/log/UserVisitList'));
+const UserDetail = lazy(() => import('@pages/log/UserDetail'));
+const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
 const UserInformation = lazy(() => import('@pages/user/UserInformation'));
 const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
 const UserInformationDetail = lazy(

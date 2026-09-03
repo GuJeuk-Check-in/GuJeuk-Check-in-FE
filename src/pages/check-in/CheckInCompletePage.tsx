@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { completeCheckInFunnelSession } from '@entities/visit';
+import { completeCheckInFunnelSession } from '@entities/check-in';
 import { PasswordBackground } from '@shared/ui/Background';
 import { useEffect } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';

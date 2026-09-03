@@ -1,4 +1,4 @@
-import type { GenderType } from '@entities/visit';
+import type { GenderType } from '@entities/check-in';
 import { FaMars, FaRegCheckSquare, FaVenus } from 'react-icons/fa';
 import {
   FieldBlock,
