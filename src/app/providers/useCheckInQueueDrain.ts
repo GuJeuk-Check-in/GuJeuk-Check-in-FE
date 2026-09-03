@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import {
   drainCheckInQueue,
   subscribeCheckInQueueDrain,
-} from '@entities/visit';
+} from '@entities/check-in/queue';
 
 export const useCheckInQueueDrain = () => {
   useEffect(() => {

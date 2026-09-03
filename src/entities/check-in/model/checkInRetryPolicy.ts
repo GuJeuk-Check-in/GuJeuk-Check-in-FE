@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { AxiosError } from 'axios';
 
 const RETRYABLE_HTTP_STATUS_START = 500;
 const RETRYABLE_AXIOS_ERROR_CODES = new Set([
@@ -13,8 +14,13 @@ type ApiErrorBody = {
   readonly message?: string;
 };
 
+export const isCheckInApiError = (
+  error: unknown
+): error is AxiosError<ApiErrorBody> =>
+  axios.isAxiosError<ApiErrorBody>(error);
+
 export const isRetryableCheckInError = (error: unknown): boolean => {
-  if (!axios.isAxiosError<ApiErrorBody>(error)) {
+  if (!isCheckInApiError(error)) {
     return false;
   }
 

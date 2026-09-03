@@ -1,7 +1,7 @@
 import {
-  drainVisitCheckInQueueForBootSync,
-  fetchVisitReadyForBootSync,
-} from '@entities/visit/readyBootSync';
+  drainCheckInQueueForBootSync,
+  fetchCheckInReadyForBootSync,
+} from '@entities/check-in/readyBootSync';
 import { useQueryClient, type QueryClient } from '@tanstack/react-query';
 import {
   markRemoteSyncBootReady,
@@ -85,7 +85,7 @@ export const useReadyHealthMonitor = (): void => {
         await invalidateRemoteSyncQueries(queryClient);
       }
 
-      await drainVisitCheckInQueueForBootSync().catch(() => undefined);
+      await drainCheckInQueueForBootSync().catch(() => undefined);
     };
 
     const checkReadiness = async (): Promise<void> => {
@@ -94,7 +94,7 @@ export const useReadyHealthMonitor = (): void => {
       requestInFlight = true;
 
       try {
-        const readyForRemoteSync = await fetchVisitReadyForBootSync().catch(
+        const readyForRemoteSync = await fetchCheckInReadyForBootSync().catch(
           () => false
         );
         await applyReadyState(readyForRemoteSync);

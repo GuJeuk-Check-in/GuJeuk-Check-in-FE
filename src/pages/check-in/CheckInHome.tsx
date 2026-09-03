@@ -8,7 +8,7 @@ import {
   ensureCheckInFunnelSession,
   fetchReadyHealth,
   isReadyForRemoteSync,
-} from '@entities/visit';
+} from '@entities/check-in';
 import {
   createHighAvailabilityRouteState,
   shouldSkipCheckInFunnelPageView,

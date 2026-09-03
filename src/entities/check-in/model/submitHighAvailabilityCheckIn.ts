@@ -1,13 +1,17 @@
-import { getCheckInQueueErrorMessage } from './checkInRetryPolicy';
 import { enqueueCheckIn } from './checkInQueueStorage';
 import { CHECK_IN_QUEUE_KINDS } from './checkInQueueTypes';
 import { createClientRecordId } from './clientRecordId';
-import { CheckInFallbackStorageError } from './submitPublicCheckInWithFallback';
+import {
+  CHECK_IN_SUBMISSION_OUTCOMES,
+  completeCheckInSubmission,
+  createCheckInSubmissionFailure,
+  type CheckInSubmissionResult,
+} from './checkInSubmissionResult';
 import type { NewUserSignUpRequest } from './types';
 
 export const submitHighAvailabilityCheckIn = async (
   payload: NewUserSignUpRequest
-): Promise<string> => {
+): Promise<CheckInSubmissionResult> => {
   const clientRecordId = createClientRecordId();
 
   try {
@@ -19,8 +23,11 @@ export const submitHighAvailabilityCheckIn = async (
       },
     });
   } catch (error) {
-    throw new CheckInFallbackStorageError(getCheckInQueueErrorMessage(error));
+    return createCheckInSubmissionFailure(
+      CHECK_IN_SUBMISSION_OUTCOMES.LOCAL_QUEUE_SAVE_FAILED,
+      error
+    );
   }
 
-  return clientRecordId;
+  return completeCheckInSubmission(clientRecordId);
 };
