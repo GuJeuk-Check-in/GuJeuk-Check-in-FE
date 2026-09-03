@@ -6,7 +6,7 @@ import { useState } from 'react';
 import {
   DateExportModal,
   useVisitListExportExcel,
-} from '@features/visit/export-excel';
+} from '@features/log/export-excel';
 import { Modal } from '@shared/ui/modal/Modal';
 import { useModal } from '@shared/hooks/useModal';
 import { useUserListExportExcel } from '@features/user/export-excel';
@@ -15,7 +15,7 @@ import {
   type OperationStatusPreviewData,
   useFacilityUsageReport,
   useVisitPerformanceReport,
-} from '@features/visit/performance-report';
+} from '@features/log/performance-report';
 
 type ReportPeriod = {
   readonly year: number;
