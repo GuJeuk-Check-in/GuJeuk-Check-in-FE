@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import closeButton from '@shared/assets/btn_left-arrow_default.png';
 import arrowRight from '@shared/assets/btn_right-arrow_default.png';
@@ -24,21 +24,37 @@ export const MonthVisitModal = ({
   const handlePrevYear = () => setYear((currentYear) => currentYear - 1);
   const handleNextYear = () => setYear((currentYear) => currentYear + 1);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="month-visit-title"
+      onClick={onClose}
+    >
       <Container onClick={(event) => event.stopPropagation()}>
-        <CloseButtonBox onClick={onClose}>
-          <img src={closeButton} style={{ width: '2rem', height: '2rem' }} />
+        <CloseButtonBox type="button" onClick={onClose} aria-label="닫기">
+          <img src={closeButton} alt="" style={{ width: '2rem', height: '2rem' }} />
         </CloseButtonBox>
         <DateHeader>
-          <PrevYearButton onClick={handlePrevYear}>
-            <img src={arrowRight} />
+          <PrevYearButton type="button" onClick={handlePrevYear} aria-label="이전 연도">
+            <img src={arrowRight} alt="" />
           </PrevYearButton>
-          <DateHeaderTitle>{year}</DateHeaderTitle>
-          <NextYearButton onClick={handleNextYear}>
-            <img src={arrowRight} />
+          <DateHeaderTitle id="month-visit-title">{year}</DateHeaderTitle>
+          <NextYearButton type="button" onClick={handleNextYear} aria-label="다음 연도">
+            <img src={arrowRight} alt="" />
           </NextYearButton>
         </DateHeader>
         <MonthVisitCardList>
@@ -90,12 +106,14 @@ const Container = styled.div`
   overflow-y: auto;
 `;
 
-const CloseButtonBox = styled.div`
+const CloseButtonBox = styled.button`
   position: absolute;
   cursor: pointer;
   padding: 1.75rem;
   left: 0;
   top: 0;
+  border: none;
+  background: transparent;
 `;
 
 const MonthVisitCardList = styled.div`

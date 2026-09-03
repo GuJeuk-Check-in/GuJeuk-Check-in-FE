@@ -13,6 +13,8 @@ const STORE_NAME = 'checkInQueue';
 export const CHECK_IN_QUEUE_DRAIN_LOCK_STORE_NAME = 'checkInQueueDrainLock';
 const INITIAL_RETRY_DELAY_MS = 30_000;
 const STALE_SYNCING_MS = 2 * 60_000;
+export const CHECK_IN_QUEUE_PERMANENT_FAILURE_RETENTION_MS =
+  7 * 24 * 60 * 60 * 1000;
 
 class CheckInQueueTransactionError extends Error {
   readonly name = 'CheckInQueueTransactionError';
@@ -127,15 +129,16 @@ export const enqueueCheckIn = async (
   await withStore('readwrite', async (store) => {
     await waitForRequest(store.add(record));
   });
-
   return record;
 };
 
 export const getDueCheckInQueueRecords = async (
   now: number,
   limit: number
-): Promise<readonly CheckInQueueRecord[]> =>
-  withStore('readonly', async (store) => {
+): Promise<readonly CheckInQueueRecord[]> => {
+  await cleanupExpiredPermanentFailureRecords(now);
+
+  return withStore('readonly', async (store) => {
     const rawItems: unknown = await waitForRequest(store.getAll());
     if (!Array.isArray(rawItems)) return [];
 
@@ -160,6 +163,30 @@ export const getDueCheckInQueueRecords = async (
       .sort((left, right) => left.createdAt - right.createdAt)
       .slice(0, limit);
   });
+};
+
+const cleanupExpiredPermanentFailureRecords = async (
+  now: number
+): Promise<void> => {
+  await withStore('readwrite', async (store) => {
+    const rawItems: unknown = await waitForRequest(store.getAll());
+    if (!Array.isArray(rawItems)) return;
+
+    await Promise.all(
+      rawItems
+        .filter(isCheckInQueueRecord)
+        .filter(
+          (record) =>
+            record.status === CHECK_IN_QUEUE_STATUSES.FAILED &&
+            record.nextRetryAt === null &&
+            (record.retentionExpiresAt ??
+              record.updatedAt + CHECK_IN_QUEUE_PERMANENT_FAILURE_RETENTION_MS) <=
+              now
+        )
+        .map((record) => waitForRequest(store.delete(record.id)))
+    );
+  });
+};
 
 export const markCheckInQueueRecordSyncing = async (
   record: CheckInQueueRecord,
@@ -188,6 +215,10 @@ export const markCheckInQueueRecordFailed = async (
     attemptCount: record.attemptCount + 1,
     lastError: errorMessage,
     nextRetryAt,
+    retentionExpiresAt:
+      nextRetryAt === null
+        ? now + CHECK_IN_QUEUE_PERMANENT_FAILURE_RETENTION_MS
+        : null,
     updatedAt: now,
   };
 

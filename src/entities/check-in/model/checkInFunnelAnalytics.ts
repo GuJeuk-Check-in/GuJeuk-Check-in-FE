@@ -29,6 +29,7 @@ type RecordCheckInFunnelEventInput = Partial<CheckInFunnelContext> & {
 };
 
 const YEAR_PREFIX_PATTERN = /^(\d{4})-/;
+const CHECK_IN_FUNNEL_EVENT_RETENTION_LIMIT = 500;
 
 const EMPTY_CONTEXT: CheckInFunnelContext = {
   userId: null,
@@ -73,7 +74,10 @@ const parseContext = (value: unknown): CheckInFunnelContext => {
 };
 
 const appendEvent = (event: CheckInFunnelEventRecord): void => {
-  writeStoredCheckInFunnelEvents([...readStoredCheckInFunnelEvents(), event]);
+  const events = [...readStoredCheckInFunnelEvents(), event];
+  writeStoredCheckInFunnelEvents(
+    events.slice(-CHECK_IN_FUNNEL_EVENT_RETENTION_LIMIT)
+  );
   flushStoredCheckInFunnelEventsInBackground();
 };
 

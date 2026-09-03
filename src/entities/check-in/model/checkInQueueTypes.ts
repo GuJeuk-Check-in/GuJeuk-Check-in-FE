@@ -48,6 +48,7 @@ export type CheckInQueueRecord = CheckInQueuePayload & {
   readonly attemptCount: number;
   readonly lastError: string | null;
   readonly nextRetryAt: number | null;
+  readonly retentionExpiresAt?: number | null;
   readonly createdAt: number;
   readonly updatedAt: number;
 };

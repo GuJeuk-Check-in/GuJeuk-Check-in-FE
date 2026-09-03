@@ -54,6 +54,9 @@ export const isCheckInQueueRecord = (
     typeof value.attemptCount === 'number' &&
     (typeof value.lastError === 'string' || value.lastError === null) &&
     (typeof value.nextRetryAt === 'number' || value.nextRetryAt === null) &&
+    (value.retentionExpiresAt === undefined ||
+      typeof value.retentionExpiresAt === 'number' ||
+      value.retentionExpiresAt === null) &&
     typeof value.createdAt === 'number' &&
     typeof value.updatedAt === 'number';
 

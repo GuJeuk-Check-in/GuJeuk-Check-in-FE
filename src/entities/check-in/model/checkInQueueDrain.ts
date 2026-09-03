@@ -68,16 +68,28 @@ const createPreparedBatches = async (
   for (const record of records) {
     switch (record.kind) {
       case CHECK_IN_QUEUE_KINDS.EXISTING_USER_CHECK_IN:
-        batches.push({
-          records: [record],
-          send: () =>
-            createExistingUserHighAvailabilityLog(
-              createExistingUserHighAvailabilityPayload(
-                record.id,
-                record.payload
-              )
-            ),
-        });
+        try {
+          const payload = createExistingUserHighAvailabilityPayload(
+            record.id,
+            record.payload
+          );
+
+          batches.push({
+            records: [record],
+            send: () => createExistingUserHighAvailabilityLog(payload),
+          });
+        } catch (error) {
+          if (!(error instanceof HighAvailabilityPayloadContractError)) {
+            throw error;
+          }
+
+          await markCheckInQueueRecordFailed(
+            record,
+            getCheckInQueueErrorMessage(error),
+            null,
+            Date.now()
+          );
+        }
         break;
       case CHECK_IN_QUEUE_KINDS.NEW_USER_SIGN_UP:
       case CHECK_IN_QUEUE_KINDS.HIGH_AVAILABILITY_CHECK_IN:
@@ -187,10 +199,21 @@ const runDrain = async (): Promise<CheckInQueueDrainResult> => {
 export const drainCheckInQueue = (): Promise<CheckInQueueDrainResult> => {
   if (activeDrain) return activeDrain;
 
-  activeDrain = withCheckInQueueDrainLock(
-    runDrain,
-    LOCKED_DRAIN_RESULT
-  ).finally(() => {
+  activeDrain = (async () => {
+    const result = await withCheckInQueueDrainLock(
+      runDrain,
+      LOCKED_DRAIN_RESULT
+    );
+    const rerunResult = await withCheckInQueueDrainLock(
+      runDrain,
+      LOCKED_DRAIN_RESULT
+    );
+
+    return {
+      sentCount: result.sentCount + rerunResult.sentCount,
+      stoppedOnError: result.stoppedOnError || rerunResult.stoppedOnError,
+    };
+  })().finally(() => {
     activeDrain = null;
   });
 

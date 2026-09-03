@@ -6,7 +6,9 @@ import type {
 } from './types';
 import { getAgeTypeFromKoreanAge } from './age';
 
-const YEAR_PREFIX_PATTERN = /^(\d{4})-/;
+const BIRTH_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const VISIT_TIME_PATTERN =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{3})?$/;
 
 export class HighAvailabilityPayloadContractError extends Error {
   readonly name = 'HighAvailabilityPayloadContractError';
@@ -19,32 +21,63 @@ export class HighAvailabilityPayloadContractError extends Error {
   }
 }
 
-const parseYear = (value: string): number | null => {
-  const match = YEAR_PREFIX_PATTERN.exec(value);
+const isValidCalendarDate = (
+  year: number,
+  month: number,
+  day: number
+): boolean => {
+  if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1) {
+    return false;
+  }
+
+  return new Date(Date.UTC(year, month, 0)).getUTCDate() >= day;
+};
+
+const parseYear = (value: string, pattern: RegExp): number | null => {
+  const match = pattern.exec(value);
   if (!match) return null;
 
   const year = Number(match[1]);
-  return Number.isInteger(year) ? year : null;
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isInteger(year) || !isValidCalendarDate(year, month, day)) {
+    return null;
+  }
+
+  if (pattern === VISIT_TIME_PATTERN) {
+    const hour = Number(match[4]);
+    const minute = Number(match[5]);
+    const second = Number(match[6]);
+    if (hour > 23 || minute > 59 || second > 59) return null;
+  }
+
+  return year;
 };
 
 export const createExistingUserHighAvailabilityPayload = (
   clientRecordId: string,
   payload: ExistingUserCheckInRequest
-): ExistingUserHighAvailabilityLogRequest => ({
-  clientRecordId,
-  id: payload.userId,
-  purpose: payload.purpose,
-  maleCount: payload.maleCount,
-  femaleCount: payload.femaleCount,
-  visitTime: payload.visitTime,
-});
+): ExistingUserHighAvailabilityLogRequest => {
+  if (parseYear(payload.visitTime, VISIT_TIME_PATTERN) === null) {
+    throw new HighAvailabilityPayloadContractError('', payload.visitTime);
+  }
+
+  return {
+    clientRecordId,
+    id: payload.userId,
+    purpose: payload.purpose,
+    maleCount: payload.maleCount,
+    femaleCount: payload.femaleCount,
+    visitTime: payload.visitTime,
+  };
+};
 
 export const createUnknownUserHighAvailabilityPayload = (
   clientRecordId: string,
   payload: NewUserSignUpRequest
 ): UnknownUserHighAvailabilitySignUpRequest => {
-  const birthYear = parseYear(payload.birthYMD);
-  const visitYear = parseYear(payload.visitTime);
+  const birthYear = parseYear(payload.birthYMD, BIRTH_DATE_PATTERN);
+  const visitYear = parseYear(payload.visitTime, VISIT_TIME_PATTERN);
 
   if (
     birthYear === null ||

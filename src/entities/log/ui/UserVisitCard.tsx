@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
 
 interface UserVisitCardProps {
@@ -19,31 +19,26 @@ export const UserVisitCard = ({
   date,
   onDelete,
 }: UserVisitCardProps) => {
-  const navigate = useNavigate();
-
-  const handleCardClick = () => {
-    navigate(`/log/${id}`);
-  };
-
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onDelete) onDelete();
   };
 
   return (
-    <Container onClick={handleCardClick}>
-      <LeftSection>
-        <Name>대표자: {name}</Name>
-        <Info>
-          <span>남 : {male}</span>
-          <Divider />
-          <span>여 : {female}</span>
-        </Info>
-      </LeftSection>
-
-      <RightSection>
+    <Container>
+      <CardLink to={`/log/${id}`}>
+        <LeftSection>
+          <Name>대표자: {name}</Name>
+          <Info>
+            <span>남 : {male}</span>
+            <Divider />
+            <span>여 : {female}</span>
+          </Info>
+        </LeftSection>
         <Date>{date}</Date>
-        <CloseButton onClick={handleDeleteClick}>
+      </CardLink>
+      <RightSection>
+        <CloseButton type="button" onClick={handleDeleteClick} aria-label="방문 기록 삭제">
           <IoClose size="1.8rem" />
         </CloseButton>
       </RightSection>
@@ -63,9 +58,24 @@ const Container = styled.div`
   border: 1px solid #6f95c4;
   border-radius: clamp(1.5rem, 3vw, 2.25rem);
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
-  cursor: pointer;
   box-sizing: border-box;
   margin: 0 auto;
+
+  @media (max-width: 56rem) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+`;
+
+const CardLink = styled(Link)`
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  color: inherit;
+  text-decoration: none;
 
   @media (max-width: 56rem) {
     align-items: flex-start;
@@ -118,7 +128,7 @@ const RightSection = styled.div`
 
   @media (max-width: 56rem) {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-left: 0;
   }
 `;

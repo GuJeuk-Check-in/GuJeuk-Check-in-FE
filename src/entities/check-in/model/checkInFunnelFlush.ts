@@ -19,11 +19,22 @@ const flushStoredCheckInFunnelEventsToMixpanel =
         batch.map((event) => trackCheckInFunnelEventWithMixpanel(event))
       );
       const removableEventIds = batch
-        .filter((_, index) => sendResults[index] !== 'failed')
+        .filter(
+          (_, index) =>
+            sendResults[index] === 'tracked' ||
+            sendResults[index] === 'not_applicable'
+        )
         .map((event) => event.clientEventId);
 
       if (removableEventIds.length > 0) {
+        const storedEventCountBeforeRemoval =
+          readStoredCheckInFunnelEvents().length;
         removeStoredCheckInFunnelEvents(removableEventIds);
+        const storedEventCountAfterRemoval =
+          readStoredCheckInFunnelEvents().length;
+        if (storedEventCountAfterRemoval >= storedEventCountBeforeRemoval) {
+          return false;
+        }
       }
 
       if (removableEventIds.length !== batch.length) return false;

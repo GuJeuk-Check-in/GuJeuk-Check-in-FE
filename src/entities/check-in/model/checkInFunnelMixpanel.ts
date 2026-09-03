@@ -6,7 +6,11 @@ import {
 
 type MixpanelEventPropertyValue = string | number | boolean;
 
-type MixpanelTrackResult = 'tracked' | 'skipped' | 'failed';
+type MixpanelTrackResult =
+  | 'tracked'
+  | 'skipped'
+  | 'failed'
+  | 'not_applicable';
 
 type MixpanelEventPayload = {
   readonly eventName: MixpanelCheckInEventName;
@@ -57,22 +61,29 @@ const isTrackResponseSuccess = (response: unknown): boolean => {
   return response.status === 1;
 };
 
-const ensureMixpanelInitialized = (): boolean => {
-  if (!isBrowserRuntime() || MIXPANEL_TOKEN.length === 0) return false;
-  if (isMixpanelInitialized) return true;
+type MixpanelInitializationResult = 'ready' | 'skipped' | 'failed';
 
-  mixpanel.init(MIXPANEL_TOKEN, {
-    autocapture: false,
-    debug: import.meta.env.VITE_MIXPANEL_DEBUG === 'true',
-    disable_notifications: true,
-    persistence: 'localStorage',
-    record_heatmap_data: false,
-    record_sessions_percent: 0,
-    track_pageview: false,
-  });
-  isMixpanelInitialized = true;
+const ensureMixpanelInitialized = (): MixpanelInitializationResult => {
+  if (!isBrowserRuntime() || MIXPANEL_TOKEN.length === 0) return 'skipped';
+  if (isMixpanelInitialized) return 'ready';
 
-  return true;
+  try {
+    mixpanel.init(MIXPANEL_TOKEN, {
+      autocapture: false,
+      debug: import.meta.env.VITE_MIXPANEL_DEBUG === 'true',
+      disable_notifications: true,
+      persistence: 'localStorage',
+      record_heatmap_data: false,
+      record_sessions_percent: 0,
+      track_pageview: false,
+    });
+    isMixpanelInitialized = true;
+  } catch (error) {
+    if (error instanceof Error) return 'failed';
+    throw error;
+  }
+
+  return 'ready';
 };
 
 const omitEmptyProperties = (
@@ -226,23 +237,39 @@ const trackMixpanelPayload = (
       resolve(false);
     }, CHECK_IN_FUNNEL_TRACK_TIMEOUT_MS);
 
-    mixpanel.track(
-      payload.eventName,
-      payload.properties,
-      { send_immediately: true, transport: 'sendBeacon' },
-      (response) => {
+    try {
+      const trackResult = Reflect.apply(mixpanel.track, mixpanel, [
+        payload.eventName,
+        payload.properties,
+        { send_immediately: true, transport: 'sendBeacon' },
+        (response: unknown) => {
+          window.clearTimeout(timeoutId);
+          resolve(isTrackResponseSuccess(response));
+        },
+      ]);
+
+      if (trackResult !== undefined) {
         window.clearTimeout(timeoutId);
-        resolve(isTrackResponseSuccess(response));
+        resolve(trackResult !== false);
       }
-    );
+    } catch (error) {
+      window.clearTimeout(timeoutId);
+      if (error instanceof Error) {
+        resolve(false);
+        return;
+      }
+
+      throw error;
+    }
   });
 
 export const trackCheckInFunnelEventWithMixpanel = async (
   event: CheckInFunnelEventRecord
 ): Promise<MixpanelTrackResult> => {
   const payloads = toMixpanelEventPayload(event);
-  if (payloads.length === 0) return 'skipped';
-  if (!ensureMixpanelInitialized()) return 'failed';
+  if (payloads.length === 0) return 'not_applicable';
+  const initializationResult = ensureMixpanelInitialized();
+  if (initializationResult !== 'ready') return initializationResult;
 
   const results = await Promise.all(payloads.map(trackMixpanelPayload));
   return results.every(Boolean) ? 'tracked' : 'failed';

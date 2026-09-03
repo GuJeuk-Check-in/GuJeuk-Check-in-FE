@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import { useState, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent, useEffect } from 'react';
 
 interface DateExportModalProps {
   isVisible: boolean;
@@ -43,17 +43,41 @@ const DateExportModal = ({
     setSelectedMonth(parseInt(e.target.value, 10));
   };
 
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, onClose]);
+
   if (!isVisible) {
     return null;
   }
 
   return (
-    <ModalOverlay onClick={onClose}>
+    <ModalOverlay
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="date-export-title"
+      onClick={onClose}
+    >
       <Container onClick={(e) => e.stopPropagation()}>
-        <Title>{title}</Title>
+        <CloseButton type="button" onClick={onClose} aria-label="닫기">
+          ×
+        </CloseButton>
+        <Title id="date-export-title">{title}</Title>
         <DateSelectorWrapper>
           <StyledSelectWrapper>
-            <StyledSelect value={selectedYear} onChange={handleYearChange}>
+            <StyledSelect
+              id="date-export-year"
+              aria-label="연도"
+              value={selectedYear}
+              onChange={handleYearChange}
+            >
               {years.map((year) => (
                 <option key={year} value={year}>
                   {year}
@@ -63,7 +87,12 @@ const DateExportModal = ({
           </StyledSelectWrapper>
           <Label>년</Label>
           <StyledSelectWrapper>
-            <StyledSelect value={selectedMonth} onChange={handleMonthChange}>
+            <StyledSelect
+              id="date-export-month"
+              aria-label="월"
+              value={selectedMonth}
+              onChange={handleMonthChange}
+            >
               {months.map((month) => (
                 <option key={month} value={month}>
                   {month}
@@ -123,6 +152,15 @@ const Container = styled.div`
   animation: ${fadeInUp} 0.3s ease-out;
 `;
 
+const CloseButton = styled.button`
+  align-self: flex-end;
+  border: none;
+  background: transparent;
+  color: #555555;
+  cursor: pointer;
+  font-size: 1.5rem;
+`;
+
 const Title = styled.h2`
   font-size: 1.75rem;
   font-weight: 700;
@@ -137,6 +175,25 @@ const DateSelectorWrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-bottom: 2rem;
+
+  @media (max-width: 30rem) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+
+    & > div {
+      min-width: 0;
+    }
+
+    & > div > select {
+      min-width: 0;
+      width: 100%;
+    }
+
+    & > span {
+      margin: 0;
+    }
+  }
 `;
 
 const Label = styled.span`
