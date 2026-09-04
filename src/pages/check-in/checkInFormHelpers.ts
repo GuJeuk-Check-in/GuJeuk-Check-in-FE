@@ -2,7 +2,7 @@ import type {
   ExistingUserCheckInRequest,
   GenderType,
   NewUserSignUpRequest,
-} from '@entities/visit';
+} from '@entities/check-in';
 
 type PurposeOption = {
   readonly label: string;

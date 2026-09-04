@@ -1,11 +1,13 @@
-import type { GenderType } from '@entities/visit';
+import type { GenderType } from '@entities/check-in';
 import {
   CHECK_IN_FUNNEL_EVENT_NAMES,
   getAgeGroupFromBirthYMD,
+  isCompleteCheckInSubmission,
   recordCheckInFunnelEvent,
   submitHighAvailabilityCheckIn,
   submitNewUserSignUpWithFallback,
-} from '@entities/visit';
+  unexpectedCheckInSubmissionErrorResult,
+} from '@entities/check-in';
 import { getApiErrorMessage } from '@shared/api';
 import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
@@ -162,23 +164,40 @@ export const useCheckInSignupFormFlow = () => {
     });
     const ageGroup = getAgeGroupFromBirthYMD(birthYMD, payload.visitTime);
 
+    recordCheckInFunnelEvent({
+      eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_SUBMITTED,
+      ageGroup,
+      isExistingUser: false,
+      visitCountBucket: 'FIRST_VISIT',
+      purpose: selectedPurpose,
+    });
+    setIsSaving(true);
+
     try {
-      recordCheckInFunnelEvent({
-        eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_SUBMITTED,
-        ageGroup,
-        isExistingUser: false,
-        visitCountBucket: 'FIRST_VISIT',
-        purpose: selectedPurpose,
-      });
-      setIsSaving(true);
-      if (
+      const result =
         locationState.submissionMode ===
         CHECK_IN_SUBMISSION_MODES.HIGH_AVAILABILITY
-      ) {
-        await submitHighAvailabilityCheckIn(payload);
-      } else {
-        await submitNewUserSignUpWithFallback(payload);
+          ? await submitHighAvailabilityCheckIn(payload)
+          : await submitNewUserSignUpWithFallback(payload);
+
+      if (!isCompleteCheckInSubmission(result)) {
+        recordCheckInFunnelEvent({
+          eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
+          ageGroup,
+          isExistingUser: false,
+          visitCountBucket: 'FIRST_VISIT',
+          purpose: selectedPurpose,
+          failureReason: result.outcome,
+        });
+        openCheckInFailedModal(
+          getApiErrorMessage(
+            result.error,
+            '체크인 정보를 서버에 전송하지 못했습니다.'
+          )
+        );
+        return;
       }
+
       recordCheckInFunnelEvent({
         eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_SUCCEEDED,
         ageGroup,
@@ -188,16 +207,20 @@ export const useCheckInSignupFormFlow = () => {
       });
       goToComplete();
     } catch (error) {
+      const result = unexpectedCheckInSubmissionErrorResult(error);
       recordCheckInFunnelEvent({
         eventName: CHECK_IN_FUNNEL_EVENT_NAMES.CHECK_IN_API_FAILED,
         ageGroup,
         isExistingUser: false,
         visitCountBucket: 'FIRST_VISIT',
         purpose: selectedPurpose,
-        failureReason: 'new_user_check_in_failed',
+        failureReason: result.outcome,
       });
       openCheckInFailedModal(
-        getApiErrorMessage(error, '체크인 정보를 서버에 전송하지 못했습니다.')
+        getApiErrorMessage(
+          result.error,
+          '체크인 정보를 서버에 전송하지 못했습니다.'
+        )
       );
     } finally {
       setIsSaving(false);
@@ -249,7 +272,7 @@ export const useCheckInSignupFormFlow = () => {
       setResidenceModalOpen(false);
     },
     closeResidenceModal: () => setResidenceModalOpen(false),
-    selectPurpose: (index: number, label: string) => {
+    selectPurpose: (_index: number, label: string) => {
       setSelectedPurposeLabel(label);
       recordCheckInFunnelEvent({
         eventName: CHECK_IN_FUNNEL_EVENT_NAMES.PURPOSE_SELECTED,

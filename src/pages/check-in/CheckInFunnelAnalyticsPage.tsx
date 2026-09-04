@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import {
   flushStoredCheckInFunnelEvents,
   readStoredCheckInFunnelEvents,
-} from '@entities/visit';
-import type { CheckInFunnelEventRecord } from '@entities/visit';
+} from '@entities/check-in/funnelDiagnostics';
+import type { CheckInFunnelEventRecord } from '@entities/check-in/funnelDiagnostics';
 import { PasswordBackground } from '@shared/ui/Background';
 import { useEffect, useState } from 'react';
 import { FiInbox, FiRefreshCw } from 'react-icons/fi';
