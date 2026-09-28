@@ -88,11 +88,11 @@ const CheckInFunnelAnalyticsPage = () => {
           </StatusCard>
           <StatusCard>
             <StatusLabel>대기 이벤트</StatusLabel>
-            <StatusMetric>{events.length}</StatusMetric>
+            <StatusMetric aria-live="polite">{events.length}</StatusMetric>
           </StatusCard>
           <StatusCard>
             <StatusLabel>이벤트 종류</StatusLabel>
-            <StatusMetric>{eventTypeCount}</StatusMetric>
+            <StatusMetric aria-live="polite">{eventTypeCount}</StatusMetric>
           </StatusCard>
         </StatusGrid>
 
