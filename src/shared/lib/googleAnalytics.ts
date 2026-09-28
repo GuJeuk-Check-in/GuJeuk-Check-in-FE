@@ -44,8 +44,9 @@ export const normalizeAnalyticsPath = (pathname: string): string => {
 
 const ensureGoogleTagQueue = (): GtagFunction => {
   window.dataLayer = window.dataLayer ?? [];
-  window.gtag = (...arguments_: GtagArguments) => {
-    window.dataLayer?.push(arguments_);
+  window.gtag = function gtag(): void {
+    // eslint-disable-next-line prefer-rest-params -- gtag.js expects the queued command to be the function arguments object.
+    window.dataLayer?.push(arguments);
   };
 
   return window.gtag;
