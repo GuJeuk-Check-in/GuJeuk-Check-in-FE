@@ -23,7 +23,16 @@ initializeGoogleAnalytics();
 
 createRoot(rootElement).render(
   <StrictMode>
-    <SentryErrorBoundary fallback={<div>페이지 오류가 발생했습니다.</div>}>
+    <SentryErrorBoundary
+      fallback={({ resetError }) => (
+        <div>
+          <p>페이지 오류가 발생했습니다.</p>
+          <button type="button" onClick={resetError}>
+            다시 시도
+          </button>
+        </div>
+      )}
+    >
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <App />
