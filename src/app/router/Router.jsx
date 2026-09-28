@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AppLayout } from '@app/layout';
+import { AnalyticsRouteObserver } from '@app/providers/AnalyticsRouteObserver';
 
 const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
 const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
@@ -59,6 +60,7 @@ const routeFallback = (
 export const Router = () => {
   return (
     <Suspense fallback={routeFallback}>
+      <AnalyticsRouteObserver />
       <Routes>
         <Route path="/organ/login" element={<OrganLogin />}></Route>
         <Route path="/organ/change" element={<OrganChange />}></Route>
