@@ -26,7 +26,11 @@ export const UserVisitCard = ({
 
   return (
     <Container>
-      <CardLink to={`/log/${id}`}>
+      <CardLink
+        to={`/log/${id}`}
+        aria-label={`${name} 방문 기록 상세 보기`}
+      />
+      <CardContent>
         <LeftSection>
           <Name>대표자: {name}</Name>
           <Info>
@@ -36,9 +40,13 @@ export const UserVisitCard = ({
           </Info>
         </LeftSection>
         <Date>{date}</Date>
-      </CardLink>
+      </CardContent>
       <RightSection>
-        <CloseButton type="button" onClick={handleDeleteClick} aria-label="방문 기록 삭제">
+        <CloseButton
+          type="button"
+          onClick={handleDeleteClick}
+          aria-label="방문 기록 삭제"
+        >
           <IoClose size="1.8rem" />
         </CloseButton>
       </RightSection>
@@ -47,6 +55,7 @@ export const UserVisitCard = ({
 };
 
 const Container = styled.div`
+  position: relative;
   width: min(100%, 80rem);
   min-height: 8.75rem;
   display: flex;
@@ -60,6 +69,7 @@ const Container = styled.div`
   box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   margin: 0 auto;
+  cursor: pointer;
 
   @media (max-width: 56rem) {
     align-items: flex-start;
@@ -68,14 +78,25 @@ const Container = styled.div`
 `;
 
 const CardLink = styled(Link)`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+`;
+
+const CardContent = styled.div`
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  color: inherit;
-  text-decoration: none;
 
   @media (max-width: 56rem) {
     align-items: flex-start;
@@ -120,6 +141,8 @@ const Divider = styled.div`
 `;
 
 const RightSection = styled.div`
+  position: relative;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 0.75rem;

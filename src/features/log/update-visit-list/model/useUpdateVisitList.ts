@@ -28,11 +28,15 @@ export const useUpdateAdminItem = (): UseMutationResult<
   >({
     mutationFn: (updateData: UpdateUserVisitRequest) =>
       updateVisitList(updateData),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['visitDetail', String(variables.id)],
-      });
-      queryClient.invalidateQueries({ queryKey: ['adminList'] });
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['visitDetail', String(variables.id)],
+        }),
+        queryClient.invalidateQueries({ queryKey: ['visitList'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthVisitList'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthVisitDetailList'] }),
+      ]);
     },
   });
 };
