@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_GA_MEASUREMENT_ID?: string;
   readonly VITE_SENTRY_DSN?: string;
   readonly VITE_SENTRY_TRACES_SAMPLE_RATE?: string;
+  readonly VITE_SENTRY_TRACE_PROPAGATION_TARGETS?: string;
   readonly VITE_MIXPANEL_TOKEN?: string;
   readonly VITE_MIXPANEL_DEBUG?: string;
 }
