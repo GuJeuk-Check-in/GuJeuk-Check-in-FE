@@ -3,6 +3,7 @@ import { exportUserListToExcel } from '@entities/user';
 import { UseModalReturn } from '@shared/hooks/useModal';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 
+// 유저 리스트를 엑셀로 추출
 export const useUserListExportExcel = (
   modal: UseModalReturn
 ): UseMutationResult<string, Error, void> => {

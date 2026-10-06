@@ -49,12 +49,15 @@ export const usersByResidence = async (
 };
 
 export const exportUserListToExcel = async (): Promise<string> => {
+// 회원 목록을 엑셀 파일로 다운로드
   try {
     const response = await axiosInstance.get<Blob>(`/organ/excel/user`, {
+    // 서버에서 엑셀 파일 데이터 요청
       responseType: 'blob',
     });
 
     downloadBlobFile(response.data, `회원 목록.xlsx`);
+    // 받은 파일을 다운로드
 
     return '엑셀 파일 다운로드 성공';
   } catch (error: unknown) {
@@ -64,6 +67,7 @@ export const exportUserListToExcel = async (): Promise<string> => {
 
     if (isAxiosError(error) && error.response?.status) {
       const status = error.response.status;
+    // Axios 에러인 경우 HTTP 상태 코드와 서버 메시지 확인
       errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
 
       const preview = await readErrorBodyPreview(error.response.data);
@@ -73,6 +77,7 @@ export const exportUserListToExcel = async (): Promise<string> => {
       }
     } else if (error instanceof Error && error.message) {
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
+      // 일반적인 Error인 경우 에러 메시지 사용
     }
 
     throw new Error(errorMessage);
