@@ -17,6 +17,7 @@ export const userList = async (page = 0): Promise<UserListResponse> => {
   return response.data;
 };
 
+// 특정 사용자 정보 조회
 export const fetchUserInformation = async (
   userId: string
 ): Promise<UserInformation> => {
