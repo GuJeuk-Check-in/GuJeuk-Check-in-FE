@@ -119,10 +119,11 @@ export const exportVisitListToExcel = async ({
   }
 };
 
+// 방문 통계 조회
 export const fetchVisitStatistics = async ({
   year,
   month,
-}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => {
+}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => { // 응답은 VisitStatisticsResponse 타입으로 지정
   const response = await axiosInstance.get('/organ/statistics/visits', {
     params: {
       year,
