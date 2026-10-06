@@ -51,7 +51,7 @@ export const AdminHeader = () => {
     isPending: isPerformanceLoading,
   } = useVisitPerformanceReport(modal);
   const {
-    mutateAsync: fetchFacilityUsageReport,
+    mutateAsync: fetchFacilityUsageReport, // useFacilityUsageReport 훅을 사용하여 시설 이용률 데이터를 가져오는 기능을 구현
     isPending: isFacilityUsageLoading,
   } = useFacilityUsageReport(modal);
 

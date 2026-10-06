@@ -133,9 +133,10 @@ export const fetchVisitStatistics = async ({
   return response.data;
 };
 
+// 시설 이용 통계 조회
 export const fetchFacilityUsage = async ({
   year,
-}: FacilityUsageRequest): Promise<FacilityUsageResponse> => {
+}: FacilityUsageRequest): Promise<FacilityUsageResponse> => { // 응답은 FacilityUsageResponse 타입으로 지정
   const response = await axiosInstance.get('/organ/usage', {
     params: {
       year,
