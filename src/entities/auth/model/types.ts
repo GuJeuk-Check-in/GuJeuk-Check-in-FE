@@ -24,15 +24,17 @@ export interface UpdatePasswordResponse {
   message: string; // 서버 응답 메시지
 }
 
+// 토큰 재발급 응답
 export interface ReissueTokenResponse {
-  accessToken: string;
-  refreshToken: string;
+  accessToken: string; // 새로 발급된 access 토큰
+  refreshToken: string; // 새로 발급된 refresh 토큰
 }
 
+// 인증 상태 저장소 (zustand, localStorage에 유지)
 export interface AuthState {
-  accessToken: string | null;
-  refreshToken: string | null;
-  isAuthenticated: boolean;
-  setAuth: (access: string, refresh: string) => void;
-  logout: () => void;
+  accessToken: string | null; // 인증용 access 토큰 (로그아웃 상태면 null)
+  refreshToken: string | null; // 토큰 재발급용 refresh 토큰 (로그아웃 상태면 null)
+  isAuthenticated: boolean; // 로그인 여부
+  setAuth: (access: string, refresh: string) => void; // 로그인 또는 토큰 재발급 시 토큰 저장
+  logout: () => void; // 토큰을 비우고 로그아웃 처리
 }
