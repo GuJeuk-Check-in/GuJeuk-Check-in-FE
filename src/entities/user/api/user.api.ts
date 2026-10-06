@@ -25,6 +25,7 @@ export const fetchUserInformation = async (
   return response.data;
 };
 
+// 특정 사용자 정보 수정
 export const updateUserInformation = async (
   id: number,
   data: Omit<UserInformation, 'id'>
