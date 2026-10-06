@@ -6,6 +6,7 @@ import {
   UpdatePasswordResponse,
 } from '../model/types';
 
+// 기관 로그인 요청
 export const enterPassword = async (payload: OrganLoginRequest) => {
   const response = await axiosInstance.post<OrganLoginResponse>(
     '/organ/login',
