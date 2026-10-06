@@ -34,6 +34,7 @@ export const updateUserInformation = async (
 
 export const usersByResidence = async (
   residence: string,
+// 거주 지역별 사용자 목록 조회
   page = 0
 ): Promise<UserListResponse> => {
   const residenceParam = residence === '기타 지역' ? '기타' : residence;
