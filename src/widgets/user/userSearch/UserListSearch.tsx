@@ -13,16 +13,20 @@ interface UserListWithSearchProps {
   totalCountText?: string;
 }
 
+// 거주지 필터 + 검색 + 무한스크롤이 결합된 회원 목록 위젯
 export const UserListWithSearch = ({
   totalCountText = '총',
 }: UserListWithSearchProps) => {
   useResidenceList();
+  // 선택된 거주지 필터
   const [filters, setFilters] = useState<{ residence: string | null }>({
     residence: null,
   });
 
+  // 무한스크롤 트리거 감지용 엘리먼트
   const observerTarget = useRef<HTMLDivElement>(null);
 
+  // 거주지 필터가 적용된 회원 목록을 페이지 단위로 조회
   const {
     data,
     isLoading,
@@ -33,9 +37,11 @@ export const UserListWithSearch = ({
     isFetchingNextPage,
   } = useInfiniteUserList({ residence: filters.residence });
 
+  // 페이지별로 나뉜 회원 데이터를 하나의 배열로 합침
   const allUsers = data?.pages.flatMap((page) => page.users) ?? [];
   const totalUsersCount = data?.pages[0]?.totalCount ?? 0;
 
+  // 조회된 회원 목록에서 이름 검색(한글 초성 포함) 적용
   const {
     searchName,
     filteredUsers,
@@ -47,6 +53,7 @@ export const UserListWithSearch = ({
     searchName: '',
   });
 
+  // 스크롤이 하단 트리거에 도달하면 다음 페이지 요청
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -64,6 +71,7 @@ export const UserListWithSearch = ({
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  // 로딩 중에는 목록 대신 로딩 오버레이 표시
   if (isLoading) {
     return (
       <LoadingOverlay>
@@ -75,6 +83,7 @@ export const UserListWithSearch = ({
     );
   }
 
+  // 조회 실패 시 에러 메시지 표시
   if (isError) {
     return (
       <ErrorText>
@@ -113,6 +122,7 @@ export const UserListWithSearch = ({
       </FilterWrapper>
 
       <UserListContainer>
+        {/* 필터/검색 결과가 있으면 카드 목록, 없으면 상황별 안내 문구 표시 */}
         {filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (
             <UserInformationCard
