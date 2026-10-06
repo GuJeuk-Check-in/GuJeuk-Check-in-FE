@@ -76,12 +76,13 @@ export const updateVisitList = async ({
   return response.data;
 };
 
+// 특정 월의 방문 기록을 엑셀 파일로 다운로드
 export const exportVisitListToExcel = async ({
   year,
   month,
-}: ExportVisitListRequest): Promise<string> => {
+}: ExportVisitListRequest): Promise<string> => { // 응답은 string 타입으로 지정
   try {
-    const formattedMonth = String(month).padStart(2, '0');
+    const formattedMonth = String(month).padStart(2, '0'); // 월을 두 자리 숫자로 포맷팅 
 
     const response = await axiosInstance.get<Blob>(
       `/organ/excel/log/${year}-${formattedMonth}`,
@@ -92,7 +93,7 @@ export const exportVisitListToExcel = async ({
 
     downloadBlobFile(
       response.data,
-      `시설이용목록_${year}-${formattedMonth}.xlsx`
+      `시설이용목록_${year}-${formattedMonth}.xlsx` // 다운로드 파일 이름 지정
     );
 
     return '엑셀 파일 다운로드 성공';
@@ -101,16 +102,16 @@ export const exportVisitListToExcel = async ({
 
     let errorMessage = '엑셀 내보내기 중 알 수 없는 오류가 발생했습니다.';
 
-    if (isAxiosError(error) && error.response?.status) {
+    if (isAxiosError(error) && error.response?.status) { // Axios 에러인 경우 HTTP 상태 코드와 서버 메시지 확인
       const status = error.response.status;
       errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
 
-      const preview = await readErrorBodyPreview(error.response.data);
+      const preview = await readErrorBodyPreview(error.response.data); // 서버 응답 데이터에서 에러 메시지 미리보기 읽기
 
       if (preview) {
-        errorMessage += ` (서버 메시지: ${preview})`;
+        errorMessage += ` (서버 메시지: ${preview})`; // 서버에서 제공하는 에러 메시지가 있는 경우 추가
       }
-    } else if (error instanceof Error && error.message) {
+    } else if (error instanceof Error && error.message) { // 일반적인 Error인 경우 에러 메시지 사용
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
     }
 

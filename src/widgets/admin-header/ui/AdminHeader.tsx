@@ -42,7 +42,7 @@ export const AdminHeader = () => {
   const [performanceExportingDate, setPerformanceExportingDate] = useState('');
   const modal = useModal();
 
-  const { mutate: visitExcelMutate, isPending: isVisitExporting } =
+  const { mutate: visitExcelMutate, isPending: isVisitExporting } = // useVisitListExportExcel 훅을 사용하여 방문 엑셀 내보내기 기능을 구현
     useVisitListExportExcel(modal);
   const { mutate: userExcelMutate, isPending: isUserExporting } =
     useUserListExportExcel(modal);
@@ -58,7 +58,7 @@ export const AdminHeader = () => {
   const isOperationPreviewInitialLoading =
     (isPerformanceLoading || isFacilityUsageLoading) && !operationPreviewData;
 
-  const handleVisitListExcelExportClick = () => {
+  const handleVisitListExcelExportClick = () => { // 방문 엑셀 내보내기 버튼 클릭 시 호출되는 함수
     setIsModalOpen(true);
   };
   const handleUserListExcelExportClick = () => {
@@ -128,7 +128,7 @@ export const AdminHeader = () => {
     }
   };
 
-  const handleExportConfirmedWithDate = (year, month) => {
+  const handleExportConfirmedWithDate = (year, month) => {// 엑셀 내보내기 모달에서 확인 버튼 클릭 시 호출되는 함수
     visitExcelMutate({ year, month });
 
     setIsModalOpen(false);
