@@ -21,8 +21,8 @@ export const UpdatePasswordForm = () => {
   const handleConfirm = () => {
     const errors: { [key: string]: string } = {};
 
-    if (!currentPW.trim()) errors.currentPW = '기존 비밀번호를 입력해주세요.';
-    if (!newPW.trim()) errors.newPW = '새 비밀번호를 입력해주세요.';
+    if (!currentPW.trim()) errors.currentPW = '기존 비밀번호를 입력해주세요.'; // 기존 비밀번호가 비어있으면 오류 메시지 설정
+    if (!newPW.trim()) errors.newPW = '새 비밀번호를 입력해주세요.'; // 새 비밀번호가 비어있으면 오류 메시지 설정
     if (!confirmPW.trim()) {
       errors.confirmPW = '비밀번호를 다시 입력해주세요.';
     } else if (newPW !== confirmPW) {
@@ -31,7 +31,7 @@ export const UpdatePasswordForm = () => {
 
     setFormErrors(errors);
 
-    if (Object.keys(errors).length > 0) return;
+    if (Object.keys(errors).length > 0) return; // 오류가 있으면 비밀번호 변경 요청을 하지 않음
 
     updatePassword(
       {
@@ -41,7 +41,7 @@ export const UpdatePasswordForm = () => {
       },
       {
         onSuccess: () => {
-          openModal({
+          openModal({ // 비밀번호 변경 성공 시 모달 열기
             icon: <FaCheckCircle color="#0F50A0" />,
             title: '변경 완료',
             subtitle: '비밀번호가 변경되었습니다. 다시 로그인해주세요.',
@@ -62,7 +62,7 @@ export const UpdatePasswordForm = () => {
 
         onError: (error) => {
           const message =
-            error.response?.data?.message ||
+            error.response?.data?.message ||  // 비밀번호 변경 요청 실패 시 오류 메시지 설정
             '비밀번호 변경 중 오류가 발생했습니다.';
           openModal({
             icon: <FaExclamationTriangle color="#D88282" />,
@@ -82,12 +82,12 @@ export const UpdatePasswordForm = () => {
     );
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => { // 엔터 키 입력 시 비밀번호 변경 처리
     if (e.key === 'Enter') handleConfirm();
   };
 
   const handleChange = (
-    setter: React.Dispatch<React.SetStateAction<string>>,
+    setter: React.Dispatch<React.SetStateAction<string>>, // 상태 업데이트 함수
     field: string,
     value: string
   ) => {
@@ -120,10 +120,11 @@ export const UpdatePasswordForm = () => {
           placeholder="새 비밀번호를 입력해주세요."
           type="password"
           value={newPW}
-          onChange={(e) => handleChange(setNewPW, 'newPW', e.target.value)}
+          onChange={(e) => handleChange(setNewPW, 'newPW', e.target.value)} // 새 비밀번호 입력 시 상태 업데이트 및 오류 메시지 초기화
           isError={!!formErrors.newPW}
           onKeyDown={handleKeyDown}
         />
+        {/* 새 비밀번호 오류 메시지 표시 */}
         <ErrorMessage visible={!!formErrors.newPW}>
           {formErrors.newPW}
         </ErrorMessage>
@@ -136,7 +137,7 @@ export const UpdatePasswordForm = () => {
           type="password"
           value={confirmPW}
           onChange={(e) =>
-            handleChange(setConfirmPW, 'confirmPW', e.target.value)
+            handleChange(setConfirmPW, 'confirmPW', e.target.value) // 비밀번호 확인 입력 시 상태 업데이트 및 오류 메시지 초기화
           }
           isError={!!formErrors.confirmPW}
           onKeyDown={handleKeyDown}
@@ -156,7 +157,7 @@ export const UpdatePasswordForm = () => {
       </ButtonWrapper>
 
       {isOpen && config && (
-        <Modal isOpen={isOpen} config={config} onClose={closeModal} />
+        <Modal isOpen={isOpen} config={config} onClose={closeModal} /> // 모달 컴포넌트 렌더링
       )}
     </FormContainer>
   );

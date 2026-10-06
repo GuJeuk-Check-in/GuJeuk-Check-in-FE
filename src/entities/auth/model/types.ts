@@ -12,14 +12,16 @@ export interface OrganLoginResponse {
   organName: string; // 로그인한 기관 이름
 }
 
+// 기관 비밀번호 변경 요청
 export interface UpdatePasswordRequest {
-  oldPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
+  oldPassword: string; // 현재 비밀번호
+  newPassword: string; // 새 비밀번호
+  confirmNewPassword: string; // 새 비밀번호 확인
 }
 
+// 기관 비밀번호 변경 응답
 export interface UpdatePasswordResponse {
-  message: string;
+  message: string; // 서버 응답 메시지
 }
 
 export interface ReissueTokenResponse {
