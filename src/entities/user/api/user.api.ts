@@ -6,6 +6,7 @@ import {
 import { isAxiosError } from 'axios';
 import type { UserListResponse, UserInformation } from '../model/types';
 
+// 전체 사용자 목록 조회
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(
     '/organ/user/all',
