@@ -18,8 +18,8 @@ export const useVisitListExportExcel = (
   modal: UseModalReturn
 ): UseMutationResult<string, Error, ExportExcelVariables> => {
   return useMutation<string, Error, ExportExcelVariables>({
-    mutationFn: exportVisitListToExcel,
     //기능: 작업의 결과가 성공이므로 전에 만들어 놨던 exportVisitListToExcel을 이용하여서 엑셀 파일을 다운로드 받을 수 있다.
+    mutationFn: exportVisitListToExcel,
     onSuccess: () => {
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,
@@ -33,9 +33,9 @@ export const useVisitListExportExcel = (
           },
         ],
       });
-    },
 
     //기능: 작업의 결과가 실패이므로 실패에 따른 콘솔 창에 에러와 살패 모달 창을 띄운다. 
+    },
     onError: (error) => {
       console.error('엑셀 내보내기 실패:', error);
 

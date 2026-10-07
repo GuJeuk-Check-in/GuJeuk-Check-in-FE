@@ -4,7 +4,7 @@
   이 파일의 전체적인 기능: 다음 달로 혹은 이전 달로 바꾸는 버튼의 스타일을 반응형으로 디자인 구현을 하였다.
 */
 
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 export const MonthSwitcher = styled.div`
   display: inline-flex;
@@ -31,15 +31,11 @@ export const MonthOptionButton = styled.button`
   font-weight: 800;
   line-height: 1;
   transform: scale(0.9);
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    color 160ms ease,
-    opacity 160ms ease,
+  transition: background-color 160ms ease, border-color 160ms ease,
+    box-shadow 160ms ease, color 160ms ease, opacity 160ms ease,
     transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
 
-  &[data-position="active"] {
+  &[data-position='active'] {
     background-color: #ffffff;
     border-color: #ffffff;
     box-shadow: 0 0.5rem 0.9rem rgba(0, 0, 0, 0.18);
@@ -49,13 +45,13 @@ export const MonthOptionButton = styled.button`
     transform: scale(1);
   }
 
-  &[data-position="previous"],
-  &[data-position="next"] {
+  &[data-position='previous'],
+  &[data-position='next'] {
     opacity: 0.78;
   }
 
-  &[data-position="previous"]:not([aria-disabled="true"]):hover,
-  &[data-position="next"]:not([aria-disabled="true"]):hover {
+  &[data-position='previous']:not([aria-disabled='true']):hover,
+  &[data-position='next']:not([aria-disabled='true']):hover {
     background-color: #ffffff;
     border-color: #ffffff;
     box-shadow: 0 0.55rem 1rem rgba(0, 0, 0, 0.2);
@@ -64,8 +60,8 @@ export const MonthOptionButton = styled.button`
     transform: scale(0.96);
   }
 
-  &[data-position="previous"]:not([aria-disabled="true"]):focus-visible,
-  &[data-position="next"]:not([aria-disabled="true"]):focus-visible {
+  &[data-position='previous']:not([aria-disabled='true']):focus-visible,
+  &[data-position='next']:not([aria-disabled='true']):focus-visible {
     background-color: #ffffff;
     border-color: #ffffff;
     box-shadow: 0 0.55rem 1rem rgba(0, 0, 0, 0.2);
@@ -76,12 +72,12 @@ export const MonthOptionButton = styled.button`
     transform: scale(0.96);
   }
 
-  &[data-position="active"][aria-disabled="true"] {
+  &[data-position='active'][aria-disabled='true'] {
     cursor: default;
     opacity: 1;
   }
 
-  &[aria-disabled="true"]:not([data-position="active"]) {
+  &[aria-disabled='true']:not([data-position='active']) {
     cursor: not-allowed;
     opacity: 0.55;
   }

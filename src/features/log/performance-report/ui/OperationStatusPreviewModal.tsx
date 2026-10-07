@@ -4,22 +4,19 @@
   이 파일의 전체적인 기능: 사용자가 모달을 열면 월별 청소년시설 운영 및 가동률 데이터를 테이블 형태로 미리 보여주고, 브라우저 인쇄 기능을 활용해 동적으로 지정된 파일명으로 PDF 저장 및 인쇄를 할 수 있도록 지원하는 흐름이다.
 */
 
-import { useEffect } from "react";
-import type {
-  FacilityUsageResponse,
-  VisitStatisticsResponse,
-} from "@entities/log";
+import { useEffect } from 'react';
+import type { FacilityUsageResponse, VisitStatisticsResponse } from '@entities/log';
 import {
   createFacilityUsageRows,
   FACILITY_CAPACITY,
   FACILITY_USAGE_COLUMNS,
-} from "../lib/facilityUsageReport";
+} from '../lib/facilityUsageReport';
 import {
   createUsageRateRow,
   createVisitorCountRow,
   FACILITY_NAME,
   getPerformanceReportFileBaseName,
-} from "../lib/visitPerformanceReport";
+} from '../lib/visitPerformanceReport';
 import {
   ActionBar,
   ActionButtonGroup,
@@ -41,15 +38,15 @@ import {
   UsageTable,
   UsageValueCell,
   ValueCell,
-} from "./OperationStatusPreviewModal.styles";
-import { ReportMonthSwitcher } from "./ReportMonthSwitcher";
+} from './OperationStatusPreviewModal.styles';
+import { ReportMonthSwitcher } from './ReportMonthSwitcher';
 
 export type OperationStatusPreviewData = {
   readonly performance: VisitStatisticsResponse;
   readonly facilityUsage: FacilityUsageResponse;
 };
-
 //기능: 모달 표시 상태, 보고서 데이터, 월 선택 상태와 사용자 동작 처리 함수를 전달받는다.
+
 type OperationStatusPreviewModalProps = {
   readonly isOpen: boolean;
   readonly data: OperationStatusPreviewData | null;
@@ -58,8 +55,8 @@ type OperationStatusPreviewModalProps = {
   readonly onMonthChange: (month: number) => void;
   readonly onClose: () => void;
 };
-
 //기능: 선택한 월의 운영 현황을 미리 보고, 브라우저 인쇄 화면에서 인쇄하거나 PDF로 저장한다.
+
 export const OperationStatusPreviewModal = ({
   isOpen,
   data,
@@ -73,7 +70,7 @@ export const OperationStatusPreviewModal = ({
       return;
     }
 
-    const style = document.createElement("style");
+    const style = document.createElement('style');
     style.innerHTML = PRINT_PAGE_STYLE;
     document.head.appendChild(style);
 
@@ -85,13 +82,14 @@ export const OperationStatusPreviewModal = ({
   if (!isOpen || !data) {
     return null;
   }
+
   //기능: 차례대로 이용자수, 방문 통계, 시설 이용 가동률을 표 데이로 변환시킨다.
   const visitorCountRow = createVisitorCountRow(data.performance);
   const usageRateRow = createUsageRateRow(data.performance);
   const facilityUsageRows = createFacilityUsageRows(data.facilityUsage);
   const reportTitle = `${data.performance.year}년 ${data.performance.month}월 청소년시설 운영 현황`;
-
   //기능: 인쇄 호출이 반환되면 문서 제목을 원래 값으로 복원하도록 예약한다.
+
   const handlePrint = () => {
     const previousTitle = document.title;
     document.title = getPerformanceReportFileBaseName(data.performance);
@@ -105,7 +103,9 @@ export const OperationStatusPreviewModal = ({
     <Overlay onClick={onClose}>
       <ModalContent onClick={(event) => event.stopPropagation()}>
         <ActionBar>
-          <HelperText>인쇄 화면에서 “PDF로 저장”을 선택하세요.</HelperText>
+          <HelperText>
+            인쇄 화면에서 “PDF로 저장”을 선택하세요.
+          </HelperText>
           <ReportMonthSwitcher
             selectedMonth={selectedMonth}
             isLoading={isMonthLoading}
@@ -135,14 +135,11 @@ export const OperationStatusPreviewModal = ({
                 <col className="total-column" />
                 <col span={4} className="count-column" />
               </colgroup>
-
               <thead>
                 <tr>
                   <HeaderDividerCell rowSpan={3}>구 분</HeaderDividerCell>
                   <HeaderCell colSpan={5}>누계</HeaderCell>
-                  <HeaderCell colSpan={5}>
-                    {data.performance.month}월
-                  </HeaderCell>
+                  <HeaderCell colSpan={5}>{data.performance.month}월</HeaderCell>
                 </tr>
                 <tr>
                   <HeaderDividerCell rowSpan={2}>계</HeaderDividerCell>
@@ -166,16 +163,12 @@ export const OperationStatusPreviewModal = ({
               <tbody>
                 <tr>
                   <RowHeader rowSpan={2}>{visitorCountRow.label}</RowHeader>
-                  <ValueCell rowSpan={2}>
-                    {visitorCountRow.cumulativeTotal}
-                  </ValueCell>
+                  <ValueCell rowSpan={2}>{visitorCountRow.cumulativeTotal}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeYouthMale}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeYouthFemale}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeOtherMale}</ValueCell>
                   <ValueCell>{visitorCountRow.cumulativeOtherFemale}</ValueCell>
-                  <ValueCell rowSpan={2}>
-                    {visitorCountRow.monthlyTotal}
-                  </ValueCell>
+                  <ValueCell rowSpan={2}>{visitorCountRow.monthlyTotal}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyYouthMale}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyYouthFemale}</ValueCell>
                   <ValueCell>{visitorCountRow.monthlyOtherMale}</ValueCell>
@@ -188,12 +181,8 @@ export const OperationStatusPreviewModal = ({
                   <ValueCell colSpan={2}>
                     {visitorCountRow.cumulativeOtherTotal}
                   </ValueCell>
-                  <ValueCell colSpan={2}>
-                    {visitorCountRow.monthlyYouthTotal}
-                  </ValueCell>
-                  <ValueCell colSpan={2}>
-                    {visitorCountRow.monthlyOtherTotal}
-                  </ValueCell>
+                  <ValueCell colSpan={2}>{visitorCountRow.monthlyYouthTotal}</ValueCell>
+                  <ValueCell colSpan={2}>{visitorCountRow.monthlyOtherTotal}</ValueCell>
                 </tr>
                 <tr>
                   <RowHeader>{usageRateRow.label}</RowHeader>
@@ -205,20 +194,15 @@ export const OperationStatusPreviewModal = ({
                     {usageRateRow.cumulativeOtherTotal}
                   </ValueCell>
                   <ValueCell>{usageRateRow.monthlyTotal}</ValueCell>
-                  <ValueCell colSpan={2}>
-                    {usageRateRow.monthlyYouthTotal}
-                  </ValueCell>
-                  <ValueCell colSpan={2}>
-                    {usageRateRow.monthlyOtherTotal}
-                  </ValueCell>
+                  <ValueCell colSpan={2}>{usageRateRow.monthlyYouthTotal}</ValueCell>
+                  <ValueCell colSpan={2}>{usageRateRow.monthlyOtherTotal}</ValueCell>
                 </tr>
               </tbody>
             </PerformanceTable>
           </TableWrapper>
 
           <SubSectionLine>
-            나. 시설 가동률(월간전체이용자수÷(수용정원:{FACILITY_CAPACITY}
-            명×가동일수)×100)
+            나. 시설 가동률(월간전체이용자수÷(수용정원:{FACILITY_CAPACITY}명×가동일수)×100)
           </SubSectionLine>
           <TableWrapper>
             <UsageTable>
@@ -243,7 +227,7 @@ export const OperationStatusPreviewModal = ({
                     {row.values.map((value, index) => (
                       <UsageValueCell
                         key={FACILITY_USAGE_COLUMNS[index].key}
-                        className={value === "-" ? "empty" : undefined}
+                        className={value === '-' ? 'empty' : undefined}
                       >
                         {value}
                       </UsageValueCell>

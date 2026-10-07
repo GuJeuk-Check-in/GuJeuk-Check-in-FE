@@ -4,7 +4,7 @@
   이 파일의 전체적인 기능: 청소년시설 운영 현황 및 실적 보고서 반응형 웹 디자인 구성 파일
 */
 
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 export const Overlay = styled.div`
   position: fixed;
@@ -78,7 +78,7 @@ export const ReportPage = styled.article`
   min-width: 78rem;
   padding: 2.4rem 2.8rem 2.6rem;
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-  font-family: "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", sans-serif;
+  font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif;
 `;
 
 export const ReportTitle = styled.h1`

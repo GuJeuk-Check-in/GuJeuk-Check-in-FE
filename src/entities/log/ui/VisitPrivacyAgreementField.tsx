@@ -4,8 +4,8 @@
   이 파일의 전체적인 기능: 방문자와 관련한 체크박스 컴포넌트를 만들었다.
 */
 
-import styled from "@emotion/styled";
-import type { ChangeEventHandler } from "react";
+import styled from '@emotion/styled';
+import type { ChangeEventHandler } from 'react';
 
 interface VisitPrivacyAgreementFieldProps {
   readonly checked: boolean;
@@ -18,20 +18,20 @@ interface VisitPrivacyAgreementFieldProps {
   readonly text?: string;
   readonly id?: string;
 }
-
 //기능: 방문객 개인정보 수집 및 이용 동의를 받는 체크박스 컴포넌트를 만들어 논 것이다.
+
 export const VisitPrivacyAgreementField = ({
   checked,
   onChange,
   name,
   disabled,
   readOnly,
-  label = "개인 정보 수집 동의",
+  label = '개인 정보 수집 동의',
   hideLabel = false,
   text,
-  id = "visit-privacy-agreement",
+  id = 'visit-privacy-agreement',
 }: VisitPrivacyAgreementFieldProps) => {
-  const consentText = text ?? (checked ? "동의함" : "동의하지 않음");
+  const consentText = text ?? (checked ? '동의함' : '동의하지 않음');
 
   return (
     <FieldGroup>
@@ -51,8 +51,8 @@ export const VisitPrivacyAgreementField = ({
     </FieldGroup>
   );
 };
-
 //기능: emotion css input 필드를 꾸민다.
+
 const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -88,7 +88,7 @@ const Checkbox = styled.input`
   }
 
   &:checked::before {
-    content: "✓";
+    content: '✓';
     position: absolute;
     top: 50%;
     left: 50%;

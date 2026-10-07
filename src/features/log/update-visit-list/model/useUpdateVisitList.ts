@@ -8,13 +8,13 @@ import {
   useMutation,
   useQueryClient,
   UseMutationResult,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 import {
   updateVisitList,
   UpdateUserVisitRequest,
   UserVisitDetailResponse,
-} from "@entities/log";
-import { AxiosError } from "axios";
+} from '@entities/log';
+import { AxiosError } from 'axios';
 
 interface ServerError {
   message?: string;
@@ -24,23 +24,27 @@ export const useUpdateAdminItem = (): UseMutationResult<
   UserVisitDetailResponse,
   AxiosError<ServerError>,
   UpdateUserVisitRequest
-> => {
   //기능: 수정이 완료된 후 서버의 최신 데이터를 다시 불러와서 화면을 갱신하기 위해 쿼리 클라이언트를 사용한다.
+> => {
   const queryClient = useQueryClient();
 
   return useMutation<
     UserVisitDetailResponse,
     AxiosError<ServerError>,
     UpdateUserVisitRequest
-  >({
     //기능: 사용자가 updateData를 받아서 사전에 정의된 updateVisitList 호출해 서버에 업데이트 요청을 보낸다.
+  >({
     mutationFn: (updateData: UpdateUserVisitRequest) =>
       updateVisitList(updateData),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["visitDetail", String(variables.id)],
-      });
-      queryClient.invalidateQueries({ queryKey: ["adminList"] });
+    onSuccess: async (_, variables) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['visitDetail', String(variables.id)],
+        }),
+        queryClient.invalidateQueries({ queryKey: ['visitList'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthVisitList'] }),
+        queryClient.invalidateQueries({ queryKey: ['monthVisitDetailList'] }),
+      ]);
     },
   });
 };

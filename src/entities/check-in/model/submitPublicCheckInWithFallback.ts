@@ -24,7 +24,7 @@ import {
 } from './checkInSubmissionResult';
 
 const enqueueRetryableCheckInSubmission = async (
-  queuePayload:ExistingUserCheckInQueuePayload | NewUserSignUpQueuePayload
+  queuePayload: ExistingUserCheckInQueuePayload | NewUserSignUpQueuePayload
 ): Promise<CheckInSubmissionResult> => {
   try {
     await enqueueCheckIn(queuePayload);

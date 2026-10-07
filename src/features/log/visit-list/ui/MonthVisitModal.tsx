@@ -4,14 +4,14 @@
   이 파일의 전체적인 기능: 연도별 월간 방문자 수를 모달로 표시하고, 선택한 연도와 월을 상세 목록 조회에 전달한다.
 */
 
-import { useEffect, useState } from "react";
-import styled from "@emotion/styled";
-import closeButton from "@shared/assets/btn_left-arrow_default.png";
-import arrowRight from "@shared/assets/btn_right-arrow_default.png";
-import { DetailMonthVisitButton } from "@shared/ui/Button/DetailMonthVisitButton";
-import { MonthVisitCard } from "@shared/ui/Crad/MonthVisitCard";
-import { useMonthVisitList } from "../model/useMonthVisitList";
-import { useDialogFocusTrap } from "@shared/hooks/useDialogFocusTrap";
+import { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import closeButton from '@shared/assets/btn_left-arrow_default.png';
+import arrowRight from '@shared/assets/btn_right-arrow_default.png';
+import { DetailMonthVisitButton } from '@shared/ui/Button/DetailMonthVisitButton';
+import { MonthVisitCard } from '@shared/ui/Crad/MonthVisitCard';
+import { useMonthVisitList } from '../model/useMonthVisitList';
+import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 
 interface MonthVisitModalProps {
   readonly isOpen: boolean;
@@ -31,22 +31,22 @@ export const MonthVisitModal = ({
 
   const handlePrevYear = () => setYear((currentYear) => currentYear - 1);
   const handleNextYear = () => setYear((currentYear) => currentYear + 1);
-
   //기능: 모달이 열려 있을 때 Escape 키로 닫을 수 있도록 하고, 종료 시 이벤트를 정리한다.
+
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === 'Escape') onClose();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
-
   //기능: 배경을 클릭하면 모달을 닫고, 모달 내부 클릭은 배경으로 전달되지 않게 한다.
+
   return (
     <Overlay
       role="dialog"
@@ -54,32 +54,16 @@ export const MonthVisitModal = ({
       aria-labelledby="month-visit-title"
       onClick={onClose}
     >
-      <Container
-        ref={dialogRef}
-        tabIndex={-1}
-        onClick={(event) => event.stopPropagation()}
-      >
+      <Container ref={dialogRef} tabIndex={-1} onClick={(event) => event.stopPropagation()}>
         <CloseButtonBox type="button" onClick={onClose} aria-label="닫기">
-          <img
-            src={closeButton}
-            alt=""
-            style={{ width: "2rem", height: "2rem" }}
-          />
+          <img src={closeButton} alt="" style={{ width: '2rem', height: '2rem' }} />
         </CloseButtonBox>
         <DateHeader>
-          <PrevYearButton
-            type="button"
-            onClick={handlePrevYear}
-            aria-label="이전 연도"
-          >
+          <PrevYearButton type="button" onClick={handlePrevYear} aria-label="이전 연도">
             <img src={arrowRight} alt="" />
           </PrevYearButton>
           <DateHeaderTitle id="month-visit-title">{year}</DateHeaderTitle>
-          <NextYearButton
-            type="button"
-            onClick={handleNextYear}
-            aria-label="다음 연도"
-          >
+          <NextYearButton type="button" onClick={handleNextYear} aria-label="다음 연도">
             <img src={arrowRight} alt="" />
           </NextYearButton>
         </DateHeader>
@@ -94,8 +78,8 @@ export const MonthVisitModal = ({
                 onClick={() => {
                   onSelectMonthForList?.(year, month.month);
                   onClose();
-                }}
                 //기능: 현재 달과 과거 달만 상세 조회 버튼을 누를 수 있도록 설정한다.
+                }}
                 pressable={new Date(year, month.month - 1, 1) <= new Date()}
               />
             </MonthVisitCard>
@@ -105,8 +89,8 @@ export const MonthVisitModal = ({
     </Overlay>
   );
 };
-
 //기능: 모달 배경, 창, 버튼, 연도의 스타일을 설정하고, 화면 크기에 따라 모달 크기와 월별 카드 배치를 조정한다.
+
 const Overlay = styled.div`
   position: fixed;
   inset: 0;

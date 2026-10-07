@@ -13,8 +13,8 @@ export const formatCount = (value: number) => value.toLocaleString('ko-KR');
 
 export const formatRate = (value: number) =>
   Number.isInteger(value) ? `${value}` : value.toFixed(1);
-
 //기능: 서버에 보낼 데이터의 양식을 정의해 놓는다.
+
 export interface VisitPerformanceTableRow {
   label: string;
   cumulativeTotal: string;
@@ -32,8 +32,8 @@ export interface VisitPerformanceTableRow {
   monthlyOtherFemale: string;
   monthlyOtherTotal: string;
 }
-
 //기능: 위 데이터 양식을 이용해 이용자수의 통계 데이터를 행으로 데이터를 생성한다.
+
 export const createVisitorCountRow = (
   data: VisitStatisticsResponse
 ): VisitPerformanceTableRow => ({
@@ -53,8 +53,8 @@ export const createVisitorCountRow = (
   monthlyOtherFemale: formatCount(data.monthly.other.female),
   monthlyOtherTotal: formatCount(data.monthly.other.total),
 });
-
 //기능: 위 데이터 양식을 이용률통계 데이터를 행으로 데이터를 생성한다.
+
 export const createUsageRateRow = (
   data: VisitStatisticsResponse
 ): VisitPerformanceTableRow => ({
@@ -74,8 +74,8 @@ export const createUsageRateRow = (
   monthlyOtherFemale: '',
   monthlyOtherTotal: formatRate(data.monthly.other.rate),
 });
-
 //기능: 연도(year)와 월(month) 정보를 추출하여 엑셀이나 PDF 등 보고서 파일을 다운로드할 때 사용할 기본 파일 이름을 생성한다.
+
 export const getPerformanceReportFileBaseName = (
   data: VisitStatisticsResponse
 ) => `${data.year}년_${data.month}월_청소년시설_운영_현황`;

@@ -4,10 +4,10 @@
   이 파일의 전체적인 기능: 엑셀 데이터를 추출할 특정 기간(연도와 월)을 선택하는 모달 팝업 컴포넌트 파일이다다
 */
 
-import styled from "@emotion/styled";
-import { keyframes } from "@emotion/react";
-import { useState, useCallback, ChangeEvent, useEffect } from "react";
-import { useDialogFocusTrap } from "@shared/hooks/useDialogFocusTrap";
+import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
+import { useState, useCallback, ChangeEvent, useEffect } from 'react';
+import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 
 interface DateExportModalProps {
   isVisible: boolean;
@@ -22,8 +22,8 @@ const DateExportModal = ({
   isVisible,
   onClose,
   onExport,
-  title = "추출할 기간 선택",
-  exportButtonLabel = "내보내기",
+  title = '추출할 기간 선택',
+  exportButtonLabel = '내보내기',
   isSubmitting = false,
 }: DateExportModalProps) => {
   const today = new Date();
@@ -32,42 +32,43 @@ const DateExportModal = ({
 
   const years = [2024, 2025, 2026];
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
-
   //기능: 현재 연도가 선택 목록에 있으면 초기값으로 지정하고, 없으면 배열의 첫 번째 연도를 기본값으로 사용한다.
+
   const defaultYear = years.includes(currentYear) ? currentYear : years[0];
 
   const [selectedYear, setSelectedYear] = useState<number>(defaultYear);
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
   const dialogRef = useDialogFocusTrap(isVisible);
-
   //기능: 사용자가 내보내기 버튼을 눌렀을 때 부모 컴포넌트에게 현재 선택된 연도와 월을 전달하며 추출 기능을 실행한다.
+
   const handleExport = useCallback(() => {
     onExport(selectedYear, selectedMonth);
   }, [selectedYear, selectedMonth, onExport]);
-
   //기능: 사용자가 연도 셀렉트의 값을 변경했을 때 해당 값을 숫자로 변환하여 selectedYear 상태를 업데이트한다.
+
   const handleYearChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(parseInt(e.target.value, 10));
   };
-
   //기능: 사용자가 월 셀렉트의 값을 변경했을 때 해당 값을 숫자로 변환하여 selectedMonth 상태를 업데이트한다.
+
   const handleMonthChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setSelectedMonth(parseInt(e.target.value, 10));
   };
+
   
   //기능: 모달이 화면에 보이고 있을 때 사용자가 키보드의 Escape 키를 누르면 모달이 닫히도록 이벤트를 등록하고 해제한다.
   useEffect(() => {
     if (!isVisible) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === 'Escape') onClose();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isVisible, onClose]);
-
   //기능: isVisible가 false일 때는 아무것도 렌더링하지 않고 팝업을 숨긴다.
+
   if (!isVisible) {
     return null;
   }
@@ -79,11 +80,7 @@ const DateExportModal = ({
       aria-labelledby="date-export-title"
       onClick={onClose}
     >
-      <Container
-        ref={dialogRef}
-        tabIndex={-1}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <Container ref={dialogRef} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <CloseButton type="button" onClick={onClose} aria-label="닫기">
           ×
         </CloseButton>
@@ -122,7 +119,7 @@ const DateExportModal = ({
         </DateSelectorWrapper>
         <ButtonWrapper>
           <ExportButton onClick={handleExport} disabled={isSubmitting}>
-            {isSubmitting ? "불러오는 중..." : exportButtonLabel}
+            {isSubmitting ? '불러오는 중...' : exportButtonLabel}
           </ExportButton>
         </ButtonWrapper>
       </Container>
@@ -133,15 +130,15 @@ const DateExportModal = ({
 export default DateExportModal;
 
 const fadeInUp = keyframes`
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  `;
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 const ModalOverlay = styled.div`
   position: fixed;
