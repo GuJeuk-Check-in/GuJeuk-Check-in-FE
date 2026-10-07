@@ -30,8 +30,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@app': path.resolve(__dirname, 'src/app'),
+      '@features': path.resolve(__dirname, 'src/features'),
       '@pages': path.resolve(__dirname, 'src/pages'),
       '@shared': path.resolve(__dirname, 'src/shared'),
+      '@widgets': path.resolve(__dirname, 'src/widgets'),
     },
   },
 });
