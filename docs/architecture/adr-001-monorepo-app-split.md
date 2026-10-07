@@ -6,7 +6,7 @@ Accepted for implementation planning.
 
 ## Context
 
-The current GuJeuk frontend is a single Vite React app that contains both public check-in routes and admin management routes. The next institution, Beopdong, needs its own check-in and admin surfaces.
+The current GuJeuk frontend is a single Vite React app that contains both public check-in routes and admin management routes. The next institution, Beopdong, needs its own admin web surface. Beopdong check-in is no longer part of this web monorepo because it will be developed as an app surface.
 
 The institution surfaces will share component structure such as headers, cards, buttons, inputs, forms, and layout primitives. However, institution colors, branding, copy, request APIs, and some form fields can differ. Admin UI/UX can also differ by institution beyond the shared login and primitive component layer.
 
@@ -20,7 +20,6 @@ Use a monorepo with separate app packages for each institution and surface:
 apps/
   gujeuk-check-in/
   gujeuk-admin/
-  beopdong-check-in/
   beopdong-admin/
 
 packages/
@@ -84,7 +83,7 @@ Rejected because GuJeuk and Beopdong APIs can differ. Endpoint functions should 
 
 1. Move the existing app into `apps/gujeuk-check-in` and delegate root scripts to that workspace.
 2. Move admin routes into `apps/gujeuk-admin` using the existing route boundary.
-3. Fill `apps/beopdong-check-in` and `apps/beopdong-admin` using shared packages plus institution-specific API adapters and branding.
+3. Fill `apps/beopdong-admin` as a runnable minimal web app boundary, using institution-specific API configuration while detailed Beopdong admin features are still pending.
 4. Extract stable shared primitives into `packages/ui` and institution token sets into `packages/tokens`.
 5. Extract auth, API core, shared types, and check-in core only after their boundaries are proven by the GuJeuk split.
 
@@ -103,11 +102,14 @@ After app splitting begins, check-in and admin should also receive surface-level
 
 ## Local Development Ports
 
-GuJeuk split apps use fixed local ports to avoid one app accidentally handling the other app's routes:
+Split apps use fixed local ports to avoid one app accidentally handling another app's routes:
 
 ```txt
 yarn dev:gujeuk-check-in  -> http://localhost:5173/check-in
 yarn dev:gujeuk-admin     -> http://localhost:5174/organ/login
+yarn dev:beopdong-admin    -> http://localhost:5176/organ/login
 ```
 
 The root `yarn dev` remains an alias for the GuJeuk check-in app.
+
+Beopdong admin resolves API requests from `VITE_BEOPDONG_API_BASE_URL` first and falls back to `VITE_API_BASE_URL` for local migration compatibility.
