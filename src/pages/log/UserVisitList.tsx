@@ -1,4 +1,4 @@
-import { UserVisitListFeature } from '@features/log/visit-list';
+import { UserVisitListFeature } from "@features/log/visit-list/ui/UserVisitListFeature";
 
 const UserVisitList = () => {
   return <UserVisitListFeature />;
