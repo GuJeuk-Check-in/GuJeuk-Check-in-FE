@@ -20,8 +20,8 @@ import type { AxiosError } from 'axios';
 interface ServerError {
   message?: string;
 }
-//기능: 지정한 연도와 월의 방문 상세 목록을 페이지 단위로 조회하는 훅이다.
 
+//fetchUserVisitList를 통해 전체 방문목록을 페이지 단위로 조회하는 훅이다.
 export const useInfiniteUserVisitList = (options?: { enabled?: boolean }) => {
   return useInfiniteQuery<
     UserVisitListResponse,

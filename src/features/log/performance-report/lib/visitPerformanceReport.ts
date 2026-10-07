@@ -4,17 +4,16 @@
   이 파일의 전체적인 기능: 운영 현황 보고서용 테이블에 들어가 이용자 수와 이용률 행의 데이터 양식을 서버에 보낼 수 있게 가공한 파일이다.
 */
 
+import type { VisitStatisticsResponse } from "@entities/log";
 
-import type { VisitStatisticsResponse } from '@entities/log';
+export const FACILITY_NAME = "구즉청소년문화의집";
 
-export const FACILITY_NAME = '구즉청소년문화의집';
-
-export const formatCount = (value: number) => value.toLocaleString('ko-KR');
+export const formatCount = (value: number) => value.toLocaleString("ko-KR");
 
 export const formatRate = (value: number) =>
   Number.isInteger(value) ? `${value}` : value.toFixed(1);
-//기능: 서버에 보낼 데이터의 양식을 정의해 놓는다.
 
+// 기능: UI 화면의 방문 성과 테이블 행에 표시할 데이터 형태를 정의한다.
 export interface VisitPerformanceTableRow {
   label: string;
   cumulativeTotal: string;
@@ -32,12 +31,12 @@ export interface VisitPerformanceTableRow {
   monthlyOtherFemale: string;
   monthlyOtherTotal: string;
 }
-//기능: 위 데이터 양식을 이용해 이용자수의 통계 데이터를 행으로 데이터를 생성한다.
 
+//기능: 위 데이터 양식을 이용해 이용자수의 통계 데이터를 행으로 데이터를 생성한다.
 export const createVisitorCountRow = (
-  data: VisitStatisticsResponse
+  data: VisitStatisticsResponse,
 ): VisitPerformanceTableRow => ({
-  label: '이용자수',
+  label: "이용자수",
   cumulativeTotal: formatCount(data.cumulative.total),
   cumulativeYouthMale: formatCount(data.cumulative.youth.male),
   cumulativeYouthFemale: formatCount(data.cumulative.youth.female),
@@ -53,29 +52,29 @@ export const createVisitorCountRow = (
   monthlyOtherFemale: formatCount(data.monthly.other.female),
   monthlyOtherTotal: formatCount(data.monthly.other.total),
 });
-//기능: 위 데이터 양식을 이용률통계 데이터를 행으로 데이터를 생성한다.
 
+//기능: 위 데이터 양식을 이용률통계 데이터를 행으로 데이터를 생성한다.
 export const createUsageRateRow = (
-  data: VisitStatisticsResponse
+  data: VisitStatisticsResponse,
 ): VisitPerformanceTableRow => ({
-  label: '이용률(%)',
-  cumulativeTotal: '100',
-  cumulativeYouthMale: '',
-  cumulativeYouthFemale: '',
+  label: "이용률(%)",
+  cumulativeTotal: "100",
+  cumulativeYouthMale: "",
+  cumulativeYouthFemale: "",
   cumulativeYouthTotal: formatRate(data.cumulative.youth.rate),
-  cumulativeOtherMale: '',
-  cumulativeOtherFemale: '',
+  cumulativeOtherMale: "",
+  cumulativeOtherFemale: "",
   cumulativeOtherTotal: formatRate(data.cumulative.other.rate),
-  monthlyTotal: '100',
-  monthlyYouthMale: '',
-  monthlyYouthFemale: '',
+  monthlyTotal: "100",
+  monthlyYouthMale: "",
+  monthlyYouthFemale: "",
   monthlyYouthTotal: formatRate(data.monthly.youth.rate),
-  monthlyOtherMale: '',
-  monthlyOtherFemale: '',
+  monthlyOtherMale: "",
+  monthlyOtherFemale: "",
   monthlyOtherTotal: formatRate(data.monthly.other.rate),
 });
 //기능: 연도(year)와 월(month) 정보를 추출하여 엑셀이나 PDF 등 보고서 파일을 다운로드할 때 사용할 기본 파일 이름을 생성한다.
 
 export const getPerformanceReportFileBaseName = (
-  data: VisitStatisticsResponse
+  data: VisitStatisticsResponse,
 ) => `${data.year}년_${data.month}월_청소년시설_운영_현황`;

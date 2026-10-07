@@ -1,27 +1,27 @@
 /*
   코드 주석 작성일: 2026/10/6
   작성자: 박민건
-  이 파일의 전체적인 기능: 방문 기록의 상세 정보를 조회해 표시하고, 수정 버튼을 누르면 수정 폼으로 전환한다.
+  이 파일의 전체적인 기능: fetchUserVisitList를 통해 전체 방문 목록을 페이지 단위로 조회하는 훅이다.
 */
 
-import { VisitFormInput } from '@shared/ui/input/VisitFormInput';
-import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
-import { useState } from 'react';
-import styled from '@emotion/styled';
-import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
-import { IoIosCall } from 'react-icons/io';
-import { FaLocationDot } from 'react-icons/fa6';
-import { FaExclamationTriangle } from 'react-icons/fa';
-import { PasswordButton } from '@shared/ui/Button/index';
-import { VisitDatePicker } from '@shared/ui/LabeldInput/VisitDatePicker';
-import { VisitTimePicker } from '@shared/ui/LabeldInput/VisitTimePicker';
-import { usePurposeList } from '@entities/purpose/index';
-import { PiStudentBold } from 'react-icons/pi';
-import { useInput } from '@shared/hooks/useInput';
-import { useCheck } from '@shared/hooks/useCheck';
-import { useModal } from '@shared/hooks/useModal';
-import { Modal } from '@shared/ui';
-import { useCounter } from '@shared/hooks/useCounter';
+import { VisitFormInput } from "@shared/ui/input/VisitFormInput";
+import { ToggleSelect } from "@shared/ui/LabeldInput/ToggleSelect";
+import { useState } from "react";
+import styled from "@emotion/styled";
+import { CountVisitor } from "@shared/ui/LabeldInput/CountVisitor";
+import { IoIosCall } from "react-icons/io";
+import { FaLocationDot } from "react-icons/fa6";
+import { FaExclamationTriangle } from "react-icons/fa";
+import { PasswordButton } from "@shared/ui/Button/index";
+import { VisitDatePicker } from "@shared/ui/LabeldInput/VisitDatePicker";
+import { VisitTimePicker } from "@shared/ui/LabeldInput/VisitTimePicker";
+import { usePurposeList } from "@entities/purpose/index";
+import { PiStudentBold } from "react-icons/pi";
+import { useInput } from "@shared/hooks/useInput";
+import { useCheck } from "@shared/hooks/useCheck";
+import { useModal } from "@shared/hooks/useModal";
+import { Modal } from "@shared/ui";
+import { useCounter } from "@shared/hooks/useCounter";
 import {
   AGE_LABELS,
   getAgeTypeByLabel,
@@ -29,7 +29,7 @@ import {
   type AgeLabel,
   type CreateUserVisitRequest,
   VisitPrivacyAgreementField,
-} from '@entities/log';
+} from "@entities/log";
 
 interface VisitFormProps {
   onSubmit: (data: CreateUserVisitRequest) => Promise<unknown>;
@@ -37,15 +37,15 @@ interface VisitFormProps {
 }
 
 const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
-  const nameInput = useInput('');
-  const phoneInput = useInput('');
-  const [ageDisplay, setAgeDisplay] = useState<AgeLabel | ''>('');
-  const [purpose, setPurpose] = useState('');
+  const nameInput = useInput("");
+  const phoneInput = useInput("");
+  const [ageDisplay, setAgeDisplay] = useState<AgeLabel | "">("");
+  const [purpose, setPurpose] = useState("");
   const maleCounter = useCounter(0);
   const femaleCounter = useCounter(0);
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState("");
   const privacyCheck = useCheck(true);
-  const [visitTime, setVisitTime] = useState('');
+  const [visitTime, setVisitTime] = useState("");
   const validationModal = useModal();
   //기능: 선택 가능한 방문 목적 목록을 조회한다
 
@@ -66,13 +66,13 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     ) {
       validationModal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '모든 필수 필드를 입력해주세요.',
-        theme: 'warning',
+        title: "입력 확인",
+        subtitle: "모든 필수 필드를 입력해주세요.",
+        theme: "warning",
         buttons: [
           {
-            label: '확인',
-            variant: 'secondary',
+            label: "확인",
+            variant: "secondary",
             onClick: validationModal.closeModal,
           },
         ],
@@ -84,13 +84,13 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     if (!privacyCheck.checked) {
       validationModal.openModal({
         icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '개인정보 동의 필요',
-        subtitle: '개인정보 수집 및 이용에 동의해야 합니다.',
-        theme: 'warning',
+        title: "개인정보 동의 필요",
+        subtitle: "개인정보 수집 및 이용에 동의해야 합니다.",
+        theme: "warning",
         buttons: [
           {
-            label: '확인',
-            variant: 'secondary',
+            label: "확인",
+            variant: "secondary",
             onClick: validationModal.closeModal,
           },
         ],
@@ -114,7 +114,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     try {
       await onSubmit(dataToSend);
     } catch (err) {
-      console.error('이용 기록 제출 실패:', err);
+      console.error("이용 기록 제출 실패:", err);
     }
   };
   //기능: 조회한 방문 목적 목록을 선택 항목으로 사용할 문자열 배열로 변환한다.
@@ -155,10 +155,10 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
             label="방문 목적"
             options={
               isPurposeLoading
-                ? ['불러오는 중...']
+                ? ["불러오는 중..."]
                 : purposeOptions.length > 0
-                ? purposeOptions
-                : ['기타']
+                  ? purposeOptions
+                  : ["기타"]
             }
             placeholder="방문 목적을 선택해주세요"
             value={purpose}
@@ -195,7 +195,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
         </InputGroup>
 
         <PasswordButton
-          content={isLoading ? '등록 중...' : '추가'}
+          content={isLoading ? "등록 중..." : "추가"}
           onClick={handleSubmit}
           disable={isLoading || isPurposeLoading}
         />
