@@ -11,6 +11,7 @@ interface UseUserDetailResult {
   isNotFound: boolean;
 }
 
+//  회원 상세조회
 export const useUserDetail = (userIdParam?: string): UseUserDetailResult => {
   const {
     data: userInfo,
@@ -20,6 +21,7 @@ export const useUserDetail = (userIdParam?: string): UseUserDetailResult => {
     refetch,
   } = useFetchUserInformation(userIdParam);
 
+  // 유저 데이터 검색
   const userData = useMemo<UserInformation | null>(() => {
     if (!userInfo) {
       return null;

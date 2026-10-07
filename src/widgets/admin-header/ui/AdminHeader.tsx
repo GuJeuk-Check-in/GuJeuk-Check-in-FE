@@ -22,7 +22,7 @@ type ReportPeriod = {
   readonly month: number;
 };
 
-const createDefaultReportPeriod = (): ReportPeriod => {
+const createDefaultReportPeriod = (): ReportPeriod => { // 현재 날짜를 기준으로 기본 보고 기간을 생성하는 함수
   const currentDate = new Date();
 
   return {
@@ -31,54 +31,54 @@ const createDefaultReportPeriod = (): ReportPeriod => {
   };
 };
 
-export const AdminHeader = () => {
-  const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [operationPreviewData, setOperationPreviewData] =
-    useState<OperationStatusPreviewData | null>(null);
-  const [selectedReportPeriod, setSelectedReportPeriod] = useState(
+export const AdminHeader = () => { // 관리자 헤더 컴포넌트
+  const navigate = useNavigate(); // useNavigate 훅을 사용하여 페이지 이동 기능을 제공
+  const [isModalOpen, setIsModalOpen] = useState(false); // 엑셀 내보내기 모달의 열림 상태를 관리하는 상태 변수
+  const [operationPreviewData, setOperationPreviewData] = // 한글 파일 미리보기 데이터를 관리하는 상태 변수
+    useState<OperationStatusPreviewData | null>(null); // 초기값은 null로 설정
+  const [selectedReportPeriod, setSelectedReportPeriod] = useState( // 보고 기간을 관리하는 상태 변수 
     createDefaultReportPeriod
   );
-  const [performanceExportingDate, setPerformanceExportingDate] = useState('');
+  const [performanceExportingDate, setPerformanceExportingDate] = useState(''); // 현재 보고 기간을 문자열로 관리하는 상태 변수
   const modal = useModal();
 
-  const { mutate: visitExcelMutate, isPending: isVisitExporting } =
+  const { mutate: visitExcelMutate, isPending: isVisitExporting } = // useVisitListExportExcel 훅을 사용하여 방문 엑셀 내보내기 기능을 구현
     useVisitListExportExcel(modal);
-  const { mutate: userExcelMutate, isPending: isUserExporting } =
+  const { mutate: userExcelMutate, isPending: isUserExporting } = // useUserListExportExcel 훅을 사용하여 사용자리스트 엑셀 내보내기 기능을 구현
     useUserListExportExcel(modal);
   const {
-    mutateAsync: fetchPerformanceReport,
+    mutateAsync: fetchPerformanceReport, // useVisitPerformanceReport 훅을 사용하여 월별 실적 데이터를 가져오는 기능을 구현
     isPending: isPerformanceLoading,
   } = useVisitPerformanceReport(modal);
   const {
-    mutateAsync: fetchFacilityUsageReport,
+    mutateAsync: fetchFacilityUsageReport, // useFacilityUsageReport 훅을 사용하여 시설 이용률 데이터를 가져오는 기능을 구현
     isPending: isFacilityUsageLoading,
   } = useFacilityUsageReport(modal);
 
   const isOperationPreviewInitialLoading =
-    (isPerformanceLoading || isFacilityUsageLoading) && !operationPreviewData;
+    (isPerformanceLoading || isFacilityUsageLoading) && !operationPreviewData; // 한글 파일 미리보기 데이터를 불러오는 중인지 여부를 나타내는 상태 변수
 
-  const handleVisitListExcelExportClick = () => {
+  const handleVisitListExcelExportClick = () => { // 방문 엑셀 내보내기 버튼 클릭 시 호출되는 함수
     setIsModalOpen(true);
   };
-  const handleUserListExcelExportClick = () => {
+  const handleUserListExcelExportClick = () => { // 사용자리스트 엑셀 내보내기 버튼 클릭 시 호출되는 함수
     userExcelMutate();
   };
 
-  const ignoreHandledRequestError = (error: unknown) => {
+  const ignoreHandledRequestError = (error: unknown) => { // 이미 처리된 요청 에러를 무시하는 함수
     if (error instanceof Error) {
       return;
     }
 
-    throw error;
+    throw error; // 처리되지 않은 에러는 다시 던져서 상위에서 처리하도록 함
   };
 
-  const openOperationStatusPreview = async (month: number) => {
-    const currentReportPeriod = createDefaultReportPeriod();
-    const dataString = `${currentReportPeriod.year}-${month}`;
+  const openOperationStatusPreview = async (month: number) => { // 한글 파일 미리보기 버튼 클릭 시 호출되는 함수
+    const currentReportPeriod = createDefaultReportPeriod(); // 현재 날짜를 기준으로 보고 기간을 생성
+    const dataString = `${currentReportPeriod.year}-${month}`; // 보고 기간을 문자열로 변환하여 상태 변수에 저장
     setPerformanceExportingDate(dataString);
 
-    try {
+    try { // Promise.all을 사용하여 월별 실적 데이터와 시설 이용률 데이터를 동시에 가져옴
       const [performance, facilityUsage] = await Promise.all([
         fetchPerformanceReport({ year: currentReportPeriod.year, month }),
         fetchFacilityUsageReport({ year: currentReportPeriod.year }),
@@ -86,58 +86,58 @@ export const AdminHeader = () => {
 
       setSelectedReportPeriod({ year: currentReportPeriod.year, month });
       setOperationPreviewData({ performance, facilityUsage });
-    } catch (error) {
+    } catch (error) { // 에러 발생 시 이미 처리된 요청 에러인지 확인하고, 처리되지 않은 에러는 다시 던져서 상위에서 처리하도록 함
       ignoreHandledRequestError(error);
     } finally {
-      setPerformanceExportingDate('');
+      setPerformanceExportingDate(''); // 요청이 완료되면 performanceExportingDate 상태 변수를 초기화
     }
   };
 
   const handleOperationStatusPreviewClick = () => {
-    void openOperationStatusPreview(selectedReportPeriod.month);
+    void openOperationStatusPreview(selectedReportPeriod.month); // 한글 파일 미리보기 버튼 클릭 시 현재 보고 기간의 월을 기준으로 openOperationStatusPreview 함수를 호출
   };
 
   const handleReportMonthChange = async (month: number) => {
     const dataString = `${selectedReportPeriod.year}-${month}`;
     setPerformanceExportingDate(dataString);
 
-    try {
+    try { // Promise.all을 사용하여 월별 실적 데이터를 가져옴
       const performance = await fetchPerformanceReport({
         year: selectedReportPeriod.year,
         month,
       });
 
-      setSelectedReportPeriod((currentPeriod) => ({
+      setSelectedReportPeriod((currentPeriod) => ({ // 현재 보고 기간의 연도와 선택된 월을 기준으로 selectedReportPeriod 상태 변수를 업데이트
         ...currentPeriod,
         month,
       }));
-      setOperationPreviewData((currentData) => {
+      setOperationPreviewData((currentData) => { // 현재 operationPreviewData 상태 변수를 업데이트하여 새로운 월별 실적 데이터를 반영 
         if (!currentData) {
           return currentData;
         }
 
-        return {
+        return { // 현재 operationPreviewData 상태 변수를 업데이트하여 새로운 월별 실적 데이터를 반영
           ...currentData,
           performance,
         };
       });
-    } catch (error) {
+    } catch (error) { // 에러 발생 시 이미 처리된 요청 에러인지 확인하고, 처리되지 않은 에러는 다시 던져서 상위에서 처리하도록 함
       ignoreHandledRequestError(error);
-    } finally {
+    } finally { // 요청이 완료되면 performanceExportingDate 상태 변수를 초기화
       setPerformanceExportingDate('');
     }
   };
 
-  const handleExportConfirmedWithDate = (year, month) => {
+  const handleExportConfirmedWithDate = (year, month) => {// 엑셀 내보내기 모달에서 확인 버튼 클릭 시 호출되는 함수
     visitExcelMutate({ year, month });
 
     setIsModalOpen(false);
   };
 
-  const getExportingPeriodMessage = (dateString: string) => {
+  const getExportingPeriodMessage = (dateString: string) => { // 현재 보고 기간을 문자열로 변환하여 사용자에게 보여줄 메시지를 반환하는 함수
     if (!dateString) return '전체 기간';
 
-    const parts = dateString.split('-');
+    const parts = dateString.split('-'); // 문자열을 '-' 기준으로 분리하여 연도와 월을 추출
     if (parts.length === 2) {
       return `기간: ${parts[0]}년 ${parts[1]}월`;
     }
