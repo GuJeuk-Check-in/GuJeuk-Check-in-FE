@@ -1,7 +1,7 @@
 /*
   코드 주석 작성일: 2026/10/6
   작성자: 박민건
-  이 파일의 전체적인 기능: fetchUserVisitList를 통해 전체 방문 목록을 페이지 단위로 조회하는 훅이다.
+  이 파일의 전체적인 기능:  CreateUserVisitRequest를 onSubmit에 전달하는 등록 폼이다.
 */
 
 import { VisitFormInput } from "@shared/ui/input/VisitFormInput";
