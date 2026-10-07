@@ -1,0 +1,203 @@
+import styled from '@emotion/styled';
+import { useNavigate } from 'react-router-dom';
+
+interface UserInformationCardProps {
+  id: number;
+  name: string;
+  location: string;
+  gender: GenderType;
+  birthday: string;
+  phonNumber: string;
+  count?: number | null;
+}
+
+type GenderType = 'MAN' | 'WOMAN';
+
+const GENDER_MAP: Record<GenderType, string> = {
+  MAN: '남성',
+  WOMAN: '여성',
+};
+
+export const UserInformationCard = ({
+  id,
+  name,
+  location,
+  gender,
+  birthday,
+  phonNumber,
+  count,
+}: UserInformationCardProps) => {
+  const navigate = useNavigate();
+  const displayCount = count !== null && count !== undefined ? count : 0;
+
+  return (
+    <Container>
+      <LeftSection>
+        <Location>{location}</Location>
+        <Name>{name}</Name>
+      </LeftSection>
+
+      <RightSection>
+        <RightWrapper>
+          <EditButton
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/organ/user/${id}`);
+            }}
+          >
+            수정
+          </EditButton>{' '}
+          <InfoWrapper>
+            <Gender>{GENDER_MAP[gender] || gender}</Gender>
+            <Diver />
+            <Birthday>{birthday}</Birthday>
+            <Diver />
+            <PhoneNumber>{phonNumber}</PhoneNumber>
+            <Diver />
+            <Count title="누적 방문 횟수">{displayCount}회 방문</Count>
+          </InfoWrapper>
+        </RightWrapper>
+      </RightSection>
+    </Container>
+  );
+};
+
+const Container = styled.div`
+  width: 100%;
+  max-width: 80rem;
+  background-color: #ffffff;
+  border: 1px solid #6f95c4;
+  border-radius: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2rem;
+  box-sizing: border-box;
+  min-height: 10rem;
+  margin: 0 auto;
+  cursor: pointer;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s ease;
+  }
+
+  @media (max-width: 64rem) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    min-height: auto;
+    padding: 1.5rem;
+  }
+`;
+
+const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-left: 1.25rem;
+
+  @media (max-width: 64rem) {
+    margin-left: 0;
+  }
+`;
+
+const Location = styled.h2`
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #2e2e32;
+  margin: 0;
+`;
+
+const Name = styled.h2`
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: #2e2e32;
+  margin: 0;
+`;
+
+const UserId = styled.h2`
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #2e2e32;
+  margin: 0;
+`;
+
+const Diver = styled.div`
+  width: 0.09375rem;
+  height: 1.25rem;
+  background-color: #aaa;
+  padding: 0;
+
+  @media (max-width: 40rem) {
+    display: none;
+  }
+`;
+
+const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+
+  @media (max-width: 64rem) {
+    width: 100%;
+  }
+`;
+
+const EditButton = styled.button`
+  font-size: 1.25rem;
+  color: #828284;
+  border: none;
+  background: none;
+  border-bottom: 1px solid #828284;
+  cursor: pointer;
+  padding: 0;
+`;
+
+const Gender = styled.span`
+  font-size: 1.25rem;
+  color: #828284;
+`;
+
+const Birthday = styled.span`
+  font-size: 1.25rem;
+  color: #828284;
+`;
+
+const PhoneNumber = styled.span`
+  font-size: 1.25rem;
+  color: #828284;
+`;
+
+const Count = styled.div`
+  font-size: 1.25rem;
+  color: #828284;
+`;
+
+const RightWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+  min-width: 0;
+
+  @media (max-width: 64rem) {
+    align-items: flex-start;
+    width: 100%;
+  }
+`;
+
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  min-width: 0;
+
+  @media (max-width: 40rem) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+`;
