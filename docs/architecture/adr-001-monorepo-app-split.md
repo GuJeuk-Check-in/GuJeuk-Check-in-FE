@@ -107,7 +107,7 @@ Split apps use fixed local ports to avoid one app accidentally handling another 
 ```txt
 yarn dev:gujeuk-check-in  -> http://localhost:5173/check-in
 yarn dev:gujeuk-admin     -> http://localhost:5174/organ/login
-yarn dev:beopdong-admin    -> http://localhost:5176/organ/login
+yarn dev:beopdong-admin    -> http://localhost:5175/organ/login
 ```
 
 The root `yarn dev` remains an alias for the GuJeuk check-in app.
