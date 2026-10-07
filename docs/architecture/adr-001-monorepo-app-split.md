@@ -100,3 +100,14 @@ yarn build
 ```
 
 After app splitting begins, check-in and admin should also receive surface-level smoke checks in a browser.
+
+## Local Development Ports
+
+GuJeuk split apps use fixed local ports to avoid one app accidentally handling the other app's routes:
+
+```txt
+yarn dev:gujeuk-check-in  -> http://localhost:5173/check-in
+yarn dev:gujeuk-admin     -> http://localhost:5174/organ/login
+```
+
+The root `yarn dev` remains an alias for the GuJeuk check-in app.

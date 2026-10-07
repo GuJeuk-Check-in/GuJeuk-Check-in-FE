@@ -182,9 +182,7 @@ const run = async () => {
     const count = lineCounts.get(page);
     console.log(`- ${page}: ${count ?? 'missing'} lines`);
   }
-  console.log(
-    '- Purpose/residence boards retain duplicated CRUD/reorder/modal shape for a future scoped extraction; business logic stays out of shared.'
-  );
+  console.log('- Admin-only pages/features/widgets must stay outside the check-in app.');
 
   if (hardFindings.length > 0) {
     process.exitCode = 1;

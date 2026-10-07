@@ -1,20 +1,8 @@
 import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { AppLayout } from '@app/layout';
 import { AnalyticsRouteObserver } from '@app/providers/AnalyticsRouteObserver';
 
-const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
-const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
-const UserVisitList = lazy(() => import('@pages/log/UserVisitList'));
-const UserDetail = lazy(() => import('@pages/log/UserDetail'));
-const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
-const UserInformation = lazy(() => import('@pages/user/UserInformation'));
-const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
-const UserInformationDetail = lazy(
-  () => import('@pages/user/UserInformationDetail'),
-);
-const ResidenceCustom = lazy(() => import('@pages/residence/ResidenceCustom'));
 const CheckInHome = lazy(() => import('@pages/check-in/CheckInHome'));
 const CheckInUserCheck = lazy(() => import('@pages/check-in/CheckInUserCheck'));
 const CheckInSignupFormPage = lazy(
@@ -62,20 +50,6 @@ export const Router = () => {
     <Suspense fallback={routeFallback}>
       <AnalyticsRouteObserver />
       <Routes>
-        <Route path="/organ/login" element={<OrganLogin />}></Route>
-        <Route path="/organ/change" element={<OrganChange />}></Route>
-        <Route element={<AppLayout />}>
-          <Route path="/log" element={<UserVisitList />}></Route>
-          <Route path="/log/create" element={<UserDetail />}></Route>
-          <Route path="/log/:logId" element={<UserDetailView />} />
-          <Route path="/organ/user/all" element={<UserInformation />} />
-          <Route
-            path="/organ/user/:userId"
-            element={<UserInformationDetail />}
-          />
-          <Route path="/purpose/all" element={<PurposeCustom />} />
-          <Route path="/residence/all" element={<ResidenceCustom />} />
-        </Route>
         <Route path="/check-in" element={<CheckInHome />} />
         <Route path="/check-in/user-check" element={<CheckInUserCheck />} />
         <Route
@@ -88,6 +62,7 @@ export const Router = () => {
           path="/check-in/funnel-analytics"
           element={<CheckInFunnelAnalyticsPage />}
         />
+        <Route path="*" element={<Navigate to="/check-in" replace />} />
       </Routes>
     </Suspense>
   );

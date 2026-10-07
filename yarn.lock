@@ -419,12 +419,6 @@ __metadata:
 "@gujeuk/gujeuk-admin@workspace:apps/gujeuk-admin":
   version: 0.0.0-use.local
   resolution: "@gujeuk/gujeuk-admin@workspace:apps/gujeuk-admin"
-  languageName: unknown
-  linkType: soft
-
-"@gujeuk/gujeuk-check-in@workspace:apps/gujeuk-check-in":
-  version: 0.0.0-use.local
-  resolution: "@gujeuk/gujeuk-check-in@workspace:apps/gujeuk-check-in"
   dependencies:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
@@ -444,7 +438,6 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.20"
     globals: "npm:^16.4.0"
     luxon: "npm:^3.7.2"
-    mixpanel-browser: "npm:^2.82.0"
     msw: "npm:^2.12.7"
     react: "npm:^19.1.1"
     react-calendar: "npm:^6.0.0"
@@ -455,6 +448,37 @@ __metadata:
     typescript-eslint: "npm:^8.67.0"
     vite: "npm:rolldown-vite@7.1.12"
     zustand: "npm:^5.0.8"
+  languageName: unknown
+  linkType: soft
+
+"@gujeuk/gujeuk-check-in@workspace:apps/gujeuk-check-in":
+  version: 0.0.0-use.local
+  resolution: "@gujeuk/gujeuk-check-in@workspace:apps/gujeuk-check-in"
+  dependencies:
+    "@emotion/react": "npm:^11.14.0"
+    "@emotion/styled": "npm:^11.14.1"
+    "@eslint/js": "npm:^9.36.0"
+    "@sentry/react": "npm:^11.0.0"
+    "@tanstack/eslint-plugin-query": "npm:^5.91.2"
+    "@tanstack/react-query": "npm:^5.90.5"
+    "@types/react": "npm:^19.2.14"
+    "@types/react-dom": "npm:^19.2.3"
+    "@vitejs/plugin-react-swc": "npm:^4.1.0"
+    axios: "npm:^1.18.0"
+    eslint: "npm:^9.36.0"
+    eslint-plugin-react-hooks: "npm:^5.2.0"
+    eslint-plugin-react-refresh: "npm:^0.4.20"
+    globals: "npm:^16.4.0"
+    luxon: "npm:^3.7.2"
+    mixpanel-browser: "npm:^2.82.0"
+    msw: "npm:^2.12.7"
+    react: "npm:^19.1.1"
+    react-dom: "npm:^19.1.1"
+    react-icons: "npm:^5.5.0"
+    react-router-dom: "npm:^7.18.2"
+    typescript: "npm:^5.9.3"
+    typescript-eslint: "npm:^8.67.0"
+    vite: "npm:rolldown-vite@7.1.12"
   languageName: unknown
   linkType: soft
 

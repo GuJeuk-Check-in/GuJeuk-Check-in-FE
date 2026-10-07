@@ -9,13 +9,25 @@
   "scripts": {
     "dev": "yarn workspace @gujeuk/gujeuk-check-in dev",
     "build": "yarn workspace @gujeuk/gujeuk-check-in build",
+    "build:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin build",
+    "build:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in build",
     "lint": "yarn workspace @gujeuk/gujeuk-check-in lint",
+    "lint:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin lint",
+    "lint:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in lint",
     "lint:fix": "yarn workspace @gujeuk/gujeuk-check-in lint:fix",
     "typecheck": "yarn workspace @gujeuk/gujeuk-check-in typecheck",
+    "typecheck:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin typecheck",
+    "typecheck:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in typecheck",
     "architecture:check": "yarn workspace @gujeuk/gujeuk-check-in architecture:check",
     "bundle:guard": "yarn workspace @gujeuk/gujeuk-check-in bundle:guard",
     "check": "yarn workspace @gujeuk/gujeuk-check-in check",
-    "preview": "yarn workspace @gujeuk/gujeuk-check-in preview"
+    "check:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin check",
+    "check:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in check",
+    "dev:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin dev",
+    "dev:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in dev",
+    "preview": "yarn workspace @gujeuk/gujeuk-check-in preview",
+    "preview:gujeuk-admin": "yarn workspace @gujeuk/gujeuk-admin preview",
+    "preview:gujeuk-check-in": "yarn workspace @gujeuk/gujeuk-check-in preview"
   },
   "packageManager": "yarn@4.3.0+sha512.1606bef7c84bc7d83b8576063de2fd08f7d69f9939015bed800f9585a002390268ecc777e9feeba7e26e9556aef6beaad4806968db2182ab5dd3e955ab3b9a0b"
 }

@@ -25,8 +25,6 @@ export default defineConfig({
           if (id.includes('/@tanstack/')) return 'vendor-query';
           if (id.includes('/axios/')) return 'vendor-axios';
           if (id.includes('/mixpanel-browser/')) return 'vendor-mixpanel';
-          if (id.includes('/react-calendar/')) return 'vendor-calendar';
-          if (id.includes('/@dnd-kit/')) return 'vendor-dnd';
           if (id.includes('/react-icons/')) return 'vendor-icons';
 
           return 'vendor';

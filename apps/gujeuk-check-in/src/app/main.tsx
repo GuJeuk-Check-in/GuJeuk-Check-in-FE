@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { setupAuthInterceptors } from '@app/providers';
 import { initializeGoogleAnalytics } from '@shared/lib/googleAnalytics';
 import {
   initializeSentryMonitoring,
@@ -17,7 +16,6 @@ if (!rootElement) {
   throw new Error('Root element was not found.');
 }
 
-setupAuthInterceptors();
 initializeSentryMonitoring();
 initializeGoogleAnalytics();
 

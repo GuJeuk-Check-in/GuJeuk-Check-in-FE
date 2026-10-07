@@ -1,10 +1,8 @@
 import { Global, css } from '@emotion/react';
 import { Router } from '@app/router';
-import { useTokenRefresher } from './providers/useTokenRefresher';
 import { useReadyHealthMonitor } from './providers/useReadyHealthMonitor';
 
 const App = () => {
-  useTokenRefresher();
   useReadyHealthMonitor();
 
   return (
