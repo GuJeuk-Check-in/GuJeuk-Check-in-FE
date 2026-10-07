@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 연도별 월간 방문자 수를 모달로 표시하고, 선택한 연도와 월을 상세 목록 조회에 전달한다.
+*/
+
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import closeButton from '@shared/assets/btn_left-arrow_default.png';
@@ -25,6 +31,7 @@ export const MonthVisitModal = ({
 
   const handlePrevYear = () => setYear((currentYear) => currentYear - 1);
   const handleNextYear = () => setYear((currentYear) => currentYear + 1);
+  //기능: 모달이 열려 있을 때 Escape 키로 닫을 수 있도록 하고, 종료 시 이벤트를 정리한다.
 
   useEffect(() => {
     if (!isOpen) return;
@@ -38,6 +45,7 @@ export const MonthVisitModal = ({
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
+  //기능: 배경을 클릭하면 모달을 닫고, 모달 내부 클릭은 배경으로 전달되지 않게 한다.
 
   return (
     <Overlay
@@ -70,6 +78,7 @@ export const MonthVisitModal = ({
                 onClick={() => {
                   onSelectMonthForList?.(year, month.month);
                   onClose();
+                //기능: 현재 달과 과거 달만 상세 조회 버튼을 누를 수 있도록 설정한다.
                 }}
                 pressable={new Date(year, month.month - 1, 1) <= new Date()}
               />
@@ -80,6 +89,7 @@ export const MonthVisitModal = ({
     </Overlay>
   );
 };
+//기능: 모달 배경, 창, 버튼, 연도의 스타일을 설정하고, 화면 크기에 따라 모달 크기와 월별 카드 배치를 조정한다.
 
 const Overlay = styled.div`
   position: fixed;

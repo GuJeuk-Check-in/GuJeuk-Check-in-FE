@@ -1,3 +1,8 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 전체 또는 선택한 월의 방문 기록을 스크롤에 따라 추가 조회하고, 방문 기록 삭제와 결과 안내를 처리한다.
+*/
 import { useRef, useEffect, useMemo, useState } from 'react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 import styled from '@emotion/styled';
@@ -19,6 +24,7 @@ export const UserVisitListFeature = () => {
     year: number;
     month: number;
   } | null>(null);
+  //기능: 선택한 월이 없으면 전체 방문 목록을 조회한다
 
   const {
     data,
@@ -37,6 +43,7 @@ export const UserVisitListFeature = () => {
 
   const isLoading = monthFilter ? monthDetail.isLoading : isLoadingAll;
   const error = monthFilter ? monthDetail.error : errorAll;
+  //기능: 전체 또는 월별 조회 결과의 여러 페이지를 하나의 방문 목록으로 합친다.
 
   const visits = useMemo<UserVisit[]>(() => {
     if (monthFilter) {
@@ -56,6 +63,7 @@ export const UserVisitListFeature = () => {
     : isFetchingNextAll;
 
   const observerTarget = useRef<HTMLDivElement>(null);
+  //기능: 목록 하단의 감지 영역이 화면에 보이면 다음 페이지를 불러오고, 종료 시 감지를 해제한다.
 
   useEffect(() => {
     if (isLoading || !hasNextPage || isFetchingNextPage) return;
@@ -120,6 +128,7 @@ export const UserVisitListFeature = () => {
                   ],
                 });
               },
+                //기능: 삭제 실패 시 서버 오류 메시지 또는 기본 안내 문구를 표시한다.
               onError: (error) => {
                 deleteConfirmModal.openModal({
                   icon: <FaExclamationTriangle size={48} color="#D88282" />,
@@ -197,6 +206,7 @@ export const UserVisitListFeature = () => {
     </>
   );
 };
+//기능: 로딩 화면, 안내 문구, 스크롤 감지 영역과 월 선택 버튼의 스타일 및 화면 크기별 배치를 설정한다.
 
 const EmptyMessage = styled.p`
   text-align: center;

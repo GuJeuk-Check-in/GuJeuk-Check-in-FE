@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 청소년시설 운영 현황 및 실적 보고서 반응형 웹 디자인 구성 파일
+*/
+
 import styled from '@emotion/styled';
 
 export const Overlay = styled.div`
