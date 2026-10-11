@@ -101,7 +101,7 @@ export const AdminHeader = () => { // 관리자 헤더 컴포넌트
     const dataString = `${selectedReportPeriod.year}-${month}`;
     setPerformanceExportingDate(dataString);
 
-    try { // Promise.all을 사용하여 월별 실적 데이터를 가져옴
+    try { // 선택한 연도와 월을 기준으로 월별 실적 데이터를 조회
       const performance = await fetchPerformanceReport({
         year: selectedReportPeriod.year,
         month,
