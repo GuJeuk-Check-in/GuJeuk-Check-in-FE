@@ -13,7 +13,7 @@ import {
 // 기능: axios안에 내장되어 있는 isAxiosError를 이용해 api 연동에 문제를 발견하였을 떄 메세지를 전달한다.
 } from '@shared/api';
 
-// 기능: api 로직을 짤 떄 필요한 내용들의 타입을 선언한 것들 가져온다..
+// 기능: api 로직을 짤 때 필요한 내용들의 타입을 선언한 것들 가져온다.
 import { isAxiosError } from 'axios';
 import type {
   CreateUserVisitRequest,

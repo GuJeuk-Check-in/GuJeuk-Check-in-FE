@@ -24,7 +24,7 @@ import { AxiosError } from 'axios';
 interface UseCreateUserVisitProps {
   onSuccessCallback?: () => void;
 }
-//기능: UseMutationResult과 제네릭을 이용해여 반환하는 데이터를 정의한다.
+//기능: UseMutationResult과 제네릭을 이용하여 반환하는 데이터를 정의한다.
 
 type UseCreateUserVisitReturn = UseMutationResult<
   UserVisitDetailResponse,

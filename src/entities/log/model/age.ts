@@ -14,7 +14,7 @@ export const AGE_OPTIONS = [
   { value: 'AGE_20_24', label: '20~24세' },
   { value: 'ADULT', label: '성인' },
 ] as const;
-// 기능: AgeType 과 AgeLabel을 각각 value 와 label로 프로퍼티를 묶어 놓는다
+// 기능: AgeType 과 AgeLabel을 각각 value 와 label로 프로퍼티를 묶어 놓는다.
 
 export type AgeType = (typeof AGE_OPTIONS)[number]['value'];
 export type AgeLabel = (typeof AGE_OPTIONS)[number]['label'];

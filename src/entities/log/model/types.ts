@@ -32,7 +32,7 @@ export interface Pageable {
     unsorted: boolean;
   };
 }
-// 기능: 방문자 기록 목록의 응답 데이터들의 타입을 정의하는 인터페이스이다.
+// 기능: 방문자 기록 목록의 응답 데이터들의 타입을 정의하는 인터페이스임.
 
 export interface UserVisitListResponse {
   content: UserVisit[];
@@ -98,7 +98,7 @@ export interface CreateUserVisitRequest {
   visitTime: string;
   privacyAgreed: boolean;
 }
-// 기능: 위 CreateUserVisitRequest의 데이터와 데이터 타입을 상속하며 추가로 id라는 데이터의 타입을 정의하는 인터페이스 이다.
+// 기능: 위 CreateUserVisitRequest의 데이터와 데이터 타입을 상속하며 추가로 id라는 데이터의 타입을 정의하는 인터페이스이다.
 
 export interface UpdateUserVisitRequest extends CreateUserVisitRequest {
   id: number;
@@ -166,8 +166,8 @@ export const FACILITY_USAGE_MONTH_KEYS = [
 //기능:  FACILITY_USAGE_MONTH_KEYS로 묶어놓은 값들을 타입으로 지정한다.
 
 export type FacilityUsageMonthKey = (typeof FACILITY_USAGE_MONTH_KEYS)[number];
-// 기능: 읽기 전용이라는 건 알겠는데 이것이 뭘하는 지는 잘 모르겠음
 
+// 기능: read only를 선언해 놓은 초기값을 수정할 수 없게한다.
 export type FacilityUsageValue = {
   readonly opDate: number | null;
   readonly avgRate: number | null;
