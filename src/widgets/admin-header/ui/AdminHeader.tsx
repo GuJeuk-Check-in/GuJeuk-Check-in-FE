@@ -78,7 +78,7 @@ export const AdminHeader = () => { // 관리자 헤더 컴포넌트
     const dataString = `${currentReportPeriod.year}-${month}`; // 보고 기간을 문자열로 변환하여 상태 변수에 저장
     setPerformanceExportingDate(dataString);
 
-    try { // Promise.all을 사용하여 월별 실적 데이터와 시설 이용률 데이터를 동시에 가져옴
+    try { // 월별 실적 데이터와 연도별 시설 이용률 데이터를 병렬로 조회
       const [performance, facilityUsage] = await Promise.all([
         fetchPerformanceReport({ year: currentReportPeriod.year, month }),
         fetchFacilityUsageReport({ year: currentReportPeriod.year }),
