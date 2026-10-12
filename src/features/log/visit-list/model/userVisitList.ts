@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 사용자 방문 목록을 페이지 단위로 조회하고, 선택한 방문 기록을 삭제한다.
+*/
+
 import {
   useMutation,
   useQueryClient,
@@ -15,6 +21,7 @@ interface ServerError {
   message?: string;
 }
 
+//fetchUserVisitList를 통해 전체 방문목록을 페이지 단위로 조회하는 훅이다.
 export const useInfiniteUserVisitList = (options?: { enabled?: boolean }) => {
   return useInfiniteQuery<
     UserVisitListResponse,
@@ -22,6 +29,7 @@ export const useInfiniteUserVisitList = (options?: { enabled?: boolean }) => {
     InfiniteData<UserVisitListResponse>,
     ['visitList'],
     number
+    //기능: visitList 쿼리키를 만들고 300초 동안 신선하게 유지한다.
   >({
     queryKey: ['visitList'],
     queryFn: ({ pageParam = 0 }) => fetchUserVisitList(pageParam),
@@ -35,12 +43,14 @@ export const useInfiniteUserVisitList = (options?: { enabled?: boolean }) => {
     initialPageParam: 0,
   });
 };
+// 기능: 방문 기록을 삭제하고, 삭제 성공 시 관련 목록의 캐시를 정리한다.
 
 export const useDeleteVisitMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation<string, AxiosError<ServerError>, number>({
     mutationFn: (id: number) => deleteUserVisit(id),
+      //기능: 성공하게 되면 visitList, monthVisitList, mothVisitDetailList의 쿼리키를 지우게 된다.
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ['visitList'] });
       queryClient.invalidateQueries({ queryKey: ['monthVisitList'] });

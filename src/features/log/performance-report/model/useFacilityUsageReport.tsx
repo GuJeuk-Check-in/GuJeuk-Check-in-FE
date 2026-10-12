@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 특정 기간의 시설 가동률 데이터를 서버에서 가져오는 요청에서 에러가 발생하면 경고 매세지모달 창을 띄워주는 훅 파일이다.
+*/
+
 import { useMutation } from '@tanstack/react-query';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import { fetchFacilityUsage } from '@entities/log';
