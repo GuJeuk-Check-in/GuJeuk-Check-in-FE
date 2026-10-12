@@ -8,11 +8,12 @@ type ExportExcelVariables = {
   month: number;
 };
 
+// 엑셀 내보내기 훅
 export const useVisitListExportExcel = (
   modal: UseModalReturn
-): UseMutationResult<string, Error, ExportExcelVariables> => {
-  return useMutation<string, Error, ExportExcelVariables>({
-    mutationFn: exportVisitListToExcel,
+): UseMutationResult<string, Error, ExportExcelVariables> => { // useMutation을 사용하여 엑셀 내보내기 기능을 구현
+  return useMutation<string, Error, ExportExcelVariables>({ // 반환 타입, 에러 타입, 변수 타입을 지정
+    mutationFn: exportVisitListToExcel, // exportVisitListToExcel 함수를 호출하여 엑셀 내보내기 요청
     onSuccess: () => {
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,
