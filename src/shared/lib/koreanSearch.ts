@@ -47,7 +47,7 @@ export const getKoreanInitials = (value: string) =>
     })
     .join('');
 
-// 완전한 텍스트 일치 또는 초성 일치로 검색어와 대상 문자열 매칭
+// 일반 문자열 부분 일치 또는 초성 부분 일치로 검색어와 대상 문자열 매칭
 export const matchesKoreanSearch = (target: string, keyword: string) => {
   const normalizedTarget = normalizeSearchText(target);
   const normalizedKeyword = normalizeSearchText(keyword);
