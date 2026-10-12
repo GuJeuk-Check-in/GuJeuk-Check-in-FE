@@ -10,8 +10,8 @@ export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth); // 토큰 저장 함수 가져오기
 
   return useMutation<
-    OrganLoginResponse,
-    AxiosError<{ message?: string }>, // 로그인 요청 성공 시 반환되는 데이터 타입
+    OrganLoginResponse, // 로그인 요청 성공 시 반환되는 데이터 타입
+    AxiosError<{ message?: string }>,  // 로그인 요청 실패 시 발생하는 에러 타입
     { organName: string; password: string } // 로그인 요청에 필요한 데이터 타입
   >({
     mutationFn: ({ organName, password }) =>  // 로그인 요청 함수
