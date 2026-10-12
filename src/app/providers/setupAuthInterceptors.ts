@@ -51,7 +51,6 @@ const redirectToLogin = () => {
   window.location.href = '/organ/login?error=expired';
 };
 
-
 // 인증 인터셉터 설정
 export const setupAuthInterceptors = () => {
   const axiosWithSetup = axiosInstance as AxiosInstanceWithSetup;
@@ -122,7 +121,7 @@ export const setupAuthInterceptors = () => {
       }
 
       if (
-      // 토큰이 만료된 경우 토큰 개발급 후 기존 요청 재시도
+      // 토큰이 만료된 경우 토큰 재발급 후 기존 요청 재시도
         status === 401 &&
         errorMsg.includes('만료된 토큰') &&
         !originalRequest._retry
@@ -137,9 +136,7 @@ export const setupAuthInterceptors = () => {
             if (newToken && originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
             }
-            return axiosInstance(originalRequest);
-
-             // 새 토큰으로 기존 요청 재요청
+            return axiosInstance(originalRequest); // 새 토큰으로 기존 요청 재요청
           });
         }
 
@@ -148,7 +145,7 @@ export const setupAuthInterceptors = () => {
 
         try {
           const res = await axiosInstance.patch<{
-          // 새로운 access 토큰과 refresht 토큰 발급
+          // 새로운 access 토큰과 refresh 토큰 발급
             accessToken: string;
             refreshToken: string;
           }>('/organ/re-issue');
