@@ -14,7 +14,7 @@ const hasHttpStatus = (error: Error): error is Error & { status: number } =>
   'status' in error && typeof error.status === 'number';
 //기능: 에러 모달에서 띄울 에러메세지를 HTTP Status 혹은 isMissingMonthlyPerformance를 이용해 에러 메세지를 반환한다.
 
-const getVisitPerformanceErrorMessage = (
+const getVisitPerformanceErrorMessage = ( // 월별 실적 조회 실패 시 사용자에게 보여줄 에러 메시지를 반환하는 함수
   error: Error,
   request: VisitStatisticsRequest
 ) => {
@@ -35,7 +35,7 @@ const getVisitPerformanceErrorMessage = (
 
 export const useVisitPerformanceReport = (modal: UseModalReturn) => {
   return useMutation({
-    mutationFn: (request: VisitStatisticsRequest) =>
+    mutationFn: (request: VisitStatisticsRequest) => // fetchVisitStatistics 함수를 호출하여 월별 실적 데이터를 가져오는 요청
       fetchVisitStatistics(request),
     onError: (error: Error, request) => {
       modal.openModal({
