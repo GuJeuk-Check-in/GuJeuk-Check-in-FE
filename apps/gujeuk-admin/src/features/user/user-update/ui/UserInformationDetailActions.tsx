@@ -6,8 +6,8 @@ import { useUpdateUserInformation } from '../model/useUpdateUser';
 
 interface Props {
   userData: UserInformation;
-  refetchUserInformation: () => Promise<unknown> | void;
-  residenceOptions: readonly string[];
+  refetchUserInformation: () => Promise<unknown> | void; // 사용자 정보 재조회 함수
+  residenceOptions: readonly string[]; // 거주지 옵션 배열
   isResidenceLoading: boolean;
   isResidenceError: boolean;
 }
@@ -22,7 +22,7 @@ export const UserInformationDetailActions = ({
   const modal = useModal();
   const updateMutation = useUpdateUserInformation();
 
-  const handleSave = (formData: UserInformation) => {
+  const handleSave = (formData: UserInformation) => { //  사용자 정보 저장 버튼 클릭 시 호출되는 함수
     if (
       !formData.name ||
       !formData.phone ||
@@ -40,7 +40,7 @@ export const UserInformationDetailActions = ({
       return;
     }
 
-    const dataToUpdate = {
+    const dataToUpdate = { // 업데이트할 사용자 정보 객체 생성
       id: formData.id,
       userId: formData.userId,
       name: formData.name,
@@ -51,9 +51,9 @@ export const UserInformationDetailActions = ({
       privacyAgreed: formData.privacyAgreed,
     };
 
-    updateMutation.mutate({ id: formData.id, data: dataToUpdate }, {
-      onSuccess: async () => {
-        await refetchUserInformation();
+    updateMutation.mutate({ id: formData.id, data: dataToUpdate }, { // 사용자 정보 업데이트 요청
+      onSuccess: async () => { // 업데이트 성공 시 사용자 정보 재조회 및 모달 표시
+        await refetchUserInformation(); // 사용자 정보 재조회
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
           title: '수정 완료',
