@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "architecture:check": "node scripts/check-architecture.mjs",
     "bundle:guard": "node scripts/check-bundle-size.mjs",
-    "check": "yarn lint && yarn typecheck && yarn build",
+    "check": "yarn architecture:check && yarn lint && yarn typecheck && yarn build",
     "preview": "vite preview --port 4173 --strictPort"
   },
   "dependencies": {
