@@ -113,8 +113,36 @@ const resolveDeadline = ({ current, previous, events }) => {
   };
 };
 
+const ensureLabels = async () => {
+  const existing = new Set(
+    (await paginate(`/repos/${REPO}/labels`)).map((label) => label.name)
+  );
+
+  const missing = [
+    ...Array.from({ length: MAX_HOURS }, (_, index) => index + 1).map((hours) => ({
+      name: `T-${pad(hours)}`,
+      color: hours <= 4 ? 'b60205' : hours <= 12 ? 'd93f0b' : 'fbca04',
+      description: `${hours}시간 내 리뷰 완료`,
+    })),
+    { name: OVERDUE_LABEL, color: '000000', description: '리뷰 마감 시간 초과' },
+  ].filter((label) => !existing.has(label.name));
+
+  if (!missing.length) return;
+
+  console.log(`라벨 ${missing.length}건 생성: ${missing.map((label) => label.name).join(', ')}`);
+  if (DRY_RUN) return;
+
+  for (const label of missing) {
+    await api(`/repos/${REPO}/labels`, {
+      method: 'POST',
+      body: JSON.stringify(label),
+    });
+  }
+};
+
 const run = async () => {
   const now = Date.now();
+  await ensureLabels();
   const pulls = await paginate(`/repos/${REPO}/pulls?state=open`);
   let updated = 0;
 

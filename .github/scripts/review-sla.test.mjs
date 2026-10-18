@@ -11,7 +11,12 @@ const event = (id, name, ago, login = 'teammate') => ({
   created_at: new Date(now - ago * hour).toISOString(),
 });
 
-async function simulate({ labels = ['T-10'], events = [], previous, markerBody, dryRun = false, draft = false }) {
+const allLabels = [
+  ...Array.from({ length: 24 }, (_, index) => `T-${String(index + 1).padStart(2, '0')}`),
+  'review-overdue',
+];
+
+async function simulate({ labels = ['T-10'], events = [], previous, markerBody, dryRun = false, draft = false, repoLabels = allLabels }) {
   const writes = [];
   class Clock extends Date { static now() { return now; } }
   await runInNewContext(source, {
@@ -24,13 +29,15 @@ async function simulate({ labels = ['T-10'], events = [], previous, markerBody, 
         writes.push({ method, url, body: init.body && JSON.parse(init.body) });
         return { ok: true, status: 204 };
       }
-      const data = url.includes('/pulls?')
-        ? [{ number: 1, draft, created_at: new Date(now - 20 * hour).toISOString(), labels: labels.map(name => ({ name })) }]
-        : url.includes('/comments?')
-          ? markerBody !== undefined || previous
-            ? [{ id: 99, body: markerBody ?? `<!-- review-sla ${JSON.stringify(previous)} -->` }]
-            : []
-          : events;
+      const data = url.includes('/labels?')
+        ? repoLabels.map(name => ({ name }))
+        : url.includes('/pulls?')
+          ? [{ number: 1, draft, created_at: new Date(now - 20 * hour).toISOString(), labels: labels.map(name => ({ name })) }]
+          : url.includes('/comments?')
+            ? markerBody !== undefined || previous
+              ? [{ id: 99, body: markerBody ?? `<!-- review-sla ${JSON.stringify(previous)} -->` }]
+              : []
+            : events;
       return { ok: true, status: 200, json: async () => data };
     },
   });
@@ -92,4 +99,22 @@ test('legacy marker without declared uses the current label', async () => {
 test('PRs without SLA labels or without an initial attachment event are skipped', async () => {
   assert.equal((await simulate({ labels: ['feat'] })).length, 0);
   assert.equal((await simulate({ events: [] })).length, 0);
+});
+test('missing labels are created with the matching color', async () => {
+  const writes = await simulate({
+    repoLabels: ['T-10'],
+    events: [event(1, 'T-10', 2)],
+  });
+  const created = writes.filter(w => w.method === 'POST' && w.url.endsWith('/repos/team/repo/labels'));
+  assert.equal(created.length, allLabels.length - 1);
+  assert.deepEqual(
+    created.find(w => w.body.name === 'T-03').body,
+    { name: 'T-03', color: 'b60205', description: '3시간 내 리뷰 완료' }
+  );
+  assert.equal(created.find(w => w.body.name === 'T-24').body.color, 'fbca04');
+  assert.equal(created.find(w => w.body.name === 'review-overdue').body.color, '000000');
+});
+test('existing labels are not recreated', async () => {
+  const writes = await simulate({ events: [event(1, 'T-10', 2)] });
+  assert.equal(writes.filter(w => w.url.endsWith('/repos/team/repo/labels')).length, 0);
 });
