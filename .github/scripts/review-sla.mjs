@@ -5,6 +5,7 @@ const DRY_RUN = process.env.DRY_RUN === 'true';
 
 const MARKER_RE = /<!-- review-sla (\{.*?\}) -->/;
 const OVERDUE_LABEL = 'review-overdue';
+const BOT_LOGIN = 'github-actions[bot]';
 const TN_RE = /^T-(\d{2})$/;
 const MAX_HOURS = 24;
 const HOUR_MS = 3_600_000;
@@ -58,6 +59,8 @@ const findMarker = async (number) => {
   const comments = await paginate(`/repos/${REPO}/issues/${number}/comments`);
 
   for (const comment of comments) {
+    if (comment.user?.login !== BOT_LOGIN) continue;
+
     const matched = comment.body?.match(MARKER_RE);
     if (!matched) continue;
 
@@ -91,7 +94,7 @@ const resolveDeadline = ({ current, previous, events }) => {
   const attached = events
     .filter((event) => event.event === 'labeled' && event.label?.name === current)
     .sort((a, b) => b.id - a.id)[0];
-  const isCountdown = attached?.actor?.login === 'github-actions[bot]';
+  const isCountdown = attached?.actor?.login === BOT_LOGIN;
 
   const isNewDeclaration = hours !== undefined && attached && !isCountdown &&
     attached.id !== previous?.declaration_event_id;
@@ -104,7 +107,28 @@ const resolveDeadline = ({ current, previous, events }) => {
     };
   }
 
-  if (!previous) return null;
+  if (!previous) {
+    const declaration = events
+      .filter(
+        (event) =>
+          event.event === 'labeled' &&
+          event.actor?.login !== BOT_LOGIN &&
+          TN_RE.test(event.label?.name ?? '')
+      )
+      .sort((a, b) => b.id - a.id)[0];
+
+    if (!declaration) return null;
+
+    const declaredHours = Number(declaration.label.name.slice(2));
+
+    return {
+      deadline: new Date(
+        Date.parse(declaration.created_at) + declaredHours * HOUR_MS
+      ).toISOString(),
+      declared: declaration.label.name,
+      declaration_event_id: declaration.id,
+    };
+  }
 
   return {
     deadline: new Date(previous.deadline).toISOString(),
@@ -185,9 +209,13 @@ const run = async () => {
 
     if (DRY_RUN) continue;
 
-    for (const name of stale) {
-      await api(`/repos/${REPO}/issues/${pr.number}/labels/${encodeURIComponent(name)}`, {
-        method: 'DELETE',
+    if (JSON.stringify(previous) !== JSON.stringify(state)) {
+      const path = marker
+        ? `/repos/${REPO}/issues/comments/${marker.id}`
+        : `/repos/${REPO}/issues/${pr.number}/comments`;
+      await api(path, {
+        method: marker ? 'PATCH' : 'POST',
+        body: JSON.stringify({ body: renderComment(state) }),
       });
     }
 
@@ -198,17 +226,13 @@ const run = async () => {
       });
     }
 
-    if (needsLabel) updated += 1;
-
-    if (JSON.stringify(previous) !== JSON.stringify(state)) {
-      const path = marker
-        ? `/repos/${REPO}/issues/comments/${marker.id}`
-        : `/repos/${REPO}/issues/${pr.number}/comments`;
-      await api(path, {
-        method: marker ? 'PATCH' : 'POST',
-        body: JSON.stringify({ body: renderComment(state) }),
+    for (const name of stale) {
+      await api(`/repos/${REPO}/issues/${pr.number}/labels/${encodeURIComponent(name)}`, {
+        method: 'DELETE',
       });
     }
+
+    if (needsLabel) updated += 1;
   }
 
   console.log(DRY_RUN ? '(dry run) 변경하지 않았습니다.' : `라벨 ${updated}건 갱신했습니다.`);

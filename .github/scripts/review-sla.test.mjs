@@ -16,7 +16,7 @@ const allLabels = [
   'review-overdue',
 ];
 
-async function simulate({ labels = ['T-10'], events = [], previous, markerBody, dryRun = false, draft = false, repoLabels = allLabels }) {
+async function simulate({ labels = ['T-10'], events = [], previous, markerBody, markerAuthor = 'github-actions[bot]', dryRun = false, draft = false, repoLabels = allLabels }) {
   const writes = [];
   class Clock extends Date { static now() { return now; } }
   await runInNewContext(source, {
@@ -35,7 +35,7 @@ async function simulate({ labels = ['T-10'], events = [], previous, markerBody, 
           ? [{ number: 1, draft, created_at: new Date(now - 20 * hour).toISOString(), labels: labels.map(name => ({ name })) }]
           : url.includes('/comments?')
             ? markerBody !== undefined || previous
-              ? [{ id: 99, body: markerBody ?? `<!-- review-sla ${JSON.stringify(previous)} -->` }]
+              ? [{ id: 99, user: { login: markerAuthor }, body: markerBody ?? `<!-- review-sla ${JSON.stringify(previous)} -->` }]
               : []
             : events;
       return { ok: true, status: 200, json: async () => data };
@@ -117,4 +117,31 @@ test('missing labels are created with the matching color', async () => {
 test('existing labels are not recreated', async () => {
   const writes = await simulate({ events: [event(1, 'T-10', 2)] });
   assert.equal(writes.filter(w => w.url.endsWith('/repos/team/repo/labels')).length, 0);
+});
+
+test('a marker comment from a non-bot author is ignored', async () => {
+  const previous = { deadline: new Date(now + 90 * hour).toISOString(), tracked: 'T-10', declared: 'T-10', declaration_event_id: 1 };
+  const writes = await simulate({ previous, markerAuthor: 'impostor', events: [event(1, 'T-10', 2)] });
+  const state = stateOf(writes);
+  assert.equal(state.deadline, new Date(now + 8 * hour).toISOString());
+  assert.equal(writes.find(w => w.body?.body).method, 'POST');
+});
+test('a deleted marker is rebuilt from the original declaration event', async () => {
+  const state = stateOf(await simulate({
+    labels: ['T-08'],
+    events: [event(1, 'T-10', 3.5), event(2, 'T-08', 1, 'github-actions[bot]')],
+  }));
+  assert.equal(state.declared, 'T-10');
+  assert.equal(state.deadline, new Date(now + 6.5 * hour).toISOString());
+  assert.equal(state.tracked, 'T-07');
+});
+test('the target label is added before stale labels are removed', async () => {
+  const writes = await simulate({ labels: ['T-12', 'T-04'], events: [event(1, 'T-12', 1), event(2, 'T-04', 1)] });
+  const labelWrites = writes.filter(w => w.url.includes(`/issues/1/labels`));
+  assert.equal(labelWrites[0].method, 'POST');
+  assert.ok(labelWrites.slice(1).every(w => w.method === 'DELETE'));
+});
+test('the marker is saved before any label is changed', async () => {
+  const writes = await simulate({ events: [event(1, 'T-10', 2)] });
+  assert.ok(writes[0].body?.body, '첫 쓰기는 마커 코멘트여야 한다');
 });
