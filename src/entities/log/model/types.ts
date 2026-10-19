@@ -1,10 +1,11 @@
+
 /*
   코드 주석 작성일: 2026/09/27
   작성자: 박민건
   전체적인 기능: entities 안에 있는 log 도메인에 쓸 데이터들의 데이터를 정의하고 있는 파일이다.
 */
 
-import type { AgeType } from './age';
+import type { AgeType } from "./age";
 // 기능: 방문자 기록에 데이터들의 타입을 정의하는 인터페이스이다.
 
 export interface UserVisit {
@@ -150,18 +151,18 @@ export interface VisitStatisticsResponse {
 // 기능: 12월달의 키 값을 하나로 FACILITY_USAGE_MONTH_KEYS라는 객체 안에 묶어 놓는다.
 
 export const FACILITY_USAGE_MONTH_KEYS = [
-  'january',
-  'february',
-  'march',
-  'april',
-  'may',
-  'june',
-  'july',
-  'august',
-  'september',
-  'october',
-  'november',
-  'december',
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
 ] as const;
 //기능:  FACILITY_USAGE_MONTH_KEYS로 묶어놓은 값들을 타입으로 지정한다.
 
