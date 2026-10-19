@@ -76,13 +76,12 @@ export const updateVisitList = async ({
   return response.data;
 };
 
-// 특정 월의 방문 기록을 엑셀 파일로 다운로드
 export const exportVisitListToExcel = async ({
   year,
   month,
-}: ExportVisitListRequest): Promise<string> => { // 응답은 string 타입으로 지정
+}: ExportVisitListRequest): Promise<string> => {
   try {
-    const formattedMonth = String(month).padStart(2, '0'); // 월을 두 자리 숫자로 포맷팅 
+    const formattedMonth = String(month).padStart(2, '0');
 
     const response = await axiosInstance.get<Blob>(
       `/organ/excel/log/${year}-${formattedMonth}`,
@@ -93,7 +92,7 @@ export const exportVisitListToExcel = async ({
 
     downloadBlobFile(
       response.data,
-      `시설이용목록_${year}-${formattedMonth}.xlsx` // 다운로드 파일 이름 지정
+      `시설이용목록_${year}-${formattedMonth}.xlsx`
     );
 
     return '엑셀 파일 다운로드 성공';
@@ -102,16 +101,16 @@ export const exportVisitListToExcel = async ({
 
     let errorMessage = '엑셀 내보내기 중 알 수 없는 오류가 발생했습니다.';
 
-    if (isAxiosError(error) && error.response?.status) { // Axios 에러인 경우 HTTP 상태 코드와 서버 메시지 확인
+    if (isAxiosError(error) && error.response?.status) {
       const status = error.response.status;
       errorMessage = `엑셀 내보내기 실패: ${status} 오류`;
 
-      const preview = await readErrorBodyPreview(error.response.data); // 서버 응답 데이터에서 에러 메시지 미리보기 읽기
+      const preview = await readErrorBodyPreview(error.response.data);
 
       if (preview) {
-        errorMessage += ` (서버 메시지: ${preview})`; // 서버에서 제공하는 에러 메시지가 있는 경우 추가
+        errorMessage += ` (서버 메시지: ${preview})`;
       }
-    } else if (error instanceof Error && error.message) { // 일반적인 Error인 경우 에러 메시지 사용
+    } else if (error instanceof Error && error.message) {
       errorMessage = `엑셀 내보내기 실패: ${error.message}`;
     }
 
@@ -119,11 +118,10 @@ export const exportVisitListToExcel = async ({
   }
 };
 
-// 방문 통계 조회
 export const fetchVisitStatistics = async ({
   year,
   month,
-}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => { // 응답은 VisitStatisticsResponse 타입으로 지정
+}: VisitStatisticsRequest): Promise<VisitStatisticsResponse> => {
   const response = await axiosInstance.get('/organ/statistics/visits', {
     params: {
       year,
@@ -134,10 +132,9 @@ export const fetchVisitStatistics = async ({
   return response.data;
 };
 
-// 시설 이용 통계 조회
 export const fetchFacilityUsage = async ({
   year,
-}: FacilityUsageRequest): Promise<FacilityUsageResponse> => { // 응답은 FacilityUsageResponse 타입으로 지정
+}: FacilityUsageRequest): Promise<FacilityUsageResponse> => {
   const response = await axiosInstance.get('/organ/usage', {
     params: {
       year,
