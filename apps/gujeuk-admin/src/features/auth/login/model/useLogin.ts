@@ -7,22 +7,22 @@ import {
 } from '@entities/auth';
 
 export const useLogin = () => {
-  const setAuth = useAuthStore((state) => state.setAuth); // 토큰 저장 함수 가져오기
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   return useMutation<
-    OrganLoginResponse, // 로그인 요청 성공 시 반환되는 데이터 타입
-    AxiosError<{ message?: string }>,  // 로그인 요청 실패 시 발생하는 에러 타입
-    { organName: string; password: string } // 로그인 요청에 필요한 데이터 타입
+    OrganLoginResponse,
+    AxiosError<{ message?: string }>,
+    { organName: string; password: string }
   >({
-    mutationFn: ({ organName, password }) =>  // 로그인 요청 함수
-      enterPassword({ // 로그인 요청에 필요한 데이터 전달
+    mutationFn: ({ organName, password }) =>
+      enterPassword({
         organName,
         password,
-        client: 'ADMIN_VIEW', // 로그인 요청 화면 구분 (관리자 페이지)
-      }), 
+        client: 'ADMIN_VIEW',
+      }),
 
-    onSuccess: ({ accessToken, refreshToken }) => { // 로그인 성공 시 토큰 저장
-      if (accessToken && refreshToken) { // accessToken과 refreshToken이 존재하면 상태 업데이트
+    onSuccess: ({ accessToken, refreshToken }) => {
+      if (accessToken && refreshToken) {
         setAuth(accessToken, refreshToken);
       }
     },

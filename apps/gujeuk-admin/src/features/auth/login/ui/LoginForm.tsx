@@ -18,12 +18,12 @@ export const LoginForm = () => {
     setOrganNameError('');
     setPasswordError('');
 
-    if (organName.trim() === '') { // 기관 이름이 비어있으면 오류 메시지 설정
+    if (organName.trim() === '') {
       setOrganNameError('기관 이름을 입력해주세요.');
       return;
     }
 
-    if (currentPW.trim() === '') { // 비밀번호가 비어있으면 오류 메시지 설정
+    if (currentPW.trim() === '') {
       setPasswordError('비밀번호를 입력해주세요.');
       return;
     }
@@ -32,27 +32,27 @@ export const LoginForm = () => {
       { organName, password: currentPW },
       {
         onSuccess: () => {
-          navigate('/log', { replace: true }); // 로그인 성공 시 로그 기록 페이지로 이동
+          navigate('/log', { replace: true });
         },
         onError: (error) => {
           const message =
-            error.response?.data?.message || error.message || '로그인 실패'; // 오류 메시지 설정
-          if (message.includes('기관') || message.includes('organName')) { // 기관 이름 관련 오류 메시지 설정
+            error.response?.data?.message || error.message || '로그인 실패';
+          if (message.includes('기관') || message.includes('organName')) {
             setOrganNameError(message);
           } else if (
             message.includes('비밀번호') ||
             message.includes('password')
           ) {
-            setPasswordError(message); // 비밀번호 오류 메시지 설정
+            setPasswordError(message);
           } else {
-            setPasswordError(message); // 기타 오류 메시지 설정
-          } 
+            setPasswordError(message);
+          }
         },
       }
     );
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => { // 엔터 키 입력 시 로그인 처리
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleConfirm();
     }
