@@ -41,6 +41,15 @@ export interface UserVisitListResponse {
   empty: boolean;
 }
 
+export interface MonthVisitCount {
+  month: number;
+  count: number;
+}
+
+export interface MonthVisitCountResponse {
+  months: MonthVisitCount[];
+}
+
 export interface MonthVisitListResponse {
   totalCount: number;
   slice: {
