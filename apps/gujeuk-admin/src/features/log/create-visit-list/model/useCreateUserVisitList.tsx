@@ -40,6 +40,8 @@ export const useCreateUserVisit = ({
     mutationFn: createUserVisit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visitList'] });
+      queryClient.invalidateQueries({ queryKey: ['monthVisitList'] });
+      queryClient.invalidateQueries({ queryKey: ['monthVisitDetailList'] });
 
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,
