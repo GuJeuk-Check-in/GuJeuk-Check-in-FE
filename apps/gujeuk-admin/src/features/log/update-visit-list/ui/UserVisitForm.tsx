@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 관리자가 특정 방문자의 정보(이름, 연락처, 연령대, 방문 목적, 인원수, 일시 등)를 입력 폼을 통해 수정하고, 서버에 저장할 수 있도록 지원하는 데이터 수정 폼 컴포넌트이다.
+*/
+
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -29,6 +35,7 @@ export const UserVisitForm = ({
   onCancel,
   onSuccess,
   modal,
+  //기능: 서버에서 받아온 기존 방문자 데이터(visit)를 화면의 입력 폼과 동기화하기 위해 초기값으로 설정하고 상태(formData)로 관리한다.
 }: UserVisitFormProps) => {
   const [formData, setFormData] = useState({
     id: visit.id || 0,
@@ -62,6 +69,7 @@ export const UserVisitForm = ({
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
+  //기능: 사용자가 화면에서 만약 성인을 선택하면, 서버가 이해할 수 있는  ADULT로 매핑하여 age 상태에 반영한다.
 
   const handleAgeChange = (ageLabel: string) => {
     const age = getAgeTypeByLabel(ageLabel);
@@ -69,6 +77,7 @@ export const UserVisitForm = ({
 
     setFormData((prev) => ({ ...prev, age }));
   };
+  //기능: 저장 버튼을 눌렀을 때 이름, 연락처, 목적, 방문일 등의 필수값을 검증하고, 이상이 없으면 서버에 수정을 요청한 뒤 결과(성공/실패)에 따라 알맞은 알림 모달을 출력한다.
 
   const handleSave = () => {
     if (

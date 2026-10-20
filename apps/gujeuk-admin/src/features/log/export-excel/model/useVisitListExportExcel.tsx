@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 엑셀을 다운로드하는 부분이며, 작업의 성공과 실패에 따라서 모달이 달라진다.
+*/
+
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import { exportVisitListToExcel } from '@entities/log';
 import { UseModalReturn } from '@shared/hooks/useModal';
@@ -8,12 +14,12 @@ type ExportExcelVariables = {
   month: number;
 };
 
-// 엑셀 내보내기 훅
+// 기능: 작업의 결과가 성공이므로 exportVisitListToExcel을 이용해 엑셀을 다운로드한다.
 export const useVisitListExportExcel = (
-  modal: UseModalReturn
-): UseMutationResult<string, Error, ExportExcelVariables> => { // useMutation을 사용하여 엑셀 내보내기 기능을 구현
-  return useMutation<string, Error, ExportExcelVariables>({ // 반환 타입, 에러 타입, 변수 타입을 지정
-    mutationFn: exportVisitListToExcel, // exportVisitListToExcel 함수를 호출하여 엑셀 내보내기 요청
+  modal: UseModalReturn,
+): UseMutationResult<string, Error, ExportExcelVariables> => {
+  return useMutation<string, Error, ExportExcelVariables>({
+    mutationFn: exportVisitListToExcel,
     onSuccess: () => {
       modal.openModal({
         icon: <FaCheckCircle size={48} color="#0F50A0" />,
@@ -28,6 +34,7 @@ export const useVisitListExportExcel = (
         ],
       });
     },
+    // 기능: 작업 실패 시 에러와 실패 안내 모달을 표시한다.
     onError: (error) => {
       console.error('엑셀 내보내기 실패:', error);
 

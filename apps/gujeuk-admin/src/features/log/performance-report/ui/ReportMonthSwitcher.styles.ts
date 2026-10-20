@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 다음 달로 혹은 이전 달로 바꾸는 버튼의 스타일을 반응형으로 디자인 구현을 하였다.
+*/
+
 import styled from '@emotion/styled';
 
 export const MonthSwitcher = styled.div`

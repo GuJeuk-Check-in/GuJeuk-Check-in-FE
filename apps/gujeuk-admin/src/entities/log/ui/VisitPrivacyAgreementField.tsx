@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 방문자와 관련한 체크박스 컴포넌트를 만들었다.
+*/
+
 import styled from '@emotion/styled';
 import type { ChangeEventHandler } from 'react';
 
@@ -12,6 +18,7 @@ interface VisitPrivacyAgreementFieldProps {
   readonly text?: string;
   readonly id?: string;
 }
+//기능: 방문객 개인정보 수집 및 이용 동의를 받는 체크박스 컴포넌트를 만들어 논 것이다.
 
 export const VisitPrivacyAgreementField = ({
   checked,
@@ -44,6 +51,7 @@ export const VisitPrivacyAgreementField = ({
     </FieldGroup>
   );
 };
+//기능: emotion css input 필드를 꾸민다.
 
 const FieldGroup = styled.div`
   display: flex;

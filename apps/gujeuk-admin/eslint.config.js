@@ -1,10 +1,10 @@
-import js from '@eslint/js'
-import query from '@tanstack/eslint-plugin-query'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
-import tseslint from 'typescript-eslint'
+import js from '@eslint/js';
+import query from '@tanstack/eslint-plugin-query';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig([
   globalIgnores(['dist', 'coverage', 'public/mockServiceWorker.js']),
@@ -53,6 +53,7 @@ export default defineConfig([
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
         sourceType: 'module',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
@@ -62,4 +63,4 @@ export default defineConfig([
       ],
     },
   },
-])
+]);

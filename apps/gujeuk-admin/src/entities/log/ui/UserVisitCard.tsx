@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 특정 유저의 방문 정보를 요약해서 카드 컴포넌트로 만드는 기능이다.
+*/
+
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
@@ -10,6 +16,7 @@ interface UserVisitCardProps {
   date: string;
   onDelete?: () => void;
 }
+// 기능: 특정 유저의 방문 정보를 요약해서 보여주는 카드 컴포넌트
 
 export const UserVisitCard = ({
   id,
@@ -53,6 +60,7 @@ export const UserVisitCard = ({
     </Container>
   );
 };
+//기능: emotion css를 활용하여 꾸미고 반응형 웹사이트를 위해 media 쿼리를 쓴다.
 
 const Container = styled.div`
   position: relative;

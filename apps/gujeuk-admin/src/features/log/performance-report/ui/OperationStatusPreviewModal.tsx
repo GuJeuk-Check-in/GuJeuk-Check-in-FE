@@ -1,3 +1,9 @@
+/*
+  코드 주석 작성일: 2026/10/5
+  작성자: 박민건
+  이 파일의 전체적인 기능: 사용자가 모달을 열면 월별 청소년시설 운영 및 가동률 데이터를 테이블 형태로 미리 보여주고, 브라우저 인쇄 기능을 활용해 동적으로 지정된 파일명으로 PDF 저장 및 인쇄를 할 수 있도록 지원하는 흐름이다.
+*/
+
 import { useEffect } from 'react';
 import type { FacilityUsageResponse, VisitStatisticsResponse } from '@entities/log';
 import {
@@ -39,6 +45,7 @@ export type OperationStatusPreviewData = {
   readonly performance: VisitStatisticsResponse;
   readonly facilityUsage: FacilityUsageResponse;
 };
+//기능: 모달 표시 상태, 보고서 데이터, 월 선택 상태와 사용자 동작 처리 함수를 전달받는다.
 
 type OperationStatusPreviewModalProps = {
   readonly isOpen: boolean;
@@ -48,6 +55,7 @@ type OperationStatusPreviewModalProps = {
   readonly onMonthChange: (month: number) => void;
   readonly onClose: () => void;
 };
+//기능: 선택한 월의 운영 현황을 미리 보고, 브라우저 인쇄 화면에서 인쇄하거나 PDF로 저장한다.
 
 export const OperationStatusPreviewModal = ({
   isOpen,
@@ -75,10 +83,12 @@ export const OperationStatusPreviewModal = ({
     return null;
   }
 
+  //기능: 차례대로 이용자수, 방문 통계, 시설 이용 가동률을 표 데이로 변환시킨다.
   const visitorCountRow = createVisitorCountRow(data.performance);
   const usageRateRow = createUsageRateRow(data.performance);
   const facilityUsageRows = createFacilityUsageRows(data.facilityUsage);
   const reportTitle = `${data.performance.year}년 ${data.performance.month}월 청소년시설 운영 현황`;
+  //기능: 인쇄 호출이 반환되면 문서 제목을 원래 값으로 복원하도록 예약한다.
 
   const handlePrint = () => {
     const previousTitle = document.title;
