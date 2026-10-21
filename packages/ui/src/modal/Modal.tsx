@@ -1,5 +1,6 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
+import { useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import { type ModalConfig } from './types';
 
 interface ModalProps {
@@ -9,6 +10,32 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const subtitleId = useId();
+  const hasConfig = config !== null;
+
+  useEffect(() => {
+    if (!isOpen || !hasConfig) return;
+    const previousFocus = document.activeElement;
+    const content = contentRef.current;
+    (content?.querySelector<HTMLButtonElement>('button') ?? content)?.focus();
+
+    return () => {
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus();
+      }
+    };
+  }, [isOpen, hasConfig]);
+
+  useEffect(() => {
+    if (!isOpen || !config) return;
+    const content = contentRef.current;
+    if (content && !content.contains(document.activeElement)) {
+      (content.querySelector<HTMLButtonElement>('button') ?? content).focus();
+    }
+  }, [isOpen, config]);
+
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
@@ -19,21 +46,49 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
     }
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      onClose?.();
+    }
+    if (event.key !== 'Tab') return;
+    const buttons = contentRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
+    const first = buttons?.[0];
+    const last = buttons?.[buttons.length - 1];
+    if (!first || !last) {
+      event.preventDefault();
+    } else if (event.shiftKey && (document.activeElement === first || document.activeElement === contentRef.current)) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <Overlay onClick={onClose}>
       <ModalContent
+        ref={contentRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={subtitleId}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
         $theme={theme}
         data-theme={theme}
       >
         {icon && <IconWrapper>{icon}</IconWrapper>}
 
-        <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        <Title id={titleId}>{title}</Title>
+        <Subtitle id={subtitleId}>{subtitle}</Subtitle>
 
         <ButtonContainer>
           {buttons.map((btn, idx) => (
             <Button
+              type="button"
               key={idx}
               onClick={() => handleButtonClick(btn.onClick)}
               $variant={btn.variant || 'secondary'}
@@ -67,6 +122,18 @@ const ModalContent = styled.div<{ $theme?: string }>`
   text-align: center;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
   animation: slideUp 0.3s ease-out;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+
+  @media (max-width: 32rem) {
+    box-sizing: border-box;
+    width: calc(100% - 2rem);
+    padding: 1.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 
   border: ${(props) => {
     switch (props.$theme) {
@@ -118,6 +185,8 @@ const Title = styled.h2`
   color: #1f2937;
   margin-bottom: 0.5rem;
   white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 `;
 
 const Subtitle = styled.p`

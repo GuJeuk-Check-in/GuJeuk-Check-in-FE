@@ -2,22 +2,15 @@ import { useState } from 'react';
 import type { ModalConfig, UseModalReturn } from './types';
 
 export const useModal = (): UseModalReturn => {
-  const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<ModalConfig | null>(null);
 
   const openModal = (modalConfig: ModalConfig) => {
     setConfig(modalConfig);
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 0);
   };
 
   const closeModal = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      setConfig(null);
-    }, 300);
+    setConfig(null);
   };
 
-  return { isOpen, config, openModal, closeModal };
+  return { isOpen: config !== null, config, openModal, closeModal };
 };
