@@ -1,8 +1,11 @@
-import styled from '@emotion/styled';
+import {
+  AddTileContainer as Container,
+  AddTileInput as AddInput,
+  AddTileActions as IconSection,
+  useInlineAdd,
+} from '@center/ui/card';
 import { MdAdd, MdClose, MdCheck } from 'react-icons/md';
-import { useState } from 'react';
 import { useCreatePurpose } from '../model/useCreatePurpose';
-import React from 'react';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
 import { Modal } from '../../../../shared/ui/modal/Modal';
@@ -11,12 +14,13 @@ export const PurposeAddBox = () => {
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { isOpen, config, openModal, closeModal } = useModal();
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [newLabel, setNewLabel] = useState('');
   const isDisabled = isCreating;
+  const add = useInlineAdd({
+    onSubmit: (label) => handleAdd(label),
+    disabled: isDisabled,
+  });
 
-  const handleAdd = () => {
-    const trimmedLabel = newLabel.trim();
+  const handleAdd = (trimmedLabel: string) => {
     if (!trimmedLabel) {
       openModal({
         icon: <FaExclamationTriangle color="#D88282" />,
@@ -45,8 +49,7 @@ export const PurposeAddBox = () => {
                 variant: 'secondary',
                 onClick: () => {
                   closeModal();
-                  setNewLabel('');
-                  setIsAdding(false);
+                  add.cancel();
                 },
               },
             ],
@@ -68,28 +71,11 @@ export const PurposeAddBox = () => {
     );
   };
 
-  const handleCancel = () => {
-    if (isDisabled) return;
-    setNewLabel('');
-    setIsAdding(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
-      e.preventDefault();
-      handleAdd();
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewLabel(e.target.value);
-  };
-
-  if (!isAdding) {
+  if (!add.isAdding) {
     return (
       <Container
         $isAddButton={true}
-        onClick={isDisabled ? undefined : () => setIsAdding(true)}
+        onClick={isDisabled ? undefined : add.start}
         $isDisabled={isDisabled}
       >
         <MdAdd size={48} color={isDisabled ? '#ccc' : '#3D72B3'} />
@@ -102,11 +88,7 @@ export const PurposeAddBox = () => {
       <Container $isDisabled={isDisabled}>
         <AddInput
           type="text"
-          value={newLabel}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={isDisabled}
-          autoFocus
+          {...add.inputProps}
           placeholder="목적을 입력하세요"
         />
         <IconSection>
@@ -114,13 +96,13 @@ export const PurposeAddBox = () => {
             size={26}
             color={isDisabled ? '#ccc' : '#007bff'}
             style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-            onClick={handleAdd}
+            onClick={add.submit}
           />
           <MdClose
             size={26}
             color={isDisabled ? '#ccc' : '#dc3545'}
             style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-            onClick={isDisabled ? undefined : handleCancel}
+            onClick={isDisabled ? undefined : add.cancel}
           />
         </IconSection>
       </Container>
@@ -131,60 +113,3 @@ export const PurposeAddBox = () => {
     </>
   );
 };
-
-interface ContainerProps {
-  $isAddButton?: boolean;
-  $isDisabled?: boolean;
-}
-
-const Container = styled.div<ContainerProps>`
-  width: 100%;
-  height: 100%;
-  border-radius: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: ${({ $isAddButton }) =>
-    $isAddButton ? 'center' : 'space-between'};
-  padding: ${({ $isAddButton }) => ($isAddButton ? '0' : '0 1rem')};
-  background-color: #ffffff;
-  border: ${({ $isAddButton }) =>
-    $isAddButton ? '0.125rem dashed #6f95c4' : '0.0625rem solid #6f95c4'};
-  box-sizing: border-box;
-  margin: 0 auto 0.9375rem auto;
-  transition: 0.2s ease;
-  opacity: ${(props) => (props.$isDisabled ? 0.6 : 1)};
-  cursor: ${(props) =>
-    props.$isDisabled
-      ? 'not-allowed'
-      : props.$isAddButton
-      ? 'pointer'
-      : 'default'};
-  pointer-events: ${(props) =>
-    props.$isDisabled && !props.$isAddButton && 'none'};
-
-  &:hover {
-    background-color: ${({ $isAddButton, $isDisabled }) =>
-      $isAddButton && !$isDisabled ? '#f9fbff' : '#ffffff'};
-  }
-`;
-
-const AddInput = styled.input`
-  font-size: 1.375rem;
-  border: none;
-  border-bottom: 0.125rem solid #007bff;
-  outline: none;
-  padding: 0.25rem 0;
-  width: 70%;
-  color: #2e2e32;
-  font-weight: 500;
-
-  &:disabled {
-    cursor: progress;
-    background-color: #f0f0f0;
-  }
-`;
-
-const IconSection = styled.div`
-  display: flex;
-  gap: 0.9375rem;
-`;

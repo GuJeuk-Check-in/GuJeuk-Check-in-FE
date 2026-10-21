@@ -4,8 +4,9 @@ import {
   TileLabel as Label,
   TileEditInput as EditInput,
   TileStyledEditIcon as StyledEditIcon,
+  stopTileDrag,
+  useInlineEdit,
 } from '@center/ui/card';
-import React, { useState } from 'react';
 import { IoClose } from 'react-icons/io5';
 
 interface Purpose {
@@ -28,45 +29,11 @@ export const PurposeCard = ({
   onUpdate,
   isDeleting,
 }: PurposeProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [newLabel, setNewLabel] = useState(purpose.purpose);
-  const [isEnterHandled, setIsEnterHandled] = useState(false);
-
-  const preventDrag = (
-    e: React.PointerEvent | React.MouseEvent | React.TouchEvent
-  ) => {
-    e.stopPropagation();
-  };
-
-  const handleUpdate = () => {
-    const trimmedLabel = newLabel.trim();
-
-    if (!trimmedLabel) {
-      handleCancel();
-      return;
-    }
-
-    if (trimmedLabel === purpose.purpose) {
-      setIsEditing(false);
-      return;
-    }
-
-    onUpdate({ id: purpose.id, newPurpose: trimmedLabel });
-    setIsEditing(false);
-  };
-
-  const handleBlur = () => {
-    if (isEnterHandled) {
-      setTimeout(() => setIsEnterHandled(false), 0);
-      return;
-    }
-    handleUpdate();
-  };
-
-  const handleCancel = () => {
-    setNewLabel(purpose.purpose);
-    setIsEditing(false);
-  };
+  const edit = useInlineEdit({
+    value: purpose.purpose,
+    onSubmit: (newPurpose) => onUpdate({ id: purpose.id, newPurpose }),
+    disabled: isDeleting,
+  });
 
   return (
     <Container isDisabled={isDeleting}>
@@ -85,41 +52,19 @@ export const PurposeCard = ({
         )}
       </DeleteIcon>
 
-      {isEditing ? (
+      {edit.isEditing ? (
         <EditInput
           type="text"
-          value={newLabel}
-          onChange={(e) => setNewLabel(e.target.value)}
-          onBlur={handleBlur}
-          onPointerDown={preventDrag}
-          onMouseDown={preventDrag}
-          onKeyDown={(e) => {
-            if (isDeleting) return;
-            e.stopPropagation();
-
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              setIsEnterHandled(true);
-              handleUpdate();
-            }
-            if (e.key === 'Escape') handleCancel();
-          }}
-          autoFocus
-          disabled={isDeleting}
-          onClick={(e) => e.stopPropagation()}
+          {...edit.inputProps}
         />
       ) : (
         <Label>
           {index}. {purpose.purpose}
           <StyledEditIcon
             size={18}
-            onClick={() => {
-              if (!isDeleting) {
-                setIsEditing(true);
-              }
-            }}
-            onPointerDown={preventDrag}
-            onMouseDown={preventDrag}
+            onClick={edit.start}
+            onPointerDown={stopTileDrag}
+            onMouseDown={stopTileDrag}
             isDeleting={isDeleting}
           />
         </Label>
