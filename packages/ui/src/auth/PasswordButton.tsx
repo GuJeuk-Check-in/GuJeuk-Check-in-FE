@@ -7,19 +7,18 @@ interface PasswordButtonProps {
   disable?: boolean;
 }
 
-export const PasswordButton = ({ content, onClick }: PasswordButtonProps) => {
+export const PasswordButton = ({ content, onClick, disable = false }: PasswordButtonProps) => {
   return (
-    <Container
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(e) => e.key === 'Enter' && onClick?.()}
-    >
+    <Container type="button" onClick={onClick} disabled={disable}>
       <Content>{content}</Content>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled.button`
+  padding: 0;
+  font: inherit;
+  box-sizing: inherit;
   width: 10.75rem;
   height: 4.1875rem;
   border-radius: 3.125rem;

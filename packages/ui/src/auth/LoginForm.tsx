@@ -21,6 +21,8 @@ export const LoginForm = ({ onLogin: login, isPending = false, onSuccess, onChan
   const [passwordError, setPasswordError] = useState('');
 
   const handleConfirm = () => {
+    if (isPending) return;
+
     const errors = validateLogin({ organName, password: currentPW });
     setOrganNameError(errors.organName ?? '');
     setPasswordError(errors.password ?? '');
@@ -80,6 +82,7 @@ export const LoginForm = ({ onLogin: login, isPending = false, onSuccess, onChan
           <PasswordButton
             content={isPending ? '확인 중...' : '확인'}
             onClick={handleConfirm}
+            disable={isPending}
           />
         </ButtonWrapper>
         <LinkButton onClick={onChangePassword}>

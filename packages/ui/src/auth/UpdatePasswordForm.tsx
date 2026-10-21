@@ -28,6 +28,8 @@ export const UpdatePasswordForm = ({ onUpdatePassword: updatePassword, isPending
   const [formErrors, setFormErrors] = useState<PasswordErrors>({});
 
   const handleConfirm = () => {
+    if (isPending) return;
+
     const errors = validatePassword({ oldPassword: currentPW, newPassword: newPW, confirmNewPassword: confirmPW });
 
     setFormErrors(errors);
