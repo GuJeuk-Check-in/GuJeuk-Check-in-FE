@@ -2,7 +2,7 @@ import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
 
-const slideDown = keyframes`
+export const dropdownSlideDown = keyframes`
 from {
   opacity: 0;
   transform: translateY(-10px);
@@ -70,7 +70,7 @@ export const DropdownList = styled.div`
   border-radius: ${({ theme }) => adminTokens(theme).components.fieldRadius};
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
   z-index: 100;
-  animation: ${slideDown} 0.2s ease-out;
+  animation: ${dropdownSlideDown} 0.2s ease-out;
   box-sizing: border-box;
 
   &::-webkit-scrollbar {
