@@ -6,10 +6,11 @@ export interface AdminShellProps {
   sidebar: ReactNode;
   children: ReactNode;
   background?: ReactNode;
+  className?: string;
 }
 
-export const AdminShell = ({ sidebar, children, background }: AdminShellProps) => (
-  <Container>
+export const AdminShell = ({ sidebar, children, background, className }: AdminShellProps) => (
+  <Container className={className}>
     {background}
     {sidebar}
     <ContentWrapper>{children}</ContentWrapper>
