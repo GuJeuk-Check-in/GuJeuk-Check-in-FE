@@ -1,6 +1,11 @@
+import {
+  TileContainer as Container,
+  TileDeleteIcon as DeleteIcon,
+  TileLabel as Label,
+  TileEditInput as EditInput,
+  TileStyledEditIcon as StyledEditIcon,
+} from '@center/ui/card';
 import React, { useState } from 'react';
-import styled from '@emotion/styled';
-import { MdEdit } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
 
 interface Purpose {
@@ -122,72 +127,3 @@ export const PurposeCard = ({
     </Container>
   );
 };
-
-interface ContainerProps {
-  isDisabled: boolean;
-}
-
-const Container = styled.div<ContainerProps>`
-  width: 100%;
-  height: 100%;
-  background-color: #ffffff;
-  border-radius: 1.25rem;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #3a3a3a;
-  opacity: ${(props) => (props.isDisabled ? 0.7 : 1)};
-  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.08);
-`;
-
-const DeleteIcon = styled.button<{ isDeleting: boolean }>`
-  background: none;
-  border: none;
-  padding: 0;
-  outline: none;
-  position: absolute;
-  top: 0.625rem;
-  right: 0.75rem;
-  color: ${(props) => (props.isDeleting ? '#aaaaaa' : '#dc7676')};
-  cursor: ${(props) => (props.isDeleting ? 'not-allowed' : 'pointer')};
-  transition: 0.2s ease;
-  z-index: 10;
-
-  &:hover {
-    transform: ${(props) => (props.isDeleting ? 'none' : 'scale(1.1)')};
-  }
-`;
-
-const Label = styled.span`
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  gap: 0.375rem;
-`;
-
-const EditInput = styled.input`
-  font-size: 1.5rem;
-  font-weight: 500;
-  text-align: center;
-  border: none;
-  border-bottom: 0.125rem solid #1e3a8a;
-  outline: none;
-  width: 80%;
-  color: #2e2e32;
-  padding: 0;
-`;
-
-const StyledEditIcon = styled(MdEdit)<{ isDeleting: boolean }>`
-  cursor: ${(props) => (props.isDeleting ? 'not-allowed' : 'pointer')};
-  color: ${(props) => (props.isDeleting ? '#666' : '#666')};
-  transition: color 0.2s;
-  position: relative;
-  z-index: 10;
-
-  &:hover {
-    color: ${(props) => (props.isDeleting ? '#666' : '#1e3a8a')};
-  }
-`;

@@ -1,4 +1,5 @@
-import { Global, css } from '@emotion/react';
+import { Global, ThemeProvider, css } from '@emotion/react';
+import { blueTheme } from '@center/tokens';
 import { Router } from '@app/router';
 import { useTokenRefresher } from './providers/useTokenRefresher';
 
@@ -6,7 +7,7 @@ const App = () => {
   useTokenRefresher();
 
   return (
-    <>
+    <ThemeProvider theme={{ admin: blueTheme }}>
       <Global
         styles={css`
           html,
@@ -18,7 +19,7 @@ const App = () => {
         `}
       />
       <Router />
-    </>
+    </ThemeProvider>
   );
 };
 
