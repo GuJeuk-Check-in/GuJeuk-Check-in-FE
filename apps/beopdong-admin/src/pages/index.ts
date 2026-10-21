@@ -1,3 +1,3 @@
-export * from './AdminHome';
-export * from './auth/OrganChange';
-export * from './auth/OrganLogin';
+export { default as AdminHome } from './AdminHome';
+export { default as OrganChange } from './auth/OrganChange';
+export { default as OrganLogin } from './auth/OrganLogin';

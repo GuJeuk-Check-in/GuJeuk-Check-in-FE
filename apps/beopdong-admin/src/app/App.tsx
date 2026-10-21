@@ -1,11 +1,13 @@
-import { Router } from './router/Router';
 import { ThemeProvider } from '@emotion/react';
 import { orangeTheme } from '@center/tokens';
+import { Router } from '@app/router';
 
-export const App = () => {
+const App = () => {
   return (
     <ThemeProvider theme={{ admin: orangeTheme }}>
       <Router />
     </ThemeProvider>
   );
 };
+
+export default App;

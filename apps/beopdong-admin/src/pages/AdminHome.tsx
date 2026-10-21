@@ -1,50 +1,41 @@
 import styled from '@emotion/styled';
+import { adminTokens } from '@center/tokens';
 
-export const AdminHome = () => {
+const AdminHome = ({ title }: { readonly title: string }) => {
   return (
     <Container>
-      <Panel aria-labelledby="admin-home-title">
-        <BrandLabel>법동</BrandLabel>
-        <h1 id="admin-home-title">관리자 기능 준비 중</h1>
-        <ReadyText>로그인 이후 화면은 기능 확정 후 연결합니다.</ReadyText>
+      <Title id="admin-page-title" tabIndex={-1}>{title}</Title>
+      <Panel aria-label={`${title} 준비 상태`}>
+        <ReadyText>화면을 준비하고 있어요.</ReadyText>
       </Panel>
     </Container>
   );
 };
 
-const Container = styled.main`
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  background: #fffaf2;
+export default AdminHome;
+
+const Container = styled.section`
+  width: 100%;
+  min-width: 0;
 `;
 
-const Panel = styled.section`
-  width: min(100%, 28rem);
-  border: 1px solid #ffddb2;
-  border-radius: 0.5rem;
-  background: #ffffff;
-  padding: 2rem;
-  box-shadow: 0 1rem 2.5rem rgba(135, 73, 0, 0.08);
-
-  h1 {
-    margin: 0;
-    font-size: 1.75rem;
-    line-height: 1.3;
-  }
+const Title = styled.h1`
+  margin: 0 0 2rem;
+  font-size: 2rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 `;
 
-const BrandLabel = styled.p`
-  margin: 0 0 0.75rem;
-  color: #FF9000;
-  font-size: 1rem;
-  font-weight: 700;
+const Panel = styled.div`
+  width: 100%;
+  border-radius: ${({ theme }) => adminTokens(theme).components.fieldRadius};
+  background: ${({ theme }) => adminTokens(theme).colors.white};
+  padding: 2rem;
 `;
 
 const ReadyText = styled.p`
-  margin: 1rem 0 0;
-  color: #667085;
-  font-size: 1rem;
+  margin: 0;
+  color: ${({ theme }) => adminTokens(theme).colors.secondaryText};
+  font-size: 1.25rem;
   line-height: 1.6;
 `;
