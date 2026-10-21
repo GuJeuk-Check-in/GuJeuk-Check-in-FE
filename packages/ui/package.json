@@ -5,7 +5,12 @@
   "type": "module",
   "exports": {
     "./auth": "./src/auth/index.ts",
-    "./modal": "./src/modal/index.ts"
+    "./modal": "./src/modal/index.ts",
+    "./button": "./src/button/index.ts",
+    "./form": "./src/form/index.ts",
+    "./search": "./src/search/index.ts",
+    "./card": "./src/card/index.ts",
+    "./layout": "./src/layout/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
