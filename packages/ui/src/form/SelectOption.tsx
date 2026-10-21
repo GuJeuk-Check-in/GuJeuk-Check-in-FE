@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
@@ -11,6 +11,9 @@ type SelectOptionProps = {
   label: string;
   options: readonly string[];
   icon?: ReactNode;
+  placeholder?: string;
+  disabled?: boolean;
+  legacy?: boolean;
 } & ({
   multiple?: false;
   value: string;
@@ -22,13 +25,18 @@ type SelectOptionProps = {
 });
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { label, options, icon } = props;
+  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false } = props;
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const selected = props.multiple ? props.value : [props.value];
 
+  useEffect(() => {
+    if (disabled) setOpen(false);
+  }, [disabled]);
+
   const handleSelect = (option: string) => {
+    if (disabled) return;
     if (props.multiple) {
       props.onChange(selected.includes(option)
         ? selected.filter((value) => value !== option)
@@ -41,7 +49,7 @@ export const SelectOption = (props: SelectOptionProps) => {
   };
 
   return (
-    <DropdownContainer
+    <Container
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}
@@ -52,39 +60,53 @@ export const SelectOption = (props: SelectOptionProps) => {
         }
       }}
     >
-      <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>
+      {label && <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>}
       <Trigger
+        $legacy={legacy} disabled={disabled}
         type="button" id={id} ref={trigger}
-        aria-labelledby={`${id}-label ${id}-value`}
+        aria-labelledby={label ? `${id}-label ${id}-value` : `${id}-value`}
         aria-expanded={open} aria-controls={open ? `${id}-options` : undefined}
         onClick={() => setOpen((value) => !value)}
       >
         {icon && <Icon aria-hidden="true">{icon}</Icon>}
-        <Value id={`${id}-value`}>{selected.filter(Boolean).join(' / ') || `${label} 선택`}</Value>
+        <Value id={`${id}-value`}>{selected.filter(Boolean).join(' / ') || placeholder}</Value>
         <DropdownArrowIcon aria-hidden="true">
           {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
         </DropdownArrowIcon>
       </Trigger>
-      {open && (
-        <Options id={`${id}-options`} role="group" aria-labelledby={`${id}-label`}>
+      {open && !disabled && (
+        <Options $legacy={legacy} id={`${id}-options`} role="group" aria-labelledby={label ? `${id}-label` : `${id}-value`}>
           {options.map((option) => (
-            <Option key={option} type="button" aria-pressed={selected.includes(option)} onClick={() => handleSelect(option)}>
+            <Option $legacy={legacy} key={option} type="button" aria-pressed={selected.includes(option)} onClick={() => handleSelect(option)}>
               <SelectionMark aria-hidden="true" $selected={selected.includes(option)} />
               {option}
             </Option>
           ))}
         </Options>
       )}
-    </DropdownContainer>
+    </Container>
   );
 };
 
-const Trigger = styled(DropdownHeader.withComponent('button'))`
+const Container = styled(DropdownContainer)`
+  width: 100%;
+`;
+
+const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean }>`
   gap: 0.75rem;
   min-height: calc(${({ theme }) => adminTokens(theme).components.fieldHeight} + 0.125rem);
   height: auto;
   padding-block: 0.75rem;
   font-family: inherit;
+  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
+
+  ${({ $legacy }) => $legacy && `
+    box-sizing: content-box;
+    width: calc(100% - 2rem);
+    height: 2.5rem;
+    min-height: 0;
+    padding: 0.5rem 0.9375rem;
+  `}
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
@@ -104,7 +126,7 @@ const Value = styled(DropdownValue)`
   overflow-wrap: anywhere;
 `;
 
-const Options = styled(DropdownList)`
+const Options = styled(DropdownList)<{ $legacy: boolean }>`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
@@ -116,12 +138,17 @@ const Options = styled(DropdownList)`
   border-radius: 0;
   background: ${({ theme }) => adminTokens(theme).colors.white};
   box-shadow: none;
+  ${({ $legacy }) => $legacy && `
+    top: calc(3.5rem + 2.5rem);
+    margin: 0;
+    animation-fill-mode: none;
+  `}
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
 `;
 
-const Option = styled.button`
+const Option = styled.button<{ $legacy: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -143,6 +170,10 @@ const Option = styled.button`
 
   &[aria-pressed='true'], &:hover, &:focus-visible {
     background: ${({ theme }) => adminTokens(theme).colors.selected};
+  }
+
+  &:hover {
+    background: ${({ theme, $legacy }) => $legacy ? adminTokens(theme).colors.selectedHover : adminTokens(theme).colors.selected};
   }
 
   &:focus-visible {
