@@ -20,9 +20,7 @@ export const PurposeBoard = () => {
     isError,
     error,
   } = usePurposeList();
-  const { items, sensors, handleDragEnd } = useReorderPurpose(
-    purposes || []
-  );
+  const { items, sensors, handleDragEnd, modal: reorderModal } = useReorderPurpose(purposes);
   const {
     handleUpdate,
     isLoading: isUpdating,
@@ -47,6 +45,7 @@ export const PurposeBoard = () => {
           {isUpdateOpen && updateConfig && (
             <Modal isOpen={isUpdateOpen} config={updateConfig} />
           )}
+          <Modal isOpen={reorderModal.isOpen} config={reorderModal.config} onClose={reorderModal.closeModal} />
         </>
       }
     >
