@@ -3,7 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "exports": {},
+  "exports": {
+    "./auth": "./src/auth/index.ts",
+    "./modal": "./src/modal/index.ts"
+  },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --max-warnings=0"
