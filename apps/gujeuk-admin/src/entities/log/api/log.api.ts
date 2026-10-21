@@ -9,6 +9,7 @@ import type {
   DeleteUserVisitResponse,
   FacilityUsageRequest,
   FacilityUsageResponse,
+  MonthVisitCountResponse,
   MonthVisitListResponse,
   UserVisitDetailResponse,
   UserVisitListResponse,
@@ -35,6 +36,15 @@ export const fetchMonthVisitList = async (
   const formattedMonth = String(month).padStart(2, '0');
   const response = await axiosInstance.get<MonthVisitListResponse>(
     `/log/date/${year}-${formattedMonth}?page=${page}`
+  );
+  return response.data;
+};
+
+export const fetchMonthVisitCounts = async (
+  year: number
+): Promise<MonthVisitCountResponse> => {
+  const response = await axiosInstance.get<MonthVisitCountResponse>(
+    `/log/count/${year}`
   );
   return response.data;
 };

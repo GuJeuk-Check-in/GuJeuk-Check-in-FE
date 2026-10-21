@@ -1,9 +1,13 @@
 import {
   useInfiniteQuery,
-  useQueries,
+  useQuery,
   type InfiniteData,
 } from '@tanstack/react-query';
-import { fetchMonthVisitList, type MonthVisitListResponse } from '@entities/log';
+import {
+  fetchMonthVisitCounts,
+  fetchMonthVisitList,
+  type MonthVisitListResponse,
+} from '@entities/log';
 
 const MONTH_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
 
@@ -18,19 +22,18 @@ export const useMonthVisitList = (
   year: number,
   options?: { readonly enabled?: boolean }
 ) => {
-  const monthQueries = useQueries({
-    queries: MONTH_NUMBERS.map((month) => ({
-      queryKey: ['monthVisitList', year, month],
-      queryFn: () => fetchMonthVisitList(year, month),
-      staleTime: 5 * 60 * 1000,
-      enabled: options?.enabled ?? true,
-    })),
+  const { data } = useQuery({
+    queryKey: ['monthVisitList', year],
+    queryFn: () => fetchMonthVisitCounts(year),
+    staleTime: 5 * 60 * 1000,
+    enabled: options?.enabled ?? true,
   });
 
   const monthVisitCounts: MonthVisitCountItem[] = MONTH_NUMBERS.map(
-    (month, index) => ({
+    (month) => ({
       month,
-      visitorCount: monthQueries[index]?.data?.totalCount ?? 0,
+      visitorCount:
+        data?.months.find((item) => item.month === month)?.count ?? 0,
     })
   );
 
