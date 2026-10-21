@@ -8,6 +8,7 @@ const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
 const UserVisitList = lazy(() => import('@pages/log/UserVisitList'));
 const UserDetail = lazy(() => import('@pages/log/UserDetail'));
 const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
+const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
 const AdminHome = lazy(() => import('@pages/AdminHome'));
 
 export const Router = () => {
@@ -36,7 +37,7 @@ export const Router = () => {
             path="/organ/user/:userId"
             element={<AdminHome title="회원 상세" />}
           />
-          <Route path="/purpose/all" element={<AdminHome title="이용대장 관리" />} />
+          <Route path="/purpose/all" element={<PurposeCustom />} />
         </Route>
         <Route path="*" element={<Navigate to="/organ/login" replace />} />
       </Routes>
