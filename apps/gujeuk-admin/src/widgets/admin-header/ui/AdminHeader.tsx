@@ -1,3 +1,4 @@
+import { Sidebar, SidebarBrandImage } from '@center/ui/layout';
 import { useNavigate } from 'react-router-dom';
 import { ExcelButton, HeaderButton } from '@shared/ui/Button/index';
 import { Logo } from '@shared/assets';
@@ -146,13 +147,16 @@ export const AdminHeader = () => {
   };
 
   return (
-    <Container>
-      <LogoImage
+    <Sidebar
+      brand={
+        <SidebarBrandImage
         src={Logo}
         alt="로고 이미지"
         onClick={() => navigate('/log')}
-      />
-      <ButtonWrapper>
+        />
+      }
+      navigation={
+        <>
         <HeaderButton onClick={() => navigate('/log')}>
           시설 이용 목록 조회
         </HeaderButton>
@@ -229,28 +233,11 @@ export const AdminHeader = () => {
           config={modal.config}
           onClose={modal.closeModal}
         />
-      </ButtonWrapper>
-    </Container>
+        </>
+      }
+    />
   );
 };
-
-const Container = styled.header`
-  position: fixed;
-  inset: 0 auto 0 0;
-  z-index: 1000;
-  width: var(--admin-sidebar-width, max(20vw, 17rem));
-  min-width: var(--admin-sidebar-width, max(20vw, 17rem));
-  height: 100dvh;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 2rem 0;
-`;
 
 const ExportLoadingMessage = styled.div`
   position: fixed;
@@ -271,28 +258,4 @@ const LoadingBox = styled.div`
   padding: 30px 50px;
   border-radius: 10px;
   color: #fff;
-`;
-
-const LogoImage = styled.img`
-  width: 15rem;
-  height: auto;
-  object-fit: contain;
-  margin-left: 1rem;
-  margin-right: 1rem;
-  margin-bottom: 3rem;
-  cursor: pointer;
-  flex-shrink: 0;
-`;
-
-const ButtonWrapper = styled.nav`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2rem;
-  flex: 1;
-  min-width: 0;
-  flex-wrap: wrap;
-  overflow: hidden;
-  font-size: 28px;
-  margin-right: 1.25rem;
 `;
