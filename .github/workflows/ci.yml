@@ -79,3 +79,36 @@ jobs:
       - uses: ./.github/actions/setup-node-yarn
       - name: Check shared package lint and types
         run: yarn check:admin-shared
+
+  type-check-required:
+    name: Type Check
+    needs: [type-check]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all app type checks to succeed
+        env:
+          RESULT: ${{ needs.type-check.result }}
+        run: test "$RESULT" = "success"
+
+  lint-required:
+    name: ES Lint
+    needs: [lint]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all app lint checks to succeed
+        env:
+          RESULT: ${{ needs.lint.result }}
+        run: test "$RESULT" = "success"
+
+  build-required:
+    name: Build
+    needs: [build]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require all app builds to succeed
+        env:
+          RESULT: ${{ needs.build.result }}
+        run: test "$RESULT" = "success"
