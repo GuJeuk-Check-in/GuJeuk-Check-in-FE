@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "check:admin-shared": "yarn workspace @center/tokens lint && yarn workspace @center/tokens typecheck && yarn workspace @center/ui lint && yarn workspace @center/ui typecheck",
     "dev": "yarn workspace @gujeuk/gujeuk-check-in dev",
     "build": "yarn workspace @gujeuk/gujeuk-check-in build",
     "build:beopdong-admin": "yarn workspace @gujeuk/beopdong-admin build",

@@ -28,34 +28,54 @@ jobs:
         run: yarn workspace @gujeuk/${{ matrix.app }} architecture:check
 
   type-check:
-    name: Type Check
+    name: Type Check (${{ matrix.app }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [beopdong-admin, gujeuk-admin, gujeuk-check-in]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-node-yarn
       - name: Run type check
-        run: yarn typecheck
+        run: yarn workspace @gujeuk/${{ matrix.app }} typecheck
 
   lint:
-    name: ES Lint
+    name: ES Lint (${{ matrix.app }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [beopdong-admin, gujeuk-admin, gujeuk-check-in]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-node-yarn
       - name: Run ES Lint
-        run: yarn lint
+        run: yarn workspace @gujeuk/${{ matrix.app }} lint
 
   build:
-    name: Build
+    name: Build (${{ matrix.app }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [beopdong-admin, gujeuk-admin, gujeuk-check-in]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-node-yarn
       - name: Run build
-        run: yarn build
+        run: yarn workspace @gujeuk/${{ matrix.app }} build
+
+  admin-shared:
+    name: Admin Shared Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-node-yarn
+      - name: Check shared package lint and types
+        run: yarn check:admin-shared
