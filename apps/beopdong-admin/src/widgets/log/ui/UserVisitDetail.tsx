@@ -1,56 +1,36 @@
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { DetailInput, SelectOption, VisitDatePicker } from '@center/ui/form';
+import { DetailInput } from '@center/ui/form';
 import { adminTokens } from '@center/tokens';
 import { IoMdPerson } from 'react-icons/io';
 import { IoCall, IoLocationSharp } from 'react-icons/io5';
 import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
 import { useState } from 'react';
-import { PasswordButton } from '@center/ui/auth';
-import { Modal, useModal } from '@center/ui/modal';
+import { Modal } from '@center/ui/modal';
+import { createVisitFormData } from '../model/visitForm';
+import { useVisitSubmission } from '../model/useVisitSubmission';
+import { VisitFormActions, VisitFormButton, VisitFormFields } from './VisitFormFields';
 
 interface UserVisitDetailProps {
   readonly visit?: UserVisitDetailRecord;
   readonly purposeOptions?: readonly string[];
 }
 
-const createFormData = (visit?: UserVisitDetailRecord) => ({
-  name: visit?.name ?? '',
-  age: String(visit?.age ?? ''),
-  gender: visit?.gender ?? '',
-  phone: visit?.phone ?? '',
-  usageMinutes: String(visit?.usageMinutes ?? ''),
-  purposes: [...(visit?.purposes ?? [])],
-  visitDate:
-    visit?.visitDate
-      .match(/\d+/g)
-      ?.map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
-      .join('-') ?? '',
-});
-
 export const UserVisitDetail = ({
   visit,
   purposeOptions = [],
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(() => createFormData(visit));
-  const modal = useModal();
-
-  const handleSave = () => {
-    modal.openModal({
-      title: '수정 API 연결 전입니다.',
-      subtitle: '입력한 내용은 아직 저장되지 않았습니다.',
-      buttons: [{ label: '확인', onClick: modal.closeModal }],
-    });
-  };
+  const [formData, setFormData] = useState(() => createVisitFormData(visit));
+  const modal = useVisitSubmission(formData, '수정');
 
   const handleCancel = () => {
     setIsEditing(false);
   };
 
   const handleEdit = () => {
-    setFormData(createFormData(visit));
+    setFormData(createVisitFormData(visit));
     setIsEditing(true);
   };
 
@@ -62,119 +42,35 @@ export const UserVisitDetail = ({
           방명록 API 연결 전입니다. 연결 후 상세 정보가 표시됩니다.
         </StatusText>
       )}
-      <Fields>
-        <InputRow>
-          <DetailInput
-            label="이름"
-            value={isEditing ? formData.name : visit?.name ?? '—'}
-            icon={<IoMdPerson />}
-            isEditable={isEditing}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-          <DetailInput
-            label="연령"
-            value={isEditing ? formData.age : visit ? `${visit.age}세` : '—'}
-            icon={<MdOutlineCalendarMonth />}
-            type="number"
-            hideNumberSpinner
-            isEditable={isEditing}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, age: e.target.value }))
-            }
-          />
-        </InputRow>
-        {isEditing ? (
-          <SelectOption
-            label="성별"
-            value={formData.gender}
-            options={['여자', '남자']}
-            icon={<IoMdPerson />}
-            onChange={(gender) => setFormData((prev) => ({ ...prev, gender }))}
-          />
-        ) : (
-          <DetailInput
-            label="성별"
-            value={visit?.gender ?? '—'}
-            icon={<IoMdPerson />}
-          />
-        )}
-        <DetailInput
-          label="연락처"
-          value={isEditing ? formData.phone : visit?.phone ?? '—'}
-          icon={<IoCall />}
-          type="tel"
-          isEditable={isEditing}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, phone: e.target.value }))
-          }
-        />
-        <DetailInput
-          label="이용 시간"
-          value={
-            isEditing
-              ? formData.usageMinutes
-              : visit
-              ? `${visit.usageMinutes}분`
-              : '—'
-          }
-          icon={<MdOutlineAccessTime />}
-          type="number"
-          hideNumberSpinner
-          isEditable={isEditing}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, usageMinutes: e.target.value }))
-          }
-        />
-        {isEditing ? (
-          <>
-            <SelectOption
-              label="이용대장"
-              multiple
-              value={formData.purposes}
-              icon={<IoLocationSharp />}
-              options={[
-                ...new Set([...purposeOptions, ...(visit?.purposes ?? [])]),
-              ]}
-              onChange={(purposes) =>
-                setFormData((prev) => ({ ...prev, purposes }))
-              }
-            />
-            <VisitDatePicker
-              value={formData.visitDate}
-              onChange={(visitDate) =>
-                setFormData((prev) => ({ ...prev, visitDate }))
-              }
-            />
-          </>
-        ) : (
-          <>
-            <DetailInput
-              label="이용대장"
-              value={visit?.purposes.join(' / ') || '—'}
-              icon={<IoLocationSharp />}
-            />
-            <DetailInput
-              label="방문 날짜"
-              value={visit?.visitDate ?? '—'}
-              icon={<MdOutlineCalendarMonth />}
-            />
-          </>
-        )}
-        {visit && (
-          <ButtonWrapper>
-            {isEditing ? (
-              <>
-                <ActionButton content="저장" onClick={handleSave} />
-                <ActionButton content="취소" onClick={handleCancel} />
-              </>
-            ) : (
-              <ActionButton content="수정" onClick={handleEdit} />
-            )}
-          </ButtonWrapper>
-        )}
-      </Fields>
+      {isEditing ? (
+        <VisitFormFields
+          value={formData}
+          onChange={setFormData}
+          purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
+        >
+          <VisitFormActions>
+            <VisitFormButton content="저장" onClick={modal.handleSubmit} />
+            <VisitFormButton content="취소" onClick={handleCancel} />
+          </VisitFormActions>
+        </VisitFormFields>
+      ) : (
+        <Fields>
+          <InputRow>
+            <DetailInput label="이름" value={visit?.name ?? '—'} icon={<IoMdPerson />} />
+            <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<MdOutlineCalendarMonth />} />
+          </InputRow>
+          <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
+          <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<IoCall />} />
+          <DetailInput label="이용 시간" value={visit ? `${visit.usageMinutes}분` : '—'} icon={<MdOutlineAccessTime />} />
+          <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
+          <DetailInput label="방문 날짜" value={visit?.visitDate ?? '—'} icon={<MdOutlineCalendarMonth />} />
+          {visit && (
+            <VisitFormActions>
+              <VisitFormButton content="수정" onClick={handleEdit} />
+            </VisitFormActions>
+          )}
+        </Fields>
+      )}
       <Modal
         isOpen={modal.isOpen}
         config={modal.config}
@@ -219,28 +115,6 @@ const Fields = styled.div`
   gap: 1.25rem;
   width: 100%;
   min-width: 0;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.625rem;
-  margin-top: 1.25rem;
-`;
-
-const ActionButton = styled(PasswordButton)`
-  background-color: ${({ theme }) => adminTokens(theme).colors.primary};
-  box-shadow: none;
-
-  &:hover {
-    background-color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
 `;
 
 const InputRow = styled.div`

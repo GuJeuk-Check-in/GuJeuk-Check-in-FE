@@ -17,6 +17,7 @@ export interface DetailInputProps {
     | ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void)
     | null;
   type?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
   checkboxLabels?: { checked: string; unchecked: string };
@@ -34,6 +35,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   name,
   onChange,
   type = 'text',
+  inputMode,
   options = [],
   placeholder = '',
   checkboxLabels = { checked: '선택됨', unchecked: '선택 안 됨' },
@@ -93,6 +95,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
         <Input
           id={inputId}
           type={type}
+          inputMode={inputMode}
           name={name}
           value={value}
           onChange={(e) => onChange?.(e)}

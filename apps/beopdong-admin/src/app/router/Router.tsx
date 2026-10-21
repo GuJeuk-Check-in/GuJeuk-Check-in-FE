@@ -6,6 +6,7 @@ import { AppLayout } from '@app/layout';
 const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
 const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
 const UserVisitList = lazy(() => import('@pages/log/UserVisitList'));
+const UserDetail = lazy(() => import('@pages/log/UserDetail'));
 const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
 const AdminHome = lazy(() => import('@pages/AdminHome'));
 
@@ -26,7 +27,7 @@ export const Router = () => {
         <Route path="/organ/change" element={<OrganChange />} />
         <Route element={<AppLayout />}>
           <Route path="/log" element={<UserVisitList />} />
-          <Route path="/log/create" element={<AdminHome title="방명록 추가" />} />
+          <Route path="/log/create" element={<UserDetail />} />
           <Route path="/log/:logId" element={<UserDetailView />} />
           <Route path="/usage/current" element={<AdminHome title="현재 이용대장 현황" />} />
           <Route path="/usage/history" element={<AdminHome title="종료된 이용대장 기록" />} />
