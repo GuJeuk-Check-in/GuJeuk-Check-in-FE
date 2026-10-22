@@ -26,3 +26,13 @@ const Button = styled.button`
     color: ${({ theme }) => adminTokens(theme).colors.black};
   }
 `;
+
+export const MenuLink = styled(Button.withComponent('a'))`
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  font-family: Arial, sans-serif;
+  line-height: normal;
+  text-align: center;
+  text-decoration: none;
+`;

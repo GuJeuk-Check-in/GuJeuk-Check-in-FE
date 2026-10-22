@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { Sidebar, SidebarBrandImage } from '@center/ui/layout';
-import { ExportButton, MenuButton as HeaderButton } from '@center/ui/button';
-import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { ExportButton, MenuLink as HeaderLink } from '@center/ui/button';
+import { Link, matchPath, useLocation } from 'react-router-dom';
 import { BeopdongLogo, ExportIcon } from '@shared/assets';
 import { ADMIN_NAVIGATION } from '@shared/config/adminNavigation';
 
 export const AdminHeader = () => {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const isMenuPath = ADMIN_NAVIGATION.some(({ path }) => Boolean(matchPath(path, pathname)));
 
@@ -27,9 +26,9 @@ export const AdminHeader = () => {
 
               return (
                 <li key={item.path}>
-                  <MenuButton onClick={() => navigate(item.path)} aria-current={isCurrent ? 'page' : undefined}>
+                  <MenuLink to={item.path} aria-current={isCurrent ? 'page' : undefined}>
                     {item.label}
-                  </MenuButton>
+                  </MenuLink>
                 </li>
               );
             })}
@@ -117,7 +116,7 @@ const MenuList = styled.ul`
   }
 `;
 
-const MenuButton = styled(HeaderButton)`
+const MenuLink = styled(HeaderLink.withComponent(Link))`
   &[aria-current='page'] {
     color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
   }
