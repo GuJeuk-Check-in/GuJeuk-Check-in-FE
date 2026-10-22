@@ -1,4 +1,5 @@
 export * from './InformationCardParts';
+export * from './UserInformationCard';
 export * from './RecordCardParts';
 export * from './TileCardParts';
 export * from './recordCardLinkStyles';
