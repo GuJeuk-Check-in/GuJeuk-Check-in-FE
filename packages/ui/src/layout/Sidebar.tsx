@@ -2,10 +2,10 @@ import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
 
-export interface SidebarProps { brand: ReactNode; navigation: ReactNode; }
+export interface SidebarProps { brand: ReactNode; navigation: ReactNode; className?: string; }
 
-export const Sidebar = ({ brand, navigation }: SidebarProps) => (
-  <Container>
+export const Sidebar = ({ brand, navigation, className }: SidebarProps) => (
+  <Container className={className}>
     {brand}
     <ButtonWrapper>{navigation}</ButtonWrapper>
   </Container>

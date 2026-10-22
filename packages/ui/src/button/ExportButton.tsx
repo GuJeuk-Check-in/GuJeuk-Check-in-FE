@@ -1,17 +1,20 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
 import { PiExportBold } from 'react-icons/pi';
+import type { ReactNode } from 'react';
 
 interface ExportButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   disabled?: boolean;
   label: string;
+  icon?: ReactNode;
+  className?: string;
 }
 
-export const ExportButton = ({ onClick, disabled, label }: ExportButtonProps) => {
+export const ExportButton = ({ onClick, disabled, label, icon, className }: ExportButtonProps) => {
   return (
-    <ButtonContainer onClick={onClick} disabled={disabled}>
-      <PiExportBold size="1.25rem" style={{ flexShrink: 0 }} />
+    <ButtonContainer className={className} onClick={onClick} disabled={disabled}>
+      {icon ?? <PiExportBold size="1.25rem" style={{ flexShrink: 0 }} />}
       <ButtonText>{label}</ButtonText>
     </ButtonContainer>
   );

@@ -9,7 +9,7 @@ interface DetailInputOption {
 
 export interface DetailInputProps {
   label: string;
-  value: string | number;
+  value: string | number | readonly string[];
   width?: string;
   isEditable?: boolean;
   name?: string;
@@ -17,9 +17,14 @@ export interface DetailInputProps {
     | ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void)
     | null;
   type?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
   checkboxLabels?: { checked: string; unchecked: string };
+  icon?: React.ReactNode;
+  trailingIcon?: React.ReactNode;
+  multiple?: boolean;
+  hideNumberSpinner?: boolean;
 }
 
 export const DetailInput: React.FC<DetailInputProps> = ({
@@ -30,29 +35,39 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   name,
   onChange,
   type = 'text',
+  inputMode,
   options = [],
   placeholder = '',
   checkboxLabels = { checked: '선택됨', unchecked: '선택 안 됨' },
+  icon,
+  trailingIcon,
+  multiple = false,
+  hideNumberSpinner = false,
 }) => {
+  const inputId = React.useId();
+  const labelId = `${inputId}-label`;
+
   const renderInput = () => {
     if (!isEditable) {
-      if (type === 'checkbox') {
-        const displayValue = value ? checkboxLabels.checked : checkboxLabels.unchecked;
-        return (
-          <InputContainer isEditable={false}>
-            <ReadOnlyText>{displayValue}</ReadOnlyText>
-          </InputContainer>
-        );
-      }
+      const displayValue = type === 'checkbox'
+        ? (value ? checkboxLabels.checked : checkboxLabels.unchecked)
+        : value;
       return (
-        <InputContainer isEditable={false}>
-          <ReadOnlyText>{value}</ReadOnlyText>
+        <InputContainer
+          isEditable={false}
+          $hasIcon={!!icon}
+          role="group"
+          aria-labelledby={labelId}
+        >
+          {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
+          <ReadOnlyText>{displayValue}</ReadOnlyText>
+          {trailingIcon && <FieldIcon aria-hidden="true">{trailingIcon}</FieldIcon>}
         </InputContainer>
       );
     }
     if (type === 'select') {
       return (
-        <StyledSelect name={name} value={value} onChange={(e) => onChange?.(e)}>
+        <StyledSelect id={inputId} name={name} value={value} multiple={multiple} onChange={(e) => onChange?.(e)}>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -69,21 +84,25 @@ export const DetailInput: React.FC<DetailInputProps> = ({
             name={name}
             checked={!!value}
             onChange={(e) => onChange?.(e)}
-            id={`${name}-${label}`}
+            id={inputId}
           />
         </EditableCheckboxWrapper>
       );
     }
     return (
-      <InputContainer isEditable={true}>
+      <InputContainer isEditable={true} $hasIcon={!!icon}>
+        {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
+          id={inputId}
           type={type}
+          inputMode={inputMode}
           name={name}
           value={value}
           onChange={(e) => onChange?.(e)}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}
+          $hideNumberSpinner={hideNumberSpinner}
         />
       </InputContainer>
     );
@@ -91,7 +110,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
 
   return (
     <Container width={width}>
-      <Label>{label}</Label>
+      <Label id={labelId} htmlFor={isEditable ? inputId : undefined}>{label}</Label>
       {renderInput()}
     </Container>
   );
@@ -112,7 +131,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const InputContainer = styled.div<{ isEditable: boolean }>`
+const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -124,10 +143,25 @@ const InputContainer = styled.div<{ isEditable: boolean }>`
   color: ${({ theme }) => adminTokens(theme).colors.text};
   background-color: ${({ theme }) => adminTokens(theme).colors.white};
   box-shadow: none;
+
+  ${({ $hasIcon, theme }) => $hasIcon && `
+    box-sizing: border-box;
+    min-height: calc(${adminTokens(theme).components.fieldHeight} + 0.125rem);
+    height: auto;
+    padding-block: 0.75rem;
+    min-width: 0;
+  `}
 `;
 
-const Input = styled.input`
+const FieldIcon = styled.span`
+  display: flex;
+  flex-shrink: 0;
+  font-size: 1.5rem;
+`;
+
+const Input = styled.input<{ $hideNumberSpinner: boolean }>`
   flex-grow: 1;
+  min-width: 0;
   border: none;
   outline: none;
   font-size: ${({ theme }) => adminTokens(theme).typography.input};
@@ -140,6 +174,11 @@ const Input = styled.input`
   &[type='number'] {
     cursor: pointer;
   }
+
+  ${({ $hideNumberSpinner }) => $hideNumberSpinner && `
+    &[type='number'] { appearance: textfield; -moz-appearance: textfield; cursor: text; }
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  `}
 `;
 
 const ReadOnlyText = styled.p`
@@ -147,6 +186,8 @@ const ReadOnlyText = styled.p`
   font-size: ${({ theme }) => adminTokens(theme).typography.input};
   color: ${({ theme }) => adminTokens(theme).colors.text};
   width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 const StyledSelect = styled.select`
@@ -166,6 +207,13 @@ const StyledSelect = styled.select`
   background-size: 1.2rem;
   cursor: pointer;
   outline: none;
+
+  &[multiple] {
+    height: auto;
+    min-height: ${({ theme }) => adminTokens(theme).components.fieldHeight};
+    padding-block: 0.5rem;
+    background-image: none;
+  }
 `;
 
 const EditableCheckboxWrapper = styled(InputContainer)`

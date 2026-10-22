@@ -5,11 +5,12 @@ interface PasswordButtonProps {
   content: string;
   onClick?: () => void;
   disable?: boolean;
+  className?: string;
 }
 
-export const PasswordButton = ({ content, onClick, disable = false }: PasswordButtonProps) => {
+export const PasswordButton = ({ content, onClick, disable = false, className }: PasswordButtonProps) => {
   return (
-    <Container type="button" onClick={onClick} disabled={disable}>
+    <Container type="button" onClick={onClick} disabled={disable} className={className}>
       <Content>{content}</Content>
     </Container>
   );

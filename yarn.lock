@@ -135,6 +135,9 @@ __metadata:
   resolution: "@center/ui@workspace:packages/ui"
   dependencies:
     "@center/tokens": "workspace:*"
+    "@dnd-kit/core": "npm:^6.3.1"
+    "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^9.36.0"
@@ -144,6 +147,8 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.20"
     globals: "npm:^16.4.0"
     react: "npm:^19.1.1"
+    react-calendar: "npm:^6.0.0"
+    react-dom: "npm:^19.1.1"
     react-icons: "npm:^5.5.0"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.67.0"
@@ -151,6 +156,7 @@ __metadata:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.1
     react: ^19.1.1
+    react-dom: ^19.1.1
     react-icons: ^5.5.0
   languageName: unknown
   linkType: soft
@@ -451,6 +457,9 @@ __metadata:
   dependencies:
     "@center/tokens": "workspace:*"
     "@center/ui": "workspace:*"
+    "@dnd-kit/core": "npm:^6.3.1"
+    "@dnd-kit/sortable": "npm:^10.0.0"
+    "@dnd-kit/utilities": "npm:^3.2.2"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^9.36.0"

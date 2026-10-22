@@ -11,6 +11,7 @@ export const InformationContainer = styled.div`
   justify-content: space-between;
   padding: 1.25rem 2rem;
   box-sizing: border-box;
+  overflow-wrap: anywhere;
   min-height: 10rem;
   margin: 0 auto;
   cursor: pointer;
@@ -31,6 +32,8 @@ export const InformationContainer = styled.div`
 `;
 
 export const InformationLeftSection = styled.div`
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

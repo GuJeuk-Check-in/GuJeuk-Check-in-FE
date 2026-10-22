@@ -24,11 +24,12 @@ export const SearchBar = ({
       <SearchInput
         type="text"
         placeholder={placeholder}
+        aria-label={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
       {value && (
-        <ClearButton onClick={onClear} aria-label="검색 초기화">
+        <ClearButton type="button" onClick={onClear} aria-label="검색 초기화">
           <MdClear size={20} />
         </ClearButton>
       )}

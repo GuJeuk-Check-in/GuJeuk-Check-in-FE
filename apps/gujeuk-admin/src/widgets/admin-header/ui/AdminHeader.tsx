@@ -157,19 +157,19 @@ export const AdminHeader = () => {
       }
       navigation={
         <>
-        <HeaderButton onClick={() => navigate('/log')}>
+        <HeaderButton to="/log">
           시설 이용 목록 조회
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/purpose/all')}>
+        <HeaderButton to="/purpose/all">
           방문 목적 커스텀
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/organ/user/all')}>
+        <HeaderButton to="/organ/user/all">
           회원 목록 조회
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/log/create')}>
+        <HeaderButton to="/log/create">
           시설 이용 기록 추가
         </HeaderButton>
-        <HeaderButton onClick={() => navigate('/residence/all')}>
+        <HeaderButton to="/residence/all">
           거주지 커스텀
         </HeaderButton>
         <ExcelButton
