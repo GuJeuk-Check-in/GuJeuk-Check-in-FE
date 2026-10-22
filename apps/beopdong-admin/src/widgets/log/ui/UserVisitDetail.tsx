@@ -61,9 +61,9 @@ export const UserVisitDetail = ({
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
           <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<IoCall />} />
-          <DetailInput label="이용 시간" value={visit ? `${visit.usageMinutes}분` : '—'} icon={<MdOutlineAccessTime />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
           <DetailInput label="방문 날짜" value={visit?.visitDate ?? '—'} icon={<MdOutlineCalendarMonth />} />
+          <DetailInput label="방문 시간" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           {visit && (
             <VisitFormActions>
               <VisitFormButton content="수정" onClick={handleEdit} />

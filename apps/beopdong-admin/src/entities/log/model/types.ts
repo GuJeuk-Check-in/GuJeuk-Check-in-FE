@@ -12,7 +12,7 @@ export interface UserVisitDetailRecord {
   age: number;
   gender: string;
   phone: string;
-  usageMinutes: number;
+  visitTime: string;
   purposes: readonly string[];
   visitDate: string;
 }

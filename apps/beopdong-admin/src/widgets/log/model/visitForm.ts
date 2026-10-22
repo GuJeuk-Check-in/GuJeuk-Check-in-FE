@@ -5,7 +5,7 @@ export interface VisitFormData {
   age: string;
   gender: string;
   phone: string;
-  usageMinutes: string;
+  visitTime: string;
   purposes: string[];
   visitDate: string;
 }
@@ -15,7 +15,7 @@ export const createVisitFormData = (visit?: UserVisitDetailRecord): VisitFormDat
   age: String(visit?.age ?? ''),
   gender: visit?.gender ?? '',
   phone: visit?.phone ?? '',
-  usageMinutes: String(visit?.usageMinutes ?? ''),
+  visitTime: visit?.visitTime ?? '',
   purposes: [...(visit?.purposes ?? [])],
   visitDate:
     visit?.visitDate

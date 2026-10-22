@@ -58,15 +58,6 @@ export const VisitFormFields = ({
       isEditable
       onChange={(event) => onChange({ ...value, phone: event.target.value })}
     />
-    <DetailInput
-      label="이용 시간"
-      value={value.usageMinutes}
-      placeholder="이용 시간을 입력해주세요 ex) 46분"
-      icon={<MdOutlineAccessTime />}
-      inputMode="numeric"
-      isEditable
-      onChange={(event) => onChange({ ...value, usageMinutes: event.target.value })}
-    />
     <SelectOption
       label="이용대장"
       multiple
@@ -79,6 +70,15 @@ export const VisitFormFields = ({
     <VisitDatePicker
       value={value.visitDate}
       onChange={(visitDate) => onChange({ ...value, visitDate })}
+    />
+    <DetailInput
+      label="방문 시간"
+      name="visitTime"
+      value={value.visitTime}
+      placeholder="방문 시간을 입력해주세요 ex) 17:00"
+      icon={<MdOutlineAccessTime />}
+      isEditable
+      onChange={(event) => onChange({ ...value, visitTime: event.target.value })}
     />
     {children}
   </Fields>
