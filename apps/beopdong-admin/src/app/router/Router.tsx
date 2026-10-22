@@ -9,6 +9,7 @@ const UserVisitList = lazy(() => import('@pages/log/UserVisitList'));
 const UserDetail = lazy(() => import('@pages/log/UserDetail'));
 const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
 const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
+const UserInformation = lazy(() => import('@pages/user/UserInformation'));
 const AdminHome = lazy(() => import('@pages/AdminHome'));
 
 export const Router = () => {
@@ -32,7 +33,7 @@ export const Router = () => {
           <Route path="/log/:logId" element={<UserDetailView />} />
           <Route path="/usage/current" element={<AdminHome title="현재 이용대장 현황" />} />
           <Route path="/usage/history" element={<AdminHome title="종료된 이용대장 기록" />} />
-          <Route path="/organ/user/all" element={<AdminHome title="회원 목록 조회" />} />
+          <Route path="/organ/user/all" element={<UserInformation />} />
           <Route
             path="/organ/user/:userId"
             element={<AdminHome title="회원 상세" />}
