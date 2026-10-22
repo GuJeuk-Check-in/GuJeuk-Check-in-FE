@@ -2,7 +2,6 @@ export interface UserVisitSummary {
   id: number;
   name: string;
   purposes: readonly string[];
-  headCount: number;
   visitDate: string;
 }
 

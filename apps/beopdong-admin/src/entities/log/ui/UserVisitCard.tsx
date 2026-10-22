@@ -32,7 +32,6 @@ export const UserVisitCard = ({ visit, onDelete }: UserVisitCardProps) => {
           <Name>{visit.name}</Name>
           <Info>
             <Purposes>{visit.purposes.join(' / ') || '—'}</Purposes>
-            <HeadCount>인원 : {visit.headCount}명</HeadCount>
           </Info>
         </LeftSection>
         <Date>{visit.visitDate || '—'}</Date>
@@ -90,10 +89,6 @@ const Info = styled(RecordSummary)`
 const Purposes = styled.span`
   min-width: 0;
   overflow-wrap: anywhere;
-`;
-
-const HeadCount = styled.span`
-  white-space: nowrap;
 `;
 
 const Date = styled(RecordMeta)`
