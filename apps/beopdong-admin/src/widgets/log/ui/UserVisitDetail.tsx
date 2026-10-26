@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 import { DetailInput } from '@center/ui/form';
 import { adminTokens } from '@center/tokens';
 import { IoMdPerson } from 'react-icons/io';
-import { IoCall, IoLocationSharp } from 'react-icons/io5';
+import { IoLocationSharp } from 'react-icons/io5';
+import { PhoneIcon } from '@shared/ui/icons';
 import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
 import { useState } from 'react';
@@ -60,7 +61,7 @@ export const UserVisitDetail = ({
             <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<MdOutlineCalendarMonth />} />
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
-          <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<IoCall />} />
+          <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
           <DetailInput label="방문 날짜" value={visit?.visitDate ?? '—'} icon={<MdOutlineCalendarMonth />} />
           <DetailInput label="방문 시간" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />

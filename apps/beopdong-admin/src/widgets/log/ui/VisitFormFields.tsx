@@ -4,7 +4,8 @@ import { adminTokens } from '@center/tokens';
 import { DetailInput, SelectOption, VisitDatePicker } from '@center/ui/form';
 import { PasswordButton } from '@center/ui/auth';
 import { IoMdPerson } from 'react-icons/io';
-import { IoCall, IoLocationSharp } from 'react-icons/io5';
+import { IoLocationSharp } from 'react-icons/io5';
+import { PhoneIcon } from '@shared/ui/icons';
 import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
 import type { VisitFormData } from '../model/visitForm';
 
@@ -53,7 +54,7 @@ export const VisitFormFields = ({
       label="연락처"
       value={value.phone}
       placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
-      icon={<IoCall />}
+      icon={<PhoneIcon />}
       type="tel"
       isEditable
       onChange={(event) => onChange({ ...value, phone: event.target.value })}
