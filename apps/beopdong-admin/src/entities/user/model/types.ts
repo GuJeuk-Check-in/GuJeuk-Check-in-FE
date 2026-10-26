@@ -5,7 +5,7 @@ export interface User {
   grade: number;
   birthYMD: string;
   phone: string;
-  count?: number | null;
+  visitCount?: number | null;
 }
 
 export type Gender = 'MAN' | 'WOMAN';

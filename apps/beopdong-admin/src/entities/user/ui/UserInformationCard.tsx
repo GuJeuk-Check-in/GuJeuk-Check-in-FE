@@ -11,7 +11,7 @@ export const UserInformationCard = ({ user }: { user: User }) => {
       subtitle={`${user.school} · ${user.grade}학년`}
       birthday={user.birthYMD}
       phoneNumber={user.phone}
-      count={user.count}
+      count={user.visitCount}
       onEdit={() => navigate(`/organ/user/${user.id}`)}
     />
   );
