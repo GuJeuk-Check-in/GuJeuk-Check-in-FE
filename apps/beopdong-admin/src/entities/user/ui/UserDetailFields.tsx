@@ -54,6 +54,7 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
             value={user.birthYMD}
             icon={DATE_ICON}
             variant="wide"
+            highlightOnFocus
             formatValue={formatPickedDate}
             onChange={(birthYMD) => edit({ birthYMD })}
           />
@@ -87,6 +88,7 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
             value={user.applyDate}
             icon={DATE_ICON}
             variant="wide"
+            highlightOnFocus
             formatValue={formatPickedDate}
             onChange={(applyDate) => edit({ applyDate })}
           />

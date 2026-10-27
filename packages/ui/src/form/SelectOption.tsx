@@ -14,6 +14,7 @@ type SelectOptionProps = {
   placeholder?: string;
   disabled?: boolean;
   legacy?: boolean;
+  highlightOnFocus?: boolean;
 } & ({
   multiple?: false;
   value: string;
@@ -25,7 +26,7 @@ type SelectOptionProps = {
 });
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false } = props;
+  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false, highlightOnFocus = false } = props;
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -62,7 +63,7 @@ export const SelectOption = (props: SelectOptionProps) => {
     >
       {label && <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>}
       <Trigger
-        $legacy={legacy} disabled={disabled}
+        $legacy={legacy} $highlightOnFocus={highlightOnFocus} disabled={disabled}
         type="button" id={id} ref={trigger}
         aria-labelledby={label ? `${id}-label ${id}-value` : `${id}-value`}
         aria-expanded={open} aria-controls={open ? `${id}-options` : undefined}
@@ -92,7 +93,7 @@ const Container = styled(DropdownContainer)`
   width: 100%;
 `;
 
-const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean }>`
+const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean; $highlightOnFocus: boolean }>`
   gap: 0.75rem;
   min-height: calc(${({ theme }) => adminTokens(theme).components.fieldHeight} + 0.125rem);
   height: auto;
@@ -108,10 +109,19 @@ const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolea
     padding: 0.5rem 0.9375rem;
   `}
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
-    outline-offset: 2px;
-  }
+  ${({ $highlightOnFocus, theme }) => $highlightOnFocus ? `
+    &:focus,
+    &[aria-expanded='true'] {
+      outline: none;
+      border-color: ${adminTokens(theme).colors.primary};
+      background-color: #fbfbff;
+    }
+  ` : `
+    &:focus-visible {
+      outline: 2px solid ${adminTokens(theme).colors.primary};
+      outline-offset: 2px;
+    }
+  `}
 `;
 
 const Icon = styled.span`

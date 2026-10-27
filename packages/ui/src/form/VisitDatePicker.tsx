@@ -9,9 +9,10 @@ interface VisitDatePickerProps {
   readonly icon?: ReactNode;
   readonly variant?: 'default' | 'wide';
   readonly formatValue?: (date: Date) => string;
+  readonly highlightOnFocus?: boolean;
 }
 
-export const VisitDatePicker = ({ value, onChange, label, icon, variant, formatValue }: VisitDatePickerProps) => (
+export const VisitDatePicker = ({ value, onChange, label, icon, variant, formatValue, highlightOnFocus }: VisitDatePickerProps) => (
   <CalendarField
     value={parseCalendarDate(value)}
     onChange={(date) => onChange(formatDateToISOString(date))}
@@ -19,5 +20,6 @@ export const VisitDatePicker = ({ value, onChange, label, icon, variant, formatV
     icon={icon}
     variant={variant}
     formatValue={formatValue}
+    highlightOnFocus={highlightOnFocus}
   />
 );

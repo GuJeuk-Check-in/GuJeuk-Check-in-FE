@@ -7,7 +7,7 @@ export const CalendarValue = styled(DropdownValue)<{ $placeholder: boolean; $leg
   ${({ $placeholder, $legacy }) => $legacy && $placeholder && 'color: #757575;'}
 `;
 
-export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean }>`
+export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean; $highlightOnFocus?: boolean }>`
   gap: 0.75rem;
   min-height: calc(${({ theme }) => adminTokens(theme).components.fieldHeight} + 0.125rem);
   height: auto;
@@ -26,10 +26,19 @@ export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ 
     padding-block: 0;
   `}
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
-    outline-offset: 2px;
-  }
+  ${({ $highlightOnFocus, theme }) => $highlightOnFocus ? `
+    &:focus,
+    &[aria-expanded='true'] {
+      outline: none;
+      border-color: ${adminTokens(theme).colors.primary};
+      background-color: #fbfbff;
+    }
+  ` : `
+    &:focus-visible {
+      outline: 2px solid ${adminTokens(theme).colors.primary};
+      outline-offset: 2px;
+    }
+  `}
 `;
 
 export const CalendarWrapper = styled.div<{ $legacy: boolean; $wide?: boolean }>`

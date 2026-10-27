@@ -14,9 +14,10 @@ interface CalendarFieldProps {
   readonly icon?: ReactNode;
   readonly variant?: 'default' | 'wide';
   readonly formatValue?: (date: Date) => string;
+  readonly highlightOnFocus?: boolean;
 }
 
-export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false, icon, variant = 'default', formatValue = formatCalendarDate }: CalendarFieldProps) => {
+export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false, icon, variant = 'default', formatValue = formatCalendarDate, highlightOnFocus = false }: CalendarFieldProps) => {
   const wide = variant === 'wide';
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -43,7 +44,7 @@ export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy
     >
       <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>
       <CalendarTrigger
-        $legacy={legacy} type="button" id={id} ref={trigger}
+        $legacy={legacy} $highlightOnFocus={highlightOnFocus} type="button" id={id} ref={trigger}
         aria-labelledby={`${id}-label ${id}-value`}
         aria-expanded={open} aria-controls={open ? `${id}-calendar` : undefined}
         onClick={() => setOpen((previous) => !previous)}
