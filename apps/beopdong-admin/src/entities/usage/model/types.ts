@@ -8,6 +8,16 @@ export interface UsageRecord {
   purposeRemainTime: number;
 }
 
+export interface UsageHistoryRecord {
+  id: number;
+  name: string;
+  detail: string;
+  purposeName: string;
+  startTime: string;
+  endTime: string;
+  visitDate: string;
+}
+
 interface UsageStatusBase {
   id: number;
   name: string;
@@ -32,4 +42,15 @@ export interface UsageStatus {
 
 export interface UsageStatusResponse {
   usageStatus: UsageStatus;
+}
+
+export interface UsageHistoryDetail {
+  purpose: number;
+  name: string;
+  visitDate: string;
+  usePurpose: string | null;
+  startTime: string;
+  endTime: string;
+  seat: number | null;
+  count: number | null;
 }
