@@ -16,18 +16,18 @@ export const UsageRecordRow = ({ record, onEndEarly }: UsageRecordRowProps) => {
   return (
     <Row>
       <Info>
-        <User>{`${record.userName}· ${record.detail}`}</User>
+        <User>{`${record.name}· ${record.detail}`}</User>
         <Purpose>{record.purposeName}</Purpose>
       </Info>
       <Time>
         <RecordMeta>{`사용 시간 : ${record.startTime} ~ ${record.endTime}`}</RecordMeta>
         <Divider aria-hidden="true" />
-        <RecordMeta>{`남은 시간 : ${record.remainingMinutes}분`}</RecordMeta>
+        <RecordMeta>{`남은 시간 : ${record.purposeRemainTime}분`}</RecordMeta>
       </Time>
       <EndButton
         type="button"
         onClick={() => onEndEarly(record)}
-        aria-label={`${record.userName} ${record.purposeName} 조기종료`}
+        aria-label={`${record.name} ${record.purposeName} 조기종료`}
       >
         조기종료
       </EndButton>

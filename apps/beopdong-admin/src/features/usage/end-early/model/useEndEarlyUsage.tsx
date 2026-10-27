@@ -12,7 +12,7 @@ export const useEndEarlyUsage = () => {
     modal.openModal({
       icon: <MdDeleteOutline size="40px" color={tokens.colors.error} />,
       title: '이 이용대장을 조기 종료할까요?',
-      subtitle: `${record.userName} · ${record.purposeName} · ${record.detail}`,
+      subtitle: `${record.name} · ${record.purposeName} · ${record.detail}`,
       theme: 'warning',
       buttons: [
         { label: '아니요', variant: 'secondary', onClick: modal.closeModal },
