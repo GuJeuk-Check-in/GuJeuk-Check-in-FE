@@ -7,6 +7,7 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { PhoneIcon } from '@shared/ui/icons';
 import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
+import { formatDateKoreanPadded } from '@shared/lib/formatDate';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
 import { createVisitFormData } from '../model/visitForm';
@@ -63,7 +64,7 @@ export const UserVisitDetail = ({
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
           <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
-          <DetailInput label="방문 날짜" value={visit?.visitDate ?? '—'} icon={<MdOutlineCalendarMonth />} />
+          <DetailInput label="방문 날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<MdOutlineCalendarMonth />} />
           <DetailInput label="방문 시간" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           {visit && (
             <VisitFormActions>
