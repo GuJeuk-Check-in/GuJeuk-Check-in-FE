@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 import { UserDetailView } from '@widgets/user';
+import { PageTitle } from '@shared/ui';
 import { previewUserDetails } from './model/previewUserDetail';
 
 const UserDetailPage = () => {
@@ -9,7 +10,7 @@ const UserDetailPage = () => {
 
   return (
     <Container>
-      <Title id="admin-page-title" tabIndex={-1}>회원 상세</Title>
+      <Title>회원 상세</Title>
       <UserDetailView key={userId} user={user} />
     </Container>
   );
@@ -26,10 +27,6 @@ const Container = styled.section`
   min-width: 0;
 `;
 
-const Title = styled.h1`
+const Title = styled(PageTitle)`
   width: min(100%, 1280px);
-  margin: 0;
-  font-size: 32px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
 `;

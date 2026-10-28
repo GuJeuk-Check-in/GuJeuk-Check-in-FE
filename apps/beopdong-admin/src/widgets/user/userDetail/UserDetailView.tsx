@@ -5,9 +5,10 @@ import { adminTokens } from '@center/tokens';
 import { PasswordButton } from '@center/ui/auth';
 import { Modal } from '@center/ui/modal';
 import { IoArrowBack } from 'react-icons/io5';
-import { UserDetailFields, isUserDetailChanged } from '@entities/user';
+import { UserDetailFields, isUserDetailChanged, validateUserDetail } from '@entities/user';
 import { useDeleteUser } from '@features/user/delete-user';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
+import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UserDetail } from '@entities/user';
 
 interface UserDetailViewProps {
@@ -20,6 +21,11 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
   const isChanged = !!user && !!draft && isUserDetailChanged(user, draft);
 
   const handleSave = () => {
+    const error = draft && validateUserDetail(draft);
+    if (error) {
+      openInputCheckNotice(modal, error);
+      return;
+    }
     openApiPendingNotice(modal, '수정');
   };
 

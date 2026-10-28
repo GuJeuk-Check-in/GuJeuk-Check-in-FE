@@ -1,17 +1,20 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { DetailInput, SelectOption, VisitDatePicker, formatDateToISOString } from '@center/ui/form';
 import { FaSchool } from 'react-icons/fa';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
-import { MdCalendarMonth } from 'react-icons/md';
 import {
   formatDateSlash,
   formatGender,
   GENDER_OPTIONS,
+  isCustomRoute,
   parseGender,
+  ROUTE_OPTIONS,
+  ROUTE_OTHER,
 } from '../lib/formatUserDetail';
 import type { UserDetail } from '../model/types';
-import { PhoneIcon } from '@shared/ui/icons';
+import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 
 interface UserDetailFieldsProps {
   readonly user?: UserDetail;
@@ -21,11 +24,18 @@ interface UserDetailFieldsProps {
 const EMPTY = '—';
 
 const formatPickedDate = (date: Date) => formatDateSlash(formatDateToISOString(date));
-const DATE_ICON = <MdCalendarMonth size={24} aria-hidden="true" />;
+const DATE_ICON = <CalendarIcon />;
 
 export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
   const isEditable = !!user && !!onChange;
   const edit = (patch: Partial<UserDetail>) => onChange?.(patch);
+  const [isOtherRoute, setIsOtherRoute] = useState(() => !!user && isCustomRoute(user.route));
+
+  const handleRouteSelect = (option: string) => {
+    const isOther = option === ROUTE_OTHER;
+    setIsOtherRoute(isOther);
+    edit({ route: isOther ? '' : option });
+  };
 
   return (
     <Fields>
@@ -62,7 +72,7 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
           <DetailInput
             label="생년월일"
             value={user ? formatDateSlash(user.birthYMD) : EMPTY}
-            icon={<MdCalendarMonth />}
+            icon={<CalendarIcon />}
           />
         )}
         {isEditable ? (
@@ -96,7 +106,7 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
           <DetailInput
             label="신청일"
             value={user ? formatDateSlash(user.applyDate) : EMPTY}
-            icon={<MdCalendarMonth />}
+            icon={<CalendarIcon />}
           />
         )}
         <DetailInput
@@ -117,14 +127,35 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
         highlightOnFocus
         onChange={(event) => edit({ address: event.target.value })}
       />
-      <DetailInput
-        label="알게된 경로"
-        value={user?.route ?? EMPTY}
-        icon={<IoLocationSharp />}
-        isEditable={isEditable}
-        highlightOnFocus
-        onChange={(event) => edit({ route: event.target.value })}
-      />
+      {isEditable ? (
+        <>
+          <SelectOption
+            label="알게된 경로"
+            value={isOtherRoute ? ROUTE_OTHER : user.route}
+            options={ROUTE_OPTIONS}
+            icon={<IoLocationSharp />}
+            highlightOnFocus
+            onChange={handleRouteSelect}
+          />
+          {isOtherRoute && (
+            <DetailInput
+              label="기타 (어떻게 알게 됐어?)"
+              value={user.route}
+              placeholder="알게된 경로를 직접 입력해주세요"
+              icon={<IoLocationSharp />}
+              isEditable
+              highlightOnFocus
+              onChange={(event) => edit({ route: event.target.value })}
+            />
+          )}
+        </>
+      ) : (
+        <DetailInput
+          label="알게된 경로"
+          value={user?.route ?? EMPTY}
+          icon={<IoLocationSharp />}
+        />
+      )}
     </Fields>
   );
 };
