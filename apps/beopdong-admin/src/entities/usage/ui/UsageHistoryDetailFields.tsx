@@ -3,6 +3,7 @@ import { DetailInput, SelectOption, TimePickerField } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { MdOutlineChair } from 'react-icons/md';
 import { TbTargetArrow } from 'react-icons/tb';
+import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';
 
@@ -19,9 +20,6 @@ interface UsageHistoryDetailFieldsProps {
 const SEAT_COUNT = 10;
 const SEAT_OPTIONS = Array.from({ length: SEAT_COUNT }, (_, index) => `${index + 1}번`);
 
-const toPickerTime = (time: string) => time.slice(0, 5);
-const toApiTime = (time: string) => `${time}:00`;
-
 export const UsageHistoryDetailFields = ({
   detail,
   isEditing,
@@ -32,8 +30,9 @@ export const UsageHistoryDetailFields = ({
   const renderTimeField = (field: UsageTimeField, label: string) => (
     <TimePickerField
       label={label}
-      value={toPickerTime(detail[field])}
-      onChange={(time) => onChange({ [field]: toApiTime(time) })}
+      panelTitle={label}
+      value={toHourMinute(detail[field])}
+      onChange={(time) => onChange({ [field]: toHourMinuteSecond(time) })}
       open={openField === field}
       onOpenChange={(open) => onOpenFieldChange(open ? field : null)}
     />

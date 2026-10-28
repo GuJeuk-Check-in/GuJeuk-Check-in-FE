@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 import { UsageHistoryDetailView } from '@widgets/usage';
+import { PageTitle } from '@shared/ui';
 import { previewUsageHistoryDetails } from './model/previewUsageHistoryDetail';
 
 const UsageHistoryDetail = () => {
@@ -9,7 +10,7 @@ const UsageHistoryDetail = () => {
 
   return (
     <Container>
-      <Title id="admin-page-title" tabIndex={-1}>종료 기록 상세</Title>
+      <Title>종료 기록 상세</Title>
       <UsageHistoryDetailView key={historyId} detail={detail} />
     </Container>
   );
@@ -25,10 +26,7 @@ const Container = styled.section`
   min-width: 0;
 `;
 
-const Title = styled.h1`
+const Title = styled(PageTitle)`
   width: min(100%, 920px);
   margin: 0 auto;
-  font-size: 32px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
 `;

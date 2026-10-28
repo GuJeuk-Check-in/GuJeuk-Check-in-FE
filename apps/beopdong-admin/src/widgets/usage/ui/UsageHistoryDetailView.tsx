@@ -4,27 +4,31 @@ import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { PasswordButton } from '@center/ui/auth';
 import { Modal } from '@center/ui/modal';
-import { UsageHistoryDetailFields } from '@entities/usage';
+import { UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
 import { useDeleteUsageHistory } from '@features/usage/delete-history';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
-import type { UsageHistoryDetail } from '@entities/usage';
+import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
+import type { UsageHistoryDetail, UsageTimeField } from '@entities/usage';
 
 interface UsageHistoryDetailViewProps {
   readonly detail?: UsageHistoryDetail;
 }
 
-type TimeField = 'startTime' | 'endTime';
-
 const EDITABLE_KEYS = ['name', 'count', 'usePurpose', 'startTime', 'endTime', 'seat'] as const;
 
 export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) => {
   const [draft, setDraft] = useState(detail);
-  const [openField, setOpenField] = useState<TimeField | null>(null);
+  const [openField, setOpenField] = useState<UsageTimeField | null>(null);
   const { modal, handleDelete } = useDeleteUsageHistory();
   const isChanged = !!detail && !!draft && EDITABLE_KEYS.some((key) => detail[key] !== draft[key]);
   const hasSeat = draft?.seat !== null && draft?.seat !== undefined;
 
   const handleSave = () => {
+    const error = draft && validateUsageHistoryDetail(draft);
+    if (error) {
+      openInputCheckNotice(modal, error);
+      return;
+    }
     openApiPendingNotice(modal, '수정');
   };
 

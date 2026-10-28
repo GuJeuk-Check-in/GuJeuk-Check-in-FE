@@ -1,6 +1,7 @@
 import { UsageHistoryCard } from '@entities/usage';
 import type { UsageHistoryRecord } from '@entities/usage';
 import { adminTokens } from '@center/tokens';
+import { PageTitle } from '@shared/ui';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 import { FaCheck } from 'react-icons/fa6';
@@ -25,7 +26,7 @@ export const UsageHistoryBoard = ({ records, onDelete }: UsageHistoryBoardProps)
 
   return (
     <Container>
-      <Title id="admin-page-title" tabIndex={-1}>종료된 이용대장 신청서</Title>
+      <Title>종료된 이용대장 신청서</Title>
       <FilterList role="group" aria-label="이용 목적 필터">
         {filters.map((filter) => (
           <FilterChip
@@ -60,14 +61,9 @@ const Container = styled.section`
   min-width: 0;
 `;
 
-const Title = styled.h1`
+const Title = styled(PageTitle)`
   width: min(100%, 1280px);
   margin: 0 auto 24px;
-  color: ${({ theme }) => adminTokens(theme).colors.text};
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
 `;
 
 const FilterList = styled.div`
