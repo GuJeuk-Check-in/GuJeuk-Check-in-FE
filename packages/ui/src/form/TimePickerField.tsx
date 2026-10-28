@@ -42,9 +42,14 @@ export const TimePickerField = ({
   const [innerOpen, setInnerOpen] = useState(false);
   const [draft, setDraft] = useState(() => parseTime(value));
   const open = controlledOpen ?? innerOpen;
+  const [wasOpen, setWasOpen] = useState(open);
+
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) setDraft(parseTime(value));
+  }
 
   const setOpen = (next: boolean) => {
-    if (next) setDraft(parseTime(value));
     setInnerOpen(next);
     onOpenChange?.(next);
   };
