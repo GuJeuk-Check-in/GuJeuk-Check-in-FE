@@ -3,6 +3,7 @@ import { adminTokens } from '@center/tokens';
 import { UserVisitCard, type UserVisitSummary } from '@entities/log';
 import styled from '@emotion/styled';
 import { useConfirmDelete } from '@shared/lib/useConfirmDelete';
+import { PageTitle } from '@shared/ui';
 
 interface UserVisitListFeatureProps {
   visits?: readonly UserVisitSummary[];
@@ -19,7 +20,7 @@ export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps)
 
   return (
     <Container>
-      <Title id="admin-page-title" tabIndex={-1}>방명록 조회</Title>
+      <Title>방명록 조회</Title>
       {visits.length > 0 ? (
         <List aria-label="방명록 목록">
           {visits.map((visit) => (
@@ -43,12 +44,9 @@ const Container = styled.section`
   min-width: 0;
 `;
 
-const Title = styled.h1`
+const Title = styled(PageTitle)`
   width: min(100%, 80rem);
   margin: 0 auto 2rem;
-  font-size: 2rem;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
 `;
 
 const List = styled.ul`

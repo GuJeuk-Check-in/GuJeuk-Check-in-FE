@@ -4,8 +4,8 @@ import { DetailInput } from '@center/ui/form';
 import { adminTokens } from '@center/tokens';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
-import { PhoneIcon } from '@shared/ui/icons';
-import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
+import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { MdOutlineAccessTime } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
 import { formatDateKoreanPadded } from '@shared/lib/formatDate';
 import { useState } from 'react';
@@ -59,12 +59,12 @@ export const UserVisitDetail = ({
         <Fields>
           <InputRow>
             <DetailInput label="이름" value={visit?.name ?? '—'} icon={<IoMdPerson />} />
-            <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<MdOutlineCalendarMonth />} />
+            <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<CalendarIcon />} />
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
           <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
-          <DetailInput label="방문 날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<MdOutlineCalendarMonth />} />
+          <DetailInput label="방문 날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<CalendarIcon />} />
           <DetailInput label="방문 시간" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           {visit && (
             <VisitFormActions>

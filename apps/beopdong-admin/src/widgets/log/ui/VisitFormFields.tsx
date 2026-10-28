@@ -5,8 +5,8 @@ import { DetailInput, SelectOption, VisitDatePicker } from '@center/ui/form';
 import { PasswordButton } from '@center/ui/auth';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
-import { PhoneIcon } from '@shared/ui/icons';
-import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
+import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { MdOutlineAccessTime } from 'react-icons/md';
 import type { VisitFormData } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
@@ -36,7 +36,7 @@ export const VisitFormFields = ({
         label="연령"
         value={value.age}
         placeholder="연령을 입력해주세요 ex) 16세"
-        icon={<MdOutlineCalendarMonth />}
+        icon={<CalendarIcon />}
         inputMode="numeric"
         isEditable
         onChange={(event) => onChange({ ...value, age: event.target.value })}
@@ -69,6 +69,7 @@ export const VisitFormFields = ({
       onChange={(purposes) => onChange({ ...value, purposes })}
     />
     <VisitDatePicker
+      icon={<CalendarIcon />}
       value={value.visitDate}
       onChange={(visitDate) => onChange({ ...value, visitDate })}
     />
