@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { PasswordButton } from '@center/ui/auth';
-import { Modal, useModal } from '@center/ui/modal';
+import { Modal } from '@center/ui/modal';
 import { IoArrowBack } from 'react-icons/io5';
 import { UserDetailFields, isUserDetailChanged } from '@entities/user';
 import { useDeleteUser } from '@features/user/delete-user';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import type { UserDetail } from '@entities/user';
 
 interface UserDetailViewProps {
@@ -15,16 +16,11 @@ interface UserDetailViewProps {
 
 export const UserDetailView = ({ user }: UserDetailViewProps) => {
   const [draft, setDraft] = useState(user);
-  const modal = useModal();
-  const deleteUser = useDeleteUser();
+  const { modal, handleDelete } = useDeleteUser();
   const isChanged = !!user && !!draft && isUserDetailChanged(user, draft);
 
   const handleSave = () => {
-    modal.openModal({
-      title: '수정 API 연결 전입니다.',
-      subtitle: '입력한 내용은 아직 저장되지 않았습니다.',
-      buttons: [{ label: '확인', onClick: modal.closeModal }],
-    });
+    openApiPendingNotice(modal, '수정');
   };
 
   return (
@@ -42,7 +38,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
             {isChanged ? (
               <SaveButton content="저장" onClick={handleSave} />
             ) : (
-              <DeleteButton type="button" onClick={() => deleteUser.handleDelete(user)}>
+              <DeleteButton type="button" onClick={() => handleDelete(user)}>
                 삭제
               </DeleteButton>
             )}
@@ -50,11 +46,6 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
         )}
       </Content>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
-      <Modal
-        isOpen={deleteUser.modal.isOpen}
-        config={deleteUser.modal.config}
-        onClose={deleteUser.modal.closeModal}
-      />
     </Card>
   );
 };

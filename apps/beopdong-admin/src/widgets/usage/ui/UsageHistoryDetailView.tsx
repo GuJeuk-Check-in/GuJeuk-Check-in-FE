@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { PasswordButton } from '@center/ui/auth';
-import { Modal, useModal } from '@center/ui/modal';
+import { Modal } from '@center/ui/modal';
 import { UsageHistoryDetailFields } from '@entities/usage';
 import { useDeleteUsageHistory } from '@features/usage/delete-history';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import type { UsageHistoryDetail } from '@entities/usage';
 
 interface UsageHistoryDetailViewProps {
@@ -19,17 +20,12 @@ const EDITABLE_KEYS = ['name', 'count', 'usePurpose', 'startTime', 'endTime', 's
 export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) => {
   const [draft, setDraft] = useState(detail);
   const [openField, setOpenField] = useState<TimeField | null>(null);
-  const modal = useModal();
-  const deleteHistory = useDeleteUsageHistory();
+  const { modal, handleDelete } = useDeleteUsageHistory();
   const isChanged = !!detail && !!draft && EDITABLE_KEYS.some((key) => detail[key] !== draft[key]);
   const hasSeat = draft?.seat !== null && draft?.seat !== undefined;
 
   const handleSave = () => {
-    modal.openModal({
-      title: '수정 API 연결 전입니다.',
-      subtitle: '입력한 내용은 아직 저장되지 않았습니다.',
-      buttons: [{ label: '확인', onClick: modal.closeModal }],
-    });
+    openApiPendingNotice(modal, '수정');
   };
 
   return (
@@ -47,7 +43,7 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
           <Actions>
             {isChanged && <ActionButton content="저장" onClick={handleSave} />}
             {!isChanged && hasSeat && (
-              <DeleteButton type="button" onClick={() => deleteHistory.handleDelete(draft)}>
+              <DeleteButton type="button" onClick={() => handleDelete(draft)}>
                 삭제
               </DeleteButton>
             )}
@@ -60,11 +56,6 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
         <StatusText role="status">종료된 이용대장 기록을 찾을 수 없습니다.</StatusText>
       )}
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
-      <Modal
-        isOpen={deleteHistory.modal.isOpen}
-        config={deleteHistory.modal.config}
-        onClose={deleteHistory.modal.closeModal}
-      />
     </Card>
   );
 };

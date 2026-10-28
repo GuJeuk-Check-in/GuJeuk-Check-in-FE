@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import { adminTokens } from '@center/tokens';
 import { useModal } from '@center/ui/modal';
 import { MdDeleteOutline } from 'react-icons/md';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import type { UsageRecord } from '@entities/usage';
 
 export const useEndEarlyUsage = () => {
@@ -16,7 +17,12 @@ export const useEndEarlyUsage = () => {
       theme: 'warning',
       buttons: [
         { label: '아니요', variant: 'secondary', onClick: modal.closeModal },
-        { label: '예', bgColor: tokens.colors.error, variant: 'primary', onClick: modal.closeModal },
+        {
+          label: '예',
+          bgColor: tokens.colors.error,
+          variant: 'primary',
+          onClick: () => openApiPendingNotice(modal, '조기 종료', '현재 이용대장은 종료되지 않았습니다.'),
+        },
       ],
     });
   };
