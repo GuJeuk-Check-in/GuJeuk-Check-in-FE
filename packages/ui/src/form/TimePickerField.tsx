@@ -13,6 +13,7 @@ interface TimePickerFieldProps {
   readonly open?: boolean;
   readonly onOpenChange?: (open: boolean) => void;
   readonly panelTitle?: string;
+  readonly disabled?: boolean;
 }
 
 type Period = '오전' | '오후';
@@ -36,12 +37,13 @@ export const TimePickerField = ({
   open: controlledOpen,
   onOpenChange,
   panelTitle = '방문시간',
+  disabled = false,
 }: TimePickerFieldProps) => {
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [innerOpen, setInnerOpen] = useState(false);
   const [draft, setDraft] = useState(() => parseTime(value));
-  const open = controlledOpen ?? innerOpen;
+  const open = !disabled && (controlledOpen ?? innerOpen);
   const [wasOpen, setWasOpen] = useState(open);
 
   if (open !== wasOpen) {
@@ -107,12 +109,13 @@ export const TimePickerField = ({
         id={id}
         ref={trigger}
         aria-labelledby={`${id}-label ${id}-value`}
+        disabled={disabled}
         aria-expanded={open}
         aria-controls={open ? `${id}-panel` : undefined}
         onClick={() => setOpen(!open)}
       >
         <MdOutlineAccessTime size={24} aria-hidden="true" />
-        <Value id={`${id}-value`}>{value}</Value>
+        <Value id={`${id}-value`}>{pad(parseTime(value).hour)} : {pad(parseTime(value).minute)}</Value>
         {open ? <IoIosArrowUp size={20} aria-hidden="true" /> : <IoIosArrowDown size={20} aria-hidden="true" />}
       </Trigger>
       {open && (
@@ -345,6 +348,10 @@ const Trigger = styled.button`
   font: inherit;
   font-size: ${({ theme }) => adminTokens(theme).typography.input};
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 
   &:focus,
   &[aria-expanded='true'] {
