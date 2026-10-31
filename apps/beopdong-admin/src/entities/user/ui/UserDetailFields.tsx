@@ -15,6 +15,7 @@ import {
 } from '../lib/formatUserDetail';
 import type { UserDetail } from '../model/types';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { formatPhone } from '@shared/lib/formatPhone';
 
 interface UserDetailFieldsProps {
   readonly user?: UserDetail;
@@ -117,6 +118,9 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
           isEditable={isEditable}
           highlightOnFocus
           onChange={(event) => edit({ phone: event.target.value })}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && user) edit({ phone: formatPhone(user.phone) });
+          }}
         />
       </Row>
       <DetailInput

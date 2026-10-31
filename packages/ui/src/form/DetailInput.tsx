@@ -17,6 +17,7 @@ export interface DetailInputProps {
     | ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void)
     | null;
   type?: string;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
@@ -36,6 +37,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   name,
   onChange,
   type = 'text',
+  onKeyDown,
   inputMode,
   options = [],
   placeholder = '',
@@ -101,6 +103,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
           name={name}
           value={value}
           onChange={(e) => onChange?.(e)}
+          onKeyDown={onKeyDown}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}

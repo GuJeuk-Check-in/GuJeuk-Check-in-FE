@@ -6,6 +6,8 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { MdDescription } from 'react-icons/md';
 import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { formatAge } from '@shared/lib/formatAge';
+import { formatPhone } from '@shared/lib/formatPhone';
 import type { VisitFormData } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
@@ -39,6 +41,9 @@ export const VisitFormFields = ({
         inputMode="numeric"
         isEditable
         onChange={(event) => onChange({ ...value, age: event.target.value })}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') onChange({ ...value, age: formatAge(value.age) });
+        }}
       />
     </InputRow>
     <SelectOption
@@ -57,6 +62,9 @@ export const VisitFormFields = ({
       type="tel"
       isEditable
       onChange={(event) => onChange({ ...value, phone: event.target.value })}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });
+      }}
     />
     <TimePickerField
       label="방문 시각"
