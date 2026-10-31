@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
-import { PasswordButton } from '@center/ui/auth';
 import { Modal } from '@center/ui/modal';
-import { IoArrowBack } from 'react-icons/io5';
+import { ActionButton, BackLink, DeleteButton } from '@shared/ui';
 import { UserDetailFields, isUserDetailChanged, validateUserDetail } from '@entities/user';
 import { useDeleteUser } from '@features/user/delete-user';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
@@ -31,9 +29,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
 
   return (
     <Card>
-      <BackLink to="/organ/user/all" aria-label="회원 목록으로 돌아가기">
-        <IoArrowBack aria-hidden="true" />
-      </BackLink>
+      <BackLink to="/organ/user/all" label="회원 목록으로" />
       <Content>
         <UserDetailFields
           user={draft}
@@ -42,7 +38,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
         {user && draft && (
           <Actions>
             {isChanged ? (
-              <SaveButton content="저장" onClick={handleSave} />
+              <ActionButton content="저장" onClick={handleSave} />
             ) : (
               <DeleteButton type="button" onClick={() => handleDelete(user)}>
                 삭제
@@ -78,55 +74,7 @@ const Content = styled.div`
   gap: 32px;
 `;
 
-const BackLink = styled(Link)`
-  display: inline-flex;
-  align-self: flex-start;
-  font-size: 28px;
-  color: ${({ theme }) => adminTokens(theme).colors.text};
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
-    outline-offset: 4px;
-  }
-`;
-
 const Actions = styled.div`
   display: flex;
   justify-content: center;
-`;
-
-const DeleteButton = styled.button`
-  width: 172px;
-  height: 52px;
-  border-radius: 9999px;
-  border: 1px solid ${({ theme }) => adminTokens(theme).colors.error};
-  background-color: color-mix(in srgb, ${({ theme }) => adminTokens(theme).colors.warning} 40%, white);
-  color: ${({ theme }) => adminTokens(theme).colors.error};
-  font: inherit;
-  font-size: 20px;
-  line-height: 1.6;
-  cursor: pointer;
-
-  &:hover {
-    background-color: color-mix(in srgb, ${({ theme }) => adminTokens(theme).colors.warning} 60%, white);
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
-    outline-offset: 4px;
-  }
-`;
-
-const SaveButton = styled(PasswordButton)`
-  background-color: ${({ theme }) => adminTokens(theme).colors.primary};
-  box-shadow: none;
-
-  &:hover {
-    background-color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
 `;

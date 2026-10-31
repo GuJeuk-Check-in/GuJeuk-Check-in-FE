@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { adminTokens } from '@center/tokens';
 import { DetailInput, SelectOption, TimePickerField, VisitDatePicker } from '@center/ui/form';
-import { PasswordButton } from '@center/ui/auth';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
@@ -72,7 +70,7 @@ export const VisitFormFields = ({
       options={purposeOptions}
       onChange={(purposes) => onChange({ ...value, purposes })}
     />
-    <InputRow>
+    <FullWidthField>
       <VisitDatePicker
         label="방문날짜"
         icon={<CalendarIcon />}
@@ -81,7 +79,7 @@ export const VisitFormFields = ({
         value={value.visitDate}
         onChange={(visitDate) => onChange({ ...value, visitDate })}
       />
-    </InputRow>
+    </FullWidthField>
     {children}
   </Fields>
 );
@@ -94,6 +92,12 @@ const Fields = styled.div`
   min-width: 0;
 `;
 
+const FullWidthField = styled.div`
+  & [role='group'] {
+    width: 100%;
+  }
+`;
+
 const InputRow = styled.div`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -101,27 +105,5 @@ const InputRow = styled.div`
 
   @media (max-width: 40rem) {
     grid-template-columns: minmax(0, 1fr);
-  }
-`;
-
-export const VisitFormActions = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.625rem;
-  margin-top: 1.25rem;
-`;
-
-export const VisitFormButton = styled(PasswordButton)`
-  background-color: ${({ theme }) => adminTokens(theme).colors.primary};
-  box-shadow: none;
-
-  &:hover {
-    background-color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
   }
 `;

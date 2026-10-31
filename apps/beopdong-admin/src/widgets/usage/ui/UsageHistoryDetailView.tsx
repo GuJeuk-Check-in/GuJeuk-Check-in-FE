@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
-import { PasswordButton } from '@center/ui/auth';
-import { Modal } from '@center/ui/modal';
+import { Modal, useModal } from '@center/ui/modal';
+import { ActionButton, BackLink } from '@shared/ui';
 import { UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
-import { useDeleteUsageHistory } from '@features/usage/delete-history';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UsageHistoryDetail, UsageTimeField } from '@entities/usage';
@@ -14,14 +12,13 @@ interface UsageHistoryDetailViewProps {
   readonly detail?: UsageHistoryDetail;
 }
 
-const EDITABLE_KEYS = ['name', 'count', 'usePurpose', 'startTime', 'endTime', 'seat'] as const;
-
 export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) => {
   const [draft, setDraft] = useState(detail);
+  const [isEditing, setIsEditing] = useState(false);
   const [openField, setOpenField] = useState<UsageTimeField | null>(null);
-  const { modal, handleDelete } = useDeleteUsageHistory();
-  const isChanged = !!detail && !!draft && EDITABLE_KEYS.some((key) => detail[key] !== draft[key]);
-  const hasSeat = draft?.seat !== null && draft?.seat !== undefined;
+  const modal = useModal();
+
+  const handleEdit = () => setIsEditing(true);
 
   const handleSave = () => {
     const error = draft && validateUsageHistoryDetail(draft);
@@ -34,25 +31,21 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
 
   return (
     <Card>
-      <BackLink to="/usage/history">‹ 종료된 이용대장 목록으로</BackLink>
+      <BackLink to="/usage/history" label="종료된 이용대장 목록으로" />
       {draft ? (
         <Content>
           <UsageHistoryDetailFields
             detail={draft}
-            isEditing={isChanged}
+            isEditing={isEditing}
             onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
             openField={openField}
             onOpenFieldChange={setOpenField}
           />
           <Actions>
-            {isChanged && <ActionButton content="저장" onClick={handleSave} />}
-            {!isChanged && hasSeat && (
-              <DeleteButton type="button" onClick={() => handleDelete(draft)}>
-                삭제
-              </DeleteButton>
-            )}
-            {!isChanged && !hasSeat && (
-              <ActionButton content="수정" onClick={() => setOpenField('startTime')} />
+            {isEditing ? (
+              <ActionButton content="저장" onClick={handleSave} />
+            ) : (
+              <ActionButton content="수정" onClick={handleEdit} />
             )}
           </Actions>
         </Content>
@@ -81,19 +74,6 @@ const Card = styled.div`
   }
 `;
 
-const BackLink = styled(Link)`
-  align-self: flex-start;
-  color: ${({ theme }) => adminTokens(theme).colors.secondaryText};
-  font-size: 16px;
-  line-height: 1.6;
-  text-decoration: none;
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
-    outline-offset: 4px;
-  }
-`;
-
 const Content = styled.div`
   display: flex;
   flex-direction: column;
@@ -105,43 +85,7 @@ const Content = styled.div`
 const Actions = styled.div`
   display: flex;
   justify-content: center;
-`;
-
-const ActionButton = styled(PasswordButton)`
-  width: 138px;
-  height: 49px;
-  background-color: ${({ theme }) => adminTokens(theme).colors.primary};
-  box-shadow: none;
-
-  &:hover {
-    background-color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-    transform: none;
-  }
-`;
-
-const DeleteButton = styled.button`
-  width: 138px;
-  height: 49px;
-  border-radius: 9999px;
-  border: 1px solid ${({ theme }) => adminTokens(theme).colors.error};
-  background-color: color-mix(in srgb, ${({ theme }) => adminTokens(theme).colors.warning} 40%, white);
-  color: ${({ theme }) => adminTokens(theme).colors.error};
-  font: inherit;
-  font-size: 20px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: color-mix(in srgb, ${({ theme }) => adminTokens(theme).colors.warning} 60%, white);
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
-    outline-offset: 4px;
-  }
+  gap: 12px;
 `;
 
 const StatusText = styled.p`
