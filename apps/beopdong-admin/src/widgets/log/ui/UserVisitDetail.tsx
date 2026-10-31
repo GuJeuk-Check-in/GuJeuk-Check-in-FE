@@ -4,7 +4,7 @@ import { adminTokens } from '@center/tokens';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
-import { MdOutlineAccessTime } from 'react-icons/md';
+import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
 import { formatDateKoreanPadded } from '@shared/lib/formatDate';
 import { useState } from 'react';
@@ -61,6 +61,7 @@ export const UserVisitDetail = ({
           <DetailInput label="방문 시각" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
           <DetailInput label="방문날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<CalendarIcon />} />
+          <DetailInput label="비고사항" value={visit?.note || '—'} icon={<MdDescription />} />
           {visit && (
             <ActionButtons>
               <ActionButton content="수정" onClick={handleEdit} />

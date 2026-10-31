@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { DetailInput, SelectOption, TimePickerField, VisitDatePicker } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
+import { MdDescription } from 'react-icons/md';
+import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import type { VisitFormData } from '../model/visitForm';
 
@@ -80,6 +82,16 @@ export const VisitFormFields = ({
         onChange={(visitDate) => onChange({ ...value, visitDate })}
       />
     </FullWidthField>
+    <NoteField>
+      <DetailInput
+        label="비고사항"
+        value={value.note ?? ''}
+        placeholder="추가로 적을 내용을 적어주세요 (엑셀에는 작성되지 않음)"
+        icon={<MdDescription />}
+        isEditable
+        onChange={(event) => onChange({ ...value, note: event.target.value || null })}
+      />
+    </NoteField>
     {children}
   </Fields>
 );
@@ -105,5 +117,12 @@ const InputRow = styled.div`
 
   @media (max-width: 40rem) {
     grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+const NoteField = styled.div`
+  & input::placeholder {
+    color: ${({ theme }) => adminTokens(theme).colors.text};
+    opacity: 1;
   }
 `;
