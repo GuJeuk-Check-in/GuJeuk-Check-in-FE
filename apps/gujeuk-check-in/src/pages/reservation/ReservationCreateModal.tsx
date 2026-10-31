@@ -6,6 +6,8 @@ import { ColorData } from "@shared/ui/design-system";
 import type { ReservationPlace, ReservationTime } from "./ReservationData";
 import { HomeImage, Calendar } from "@shared/assets/index";
 
+const PHONE_PATTERN = /^010-\d{4}-\d{4}$/;
+
 export interface ReservationCreateValues {
   userName: string;
   phone: string;
@@ -30,7 +32,7 @@ export const ReservationCreateModal = ({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!userName.trim() || !phone.trim()) return;
+    if (!userName.trim() || !PHONE_PATTERN.test(phone.trim())) return;
     onSubmit({
       userName: userName.trim(),
       phone: phone.trim(),
@@ -89,7 +91,10 @@ export const ReservationCreateModal = ({
           <Button variant="secondary" onClick={onClose}>
             취소
           </Button>
-          <Button type="submit" disabled={!userName.trim() || !phone.trim()}>
+          <Button
+            type="submit"
+            disabled={!userName.trim() || !PHONE_PATTERN.test(phone.trim())}
+          >
             예약하기
           </Button>
         </ActionRow>
