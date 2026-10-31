@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
-import { Modal } from '@center/ui/modal';
-import { ActionButton, BackLink, DeleteButton } from '@shared/ui';
-import { UserDetailFields, isUserDetailChanged, validateUserDetail } from '@entities/user';
-import { useDeleteUser } from '@features/user/delete-user';
+import { Modal, useModal } from '@center/ui/modal';
+import { ActionButton, BackLink } from '@shared/ui';
+import { UserDetailFields, validateUserDetail } from '@entities/user';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UserDetail } from '@entities/user';
@@ -15,8 +14,8 @@ interface UserDetailViewProps {
 
 export const UserDetailView = ({ user }: UserDetailViewProps) => {
   const [draft, setDraft] = useState(user);
-  const { modal, handleDelete } = useDeleteUser();
-  const isChanged = !!user && !!draft && isUserDetailChanged(user, draft);
+  const [isEditing, setIsEditing] = useState(false);
+  const modal = useModal();
 
   const handleSave = () => {
     const error = draft && validateUserDetail(draft);
@@ -33,16 +32,16 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
       <Content>
         <UserDetailFields
           user={draft}
-          onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
+          onChange={isEditing
+            ? (patch) => setDraft((previous) => previous && { ...previous, ...patch })
+            : undefined}
         />
         {user && draft && (
           <Actions>
-            {isChanged ? (
+            {isEditing ? (
               <ActionButton content="저장" onClick={handleSave} />
             ) : (
-              <DeleteButton type="button" onClick={() => handleDelete(user)}>
-                삭제
-              </DeleteButton>
+              <ActionButton content="수정" onClick={() => setIsEditing(true)} />
             )}
           </Actions>
         )}
