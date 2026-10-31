@@ -4,3 +4,4 @@ export { default as CheckInCompletePage } from './check-in/CheckInCompletePage';
 export { default as CheckInHome } from './check-in/CheckInHome';
 export { default as CheckInUserCheck } from './check-in/CheckInUserCheck';
 export { default as CheckInFunnelAnalyticsPage } from './check-in/CheckInFunnelAnalyticsPage';
+export { default as ReservationDashboardPage } from './reservation/ReservationDashboardPage';

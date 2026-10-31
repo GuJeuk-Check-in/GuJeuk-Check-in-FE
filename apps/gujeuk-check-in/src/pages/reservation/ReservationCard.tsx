@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
-import type { MouseEvent } from 'react';
+import type { MouseEvent } from "react";
 import { ColorData } from "@shared/ui/design-system";
 
 interface ReservationCardProps {
   userName: string;
   column: number;
   row: number;
-  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ReservationCard = ({
@@ -20,15 +20,14 @@ export const ReservationCard = ({
       $column={column}
       $row={row}
       onClick={onClick}
-      role="button"
-      tabIndex={0}
+      type="button"
     >
       {userName}
     </Card>
   );
 };
 
-const Card = styled.div<{ $column: number; $row: number }>`
+const Card = styled.button<{ $column: number; $row: number }>`
   grid-column: ${({ $column }) => $column};
   grid-row: ${({ $row }) => $row};
   z-index: 2;
@@ -42,7 +41,9 @@ const Card = styled.div<{ $column: number; $row: number }>`
   border: 0;
   background-color: ${ColorData.colors.fillNormal};
   color: ${ColorData.colors.labelNormal};
+  font-family: inherit;
   font-size: 0.8rem;
+  text-align: center;
   cursor: pointer;
   transition: background-color ${ColorData.interaction.transitionFast},
     box-shadow ${ColorData.interaction.transitionFast};

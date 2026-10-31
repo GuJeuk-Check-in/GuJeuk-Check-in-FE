@@ -1,8 +1,11 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { type ModalConfig } from '@shared/hooks/useModal';
 import { Button } from '../button';
 import { ColorData } from '../design-system/ColorData';
+
+const FOCUSABLE_ELEMENTS_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface ModalProps {
   isOpen: boolean;
@@ -25,9 +28,71 @@ export const Modal = ({
   mode = 'dialog',
   position,
 }: ModalProps) => {
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const isDialogOpen = isOpen && config !== null && mode === 'dialog';
+
+  useEffect(() => {
+    if (!isDialogOpen) return;
+
+    const previouslyFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const modalContent = modalContentRef.current;
+    if (!modalContent) return;
+
+    const focusableElements = Array.from(
+      modalContent.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    (focusableElements[0] ?? modalContent).focus();
+
+    return () => {
+      previouslyFocusedElement?.focus();
+    };
+  }, [isDialogOpen]);
+
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (mode !== 'dialog') return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      onClose?.();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const modalContent = modalContentRef.current;
+    if (!modalContent) return;
+
+    const focusableElements = Array.from(
+      modalContent.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      modalContent.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (event.shiftKey && (activeElement === firstElement || !modalContent.contains(activeElement))) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (
+      !event.shiftKey &&
+      (activeElement === lastElement || !modalContent.contains(activeElement))
+    ) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
 
   return (
     <Overlay
@@ -39,9 +104,11 @@ export const Modal = ({
       $mode={mode}
     >
       <ModalContent
+        ref={modalContentRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal={mode === 'dialog' ? true : undefined}
         aria-labelledby="common-modal-title"
+        tabIndex={-1}
         $theme={theme}
         $size={size}
         $mode={mode}
@@ -49,6 +116,7 @@ export const Modal = ({
         $left={position?.left}
         data-theme={theme}
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleKeyDown}
       >
         {onClose && (
           <CloseButton type="button" onClick={onClose} aria-label="모달 닫기">
