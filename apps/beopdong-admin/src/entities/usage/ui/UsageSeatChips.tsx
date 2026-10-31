@@ -6,20 +6,22 @@ interface UsageSeatChipsProps {
   readonly seatCount: number;
   readonly selected: number;
   readonly onSelect: (seat: number) => void;
+  readonly disabled?: boolean;
 }
 
-export const UsageSeatChips = ({ seatCount, selected, onSelect }: UsageSeatChipsProps) => {
+export const UsageSeatChips = ({ seatCount, selected, onSelect, disabled = false }: UsageSeatChipsProps) => {
   const seats = Array.from({ length: seatCount }, (_, index) => index + 1);
 
   return (
     <Container>
-      <Heading id="usage-seat-heading">좌석번호</Heading>
+      <Heading id="usage-seat-heading">좌석</Heading>
       <Chips role="radiogroup" aria-labelledby="usage-seat-heading">
         {seats.map((seat) => (
           <Chip
             key={seat}
             type="button"
             role="radio"
+            disabled={disabled}
             aria-checked={seat === selected}
             $active={seat === selected}
             onClick={() => onSelect(seat)}
@@ -36,14 +38,14 @@ export const UsageSeatChips = ({ seatCount, selected, onSelect }: UsageSeatChips
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.5rem;
 `;
 
 const Heading = styled.h2`
   margin: 0;
   color: ${({ theme }) => adminTokens(theme).colors.text};
-  font-size: 20px;
-  font-weight: 700;
+  font-size: ${({ theme }) => adminTokens(theme).typography.input};
+  font-weight: 500;
 `;
 
 const Chips = styled.div`

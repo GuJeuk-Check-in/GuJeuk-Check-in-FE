@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { DetailInput, SelectOption, TimePickerField } from '@center/ui/form';
+import { DetailInput, TimePickerField } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
-import { MdOutlineChair } from 'react-icons/md';
 import { TbTargetArrow } from 'react-icons/tb';
+import { SeatIcon } from '@shared/ui/icons';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';
@@ -18,7 +18,6 @@ interface UsageHistoryDetailFieldsProps {
 }
 
 const SEAT_COUNT = 10;
-const SEAT_OPTIONS = Array.from({ length: SEAT_COUNT }, (_, index) => `${index + 1}번`);
 
 export const UsageHistoryDetailFields = ({
   detail,
@@ -32,6 +31,7 @@ export const UsageHistoryDetailFields = ({
       label={label}
       panelTitle={label}
       value={toHourMinute(detail[field])}
+      disabled={!isEditing}
       onChange={(time) => onChange({ [field]: toHourMinuteSecond(time) })}
       open={openField === field}
       onOpenChange={(open) => onOpenFieldChange(open ? field : null)}
@@ -44,7 +44,7 @@ export const UsageHistoryDetailFields = ({
         label="이름"
         value={detail.name}
         icon={<IoMdPerson />}
-        isEditable
+        isEditable={isEditing}
         highlightOnFocus
         onChange={(event) => onChange({ name: event.target.value })}
       />
@@ -55,7 +55,7 @@ export const UsageHistoryDetailFields = ({
           placeholder="인원을 입력해주세요"
           icon={<IoMdPerson />}
           inputMode="numeric"
-          isEditable
+          isEditable={isEditing}
           highlightOnFocus
           onChange={(event) => onChange({ count: Number(event.target.value.replace(/\D/g, '')) })}
         />
@@ -65,7 +65,7 @@ export const UsageHistoryDetailFields = ({
           label="사용 목적"
           value={detail.usePurpose}
           icon={<TbTargetArrow />}
-          isEditable
+          isEditable={isEditing}
           highlightOnFocus
           onChange={(event) => onChange({ usePurpose: event.target.value })}
         />
@@ -73,20 +73,13 @@ export const UsageHistoryDetailFields = ({
       {renderTimeField('startTime', '시작 시간')}
       {renderTimeField('endTime', '종료 시간')}
       {detail.seat !== null && (isEditing ? (
-        <SelectOption
-          label="좌석"
-          value={`${detail.seat}번`}
-          options={SEAT_OPTIONS}
-          icon={<MdOutlineChair />}
-          highlightOnFocus
-          onChange={(option) => onChange({ seat: Number.parseInt(option, 10) })}
-        />
-      ) : (
         <UsageSeatChips
           seatCount={SEAT_COUNT}
           selected={detail.seat}
           onSelect={(seat) => onChange({ seat })}
         />
+      ) : (
+        <DetailInput label="좌석" value={`${detail.seat}번`} icon={<SeatIcon />} />
       ))}
     </Fields>
   );
