@@ -1,0 +1,62 @@
+export const ColorData = {
+  colors: {
+    primary: '#0066FF',
+    primaryStrong: '#005EEB',
+    primaryHeavy: '#0054D1',
+    primaryLight: '#EAF2FE',
+    primary8: 'rgba(0, 102, 255, 0.08)',
+    labelStrong: '#000000',
+    labelNormal: '#171719',
+    labelNeutral: 'rgba(46, 47, 51, 0.88)',
+    labelAlternative: 'rgba(55, 56, 60, 0.61)',
+    labelAssistive: 'rgba(55, 56, 60, 0.28)',
+    labelDisabled: 'rgba(55, 56, 60, 0.16)',
+    lineAlternative: 'rgba(112, 115, 124, 0.16)',
+    lineNormal: '#D9DADD',
+    fillNormal: 'rgba(112, 115, 124, 0.08)',
+    background: '#FFFFFF',
+    interactionDisabled: '#F4F4F5',
+    dimmer: 'rgba(23, 23, 25, 0.52)',
+    positive: '#00BF4F',
+    positiveBackground: '#EAFBF0',
+    caution: '#FF9200',
+    cautionBackground: '#FFF4E5',
+    negative: '#FF4242',
+    negativeBackground: '#FFF0F0',
+  },
+  spacing: {
+    4: '0.25rem',
+    8: '0.5rem',
+    12: '0.75rem',
+    16: '1rem',
+    24: '1.5rem',
+    32: '2rem',
+  },
+  radius: {
+    small: '0.375rem',
+    medium: '0.5rem',
+    large: '0.625rem',
+    modal: '1rem',
+    pill: '999px',
+  },
+  shadow: {
+    popover: '0 4px 16px rgba(0, 0, 0, 0.12)',
+    modal: '0 16px 24px rgba(0, 0, 0, 0.16)',
+    focus: '0 0 0 2px #0066FF',
+  },
+  typography: {
+    fontFamily:
+      'Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
+    modalTitle: { fontSize: '1.125rem', fontWeight: 700, lineHeight: 1.4 },
+    title: { fontSize: '1.625rem', fontWeight: 700, lineHeight: 1.3 },
+    body: { fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.5 },
+    label: { fontSize: '0.8125rem', fontWeight: 600, lineHeight: 1.4 },
+    caption: { fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.4 },
+  },
+  interaction: {
+    transitionFast: '150ms ease',
+    transitionNormal: '200ms ease',
+  },
+} as const;
+
+export type DesignTokens = typeof ColorData;
