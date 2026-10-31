@@ -7,7 +7,7 @@ export const CalendarValue = styled(DropdownValue)<{ $placeholder: boolean; $leg
   ${({ $placeholder, $legacy }) => $legacy && $placeholder && 'color: #757575;'}
 `;
 
-export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean }>`
+export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean; $highlightOnFocus?: boolean }>`
   gap: 0.75rem;
   min-height: calc(${({ theme }) => adminTokens(theme).components.fieldHeight} + 0.125rem);
   height: auto;
@@ -26,13 +26,22 @@ export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ 
     padding-block: 0;
   `}
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
-    outline-offset: 2px;
-  }
+  ${({ $highlightOnFocus, theme }) => $highlightOnFocus ? `
+    &:focus,
+    &[aria-expanded='true'] {
+      outline: none;
+      border-color: ${adminTokens(theme).colors.primary};
+      background-color: #fbfbff;
+    }
+  ` : `
+    &:focus-visible {
+      outline: 2px solid ${adminTokens(theme).colors.primary};
+      outline-offset: 2px;
+    }
+  `}
 `;
 
-export const CalendarWrapper = styled.div<{ $legacy: boolean }>`
+export const CalendarWrapper = styled.div<{ $legacy: boolean; $wide?: boolean }>`
   position: absolute;
   top: 100%;
   left: 0;
@@ -52,6 +61,17 @@ export const CalendarWrapper = styled.div<{ $legacy: boolean }>`
     width: 95.8%;
   `}
 
+  ${({ $wide, theme }) => $wide && `
+    position: static;
+    width: calc(200% + 1.25rem);
+    padding: 2.5rem 1.25rem;
+    border: 0.0625rem solid ${adminTokens(theme).colors.fieldBorder};
+    border-radius: 1rem;
+    box-shadow: none;
+
+    @media (max-width: 40rem) { width: 100%; padding: 1.5rem 0.5rem; }
+  `}
+
   @media (max-width: 32rem) { padding: ${({ $legacy }) => $legacy ? '1.25rem' : '0.5rem'}; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -59,7 +79,7 @@ export const CalendarWrapper = styled.div<{ $legacy: boolean }>`
   }
 `;
 
-export const StyledCalendar = styled(Calendar)<{ $legacy: boolean }>`
+export const StyledCalendar = styled(Calendar)<{ $legacy: boolean; $wide?: boolean }>`
   && {
     border: none;
     width: 100%;
@@ -128,6 +148,29 @@ export const StyledCalendar = styled(Calendar)<{ $legacy: boolean }>`
     .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus { background: #1087ff; }
     .react-calendar__month-view__days__day--weekend { color: #d88282; }
     .react-calendar__month-view__days__day--neighboringMonth { color: #6a6a6a; }
+  `}
+
+  ${({ $wide, theme }) => $wide && `
+    .react-calendar__navigation { margin-bottom: 2rem; }
+    .react-calendar__navigation__label { font-size: 1.375rem; font-weight: 700; flex-grow: 0 !important; padding: 0 1.5rem; }
+    .react-calendar__navigation button { font-size: 1.5rem; display: flex; align-items: center; justify-content: center; }
+    .react-calendar__navigation button:enabled:hover,
+    .react-calendar__navigation button:enabled:focus { background: none; }
+    .react-calendar__month-view { width: min(100%, 26rem); margin: 0 auto; }
+    .react-calendar__month-view__weekdays { margin-bottom: 1rem; font-size: 1.125rem; font-weight: 700; }
+    .react-calendar__month-view__weekdays abbr { text-decoration: none; }
+    .react-calendar__month-view__days { row-gap: 0.75rem; }
+    .react-calendar__tile {
+      width: auto;
+      height: 2.25rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      margin-bottom: 0;
+    }
+    .react-calendar__tile--now { background: none; }
+    .react-calendar__tile:enabled:hover,
+    .react-calendar__tile:enabled:focus { background: ${adminTokens(theme).colors.primaryLight}; }
   `}
 
   .react-calendar__tile--active.react-calendar__month-view__days__day--weekend,

@@ -14,4 +14,5 @@ export interface UserVisitDetailRecord {
   visitTime: string;
   purposes: readonly string[];
   visitDate: string;
+  note?: string | null;
 }

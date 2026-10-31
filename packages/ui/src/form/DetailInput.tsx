@@ -17,6 +17,7 @@ export interface DetailInputProps {
     | ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void)
     | null;
   type?: string;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
@@ -25,6 +26,7 @@ export interface DetailInputProps {
   trailingIcon?: React.ReactNode;
   multiple?: boolean;
   hideNumberSpinner?: boolean;
+  highlightOnFocus?: boolean;
 }
 
 export const DetailInput: React.FC<DetailInputProps> = ({
@@ -35,6 +37,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   name,
   onChange,
   type = 'text',
+  onKeyDown,
   inputMode,
   options = [],
   placeholder = '',
@@ -43,6 +46,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   trailingIcon,
   multiple = false,
   hideNumberSpinner = false,
+  highlightOnFocus = false,
 }) => {
   const inputId = React.useId();
   const labelId = `${inputId}-label`;
@@ -90,7 +94,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
       );
     }
     return (
-      <InputContainer isEditable={true} $hasIcon={!!icon}>
+      <InputContainer isEditable={true} $hasIcon={!!icon} $highlightOnFocus={highlightOnFocus}>
         {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
           id={inputId}
@@ -99,6 +103,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
           name={name}
           value={value}
           onChange={(e) => onChange?.(e)}
+          onKeyDown={onKeyDown}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}
@@ -131,7 +136,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
+const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean; $highlightOnFocus?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -150,6 +155,13 @@ const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
     height: auto;
     padding-block: 0.75rem;
     min-width: 0;
+  `}
+
+  ${({ $highlightOnFocus, theme }) => $highlightOnFocus && `
+    &:focus-within {
+      border-color: ${adminTokens(theme).colors.primary};
+      background-color: #fbfbff;
+    }
   `}
 `;
 

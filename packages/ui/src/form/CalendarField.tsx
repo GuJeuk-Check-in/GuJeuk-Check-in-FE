@@ -1,6 +1,6 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 import { FaCalendarDays } from 'react-icons/fa6';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward, IoIosArrowUp } from 'react-icons/io';
 import { DropdownContainer, DropdownLabel, DropdownArrowIcon } from './DropdownParts';
 import { CalendarTrigger, CalendarValue, CalendarWrapper, StyledCalendar } from './CalendarParts';
 import { formatCalendarDate } from './dateFormatters';
@@ -11,9 +11,14 @@ interface CalendarFieldProps {
   readonly onChange: (value: Date) => void;
   readonly label?: string;
   readonly legacy?: boolean;
+  readonly icon?: ReactNode;
+  readonly variant?: 'default' | 'wide';
+  readonly formatValue?: (date: Date) => string;
+  readonly highlightOnFocus?: boolean;
 }
 
-export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false }: CalendarFieldProps) => {
+export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false, icon, variant = 'default', formatValue = formatCalendarDate, highlightOnFocus = false }: CalendarFieldProps) => {
+  const wide = variant === 'wide';
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -39,24 +44,30 @@ export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy
     >
       <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>
       <CalendarTrigger
-        $legacy={legacy} type="button" id={id} ref={trigger}
+        $legacy={legacy} $highlightOnFocus={highlightOnFocus} type="button" id={id} ref={trigger}
         aria-labelledby={`${id}-label ${id}-value`}
         aria-expanded={open} aria-controls={open ? `${id}-calendar` : undefined}
         onClick={() => setOpen((previous) => !previous)}
       >
-        <FaCalendarDays size={24} aria-hidden="true" />
+        {icon ?? <FaCalendarDays size={24} aria-hidden="true" />}
         <CalendarValue id={`${id}-value`} $placeholder={!value} $legacy={legacy}>
-          {value ? formatCalendarDate(value) : `${label}를 선택해주세요${legacy ? '.' : ''}`}
+          {value ? formatValue(value) : `${label}를 선택해주세요${legacy ? '.' : ''}`}
         </CalendarValue>
-        <DropdownArrowIcon aria-hidden="true">
-          {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
-        </DropdownArrowIcon>
+        {!wide && (
+          <DropdownArrowIcon aria-hidden="true">
+            {open ? <IoIosArrowUp size={20} /> : <IoIosArrowDown size={20} />}
+          </DropdownArrowIcon>
+        )}
       </CalendarTrigger>
       {open && (
-        <CalendarWrapper $legacy={legacy} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
+        <CalendarWrapper $legacy={legacy} $wide={wide} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
           <StyledCalendar
-            $legacy={legacy} value={value ?? (legacy ? new Date() : null)} onChange={handleDateSelect}
-            calendarType="gregory" locale="ko-KR" nextLabel="›" prevLabel="‹"
+            $legacy={legacy} $wide={wide} value={value ?? (legacy ? new Date() : null)} onChange={handleDateSelect}
+            calendarType="gregory" locale="ko-KR"
+            nextLabel={wide ? <IoIosArrowForward aria-hidden="true" /> : '›'}
+            prevLabel={wide ? <IoIosArrowBack aria-hidden="true" /> : '‹'}
+            next2Label={wide ? null : undefined} prev2Label={wide ? null : undefined}
+            formatDay={wide ? (_locale, date) => String(date.getDate()) : undefined}
             navigationAriaLabel="달력 탐색" prevAriaLabel="이전 기간" nextAriaLabel="다음 기간"
             prev2AriaLabel="이전 연도" next2AriaLabel="다음 연도"
           />
