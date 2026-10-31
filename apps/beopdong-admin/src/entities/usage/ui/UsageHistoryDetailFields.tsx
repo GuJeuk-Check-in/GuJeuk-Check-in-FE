@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { DetailInput, TimePickerField } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { TbTargetArrow } from 'react-icons/tb';
-import { SeatIcon } from '@shared/ui/icons';
+import { CalendarIcon, SeatIcon } from '@shared/ui/icons';
+import { formatDateKoreanPadded } from '@shared/lib/formatDate';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';
@@ -47,6 +48,11 @@ export const UsageHistoryDetailFields = ({
         isEditable={isEditing}
         highlightOnFocus
         onChange={(event) => onChange({ name: event.target.value })}
+      />
+      <DetailInput
+        label="방문날짜"
+        value={formatDateKoreanPadded(detail.visitDate)}
+        icon={<CalendarIcon />}
       />
       {detail.count !== null && (
         <DetailInput

@@ -26,6 +26,16 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
     };
   }, []);
 
+  const handlePeriodKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+    if (!step) return;
+    event.preventDefault();
+    const current = PERIOD_OPTIONS.indexOf(period as (typeof PERIOD_OPTIONS)[number]);
+    const next = PERIOD_OPTIONS[(current + step + PERIOD_OPTIONS.length) % PERIOD_OPTIONS.length];
+    setPeriod(next);
+    event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]')[PERIOD_OPTIONS.indexOf(next)]?.focus();
+  };
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') {
       event.stopPropagation();
@@ -36,7 +46,7 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
     const first = buttons?.[0];
     const last = buttons?.[buttons.length - 1];
     if (!first || !last) return;
-    if (event.shiftKey && document.activeElement === first) {
+    if (event.shiftKey && (document.activeElement === first || document.activeElement === contentRef.current)) {
       event.preventDefault();
       last.focus();
     } else if (!event.shiftKey && document.activeElement === last) {
@@ -63,13 +73,14 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
         </PlusIcon>
         <Title id={titleId}>{title}</Title>
         <Subtitle id={subtitleId}>내려받을 날짜를 선택해주세요</Subtitle>
-        <Periods role="radiogroup" aria-label="내려받을 기간">
+        <Periods role="radiogroup" aria-label="내려받을 기간" onKeyDown={handlePeriodKeyDown}>
           {PERIOD_OPTIONS.map((option) => (
             <PeriodButton
               key={option}
               type="button"
               role="radio"
               aria-checked={period === option}
+              tabIndex={period === option ? 0 : -1}
               $selected={period === option}
               onClick={() => setPeriod(option)}
             >
