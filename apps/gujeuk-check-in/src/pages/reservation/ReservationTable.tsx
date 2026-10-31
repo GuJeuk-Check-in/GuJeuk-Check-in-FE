@@ -66,6 +66,12 @@ export const ReservationTable = ({
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget) return;
 
+    const phone = values.phone.trim();
+    if (reservations.some((reservation) => reservation.phone === phone)) {
+      showToast("이미 예약된 전화번호예요. 예약은 1인 1시간만 가능해요.");
+      return;
+    }
+
     const column = PlaceData.indexOf(createTarget.place) + 2;
     const row = TimeData.indexOf(createTarget.time) + 2;
     const reservation: Reservation = {
@@ -75,7 +81,7 @@ export const ReservationTable = ({
       startTime: createTarget.time,
       endTime: getNextTime(createTarget.time),
       people: values.people,
-      phone: values.phone,
+      phone,
       column,
       row,
     };
