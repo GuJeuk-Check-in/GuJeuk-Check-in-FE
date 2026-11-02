@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { DetailInput, SelectOption, VisitDatePicker, formatDateToISOString } from '@center/ui/form';
+import {
+  DetailInput,
+  SelectOption,
+  VisitDatePicker,
+  formatDateKoreanPadded,
+  formatDateToISOString,
+} from '@center/ui/form';
 import { FaSchool } from 'react-icons/fa';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import {
-  formatDateSlash,
   formatGender,
   GENDER_OPTIONS,
   isCustomRoute,
@@ -19,21 +24,45 @@ import { formatPhone } from '@shared/lib/formatPhone';
 
 interface UserDetailFieldsProps {
   readonly user?: UserDetail;
-  readonly onChange?: (patch: Partial<UserDetail>) => void;
+  readonly isEditing: boolean;
+  readonly onChange: (patch: Partial<UserDetail>) => void;
 }
 
 const EMPTY = '—';
 
-const formatPickedDate = (date: Date) => formatDateSlash(formatDateToISOString(date));
+const formatPickedDate = (date: Date) => formatDateKoreanPadded(formatDateToISOString(date));
 const DATE_ICON = <CalendarIcon />;
 
-export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
-  const isEditable = !!user && !!onChange;
-  const edit = (patch: Partial<UserDetail>) => onChange?.(patch);
+interface DateFieldProps {
+  readonly label: string;
+  readonly value?: string;
+  readonly isEditing: boolean;
+  readonly onChange: (date: string) => void;
+}
+
+const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
+  isEditing && value !== undefined ? (
+    <VisitDatePicker
+      label={label}
+      value={value}
+      icon={DATE_ICON}
+      variant="wide"
+      highlightOnFocus
+      formatValue={formatPickedDate}
+      onChange={onChange}
+    />
+  ) : (
+    <DetailInput label={label} value={value ? formatDateKoreanPadded(value) : EMPTY} icon={DATE_ICON} />
+  );
+
+export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFieldsProps) => {
+  const isEditable = isEditing && !!user;
+  const edit = onChange;
   const [isOtherRoute, setIsOtherRoute] = useState(() => !!user && isCustomRoute(user.route));
 
   const handleRouteSelect = (option: string) => {
     const isOther = option === ROUTE_OTHER;
+    if (isOther && isOtherRoute) return;
     setIsOtherRoute(isOther);
     edit({ route: isOther ? '' : option });
   };
@@ -59,23 +88,12 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
         />
       </Row>
       <Row>
-        {isEditable ? (
-          <VisitDatePicker
-            label="생년월일"
-            value={user.birthYMD}
-            icon={DATE_ICON}
-            variant="wide"
-            highlightOnFocus
-            formatValue={formatPickedDate}
-            onChange={(birthYMD) => edit({ birthYMD })}
-          />
-        ) : (
-          <DetailInput
-            label="생년월일"
-            value={user ? formatDateSlash(user.birthYMD) : EMPTY}
-            icon={<CalendarIcon />}
-          />
-        )}
+        <DateField
+          label="생년월일"
+          value={user?.birthYMD}
+          isEditing={isEditable}
+          onChange={(birthYMD) => edit({ birthYMD })}
+        />
         {isEditable ? (
           <SelectOption
             label="성별"
@@ -93,23 +111,12 @@ export const UserDetailFields = ({ user, onChange }: UserDetailFieldsProps) => {
         )}
       </Row>
       <Row>
-        {isEditable ? (
-          <VisitDatePicker
-            label="신청일"
-            value={user.applyDate}
-            icon={DATE_ICON}
-            variant="wide"
-            highlightOnFocus
-            formatValue={formatPickedDate}
-            onChange={(applyDate) => edit({ applyDate })}
-          />
-        ) : (
-          <DetailInput
-            label="신청일"
-            value={user ? formatDateSlash(user.applyDate) : EMPTY}
-            icon={<CalendarIcon />}
-          />
-        )}
+        <DateField
+          label="신청일"
+          value={user?.applyDate}
+          isEditing={isEditable}
+          onChange={(applyDate) => edit({ applyDate })}
+        />
         <DetailInput
           label="연락처"
           value={user?.phone ?? EMPTY}

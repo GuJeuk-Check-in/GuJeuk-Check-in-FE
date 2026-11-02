@@ -32,9 +32,8 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
       <Content>
         <UserDetailFields
           user={draft}
-          onChange={isEditing
-            ? (patch) => setDraft((previous) => previous && { ...previous, ...patch })
-            : undefined}
+          isEditing={isEditing}
+          onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
         />
         {user && draft && (
           <Actions>
