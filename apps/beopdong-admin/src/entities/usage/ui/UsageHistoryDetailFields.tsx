@@ -5,7 +5,7 @@ import { TbTargetArrow } from 'react-icons/tb';
 import { CalendarIcon, SeatIcon } from '@shared/ui/icons';
 import { formatDateKoreanPadded } from '@shared/lib/formatDate';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
-import type { UsageHistoryDetail } from '../model/types';
+import type { UsageHistoryDetail, UsageHistoryDetailPatch } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';
 
 export type UsageTimeField = 'startTime' | 'endTime';
@@ -13,7 +13,7 @@ export type UsageTimeField = 'startTime' | 'endTime';
 interface UsageHistoryDetailFieldsProps {
   readonly detail: UsageHistoryDetail;
   readonly isEditing: boolean;
-  readonly onChange: (patch: Partial<UsageHistoryDetail>) => void;
+  readonly onChange: (patch: UsageHistoryDetailPatch) => void;
   readonly openField: UsageTimeField | null;
   readonly onOpenFieldChange: (field: UsageTimeField | null) => void;
 }
@@ -54,7 +54,7 @@ export const UsageHistoryDetailFields = ({
         value={formatDateKoreanPadded(detail.visitDate)}
         icon={<CalendarIcon />}
       />
-      {detail.count !== null && (
+      {detail.kind === 'group' && (
         <DetailInput
           label="인원"
           value={detail.count || ''}
@@ -66,7 +66,7 @@ export const UsageHistoryDetailFields = ({
           onChange={(event) => onChange({ count: Number(event.target.value.replace(/\D/g, '')) })}
         />
       )}
-      {detail.usePurpose !== null && (
+      {detail.kind === 'pc' && (
         <DetailInput
           label="사용 목적"
           value={detail.usePurpose}
@@ -78,7 +78,7 @@ export const UsageHistoryDetailFields = ({
       )}
       {renderTimeField('startTime', '시작 시간')}
       {renderTimeField('endTime', '종료 시간')}
-      {detail.seat !== null && (isEditing ? (
+      {detail.kind === 'pc' && (isEditing ? (
         <UsageSeatChips
           seatCount={SEAT_COUNT}
           selected={detail.seat}

@@ -1,5 +1,5 @@
 import { toHourMinute } from '@shared/lib/formatTime';
-import type { GroupUsage, PcUsage, UsageRecord, UsageStatus } from '../model/types';
+import type { GroupUsage, PcUsage, UsageGroup, UsageRecord, UsageStatus } from '../model/types';
 
 const toPcRecord = (usage: PcUsage): UsageRecord => ({
   id: usage.id,
@@ -21,8 +21,8 @@ const toGroupRecord = (usage: GroupUsage, purposeName: string): UsageRecord => (
   purposeRemainTime: usage.purposeRemainTime,
 });
 
-export const toUsageGroups = ({ pc, pingPong, sing }: UsageStatus): UsageRecord[][] => [
-  pc.map(toPcRecord),
-  pingPong ? [toGroupRecord(pingPong, '포켓볼 탁구')] : [],
-  sing ? [toGroupRecord(sing, '노래방')] : [],
+export const toUsageGroups = ({ pc, pingPong, sing }: UsageStatus): UsageGroup[] => [
+  { id: 'pc', label: '인터넷', records: pc.map(toPcRecord) },
+  { id: 'pingPong', label: '탁구', records: pingPong ? [toGroupRecord(pingPong, '탁구')] : [] },
+  { id: 'sing', label: '노래방', records: sing ? [toGroupRecord(sing, '노래방')] : [] },
 ];

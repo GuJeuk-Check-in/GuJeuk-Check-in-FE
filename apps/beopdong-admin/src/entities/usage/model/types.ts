@@ -44,7 +44,13 @@ export interface UsageStatusResponse {
   usageStatus: UsageStatus;
 }
 
-export interface UsageHistoryDetail {
+export interface UsageGroup {
+  id: 'pc' | 'pingPong' | 'sing';
+  label: string;
+  records: UsageRecord[];
+}
+
+export interface UsageHistoryDetailResponse {
   purpose: number;
   name: string;
   visitDate: string;
@@ -54,3 +60,28 @@ export interface UsageHistoryDetail {
   seat: number | null;
   count: number | null;
 }
+
+interface UsageHistoryDetailBase {
+  purpose: number;
+  name: string;
+  visitDate: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface PcUsageHistoryDetail extends UsageHistoryDetailBase {
+  kind: 'pc';
+  seat: number;
+  usePurpose: string;
+}
+
+export interface GroupUsageHistoryDetail extends UsageHistoryDetailBase {
+  kind: 'group';
+  count: number;
+}
+
+export type UsageHistoryDetail = PcUsageHistoryDetail | GroupUsageHistoryDetail;
+
+export type UsageHistoryDetailPatch = Partial<
+  UsageHistoryDetailBase & Pick<PcUsageHistoryDetail, 'seat' | 'usePurpose'> & Pick<GroupUsageHistoryDetail, 'count'>
+>;

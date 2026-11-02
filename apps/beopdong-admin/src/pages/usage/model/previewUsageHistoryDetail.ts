@@ -1,6 +1,6 @@
-import type { UsageHistoryDetail } from '@entities/usage';
+import type { UsageHistoryDetailResponse } from '@entities/usage';
 
-export const previewUsageHistoryDetails: Readonly<Record<number, UsageHistoryDetail>> = {
+export const previewUsageHistoryDetails: Readonly<Record<number, UsageHistoryDetailResponse>> = {
   1: { purpose: 3, name: '김하늘', visitDate: '2011-03-12', usePurpose: null, startTime: '12:40:00', endTime: '13:20:00', seat: null, count: 2 },
   2: { purpose: 3, name: '김하늘', visitDate: '2011-03-12', usePurpose: null, startTime: '12:40:00', endTime: '13:20:00', seat: null, count: 2 },
   3: { purpose: 1, name: '이서준', visitDate: '2011-03-12', usePurpose: '자료 검색', startTime: '14:00:00', endTime: '14:40:00', seat: 3, count: null },

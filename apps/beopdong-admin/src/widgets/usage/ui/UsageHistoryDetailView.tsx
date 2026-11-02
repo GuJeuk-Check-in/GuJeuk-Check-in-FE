@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { Modal, useModal } from '@center/ui/modal';
 import { ActionButton, BackLink } from '@shared/ui';
-import { UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
+import { applyUsageHistoryPatch, UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UsageHistoryDetail, UsageTimeField } from '@entities/usage';
@@ -37,7 +37,7 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
           <UsageHistoryDetailFields
             detail={draft}
             isEditing={isEditing}
-            onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
+            onChange={(patch) => setDraft((previous) => previous && applyUsageHistoryPatch(previous, patch))}
             openField={openField}
             onOpenFieldChange={setOpenField}
           />
