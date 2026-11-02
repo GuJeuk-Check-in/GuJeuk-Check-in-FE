@@ -17,9 +17,6 @@ const CheckInCompletePage = lazy(
 const CheckInFunnelAnalyticsPage = lazy(
   () => import('@pages/check-in/CheckInFunnelAnalyticsPage'),
 );
-const ReservationDashboardPage = lazy(
-  () => import('@pages/reservation/ReservationDashboardPage'),
-);
 
 const RouteFallback = styled.div`
   position: fixed;
@@ -65,7 +62,6 @@ export const Router = () => {
           path="/check-in/funnel-analytics"
           element={<CheckInFunnelAnalyticsPage />}
         />
-        <Route path="/reservation" element={<ReservationDashboardPage />} />
         <Route path="*" element={<Navigate to="/check-in" replace />} />
       </Routes>
     </Suspense>

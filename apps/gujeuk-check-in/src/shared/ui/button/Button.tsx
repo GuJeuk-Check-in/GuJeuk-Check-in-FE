@@ -9,6 +9,7 @@ interface ButtonProps {
   type?: "button" | "submit";
   disabled?: boolean;
   onClick?: () => void;
+  bgColor?: string;
 }
 
 export const Button = ({
@@ -18,6 +19,7 @@ export const Button = ({
   type = "button",
   disabled = false,
   onClick,
+  bgColor,
 }: ButtonProps) => (
   <StyledButton
     type={type}
@@ -25,6 +27,7 @@ export const Button = ({
     $size={size}
     disabled={disabled}
     onClick={onClick}
+    style={bgColor ? { backgroundColor: bgColor } : undefined}
   >
     {children}
   </StyledButton>
@@ -72,7 +75,7 @@ const StyledButton = styled.button<{
         color: ${ColorData.colors.background};
 
         &:hover:not(:disabled) {
-          background-color: #e83b3b;
+          background-color: ${ColorData.colors.negativeStrong};
         }
       `;
     }

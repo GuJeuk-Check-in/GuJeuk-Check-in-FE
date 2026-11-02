@@ -1,17 +1,21 @@
 import { useState, type FormEvent } from "react";
 import styled from "@emotion/styled";
-import { Button, Input } from "@shared/ui";
 import { Modal } from "@shared/ui/modal";
-import { ColorData } from "@shared/ui/design-system";
-import type { ReservationPlace, ReservationTime } from "./ReservationData";
-import { HomeImage, Calendar } from "@shared/assets/index";
+import { Calendar, HomeImage } from "@shared/assets";
+import {
+  getNextTime,
+  type ReservationPeople,
+  type ReservationPlace,
+  type ReservationTime,
+} from "./ReservationData";
+import { reservationTokens as ColorData } from "./reservationTokens";
 
 const PHONE_PATTERN = /^010-\d{4}-\d{4}$/;
 
 export interface ReservationCreateValues {
   userName: string;
   phone: string;
-  people: string;
+  people: ReservationPeople;
 }
 
 interface ReservationCreateModalProps {
@@ -36,7 +40,7 @@ export const ReservationCreateModal = ({
     onSubmit({
       userName: userName.trim(),
       phone: phone.trim(),
-      people: "본인",
+      people: { male: 0, female: 0 },
     });
   };
 
@@ -44,6 +48,8 @@ export const ReservationCreateModal = ({
     <Modal
       isOpen
       onClose={onClose}
+      size="large"
+      showCloseButton
       config={{
         title: "예약 추가",
         subtitle: "예약자 정보를 입력하면 바로 예약돼요.",
@@ -51,12 +57,12 @@ export const ReservationCreateModal = ({
     >
       <TargetInfo>
         <InfoRow>
-          <img src={HomeImage} />
+          <img src={HomeImage} alt="" />
           <strong>시설</strong>
           <b>{place}</b>
         </InfoRow>
         <InfoRow>
-          <img src={Calendar} />
+          <img src={Calendar} alt="" />
           <strong>시간</strong>
           <b>
             오늘 · {getTodayLabel()} {time} - {getNextTime(time)}
@@ -88,24 +94,20 @@ export const ReservationCreateModal = ({
         </Field>
         <Notice>ⓘ 예약은 1인 1시간만 가능해요.</Notice>
         <ActionRow>
-          <Button variant="secondary" onClick={onClose}>
+          <ActionButton type="button" $variant="secondary" onClick={onClose}>
             취소
-          </Button>
-          <Button
+          </ActionButton>
+          <ActionButton
             type="submit"
+            $variant="primary"
             disabled={!userName.trim() || !PHONE_PATTERN.test(phone.trim())}
           >
             예약하기
-          </Button>
+          </ActionButton>
         </ActionRow>
       </Form>
     </Modal>
   );
-};
-
-const getNextTime = (time: string) => {
-  const [hour, minute] = time.split(":").map(Number);
-  return `${String(hour + 1).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 };
 
 const getTodayLabel = () =>
@@ -143,7 +145,7 @@ const InfoRow = styled.div`
   img {
     width: 1rem;
     height: 1rem;
-    object-fit: contain;
+    flex-shrink: 0;
   }
 `;
 
@@ -180,4 +182,78 @@ const Notice = styled.p`
   margin: -${ColorData.spacing[8]} 0 0;
   color: ${ColorData.colors.labelAlternative};
   font-size: ${ColorData.typography.caption.fontSize};
+`;
+
+const Input = styled.input`
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 ${ColorData.spacing[12]};
+  box-sizing: border-box;
+  border: 1px solid ${ColorData.colors.lineNormal};
+  border-radius: ${ColorData.radius.medium};
+  background-color: ${ColorData.colors.background};
+  color: ${ColorData.colors.labelNormal};
+  font-family: ${ColorData.typography.fontFamily};
+  font-size: ${ColorData.typography.body.fontSize};
+  outline: none;
+  transition: border-color ${ColorData.interaction.transitionFast},
+    box-shadow ${ColorData.interaction.transitionFast};
+
+  &::placeholder {
+    color: ${ColorData.colors.labelAssistive};
+  }
+
+  &:focus {
+    border-color: ${ColorData.colors.primary};
+    box-shadow: ${ColorData.shadow.focus};
+  }
+`;
+
+const ActionButton = styled.button<{ $variant: "primary" | "secondary" }>`
+  min-height: 2.75rem;
+  padding: 0 ${ColorData.spacing[16]};
+  border: 1px solid transparent;
+  border-radius: ${ColorData.radius.large};
+  background-color: ${({ $variant }) =>
+    $variant === "primary"
+      ? ColorData.colors.primary
+      : ColorData.colors.background};
+  color: ${({ $variant }) =>
+    $variant === "primary"
+      ? ColorData.colors.background
+      : ColorData.colors.labelNormal};
+  font-family: ${ColorData.typography.fontFamily};
+  font-size: ${ColorData.typography.body.fontSize};
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color ${ColorData.interaction.transitionFast},
+    border-color ${ColorData.interaction.transitionFast},
+    box-shadow ${ColorData.interaction.transitionFast};
+
+  ${({ $variant }) =>
+    $variant === "primary"
+      ? `
+        &:hover:not(:disabled) {
+          background-color: ${ColorData.colors.primaryStrong};
+        }
+      `
+      : `
+        border-color: ${ColorData.colors.lineNormal};
+
+        &:hover:not(:disabled) {
+          background-color: ${ColorData.colors.fillNormal};
+        }
+      `}
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    background-color: ${ColorData.colors.interactionDisabled};
+    border-color: transparent;
+    color: ${ColorData.colors.labelDisabled};
+    cursor: not-allowed;
+  }
 `;

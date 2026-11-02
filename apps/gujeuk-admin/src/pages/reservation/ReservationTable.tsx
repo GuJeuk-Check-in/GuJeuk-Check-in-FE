@@ -1,7 +1,11 @@
-import { Fragment, useEffect, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+} from "react";
 import styled from "@emotion/styled";
-import { Toast } from "@shared/ui";
-import { ColorData } from "@shared/ui/design-system";
 import { ReservationCard } from "./ReservationCard";
 import {
   ReservationCreateModal,
@@ -11,13 +15,14 @@ import { ReservationDeleteModal } from "./ReservationDeleteModal";
 import { ReservationDetailModal } from "./ReservationDetailModal";
 import {
   PlaceData,
-  ReservationData,
   TimeData,
+  getNextTime,
   type Reservation,
   type ReservationPlace,
   type ReservationTime,
 } from "./ReservationData";
 import { ReservationEmptyCell } from "./ReservationEmptyCell";
+import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -25,42 +30,54 @@ interface CreateTarget {
 }
 
 interface ReservationTableProps {
-  onAvailabilityChange?: (availability: { inUse: number; available: number }) => void;
+  reservations: Reservation[];
+  activeTimeIndex: number;
+  onCreateReservation: (reservation: Reservation) => void;
+  onDeleteReservation: (reservation: Reservation) => void;
+}
+
+type ToastVariant = "positive" | "caution";
+
+interface ToastState {
+  message: string;
+  variant: ToastVariant;
 }
 
 export const ReservationTable = ({
-  onAvailabilityChange,
+  reservations,
+  activeTimeIndex,
+  onCreateReservation,
+  onDeleteReservation,
 }: ReservationTableProps) => {
-  const [reservations, setReservations] =
-    useState<Reservation[]>(ReservationData);
-  const [currentTime, setCurrentTime] = useState(() => new Date());
   const [selectedReservation, setSelectedReservation] =
     useState<Reservation | null>(null);
   const [detailPosition, setDetailPosition] = useState({ top: 0, left: 0 });
   const [deleteTarget, setDeleteTarget] = useState<Reservation | null>(null);
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
-  const [toastMessage, setToastMessage] = useState("");
+  const [toast, setToast] = useState<ToastState | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setCurrentTime(new Date()), 60_000);
-    return () => window.clearInterval(timer);
+    return () => {
+      if (toastTimerRef.current !== null) {
+        window.clearTimeout(toastTimerRef.current);
+      }
+    };
   }, []);
 
-  const activeTimeIndex = getActiveTimeIndex(currentTime);
-  const activeTime = activeTimeIndex === -1 ? null : TimeData[activeTimeIndex];
-  const inUseCount = activeTime
-    ? reservations.filter((reservation) => reservation.startTime === activeTime)
-        .length
-    : 0;
-  const availableCount = Math.max(PlaceData.length - inUseCount, 0);
+  const showToast = (
+    message: string,
+    variant: ToastVariant = "positive",
+  ) => {
+    if (toastTimerRef.current !== null) {
+      window.clearTimeout(toastTimerRef.current);
+    }
 
-  useEffect(() => {
-    onAvailabilityChange?.({ inUse: inUseCount, available: availableCount });
-  }, [availableCount, inUseCount, onAvailabilityChange]);
-
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    window.setTimeout(() => setToastMessage(""), 2500);
+    setToast({ message, variant });
+    toastTimerRef.current = window.setTimeout(() => {
+      setToast(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const handleCreate = (values: ReservationCreateValues) => {
@@ -68,42 +85,59 @@ export const ReservationTable = ({
 
     const phone = values.phone.trim();
     if (reservations.some((reservation) => reservation.phone === phone)) {
-      showToast("이미 예약된 전화번호예요. 예약은 1인 1시간만 가능해요.");
+      showToast(
+        "이미 예약된 전화번호예요. 예약은 1인 1시간만 가능해요.",
+        "caution",
+      );
       return;
     }
 
-    const column = PlaceData.indexOf(createTarget.place) + 2;
-    const row = TimeData.indexOf(createTarget.time) + 2;
     const reservation: Reservation = {
       id: Date.now(),
       userName: values.userName,
       place: createTarget.place,
       startTime: createTarget.time,
-      endTime: getNextTime(createTarget.time),
       people: values.people,
       phone,
-      column,
-      row,
     };
 
-    setReservations((current) => [...current, reservation]);
+    onCreateReservation(reservation);
     setCreateTarget(null);
     showToast(
-      `${reservation.userName}님의 ${reservation.place} · ${reservation.startTime} - ${reservation.endTime} 예약이 추가됐어요.`,
+      `${reservation.userName}님의 ${reservation.place} · ${reservation.startTime} - ${getNextTime(reservation.startTime)} 예약이 추가됐어요.`,
     );
   };
 
   const handleDelete = () => {
     if (!deleteTarget) return;
 
-    setReservations((current) =>
-      current.filter((reservation) => reservation.id !== deleteTarget.id),
-    );
+    onDeleteReservation(deleteTarget);
     setDeleteTarget(null);
     setSelectedReservation(null);
     showToast(
-      `${deleteTarget.userName}님의 ${deleteTarget.place} · ${deleteTarget.startTime} - ${deleteTarget.endTime} 예약을 삭제했어요.`,
+      `${deleteTarget.userName}님의 ${deleteTarget.place} · ${deleteTarget.startTime} - ${getNextTime(deleteTarget.startTime)} 예약을 삭제했어요.`,
     );
+  };
+
+  const handleReservationClick = (
+    reservation: Reservation,
+    event: MouseEvent<HTMLButtonElement>,
+  ) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const popoverWidth = 330;
+    const popoverHeight = 282;
+    const gap = 8;
+    const left =
+      rect.right + gap + popoverWidth <= window.innerWidth
+        ? rect.right + gap
+        : rect.left - gap - popoverWidth;
+    const top = Math.min(
+      Math.max(16, rect.top),
+      window.innerHeight - popoverHeight - 16,
+    );
+
+    setDetailPosition({ top, left: Math.max(16, left) });
+    setSelectedReservation(reservation);
   };
 
   return (
@@ -134,10 +168,14 @@ export const ReservationTable = ({
               );
 
               return reservation ? (
-                <OccupiedCell
+                <ReservationCard
                   key={`${time}-${place}`}
-                  $column={placeIndex + 2}
-                  $row={timeIndex + 2}
+                  userName={reservation.userName}
+                  column={placeIndex + 2}
+                  row={timeIndex + 2}
+                  onClick={(event) =>
+                    handleReservationClick(reservation, event)
+                  }
                 />
               ) : (
                 <ReservationEmptyCell
@@ -158,31 +196,6 @@ export const ReservationTable = ({
           </Fragment>
         ))}
 
-        {reservations.map((reservation) => (
-          <ReservationCard
-            key={reservation.id}
-            userName={reservation.userName}
-            column={reservation.column}
-            row={reservation.row}
-            onClick={(event) => {
-              const rect = event.currentTarget.getBoundingClientRect();
-              const popoverWidth = 296;
-              const popoverHeight = 260;
-              const gap = 8;
-              const left =
-                rect.right + gap + popoverWidth <= window.innerWidth
-                  ? rect.right + gap
-                  : rect.left - gap - popoverWidth;
-              const top = Math.min(
-                Math.max(16, rect.top),
-                window.innerHeight - popoverHeight - 16,
-              );
-
-              setDetailPosition({ top, left: Math.max(16, left) });
-              setSelectedReservation(reservation);
-            }}
-          />
-        ))}
       </TableGrid>
 
       {selectedReservation && (
@@ -214,42 +227,21 @@ export const ReservationTable = ({
         />
       )}
 
-      {toastMessage && (
+      {toast && (
         <ToastPosition>
-          <Toast>{toastMessage}</Toast>
+          <Toast role="status" aria-live="polite" $variant={toast.variant}>
+            {toast.message}
+          </Toast>
         </ToastPosition>
       )}
     </>
   );
 };
 
-const getNextTime = (time: string) => {
-  const [hour, minute] = time.split(":").map(Number);
-  return `${String(hour + 1).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-};
-
-const getActiveTimeIndex = (date: Date) => {
-  const currentMinutes = date.getHours() * 60 + date.getMinutes();
-
-  return TimeData.findIndex((time, index) => {
-    const [hour, minute] = time.split(":").map(Number);
-    const startMinutes = hour * 60 + minute;
-    const nextTime = TimeData[index + 1];
-    const endMinutes = nextTime
-      ? nextTime.split(":").reduce((total, value, valueIndex) => {
-          const number = Number(value);
-          return total + (valueIndex === 0 ? number * 60 : number);
-        }, 0)
-      : startMinutes + 60;
-
-    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
-  });
-};
-
 const TableGrid = styled.div`
   display: grid;
-  grid-template-columns: 5rem repeat(9, minmax(7.5rem, 1fr));
-  grid-template-rows: 3.5rem repeat(${TimeData.length}, 4.5rem);
+  grid-template-columns: 5rem repeat(9, minmax(7rem, 1fr));
+  grid-template-rows: 4.5rem repeat(${TimeData.length}, 8rem);
   min-width: 68rem;
   overflow: hidden;
   position: relative;
@@ -280,14 +272,24 @@ const TimeCell = styled.div<{ $row: number; $active: boolean }>`
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
 `;
 
-const OccupiedCell = styled.div<{ $column: number; $row: number }>`
-  grid-column: ${({ $column }) => $column};
-  grid-row: ${({ $row }) => $row};
-`;
-
 const ToastPosition = styled.div`
   position: fixed;
   right: ${ColorData.spacing[24]};
   bottom: ${ColorData.spacing[24]};
   z-index: 1200;
+`;
+
+const Toast = styled.div<{ $variant: ToastVariant }>`
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  background-color: ${({ $variant }) =>
+    $variant === "caution"
+      ? ColorData.colors.cautionBackground
+      : ColorData.colors.positiveBackground};
+  color: ${({ $variant }) =>
+    $variant === "caution"
+      ? ColorData.colors.caution
+      : ColorData.colors.positive};
+  box-shadow: ${ColorData.shadow.modal};
+  font-size: ${ColorData.typography.caption.fontSize};
 `;

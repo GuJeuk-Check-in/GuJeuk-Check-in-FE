@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import type { MouseEvent } from "react";
-import { ColorData } from "@shared/ui/design-system";
+import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface ReservationCardProps {
   userName: string;

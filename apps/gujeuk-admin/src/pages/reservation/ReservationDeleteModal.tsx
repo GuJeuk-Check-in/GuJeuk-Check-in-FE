@@ -1,9 +1,8 @@
 import styled from "@emotion/styled";
-import { Button } from "@shared/ui";
 import { Modal } from "@shared/ui/modal";
-import { ColorData } from "@shared/ui/design-system";
-import type { Reservation } from "./ReservationData";
 import { DeleteIcon } from "@shared/assets";
+import { getNextTime, type Reservation } from "./ReservationData";
+import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface ReservationDeleteModalProps {
   reservation: Reservation;
@@ -29,12 +28,18 @@ export const ReservationDeleteModal = ({
       subtitle: "삭제한 예약은 되돌릴 수 없어요.",
       buttons: [
         { label: "취소", variant: "secondary", onClick: onClose },
-        { label: "삭제하기", variant: "primary", onClick: onConfirm },
+        {
+          label: "삭제하기",
+          variant: "primary",
+          bgColor: ColorData.colors.negative,
+          onClick: onConfirm,
+        },
       ],
     }}
+    showCloseButton
   >
     <TargetInfo>
-      {reservation.place} · 오늘 {reservation.startTime} - {reservation.endTime}
+      {reservation.place} · 오늘 {reservation.startTime} - {getNextTime(reservation.startTime)}
     </TargetInfo>
   </Modal>
 );

@@ -6,3 +6,4 @@ export * from './user/UserInformation';
 export * from './log/UserDetail';
 export * from './log/UserDetailView';
 export * from './log/UserVisitList';
+export { default as ReservationDashboardPage } from './reservation/ReservationDashboardPage';

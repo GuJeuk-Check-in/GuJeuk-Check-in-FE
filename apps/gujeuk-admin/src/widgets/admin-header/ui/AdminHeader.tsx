@@ -160,6 +160,9 @@ export const AdminHeader = () => {
         <HeaderButton to="/log">
           시설 이용 목록 조회
         </HeaderButton>
+        <HeaderButton to="/reservation">
+          예약 확인
+        </HeaderButton>
         <HeaderButton to="/purpose/all">
           방문 목적 커스텀
         </HeaderButton>

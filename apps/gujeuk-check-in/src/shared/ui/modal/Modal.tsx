@@ -1,4 +1,4 @@
-import { useEffect, useRef, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { type ModalConfig } from '@shared/hooks/useModal';
 import { Button } from '../button';
@@ -10,29 +10,16 @@ const FOCUSABLE_ELEMENTS_SELECTOR =
 interface ModalProps {
   isOpen: boolean;
   config: ModalConfig | null;
-  children?: ReactNode;
   onClose?: () => void;
-  titleExtra?: ReactNode;
-  size?: 'default' | 'compact';
-  mode?: 'dialog' | 'popover';
-  position?: { top: number; left: number };
 }
 
-export const Modal = ({
-  isOpen,
-  config,
-  children,
-  onClose,
-  titleExtra,
-  size = 'default',
-  mode = 'dialog',
-  position,
-}: ModalProps) => {
+export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
   const modalContentRef = useRef<HTMLDivElement>(null);
-  const isDialogOpen = isOpen && config !== null && mode === 'dialog';
+  const titleId = useId();
+  const subtitleId = useId();
 
   useEffect(() => {
-    if (!isDialogOpen) return;
+    if (!isOpen || !config) return;
 
     const previouslyFocusedElement =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -48,15 +35,13 @@ export const Modal = ({
     return () => {
       previouslyFocusedElement?.focus();
     };
-  }, [isDialogOpen]);
+  }, [isOpen, config]);
 
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (mode !== 'dialog') return;
-
     if (event.key === 'Escape') {
       event.preventDefault();
       onClose?.();
@@ -97,48 +82,35 @@ export const Modal = ({
   return (
     <Overlay
       onClick={(event) => {
-        if (mode === 'dialog' && event.target === event.currentTarget) {
+        if (event.target === event.currentTarget) {
           onClose?.();
         }
       }}
-      $mode={mode}
     >
       <ModalContent
         ref={modalContentRef}
         role="dialog"
-        aria-modal={mode === 'dialog' ? true : undefined}
-        aria-labelledby="common-modal-title"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={subtitle ? subtitleId : undefined}
         tabIndex={-1}
         $theme={theme}
-        $size={size}
-        $mode={mode}
-        $top={position?.top}
-        $left={position?.left}
         data-theme={theme}
         onClick={(event) => event.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
-        {onClose && (
-          <CloseButton type="button" onClick={onClose} aria-label="모달 닫기">
-            ×
-          </CloseButton>
-        )}
         {icon && <IconWrapper>{icon}</IconWrapper>}
-        <TitleRow>
-          <Title id="common-modal-title">{title}</Title>
-          {titleExtra}
-        </TitleRow>
-        {subtitle && <Subtitle $theme={theme}>{subtitle}</Subtitle>}
-        {children}
+        <Title id={titleId}>{title}</Title>
+        {subtitle && <Subtitle id={subtitleId} $theme={theme}>{subtitle}</Subtitle>}
 
         {buttons.length > 0 && (
           <ButtonContainer>
             {buttons.map((button, index) => (
               <Button
                 key={`${button.label}-${index}`}
-                variant={button.variant === 'primary' ? 'danger' : 'secondary'}
-                size={size === 'compact' ? 'small' : 'medium'}
+                variant={button.variant || 'secondary'}
                 onClick={button.onClick}
+                bgColor={button.bgColor}
               >
                 {button.label}
               </Button>
@@ -150,44 +122,32 @@ export const Modal = ({
   );
 };
 
-const Overlay = styled.div<{ $mode: 'dialog' | 'popover' }>`
+const Overlay = styled.div`
   position: fixed;
   inset: 0;
   z-index: 1000;
   display: flex;
-  align-items: ${({ $mode }) => ($mode === 'dialog' ? 'center' : 'flex-start')};
-  justify-content: ${({ $mode }) => ($mode === 'dialog' ? 'center' : 'flex-start')};
-  padding: ${({ $mode }) => ($mode === 'dialog' ? ColorData.spacing[16] : '0')};
-  background-color: ${({ $mode }) =>
-    $mode === 'dialog' ? ColorData.colors.dimmer : 'transparent'};
-  pointer-events: ${({ $mode }) => ($mode === 'popover' ? 'none' : 'auto')};
+  align-items: center;
+  justify-content: center;
+  background-color: ${ColorData.colors.dimmer};
 `;
 
-const ModalContent = styled.div<{
-  $theme?: ModalConfig['theme'];
-  $size: 'default' | 'compact';
-  $mode: 'dialog' | 'popover';
-  $top?: number;
-  $left?: number;
-}>`
-  position: ${({ $mode }) => ($mode === 'popover' ? 'fixed' : 'relative')};
-  top: ${({ $top }) => ($top === undefined ? 'auto' : `${$top}px`)};
-  left: ${({ $left }) => ($left === undefined ? 'auto' : `${$left}px`)};
-  pointer-events: auto;
-  width: ${({ $size }) => ($size === 'compact' ? '18.5rem' : 'min(90%, 24rem)')};
+const ModalContent = styled.div<{ $theme?: ModalConfig['theme'] }>`
+  width: min(90%, 24rem);
   max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
   overflow-y: auto;
-  padding: ${({ $size }) => ($size === 'compact' ? ColorData.spacing[16] : ColorData.spacing[24])};
-  border: ${({ $size }) => ($size === 'compact' ? '1px' : '2px')} solid
+  padding: ${ColorData.spacing[32]};
+  border: 2px solid
     ${({ $theme }) =>
       $theme === 'warning'
         ? ColorData.colors.negative
         : $theme === 'info'
           ? ColorData.colors.primary
           : ColorData.colors.lineNormal};
-  border-radius: ${ColorData.radius.modal};
+  border-radius: 1.875rem;
   background-color: ${ColorData.colors.background};
-  box-shadow: ${ColorData.shadow.modal};
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
   text-align: center;
   animation: modalEnter ${ColorData.interaction.transitionNormal};
 
@@ -216,16 +176,9 @@ const IconWrapper = styled.div`
 const Title = styled.h2`
   margin: 0 0 ${ColorData.spacing[8]};
   color: ${ColorData.colors.labelNormal};
-  font-size: 1.125rem;
+  font-size: 1.375rem;
   font-weight: 700;
-  text-align: left;
   white-space: pre-wrap;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: ${ColorData.spacing[8]};
 `;
 
 const Subtitle = styled.p<{ $theme?: ModalConfig['theme'] }>`
@@ -237,33 +190,12 @@ const Subtitle = styled.p<{ $theme?: ModalConfig['theme'] }>`
         ? ColorData.colors.primary
         : ColorData.colors.labelAlternative};
   font-size: ${ColorData.typography.body.fontSize};
-  text-align: left;
   white-space: pre-wrap;
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: ${ColorData.spacing[16]};
-  right: ${ColorData.spacing[16]};
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 0;
-  border-radius: 50%;
-  background-color: ${ColorData.colors.fillNormal};
-  color: ${ColorData.colors.labelAlternative};
-  font-size: 1.25rem;
-  line-height: 1;
-  cursor: pointer;
-
-  &:hover {
-    background-color: ${ColorData.colors.lineAlternative};
-  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: ${ColorData.spacing[12]};
-  margin-top: ${ColorData.spacing[24]};
   flex-wrap: wrap;
 `;

@@ -22,6 +22,7 @@ export const ColorData = {
     caution: '#FF9200',
     cautionBackground: '#FFF4E5',
     negative: '#FF4242',
+    negativeStrong: '#E83B3B',
     negativeBackground: '#FFF0F0',
   },
   spacing: {

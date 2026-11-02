@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { PlusButton } from "@shared/assets";
-import { ColorData } from "@shared/ui/design-system";
 import type { ReservationPlace, ReservationTime } from './ReservationData';
+import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface ReservationEmptyCellProps {
   place: ReservationPlace;

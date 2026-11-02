@@ -1,8 +1,12 @@
 import styled from '@emotion/styled';
-import { Badge, Button } from '@shared/ui';
-import { Modal } from '@shared/ui/modal';
-import { ColorData } from '@shared/ui/design-system';
-import type { Reservation } from './ReservationData';
+import { Popover } from '@shared/ui/popover';
+import { FiTrash2 } from 'react-icons/fi';
+import {
+  formatPeople,
+  getNextTime,
+  type Reservation,
+} from './ReservationData';
+import { reservationTokens as ColorData } from './reservationTokens';
 
 interface ReservationDetailModalProps {
   reservation: Reservation;
@@ -17,7 +21,7 @@ export const ReservationDetailModal = ({
   onClose,
   onDelete,
 }: ReservationDetailModalProps) => (
-  <Modal
+  <Popover
     isOpen
     onClose={onClose}
     config={{
@@ -25,22 +29,40 @@ export const ReservationDetailModal = ({
       subtitle: '',
       buttons: [
         { label: '닫기', variant: 'secondary', onClick: onClose },
-        { label: '예약 삭제', variant: 'primary', onClick: onDelete },
+        {
+          label: '예약 삭제',
+          icon: <FiTrash2 aria-hidden="true" />,
+          variant: 'primary',
+          bgColor: ColorData.colors.negative,
+          onClick: onDelete,
+        },
       ],
     }}
-    size="compact"
-    mode="popover"
     position={position}
     titleExtra={<Badge>예약</Badge>}
   >
     <DetailList>
       <DetailRow><Label>시설</Label><Value>{reservation.place}</Value></DetailRow>
-      <DetailRow><Label>시간</Label><Value>오늘 {reservation.startTime} - {reservation.endTime}</Value></DetailRow>
-      <DetailRow><Label>인원</Label><Value>{reservation.people}</Value></DetailRow>
+      <DetailRow><Label>시간</Label><Value>오늘 {reservation.startTime} - {getNextTime(reservation.startTime)}</Value></DetailRow>
+      <DetailRow><Label>인원</Label><Value>{formatPeople(reservation.people)}</Value></DetailRow>
       <DetailRow><Label>연락처</Label><Value>{reservation.phone}</Value></DetailRow>
     </DetailList>
-  </Modal>
+  </Popover>
 );
+
+const Badge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  background-color: ${ColorData.colors.primary8};
+  color: ${ColorData.colors.primary};
+  font-size: ${ColorData.typography.caption.fontSize};
+  font-weight: 600;
+  font-family: inherit;
+  line-height: 1;
+`;
 
 const DetailList = styled.div`
   display: flex;
