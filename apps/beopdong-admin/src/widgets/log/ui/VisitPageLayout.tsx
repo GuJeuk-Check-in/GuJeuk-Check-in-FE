@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { adminTokens } from '@center/tokens';
+import { DetailPanel } from '@shared/ui';
 
 interface VisitPageLayoutProps {
   readonly title: string;
@@ -35,19 +35,16 @@ const Title = styled.h1`
   }
 `;
 
-const Wrapper = styled.div`
-  width: min(100%, calc(90% + 5rem), 65rem);
-  margin: 3.75rem auto;
-  padding: 2.5rem;
-  background-color: ${({ theme }) => adminTokens(theme).colors.white};
-  border-radius: 1.25rem;
-  box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
+const Wrapper = styled(DetailPanel)`
+  margin-block: 3.75rem;
+  padding: 3.75rem 6rem 6.25rem;
+  gap: 3.75rem;
+
+  @media (max-width: 64rem) {
+    padding: 2.5rem 2rem;
+  }
 
   @media (max-width: 48rem) {
-    width: 100%;
-    margin-block: 3.75rem;
-    padding: 1.5rem;
+    padding: 1.5rem 1rem;
   }
 `;
