@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { DetailInput, TimePickerField } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
@@ -27,6 +28,8 @@ export const UsageHistoryDetailFields = ({
   openField,
   onOpenFieldChange,
 }: UsageHistoryDetailFieldsProps) => {
+  const [countError, setCountError] = useState('');
+
   const renderTimeField = (field: UsageTimeField, label: string) => (
     <TimePickerField
       label={label}
@@ -63,7 +66,13 @@ export const UsageHistoryDetailFields = ({
           inputMode="numeric"
           isEditable={isEditing}
           highlightOnFocus
-          onChange={(event) => onChange({ count: Number(event.target.value.replace(/\D/g, '')) })}
+          onChange={(event) => {
+            const { value } = event.target;
+            const isValid = /^\d*$/.test(value);
+            setCountError(isValid ? '' : '인원은 숫자(양의 정수)만 입력해주세요.');
+            if (isValid) onChange({ count: Number(value) });
+          }}
+          errorMessage={countError}
         />
       )}
       {detail.kind === 'pc' && (

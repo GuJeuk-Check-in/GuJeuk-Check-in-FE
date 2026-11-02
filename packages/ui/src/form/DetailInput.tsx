@@ -27,6 +27,7 @@ export interface DetailInputProps {
   multiple?: boolean;
   hideNumberSpinner?: boolean;
   highlightOnFocus?: boolean;
+  errorMessage?: string;
 }
 
 export const DetailInput: React.FC<DetailInputProps> = ({
@@ -47,6 +48,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   multiple = false,
   hideNumberSpinner = false,
   highlightOnFocus = false,
+  errorMessage,
 }) => {
   const inputId = React.useId();
   const labelId = `${inputId}-label`;
@@ -117,6 +119,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     <Container width={width}>
       <Label id={labelId} htmlFor={isEditable ? inputId : undefined}>{label}</Label>
       {renderInput()}
+      {isEditable && errorMessage && <ErrorText role="alert">{errorMessage}</ErrorText>}
     </Container>
   );
 };
@@ -127,6 +130,12 @@ const Container = styled.div<{ width: string }>`
   flex-direction: column;
   gap: 0.5rem;
   box-sizing: border-box;
+`;
+
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: ${({ theme }) => adminTokens(theme).colors.error};
 `;
 
 const Label = styled.label`
