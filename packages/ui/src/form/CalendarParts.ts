@@ -168,9 +168,9 @@ export const StyledCalendar = styled(Calendar)<{ $legacy: boolean; $wide?: boole
       border-radius: 9999px;
       margin-bottom: 0;
     }
-    .react-calendar__tile--now { background: none; }
-    .react-calendar__tile:enabled:hover,
-    .react-calendar__tile:enabled:focus { background: ${adminTokens(theme).colors.primaryLight}; }
+    .react-calendar__tile--now:not(.react-calendar__tile--active) { background: none; }
+    .react-calendar__tile:enabled:not(.react-calendar__tile--active):hover,
+    .react-calendar__tile:enabled:not(.react-calendar__tile--active):focus { background: ${adminTokens(theme).colors.primaryLight}; }
   `}
 
   .react-calendar__tile--active.react-calendar__month-view__days__day--weekend,
