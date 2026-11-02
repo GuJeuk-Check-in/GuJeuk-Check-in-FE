@@ -1,6 +1,7 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
-import { useEffect, useId, useRef, type KeyboardEvent } from 'react';
+import { useId } from 'react';
+import { Dialog } from './Dialog';
 import { type ModalConfig } from './types';
 
 interface ModalProps {
@@ -10,110 +11,44 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
-  const contentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const subtitleId = useId();
-  const hasConfig = config !== null;
-
-  useEffect(() => {
-    if (!isOpen || !hasConfig) return;
-    const previousFocus = document.activeElement;
-    const content = contentRef.current;
-    (content?.querySelector<HTMLButtonElement>('button') ?? content)?.focus();
-
-    return () => {
-      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
-        previousFocus.focus();
-      }
-    };
-  }, [isOpen, hasConfig]);
-
-  useEffect(() => {
-    if (!isOpen || !config) return;
-    const content = contentRef.current;
-    if (content && !content.contains(document.activeElement)) {
-      (content.querySelector<HTMLButtonElement>('button') ?? content).focus();
-    }
-  }, [isOpen, config]);
 
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
 
-  const handleButtonClick = (onClick?: () => void) => {
-    if (onClick) {
-      onClick();
-    }
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      onClose?.();
-    }
-    if (event.key !== 'Tab') return;
-    const buttons = contentRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
-    const first = buttons?.[0];
-    const last = buttons?.[buttons.length - 1];
-    if (!first || !last) {
-      event.preventDefault();
-    } else if (event.shiftKey && (document.activeElement === first || document.activeElement === contentRef.current)) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
-
   return (
-    <Overlay onClick={onClose}>
-      <ModalContent
-        ref={contentRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={subtitleId}
-        tabIndex={-1}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={handleKeyDown}
-        $theme={theme}
-        data-theme={theme}
-      >
-        {icon && <IconWrapper>{icon}</IconWrapper>}
+    <ModalContent
+      onClose={onClose}
+      refocusKey={config}
+      aria-labelledby={titleId}
+      aria-describedby={subtitleId}
+      data-theme={theme}
+    >
+      {icon && <IconWrapper>{icon}</IconWrapper>}
 
-        <Title id={titleId}>{title}</Title>
-        <Subtitle id={subtitleId}>{subtitle}</Subtitle>
+      <Title id={titleId}>{title}</Title>
+      <Subtitle id={subtitleId}>{subtitle}</Subtitle>
 
-        <ButtonContainer>
-          {buttons.map((btn, idx) => (
-            <Button
-              type="button"
-              key={idx}
-              onClick={() => handleButtonClick(btn.onClick)}
-              $variant={btn.variant || 'secondary'}
-              style={{ backgroundColor: btn.bgColor }}
-            >
-              {btn.label}
-            </Button>
-          ))}
-        </ButtonContainer>
-      </ModalContent>
-    </Overlay>
+      <ButtonContainer>
+        {buttons.map((btn, idx) => (
+          <Button
+            type="button"
+            key={idx}
+            onClick={btn.onClick}
+            $variant={btn.variant || 'secondary'}
+            style={{ backgroundColor: btn.bgColor }}
+          >
+            {btn.label}
+          </Button>
+        ))}
+      </ButtonContainer>
+    </ModalContent>
   );
 };
 
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-`;
-
-const ModalContent = styled.div<{ $theme?: string }>`
+const ModalContent = styled(Dialog)`
   border-radius: 1.875rem;
   background-color: white;
   padding: 2rem;
@@ -135,16 +70,15 @@ const ModalContent = styled.div<{ $theme?: string }>`
     animation: none;
   }
 
-  border: ${(props) => {
-    switch (props.$theme) {
-      case 'warning':
-        return `2px solid ${adminTokens(props.theme).colors.warning}`;
-      case 'info':
-        return `2px solid ${adminTokens(props.theme).colors.primary}`;
-      default:
-        return '2px solid #d1d5db';
-    }
-  }};
+  border: 2px solid #d1d5db;
+
+  &[data-theme='warning'] {
+    border-color: ${({ theme }) => adminTokens(theme).colors.warning};
+  }
+
+  &[data-theme='info'] {
+    border-color: ${({ theme }) => adminTokens(theme).colors.primary};
+  }
 
   @keyframes slideUp {
     from {

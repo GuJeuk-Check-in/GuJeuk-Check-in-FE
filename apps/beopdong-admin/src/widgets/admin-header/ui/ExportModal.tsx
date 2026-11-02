@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react';
+import { useId, useState, type KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
+import { Dialog } from '@center/ui/modal';
 
 const PERIOD_OPTIONS = ['일계', '월계', '상반기', '하반기'] as const;
 
@@ -12,19 +13,8 @@ interface ExportModalProps {
 
 export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => {
   const [period, setPeriod] = useState<string>(PERIOD_OPTIONS[0]);
-  const contentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const subtitleId = useId();
-
-  useEffect(() => {
-    const previousFocus = document.activeElement;
-    contentRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
-    return () => {
-      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
-        previousFocus.focus();
-      }
-    };
-  }, []);
 
   const handlePeriodKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
@@ -36,78 +26,38 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
     event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]')[PERIOD_OPTIONS.indexOf(next)]?.focus();
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      onClose();
-    }
-    if (event.key !== 'Tab') return;
-    const buttons = contentRef.current?.querySelectorAll<HTMLButtonElement>('button');
-    const first = buttons?.[0];
-    const last = buttons?.[buttons.length - 1];
-    if (!first || !last) return;
-    if (event.shiftKey && (document.activeElement === first || document.activeElement === contentRef.current)) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
-
   return (
-    <Overlay onClick={onClose}>
-      <Content
-        ref={contentRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={subtitleId}
-        tabIndex={-1}
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={handleKeyDown}
-      >
-        <PlusIcon viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="5" />
-          <path d="M12 7.5v9M7.5 12h9" />
-        </PlusIcon>
-        <Title id={titleId}>{title}</Title>
-        <Subtitle id={subtitleId}>내려받을 날짜를 선택해주세요</Subtitle>
-        <Periods role="radiogroup" aria-label="내려받을 기간" onKeyDown={handlePeriodKeyDown}>
-          {PERIOD_OPTIONS.map((option) => (
-            <PeriodButton
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={period === option}
-              tabIndex={period === option ? 0 : -1}
-              $selected={period === option}
-              onClick={() => setPeriod(option)}
-            >
-              {option}
-            </PeriodButton>
-          ))}
-        </Periods>
-        <Actions>
-          <CancelButton type="button" onClick={onClose}>아니요</CancelButton>
-          <ConfirmButton type="button" onClick={() => onConfirm(period)}>예</ConfirmButton>
-        </Actions>
-      </Content>
-    </Overlay>
+    <Content onClose={onClose} aria-labelledby={titleId} aria-describedby={subtitleId}>
+      <PlusIcon viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <path d="M12 7.5v9M7.5 12h9" />
+      </PlusIcon>
+      <Title id={titleId}>{title}</Title>
+      <Subtitle id={subtitleId}>내려받을 날짜를 선택해주세요</Subtitle>
+      <Periods role="radiogroup" aria-label="내려받을 기간" onKeyDown={handlePeriodKeyDown}>
+        {PERIOD_OPTIONS.map((option) => (
+          <PeriodButton
+            key={option}
+            type="button"
+            role="radio"
+            aria-checked={period === option}
+            tabIndex={period === option ? 0 : -1}
+            $selected={period === option}
+            onClick={() => setPeriod(option)}
+          >
+            {option}
+          </PeriodButton>
+        ))}
+      </Periods>
+      <Actions>
+        <CancelButton type="button" onClick={onClose}>아니요</CancelButton>
+        <ConfirmButton type="button" onClick={() => onConfirm(period)}>예</ConfirmButton>
+      </Actions>
+    </Content>
   );
 };
 
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-`;
-
-const Content = styled.div`
+const Content = styled(Dialog)`
   box-sizing: border-box;
   width: 90%;
   max-width: 36rem;
