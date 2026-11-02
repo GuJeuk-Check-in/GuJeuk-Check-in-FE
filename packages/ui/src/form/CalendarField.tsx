@@ -13,11 +13,13 @@ interface CalendarFieldProps {
   readonly legacy?: boolean;
   readonly icon?: ReactNode;
   readonly variant?: 'default' | 'wide';
+  /** wide일 때 달력 폭. double은 2열 부모(간격 1.25rem)의 두 칸에 걸친다. */
+  readonly span?: 'full' | 'double';
   readonly formatValue?: (date: Date) => string;
   readonly highlightOnFocus?: boolean;
 }
 
-export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false, icon, variant = 'default', formatValue = formatCalendarDate, highlightOnFocus = false }: CalendarFieldProps) => {
+export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy = false, icon, variant = 'default', span = 'full', formatValue = formatCalendarDate, highlightOnFocus = false }: CalendarFieldProps) => {
   const wide = variant === 'wide';
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -60,7 +62,7 @@ export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy
         )}
       </CalendarTrigger>
       {open && (
-        <CalendarWrapper $legacy={legacy} $wide={wide} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
+        <CalendarWrapper $legacy={legacy} $wide={wide} $span={span} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
           <StyledCalendar
             $legacy={legacy} $wide={wide} value={value ?? (legacy ? new Date() : null)} onChange={handleDateSelect}
             calendarType="gregory" locale="ko-KR"

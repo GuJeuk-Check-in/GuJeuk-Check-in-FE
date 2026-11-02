@@ -47,6 +47,7 @@ const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
       value={value}
       icon={DATE_ICON}
       variant="wide"
+      span="double"
       highlightOnFocus
       formatValue={formatPickedDate}
       onChange={onChange}

@@ -41,7 +41,7 @@ export const CalendarTrigger = styled(DropdownHeader.withComponent('button'))<{ 
   `}
 `;
 
-export const CalendarWrapper = styled.div<{ $legacy: boolean; $wide?: boolean }>`
+export const CalendarWrapper = styled.div<{ $legacy: boolean; $wide?: boolean; $span?: 'full' | 'double' }>`
   position: absolute;
   top: 100%;
   left: 0;
@@ -61,9 +61,9 @@ export const CalendarWrapper = styled.div<{ $legacy: boolean; $wide?: boolean }>
     width: 95.8%;
   `}
 
-  ${({ $wide, theme }) => $wide && `
+  ${({ $wide, $span, theme }) => $wide && `
     position: static;
-    width: calc(200% + 1.25rem);
+    width: ${$span === 'double' ? 'calc(200% + 1.25rem)' : '100%'};
     padding: 2.5rem 1.25rem;
     border: 0.0625rem solid ${adminTokens(theme).colors.fieldBorder};
     border-radius: 1rem;

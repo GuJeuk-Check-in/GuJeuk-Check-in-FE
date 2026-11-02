@@ -80,16 +80,14 @@ export const VisitFormFields = ({
       options={purposeOptions}
       onChange={(purposes) => onChange({ ...value, purposes })}
     />
-    <FullWidthField>
-      <VisitDatePicker
-        label="방문날짜"
-        icon={<CalendarIcon />}
-        variant="wide"
-        highlightOnFocus
-        value={value.visitDate}
-        onChange={(visitDate) => onChange({ ...value, visitDate })}
-      />
-    </FullWidthField>
+    <VisitDatePicker
+      label="방문날짜"
+      icon={<CalendarIcon />}
+      variant="wide"
+      highlightOnFocus
+      value={value.visitDate}
+      onChange={(visitDate) => onChange({ ...value, visitDate })}
+    />
     <NoteField>
       <DetailInput
         label="비고사항"
@@ -110,12 +108,6 @@ const Fields = styled.div`
   gap: 1.25rem;
   width: 100%;
   min-width: 0;
-`;
-
-const FullWidthField = styled.div`
-  & [role='group'] {
-    width: 100%;
-  }
 `;
 
 const InputRow = styled.div`
