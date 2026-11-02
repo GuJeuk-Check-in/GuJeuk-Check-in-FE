@@ -111,10 +111,10 @@ const PeriodButton = styled.button<{ $selected: boolean }>`
   font-weight: 700;
   cursor: pointer;
   background-color: ${({ theme }) => adminTokens(theme).colors.white};
-  color: ${({ $selected, theme }) => ($selected ? '#8a5a1f' : adminTokens(theme).colors.primary)};
+  color: ${({ $selected, theme }) => ($selected ? adminTokens(theme).colors.primaryDark : adminTokens(theme).colors.primary)};
   border: ${({ $selected, theme }) => $selected
     ? `0.25rem solid ${adminTokens(theme).colors.primary}`
-    : '0.0625rem solid #e5e5e5'};
+    : '0.0625rem solid rgba(0, 0, 0, 0.1)'};
   border-radius: 62.4375rem;
 `;
 
