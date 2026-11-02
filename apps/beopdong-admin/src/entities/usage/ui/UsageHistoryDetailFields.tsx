@@ -4,7 +4,7 @@ import { DetailInput, TimePickerField } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { TbTargetArrow } from 'react-icons/tb';
 import { CalendarIcon, SeatIcon } from '@shared/ui/icons';
-import { formatDateKoreanPadded } from '@shared/lib/formatDate';
+import { formatDateKoreanPadded } from '@center/ui/form';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail, UsageHistoryDetailPatch } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';

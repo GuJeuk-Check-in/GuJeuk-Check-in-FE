@@ -1,6 +1,6 @@
 import { UserInformationCard as SharedUserInformationCard } from '@center/ui/card';
 import { useNavigate } from 'react-router-dom';
-import { formatDateKoreanPadded } from '@shared/lib/formatDate';
+import { formatDateKoreanPadded } from '@center/ui/form';
 import type { User } from '../model/types';
 
 interface UserInformationCardProps {

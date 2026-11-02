@@ -12,7 +12,7 @@ import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
-import { formatDateKoreanPadded } from '@shared/lib/formatDate';
+import { formatDateKoreanPadded } from '@center/ui/form';
 import type { UsageHistoryRecord } from '../model/types';
 
 interface UsageHistoryCardProps {

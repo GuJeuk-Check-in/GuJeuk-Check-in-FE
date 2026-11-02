@@ -5,5 +5,10 @@ export * from './ToggleSelect';
 export * from './SelectOption';
 export * from './VisitDatePicker';
 export { CalendarField } from './CalendarField';
-export { parseCalendarDate, formatDateToISOString, formatDateToKoreanDate } from './dateFormatters';
+export {
+  parseCalendarDate,
+  formatDateToISOString,
+  formatDateToKoreanDate,
+  formatDateKoreanPadded,
+} from './dateFormatters';
 export { TimePickerField } from './TimePickerField';

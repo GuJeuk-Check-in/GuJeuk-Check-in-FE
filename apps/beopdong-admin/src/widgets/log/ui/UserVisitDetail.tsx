@@ -6,7 +6,7 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
 import type { UserVisitDetailRecord } from '@entities/log';
-import { formatDateKoreanPadded } from '@shared/lib/formatDate';
+import { formatDateKoreanPadded } from '@center/ui/form';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, BackLink } from '@shared/ui';
