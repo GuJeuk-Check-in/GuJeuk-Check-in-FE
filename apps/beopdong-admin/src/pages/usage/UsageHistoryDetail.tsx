@@ -12,7 +12,7 @@ const UsageHistoryDetail = () => {
 
   return (
     <Container>
-      <Title>종료 기록 상세</Title>
+      <PageTitle>종료 기록 상세</PageTitle>
       <UsageHistoryDetailView key={historyId} detail={detail} />
     </Container>
   );
@@ -26,9 +26,4 @@ const Container = styled.section`
   gap: 32px;
   width: 100%;
   min-width: 0;
-`;
-
-const Title = styled(PageTitle)`
-  width: min(100%, 920px);
-  margin: 0 auto;
 `;
