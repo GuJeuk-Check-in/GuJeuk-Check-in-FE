@@ -12,12 +12,19 @@ export const BackLink = ({ to, label }: BackLinkProps) => (
 );
 
 const StyledLink = styled(Link)`
-  align-self: flex-start;
+  position: absolute;
+  top: 2.5rem;
+  left: 2.5rem;
   color: ${({ theme }) => adminTokens(theme).colors.secondaryText};
   font-size: 1.25rem;
   line-height: 1.6;
   text-underline-offset: 0.2em;
   text-decoration: none;
+
+  @media (max-width: 48rem) {
+    top: 1.5rem;
+    left: 1rem;
+  }
 
   &:focus-visible {
     outline: 0.125rem solid

@@ -37,14 +37,4 @@ const Title = styled.h1`
 
 const Wrapper = styled(DetailPanel)`
   margin-block: 3.75rem;
-  padding: 3.75rem 6rem 6.25rem;
-  gap: 3.75rem;
-
-  @media (max-width: 64rem) {
-    padding: 2.5rem 2rem;
-  }
-
-  @media (max-width: 48rem) {
-    padding: 1.5rem 1rem;
-  }
 `;
