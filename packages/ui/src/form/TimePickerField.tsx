@@ -205,6 +205,7 @@ const Spinner = ({
 
   const step = (delta: 1 | -1) => {
     setDirection(delta);
+    setTyped(null);
     onStep(delta);
   };
   const stepForWheel = useRef(step);
