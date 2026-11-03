@@ -95,10 +95,11 @@ export const DetailInput: React.FC<DetailInputProps> = ({
       );
     }
     return (
-      <InputContainer isEditable={true} $hasIcon={!!icon}>
+      <InputContainer isEditable={true} $hasIcon={!!icon} $invalid={!!errorMessage}>
         {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
           id={inputId}
+          aria-invalid={errorMessage ? true : undefined}
           type={type}
           inputMode={inputMode}
           name={name}
@@ -144,7 +145,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
+const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean; $invalid?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -166,6 +167,13 @@ const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
   `}
 
   ${({ theme }) => fieldFocusStyle(theme, { selector: '&:focus-within', outlineFallback: false })}
+
+  ${({ $invalid, theme }) => $invalid && `
+    &&,
+    &&:focus-within {
+      border-color: ${adminTokens(theme).colors.error};
+    }
+  `}
 `;
 
 const FieldIcon = styled.span`
