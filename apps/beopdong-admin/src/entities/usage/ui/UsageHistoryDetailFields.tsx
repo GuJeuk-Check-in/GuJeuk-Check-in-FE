@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { DetailInput, TimePickerField } from '@center/ui/form';
+import { DetailInput, TimePickerField, VisitDatePicker } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { TbTargetArrow } from 'react-icons/tb';
 import { CalendarIcon, SeatIcon } from '@shared/ui/icons';
-import { formatDateKoreanPadded } from '@center/ui/form';
+import { formatDateKoreanPadded, formatDateToISOString } from '@center/ui/form';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail, UsageHistoryDetailPatch } from '../model/types';
 import { UsageSeatChips } from './UsageSeatChips';
@@ -20,6 +20,8 @@ interface UsageHistoryDetailFieldsProps {
 }
 
 const SEAT_COUNT = 10;
+
+const formatPickedDate = (date: Date) => formatDateKoreanPadded(formatDateToISOString(date));
 
 export const UsageHistoryDetailFields = ({
   detail,
@@ -51,11 +53,22 @@ export const UsageHistoryDetailFields = ({
         isEditable={isEditing}
         onChange={(event) => onChange({ name: event.target.value })}
       />
-      <DetailInput
-        label="방문날짜"
-        value={formatDateKoreanPadded(detail.visitDate)}
-        icon={<CalendarIcon />}
-      />
+      {isEditing ? (
+        <VisitDatePicker
+          label="방문날짜"
+          value={detail.visitDate}
+          icon={<CalendarIcon />}
+          variant="wide"
+          formatValue={formatPickedDate}
+          onChange={(visitDate) => onChange({ visitDate })}
+        />
+      ) : (
+        <DetailInput
+          label="방문날짜"
+          value={formatDateKoreanPadded(detail.visitDate)}
+          icon={<CalendarIcon />}
+        />
+      )}
       {detail.kind === 'group' && (
         <DetailInput
           label="인원"
