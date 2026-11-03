@@ -117,7 +117,8 @@ const DeleteButton = styled(RecordCloseButton)`
   }
 
   @media (max-width: 64rem) {
-    top: 1rem;
+    top: auto;
+    bottom: 1rem;
     transform: none;
   }
 `;
