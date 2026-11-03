@@ -7,6 +7,7 @@ import { CalendarIcon, SeatIcon } from '@shared/ui/icons';
 import { formatDateKoreanPadded, formatDateToISOString } from '@center/ui/form';
 import { toHourMinute, toHourMinuteSecond } from '@shared/lib/formatTime';
 import type { UsageHistoryDetail, UsageHistoryDetailPatch } from '../model/types';
+import { getHeadcountError, toHeadcountValue } from '../lib/headcount';
 import { UsageSeatChips } from './UsageSeatChips';
 
 export type UsageTimeField = 'startTime' | 'endTime';
@@ -30,7 +31,8 @@ export const UsageHistoryDetailFields = ({
   openField,
   onOpenFieldChange,
 }: UsageHistoryDetailFieldsProps) => {
-  const [countError, setCountError] = useState('');
+  const [countText, setCountText] = useState(() => (detail.kind === 'group' && detail.count ? String(detail.count) : ''));
+  const countError = getHeadcountError(countText);
 
   const renderTimeField = (field: UsageTimeField, label: string) => (
     <TimePickerField
@@ -72,16 +74,15 @@ export const UsageHistoryDetailFields = ({
       {detail.kind === 'group' && (
         <DetailInput
           label="인원"
-          value={detail.count || ''}
+          value={countText}
           placeholder="인원을 입력해주세요"
           icon={<IoMdPerson />}
           inputMode="numeric"
           isEditable={isEditing}
           onChange={(event) => {
             const { value } = event.target;
-            const isValid = /^\d*$/.test(value);
-            setCountError(isValid ? '' : '인원은 숫자(양의 정수)만 입력해주세요.');
-            if (isValid) onChange({ count: Number(value) });
+            setCountText(value);
+            onChange({ count: toHeadcountValue(value) });
           }}
           errorMessage={countError}
         />
