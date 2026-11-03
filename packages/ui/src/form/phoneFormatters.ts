@@ -1,10 +1,12 @@
-const PHONE_PATTERN = /^(01\d|02|0[3-9]\d)-\d{3,4}-\d{4}$/;
+const FORMATTED_PHONE_PATTERN = /^(01\d|02|0[3-9]\d)-\d{3,4}-\d{4}$/;
+
+export const toPhoneDigits = (value: string): string => value.replace(/\D/g, '');
 
 export const formatPhone = (value: string): string => {
   const trimmed = value.trim();
-  if (PHONE_PATTERN.test(trimmed)) return trimmed;
+  if (FORMATTED_PHONE_PATTERN.test(trimmed)) return trimmed;
 
-  const digits = trimmed.replace(/\D/g, '');
+  const digits = toPhoneDigits(trimmed);
   if (digits.length === 11) return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
   if (digits.length === 10) {
     return digits.startsWith('02')

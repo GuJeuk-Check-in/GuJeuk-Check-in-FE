@@ -6,6 +6,7 @@ import {
   VisitDatePicker,
   formatDateKoreanPadded,
   formatDateToISOString,
+  formatPhone,
 } from '@center/ui/form';
 import { FaSchool } from 'react-icons/fa';
 import { IoMdPerson } from 'react-icons/io';
@@ -20,7 +21,6 @@ import {
 } from '../lib/formatUserDetail';
 import type { UserDetail } from '../model/types';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
-import { formatPhone } from '@shared/lib/formatPhone';
 
 interface UserDetailFieldsProps {
   readonly user?: UserDetail;

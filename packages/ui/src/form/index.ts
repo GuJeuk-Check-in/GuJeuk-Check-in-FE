@@ -12,3 +12,4 @@ export {
   formatDateKoreanPadded,
 } from './dateFormatters';
 export { TimePickerField } from './TimePickerField';
+export { formatPhone, toPhoneDigits } from './phoneFormatters';

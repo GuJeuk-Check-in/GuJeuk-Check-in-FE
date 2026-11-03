@@ -1,4 +1,5 @@
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { toPhoneDigits } from '@center/ui/form';
 import { Modal } from '@shared/ui';
 import { useModal } from '@shared/hooks/useModal';
 import { UserInformationDetailCard, UserInformation } from '@entities/user';
@@ -44,7 +45,7 @@ export const UserInformationDetailActions = ({
       id: formData.id,
       userId: formData.userId,
       name: formData.name,
-      phone: formData.phone,
+      phone: toPhoneDigits(formData.phone),
       gender: formData.gender,
       birthYMD: formData.birthYMD,
       residence: formData.residence,

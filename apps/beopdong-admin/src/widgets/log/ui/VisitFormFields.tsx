@@ -1,13 +1,12 @@
 import type { ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { DetailInput, SelectOption, TimePickerField, VisitDatePicker } from '@center/ui/form';
+import { DetailInput, formatPhone, SelectOption, TimePickerField, VisitDatePicker } from '@center/ui/form';
 import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { MdDescription } from 'react-icons/md';
 import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { formatAge } from '@shared/lib/formatAge';
-import { formatPhone } from '@shared/lib/formatPhone';
 import type { VisitFormData } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
