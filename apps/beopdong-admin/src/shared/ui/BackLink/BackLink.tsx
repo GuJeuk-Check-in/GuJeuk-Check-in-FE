@@ -8,7 +8,7 @@ interface BackLinkProps {
 }
 
 export const BackLink = ({ to, label }: BackLinkProps) => (
-  <StyledLink to={to}>‹ {label}</StyledLink>
+  <StyledLink to={to} data-back-link>‹ {label}</StyledLink>
 );
 
 const StyledLink = styled(Link)`

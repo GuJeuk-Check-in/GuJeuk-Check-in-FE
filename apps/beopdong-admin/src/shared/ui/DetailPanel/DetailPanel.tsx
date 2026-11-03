@@ -6,7 +6,7 @@ export const DetailPanel = styled.div`
   box-sizing: border-box;
   width: min(calc(88% + 15px), 70rem);
   margin-inline: auto;
-  padding: 6.5rem 8% 3rem;
+  padding: 2.5rem 8% 3rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -14,12 +14,24 @@ export const DetailPanel = styled.div`
   border-radius: 1.25rem;
   box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.25);
 
+  &:has([data-back-link]) {
+    padding-top: 6.5rem;
+  }
+
   @media (max-width: 64rem) {
     width: 100%;
-    padding: 6.5rem 2rem 2.5rem;
+    padding: 2.5rem 2rem;
+
+    &:has([data-back-link]) {
+      padding-top: 6.5rem;
+    }
   }
 
   @media (max-width: 48rem) {
-    padding: 4.5rem 1rem 1.5rem;
+    padding: 1.5rem 1rem;
+
+    &:has([data-back-link]) {
+      padding-top: 4.5rem;
+    }
   }
 `;
