@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { adminTokens } from '@center/tokens';
+import { fieldFocusStyle } from './fieldFocusStyle';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
@@ -351,12 +352,7 @@ const Trigger = styled.button`
     cursor: default;
   }
 
-  &:focus,
-  &[aria-expanded='true'] {
-    outline: none;
-    border-color: ${({ theme }) => adminTokens(theme).colors.primary};
-    background-color: #fbfbff;
-  }
+  ${({ theme }) => fieldFocusStyle(theme)}
 `;
 
 const Value = styled.span`

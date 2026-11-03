@@ -83,7 +83,6 @@ export const VisitFormFields = ({
       label="방문날짜"
       icon={<CalendarIcon />}
       variant="wide"
-      highlightOnFocus
       value={value.visitDate}
       onChange={(visitDate) => onChange({ ...value, visitDate })}
     />

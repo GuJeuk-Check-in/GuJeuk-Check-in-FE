@@ -10,10 +10,9 @@ interface VisitDatePickerProps {
   readonly variant?: 'default' | 'wide';
   readonly span?: 'full' | 'double';
   readonly formatValue?: (date: Date) => string;
-  readonly highlightOnFocus?: boolean;
 }
 
-export const VisitDatePicker = ({ value, onChange, label, icon, variant, span, formatValue, highlightOnFocus }: VisitDatePickerProps) => (
+export const VisitDatePicker = ({ value, onChange, label, icon, variant, span, formatValue }: VisitDatePickerProps) => (
   <CalendarField
     value={parseCalendarDate(value)}
     onChange={(date) => onChange(formatDateToISOString(date))}
@@ -22,6 +21,5 @@ export const VisitDatePicker = ({ value, onChange, label, icon, variant, span, f
     variant={variant}
     span={span}
     formatValue={formatValue}
-    highlightOnFocus={highlightOnFocus}
   />
 );

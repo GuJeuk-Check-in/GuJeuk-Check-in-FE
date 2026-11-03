@@ -49,7 +49,6 @@ export const UsageHistoryDetailFields = ({
         value={detail.name}
         icon={<IoMdPerson />}
         isEditable={isEditing}
-        highlightOnFocus
         onChange={(event) => onChange({ name: event.target.value })}
       />
       <DetailInput
@@ -65,7 +64,6 @@ export const UsageHistoryDetailFields = ({
           icon={<IoMdPerson />}
           inputMode="numeric"
           isEditable={isEditing}
-          highlightOnFocus
           onChange={(event) => {
             const { value } = event.target;
             const isValid = /^\d*$/.test(value);
@@ -81,7 +79,6 @@ export const UsageHistoryDetailFields = ({
           value={detail.usePurpose}
           icon={<TbTargetArrow />}
           isEditable={isEditing}
-          highlightOnFocus
           onChange={(event) => onChange({ usePurpose: event.target.value })}
         />
       )}

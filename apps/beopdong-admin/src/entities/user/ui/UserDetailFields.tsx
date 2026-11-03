@@ -48,7 +48,6 @@ const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
       icon={DATE_ICON}
       variant="wide"
       span="double"
-      highlightOnFocus
       formatValue={formatPickedDate}
       onChange={onChange}
     />
@@ -76,7 +75,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           value={user?.name ?? EMPTY}
           icon={<IoMdPerson />}
           isEditable={isEditable}
-          highlightOnFocus
           onChange={(event) => edit({ name: event.target.value })}
         />
         <DetailInput
@@ -84,7 +82,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           value={user?.school ?? EMPTY}
           icon={<FaSchool />}
           isEditable={isEditable}
-          highlightOnFocus
           onChange={(event) => edit({ school: event.target.value })}
         />
       </Row>
@@ -124,7 +121,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           icon={<PhoneIcon />}
           type="tel"
           isEditable={isEditable}
-          highlightOnFocus
           onChange={(event) => edit({ phone: event.target.value })}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && user) edit({ phone: formatPhone(user.phone) });
@@ -136,7 +132,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
         value={user?.address ?? EMPTY}
         icon={<IoLocationSharp />}
         isEditable={isEditable}
-        highlightOnFocus
         onChange={(event) => edit({ address: event.target.value })}
       />
       {isEditable ? (
@@ -146,7 +141,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
             value={isOtherRoute ? ROUTE_OTHER : user.route}
             options={ROUTE_OPTIONS}
             icon={<IoLocationSharp />}
-            highlightOnFocus
             onChange={handleRouteSelect}
           />
           {isOtherRoute && (
@@ -156,7 +150,6 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
               placeholder="알게된 경로를 직접 입력해주세요"
               icon={<IoLocationSharp />}
               isEditable
-              highlightOnFocus
               onChange={(event) => edit({ route: event.target.value })}
             />
           )}

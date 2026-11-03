@@ -1,4 +1,5 @@
 import { adminTokens } from '@center/tokens';
+import { fieldFocusStyle } from './fieldFocusStyle';
 import styled from '@emotion/styled';
 import React from 'react';
 
@@ -26,7 +27,6 @@ export interface DetailInputProps {
   trailingIcon?: React.ReactNode;
   multiple?: boolean;
   hideNumberSpinner?: boolean;
-  highlightOnFocus?: boolean;
   errorMessage?: string;
 }
 
@@ -47,7 +47,6 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   trailingIcon,
   multiple = false,
   hideNumberSpinner = false,
-  highlightOnFocus = false,
   errorMessage,
 }) => {
   const inputId = React.useId();
@@ -96,7 +95,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
       );
     }
     return (
-      <InputContainer isEditable={true} $hasIcon={!!icon} $highlightOnFocus={highlightOnFocus}>
+      <InputContainer isEditable={true} $hasIcon={!!icon}>
         {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
           id={inputId}
@@ -145,7 +144,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean; $highlightOnFocus?: boolean }>`
+const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -166,12 +165,7 @@ const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean; $hi
     min-width: 0;
   `}
 
-  ${({ $highlightOnFocus, theme }) => $highlightOnFocus && `
-    &:focus-within {
-      border-color: ${adminTokens(theme).colors.primary};
-      background-color: #fbfbff;
-    }
-  `}
+  ${({ theme }) => fieldFocusStyle(theme, { selector: '&:focus-within', outlineFallback: false })}
 `;
 
 const FieldIcon = styled.span`
