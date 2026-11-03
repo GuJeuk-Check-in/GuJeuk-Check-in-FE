@@ -1,4 +1,3 @@
-import type { KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { IoClose } from 'react-icons/io5';
 import { adminTokens } from '@center/tokens';
@@ -18,6 +17,7 @@ import {
   InformationInfoWrapper as InfoWrapper,
 } from './InformationCardParts';
 import { RecordCloseButton } from './RecordCardParts';
+import { recordCardLinkStyles } from './recordCardLinkStyles';
 
 export interface UserInformationCardProps {
   name: string;
@@ -28,32 +28,32 @@ export interface UserInformationCardProps {
   count?: number | null;
   onEdit: () => void;
   onDelete?: () => void;
-  isCardClickable?: boolean;
+  href?: string;
 }
 
 export const UserInformationCard = ({
-  name, subtitle, gender, birthday, phoneNumber, count, onEdit, onDelete, isCardClickable = false,
+  name, subtitle, gender, birthday, phoneNumber, count, onEdit, onDelete, href,
 }: UserInformationCardProps) => {
   return (
-    <CardContainer
-      $hasDelete={!!onDelete}
-      {...(isCardClickable && {
-        role: 'link',
-        tabIndex: 0,
-        'aria-label': `${name} 회원 상세 보기`,
-        onClick: onEdit,
-        onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
-          if (event.target === event.currentTarget && event.key === 'Enter') onEdit();
-        },
-      })}
-    >
+    <CardContainer $hasDelete={!!onDelete}>
+      {href && (
+        <CardLink
+          href={href}
+          aria-label={`${name} 회원 상세 보기`}
+          onClick={(event) => {
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            event.preventDefault();
+            onEdit();
+          }}
+        />
+      )}
       <LeftSection>
         <Subtitle>{subtitle}</Subtitle>
         <Name>{name}</Name>
       </LeftSection>
       <RightSection>
         <RightWrapper>
-          {!isCardClickable && (
+          {!href && (
             <EditButton
               type="button"
               aria-label={`${name} 회원 수정`}
@@ -104,8 +104,18 @@ const CardContainer = styled(Container)<{ $hasDelete: boolean }>`
   }
 `;
 
+const CardLink = styled.a`
+  ${recordCardLinkStyles};
+
+  &:focus-visible {
+    outline: 0.1875rem solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
+    outline-offset: 0.1875rem;
+  }
+`;
+
 const DeleteButton = styled(RecordCloseButton)`
   position: absolute;
+  z-index: 2;
   top: 50%;
   right: 1.25rem;
   transform: translateY(-50%);

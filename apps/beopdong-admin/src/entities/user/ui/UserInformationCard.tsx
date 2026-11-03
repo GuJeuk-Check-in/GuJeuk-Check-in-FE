@@ -18,9 +18,9 @@ export const UserInformationCard = ({ user, onDelete }: UserInformationCardProps
       birthday={formatDateKoreanPadded(user.birthYMD)}
       phoneNumber={user.phone}
       count={user.visitCount}
+      href={`/organ/user/${user.id}`}
       onEdit={() => navigate(`/organ/user/${user.id}`)}
       onDelete={onDelete}
-      isCardClickable
     />
   );
 };
