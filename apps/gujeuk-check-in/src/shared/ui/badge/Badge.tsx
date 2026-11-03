@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
-import { ColorData } from '../design-system/ColorData';
+import { ColorData } from '@center/tokens';
 
 interface BadgeProps {
   children: ReactNode;

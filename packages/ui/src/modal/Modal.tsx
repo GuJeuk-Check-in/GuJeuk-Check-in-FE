@@ -32,9 +32,10 @@ export const Modal = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const subtitleId = useId();
+  const hasConfig = config !== null;
 
   useEffect(() => {
-    if (!isOpen || !config) return;
+    if (!isOpen || !hasConfig) return;
 
     const previousFocus = document.activeElement;
     const content = contentRef.current;
@@ -51,7 +52,7 @@ export const Modal = ({
         previousFocus.focus();
       }
     };
-  }, [isOpen, config]);
+  }, [isOpen, hasConfig]);
 
   if (!isOpen || !config) return null;
 
@@ -82,13 +83,15 @@ export const Modal = ({
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
     const activeElement = document.activeElement;
+    const isFocusOutsideItems =
+      activeElement === content || !content.contains(activeElement);
 
-    if (event.shiftKey && (activeElement === firstElement || !content.contains(activeElement))) {
+    if (event.shiftKey && (activeElement === firstElement || isFocusOutsideItems)) {
       event.preventDefault();
       lastElement.focus();
     } else if (
       !event.shiftKey &&
-      (activeElement === lastElement || !content.contains(activeElement))
+      (activeElement === lastElement || isFocusOutsideItems)
     ) {
       event.preventDefault();
       firstElement.focus();
@@ -154,7 +157,7 @@ export const Modal = ({
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;

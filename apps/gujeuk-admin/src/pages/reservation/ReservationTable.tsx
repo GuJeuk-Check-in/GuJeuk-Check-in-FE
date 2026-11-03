@@ -6,6 +6,8 @@ import {
   type MouseEvent,
 } from "react";
 import styled from "@emotion/styled";
+import { ColorData } from "@center/tokens";
+import { SucceedIcon } from "@shared/assets";
 import { ReservationCard } from "./ReservationCard";
 import {
   ReservationCreateModal,
@@ -22,7 +24,6 @@ import {
   type ReservationTime,
 } from "./ReservationData";
 import { ReservationEmptyCell } from "./ReservationEmptyCell";
-import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -124,19 +125,30 @@ export const ReservationTable = ({
     event: MouseEvent<HTMLButtonElement>,
   ) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    const popoverWidth = 330;
+    const viewportPadding = 16;
+    const popoverWidth = Math.min(
+      296,
+      window.innerWidth - viewportPadding * 2,
+    );
     const popoverHeight = 282;
     const gap = 8;
-    const left =
+    const maxLeft = window.innerWidth - popoverWidth - viewportPadding;
+    const preferredLeft =
       rect.right + gap + popoverWidth <= window.innerWidth
         ? rect.right + gap
         : rect.left - gap - popoverWidth;
-    const top = Math.min(
-      Math.max(16, rect.top),
-      window.innerHeight - popoverHeight - 16,
+
+    const left = Math.min(
+      Math.max(viewportPadding, preferredLeft),
+      maxLeft,
     );
 
-    setDetailPosition({ top, left: Math.max(16, left) });
+    const top = Math.min(
+      Math.max(viewportPadding, rect.top),
+      window.innerHeight - popoverHeight - viewportPadding,
+    );
+
+    setDetailPosition({ top, left });
     setSelectedReservation(reservation);
   };
 
@@ -171,6 +183,8 @@ export const ReservationTable = ({
                 <ReservationCard
                   key={`${time}-${place}`}
                   userName={reservation.userName}
+                  place={place}
+                  time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   onClick={(event) =>
@@ -230,6 +244,9 @@ export const ReservationTable = ({
       {toast && (
         <ToastPosition>
           <Toast role="status" aria-live="polite" $variant={toast.variant}>
+            {toast.variant === "positive" && (
+              <ToastIcon src={SucceedIcon} alt="" />
+            )}
             {toast.message}
           </Toast>
         </ToastPosition>
@@ -280,16 +297,28 @@ const ToastPosition = styled.div`
 `;
 
 const Toast = styled.div<{ $variant: ToastVariant }>`
-  padding: 0.75rem 1rem;
-  border-radius: 999px;
-  background-color: ${({ $variant }) =>
-    $variant === "caution"
-      ? ColorData.colors.cautionBackground
-      : ColorData.colors.positiveBackground};
-  color: ${({ $variant }) =>
-    $variant === "caution"
-      ? ColorData.colors.caution
-      : ColorData.colors.positive};
-  box-shadow: ${ColorData.shadow.modal};
+  display: inline-flex;
+  align-items: center;
+  gap: ${ColorData.spacing[8]};
+  min-height: 2.75rem;
+  padding: 0 ${ColorData.spacing[16]};
+  border-radius: ${ColorData.radius.large};
+  border-left: 0.25rem solid
+    ${({ $variant }) =>
+      $variant === "caution"
+        ? ColorData.colors.caution
+        : "transparent"};
+  background-color: ${ColorData.colors.background};
+  color: ${ColorData.colors.labelNormal};
+  box-shadow: ${ColorData.shadow.popover};
+  font-family: ${ColorData.typography.fontFamily};
   font-size: ${ColorData.typography.caption.fontSize};
+`;
+
+const ToastIcon = styled.img`
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  object-fit: contain;
 `;

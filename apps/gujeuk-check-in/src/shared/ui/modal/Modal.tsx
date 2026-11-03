@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
+import { ColorData } from '@center/tokens';
 import { type ModalConfig } from '@shared/hooks/useModal';
 import { Button } from '../button';
-import { ColorData } from '../design-system/ColorData';
 
 const FOCUSABLE_ELEMENTS_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -17,9 +17,10 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
   const modalContentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const subtitleId = useId();
+  const hasConfig = config !== null;
 
   useEffect(() => {
-    if (!isOpen || !config) return;
+    if (!isOpen || !hasConfig) return;
 
     const previouslyFocusedElement =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -35,7 +36,7 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
     return () => {
       previouslyFocusedElement?.focus();
     };
-  }, [isOpen, config]);
+  }, [isOpen, hasConfig]);
 
   if (!isOpen || !config) return null;
 
@@ -66,13 +67,15 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
     const activeElement = document.activeElement;
+    const isFocusOutsideItems =
+      activeElement === modalContent || !modalContent.contains(activeElement);
 
-    if (event.shiftKey && (activeElement === firstElement || !modalContent.contains(activeElement))) {
+    if (event.shiftKey && (activeElement === firstElement || isFocusOutsideItems)) {
       event.preventDefault();
       lastElement.focus();
     } else if (
       !event.shiftKey &&
-      (activeElement === lastElement || !modalContent.contains(activeElement))
+      (activeElement === lastElement || isFocusOutsideItems)
     ) {
       event.preventDefault();
       firstElement.focus();

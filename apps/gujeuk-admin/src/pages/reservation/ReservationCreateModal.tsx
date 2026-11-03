@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import styled from "@emotion/styled";
+import { ColorData } from "@center/tokens";
 import { Modal } from "@shared/ui/modal";
 import { Calendar, HomeImage } from "@shared/assets";
 import {
@@ -8,7 +9,6 @@ import {
   type ReservationPlace,
   type ReservationTime,
 } from "./ReservationData";
-import { reservationTokens as ColorData } from "./reservationTokens";
 
 const PHONE_PATTERN = /^010-\d{4}-\d{4}$/;
 

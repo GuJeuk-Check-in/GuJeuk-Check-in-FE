@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
+import { ColorData } from "@center/tokens";
 import { Modal } from "@shared/ui/modal";
 import { DeleteIcon } from "@shared/assets";
 import { getNextTime, type Reservation } from "./ReservationData";
-import { reservationTokens as ColorData } from "./reservationTokens";
 
 interface ReservationDeleteModalProps {
   reservation: Reservation;

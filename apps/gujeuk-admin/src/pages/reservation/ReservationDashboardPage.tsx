@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import { ColorData } from "@center/tokens";
 import { ReservationTable } from "./ReservationTable";
 import {
   PlaceData,
@@ -9,7 +10,6 @@ import {
   getActiveTimeIndex,
   type Reservation,
 } from "./ReservationData";
-import { reservationTokens as ColorData } from "./reservationTokens";
 
 const ReservationDashboardPage = () => {
   const [reservations, setReservations] = useState<Reservation[]>(ReservationData);
@@ -21,11 +21,10 @@ const ReservationDashboardPage = () => {
   }, []);
 
   const activeTimeIndex = getActiveTimeIndex(currentTime);
-  const activeTime = activeTimeIndex === -1 ? null : TimeData[activeTimeIndex];
-  const inUse = activeTime
-    ? reservations.filter((reservation) => reservation.startTime === activeTime)
-        .length
-    : 0;
+  const activeTime = TimeData[activeTimeIndex] ?? null;
+  const inUse = reservations.filter(
+    (reservation) => reservation.startTime === activeTime,
+  ).length;
   const availability = {
     inUse,
     available: Math.max(PlaceData.length - inUse, 0),

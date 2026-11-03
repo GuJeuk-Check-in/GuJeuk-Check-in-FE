@@ -1,9 +1,11 @@
 import styled from "@emotion/styled";
 import type { MouseEvent } from "react";
-import { reservationTokens as ColorData } from "./reservationTokens";
+import { ColorData } from "@center/tokens";
 
 interface ReservationCardProps {
   userName: string;
+  place: string;
+  time: string;
   column: number;
   row: number;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
@@ -11,6 +13,8 @@ interface ReservationCardProps {
 
 export const ReservationCard = ({
   userName,
+  place,
+  time,
   column,
   row,
   onClick,
@@ -19,6 +23,7 @@ export const ReservationCard = ({
     <Card
       $column={column}
       $row={row}
+      aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       onClick={onClick}
       type="button"
     >

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import type { InputHTMLAttributes } from 'react';
-import { ColorData } from '../design-system/ColorData';
+import { ColorData } from '@center/tokens';
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>;
 

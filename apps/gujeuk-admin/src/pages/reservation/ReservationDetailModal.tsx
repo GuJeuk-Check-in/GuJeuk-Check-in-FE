@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { ColorData } from '@center/tokens';
 import { Popover } from '@shared/ui/popover';
 import { FiTrash2 } from 'react-icons/fi';
 import {
@@ -6,7 +7,6 @@ import {
   getNextTime,
   type Reservation,
 } from './ReservationData';
-import { reservationTokens as ColorData } from './reservationTokens';
 
 interface ReservationDetailModalProps {
   reservation: Reservation;

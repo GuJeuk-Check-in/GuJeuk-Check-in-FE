@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import type { ReactNode } from "react";
-import { ColorData } from "../design-system/ColorData";
+import { ColorData } from "@center/tokens";
 
 interface ButtonProps {
   children: ReactNode;
@@ -73,10 +73,6 @@ const StyledButton = styled.button<{
       return `
         background-color: ${ColorData.colors.negative};
         color: ${ColorData.colors.background};
-
-        &:hover:not(:disabled) {
-          background-color: ${ColorData.colors.negativeStrong};
-        }
       `;
     }
 

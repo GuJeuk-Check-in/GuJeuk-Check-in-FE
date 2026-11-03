@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import type { ReactNode } from 'react';
 import { SucceedIcon } from '@shared/assets';
-import { ColorData } from '../design-system/ColorData';
+import { ColorData } from '@center/tokens';
 
 interface ToastProps {
   children: ReactNode;

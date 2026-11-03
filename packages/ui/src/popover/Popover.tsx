@@ -1,7 +1,10 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
-import { useEffect, useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { type ModalConfig } from '../modal/types';
+
+const FOCUSABLE_ELEMENTS_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface PopoverProps {
   isOpen: boolean;
@@ -22,6 +25,8 @@ export const Popover = ({
 }: PopoverProps) => {
   const titleId = useId();
   const subtitleId = useId();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const hasConfig = config !== null;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -36,6 +41,26 @@ export const Popover = ({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    if (!isOpen || !hasConfig) return;
+
+    const previousFocus = document.activeElement;
+    const content = contentRef.current;
+    if (!content) return;
+
+    const focusableElements = Array.from(
+      content.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    (focusableElements[0] ?? content).focus();
+
+    return () => {
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus();
+      }
+    };
+  }, [isOpen, hasConfig]);
+
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
@@ -43,9 +68,11 @@ export const Popover = ({
   return (
     <PopoverLayer>
       <PopoverContent
+        ref={contentRef}
         role="dialog"
         aria-labelledby={titleId}
         aria-describedby={subtitle ? subtitleId : undefined}
+        tabIndex={-1}
         data-theme={theme}
         $theme={theme}
         $top={position.top}
@@ -103,7 +130,8 @@ const PopoverContent = styled.div<{
   left: ${({ $left }) => `${$left}px`};
   width: 18.5rem;
   max-height: calc(100dvh - 2rem);
-  box-sizing: content-box;
+  max-width: calc(100vw - 2rem);
+  box-sizing: border-box;
   overflow-y: auto;
   padding: 1rem;
   border: 1px solid

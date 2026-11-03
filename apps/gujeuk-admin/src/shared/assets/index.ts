@@ -7,6 +7,7 @@ import HomeImage from './home.png';
 import Calendar from './Calendar.png';
 import DeleteIcon from './DeleteIcon.png';
 import PlusButton from './plus.png';
+import SucceedIcon from './SucceedIcon.png';
 
 export {
   Logo,
@@ -18,4 +19,5 @@ export {
   Calendar,
   DeleteIcon,
   PlusButton,
+  SucceedIcon,
 };
