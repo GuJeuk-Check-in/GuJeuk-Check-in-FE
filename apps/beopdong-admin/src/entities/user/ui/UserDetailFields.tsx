@@ -21,6 +21,7 @@ import {
 } from '../lib/formatUserDetail';
 import type { UserDetail } from '../model/types';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { getPhoneError } from '@shared/lib/phoneError';
 
 interface UserDetailFieldsProps {
   readonly user?: UserDetail;
@@ -121,6 +122,7 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           icon={<PhoneIcon />}
           type="tel"
           isEditable={isEditable}
+          errorMessage={getPhoneError(user?.phone ?? '')}
           onChange={(event) => edit({ phone: event.target.value })}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && user) edit({ phone: formatPhone(user.phone) });

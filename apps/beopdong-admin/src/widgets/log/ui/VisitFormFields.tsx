@@ -7,6 +7,7 @@ import { MdDescription } from 'react-icons/md';
 import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { formatAge } from '@shared/lib/formatAge';
+import { getPhoneError } from '@shared/lib/phoneError';
 import type { VisitFormData } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
@@ -60,6 +61,7 @@ export const VisitFormFields = ({
       icon={<PhoneIcon />}
       type="tel"
       isEditable
+      errorMessage={getPhoneError(value.phone)}
       onChange={(event) => onChange({ ...value, phone: event.target.value })}
       onKeyDown={(event) => {
         if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });

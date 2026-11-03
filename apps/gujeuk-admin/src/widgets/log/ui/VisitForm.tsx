@@ -51,7 +51,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
 
     if (
       !nameInput.value ||
-      !phoneInput.value ||
+      !toPhoneDigits(phoneInput.value) ||
       !trimmedPurpose ||
       !date ||
       !age ||

@@ -26,7 +26,7 @@ export const UserInformationDetailActions = ({
   const handleSave = (formData: UserInformation) => {
     if (
       !formData.name ||
-      !formData.phone ||
+      !toPhoneDigits(formData.phone) ||
       !formData.birthYMD ||
       !formData.gender ||
       !formData.residence

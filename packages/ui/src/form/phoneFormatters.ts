@@ -18,3 +18,6 @@ export const formatPhone = (value: string): string => {
   }
   return value;
 };
+
+export const isValidPhone = (value: string): boolean =>
+  FORMATTED_PHONE_PATTERN.test(formatPhone(value));

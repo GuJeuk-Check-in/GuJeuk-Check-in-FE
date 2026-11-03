@@ -74,7 +74,7 @@ export const UserVisitForm = ({
   const handleSave = () => {
     if (
       !formData.name ||
-      !formData.phone ||
+      !toPhoneDigits(formData.phone) ||
       !formData.purpose.trim() ||
       !formData.visitDate
     ) {

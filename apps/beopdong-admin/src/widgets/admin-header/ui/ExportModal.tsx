@@ -33,7 +33,7 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
         <path d="M12 7.5v9M7.5 12h9" />
       </PlusIcon>
       <Title id={titleId}>{title}</Title>
-      <Subtitle id={subtitleId}>내려받을 날짜를 선택해주세요</Subtitle>
+      <Subtitle id={subtitleId}>내려받을 기간을 선택해주세요</Subtitle>
       <Periods role="radiogroup" aria-label="내려받을 기간" onKeyDown={handlePeriodKeyDown}>
         {PERIOD_OPTIONS.map((option) => (
           <PeriodButton
