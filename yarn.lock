@@ -522,6 +522,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@gujeuk/gujeuk-check-in@workspace:apps/gujeuk-check-in"
   dependencies:
+    "@center/tokens": "workspace:*"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^9.36.0"

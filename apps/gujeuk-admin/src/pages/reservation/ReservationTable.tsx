@@ -262,7 +262,7 @@ export const ReservationTable = ({
 const TableGrid = styled.div`
   display: grid;
   grid-template-columns: 5rem repeat(9, minmax(7rem, 1fr));
-  grid-template-rows: 4.5rem repeat(${TimeData.length}, 8rem);
+  grid-template-rows: 4.5rem repeat(${TimeData.length}, 5rem);
   min-width: 68rem;
   overflow: hidden;
   position: relative;
