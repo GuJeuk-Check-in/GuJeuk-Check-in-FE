@@ -8,6 +8,7 @@ export interface VisitFormData {
   visitTime: string;
   purposes: string[];
   visitDate: string;
+  note: string | null;
 }
 
 export const createVisitFormData = (visit?: UserVisitDetailRecord): VisitFormData => ({
@@ -17,9 +18,6 @@ export const createVisitFormData = (visit?: UserVisitDetailRecord): VisitFormDat
   phone: visit?.phone ?? '',
   visitTime: visit?.visitTime ?? '',
   purposes: [...(visit?.purposes ?? [])],
-  visitDate:
-    visit?.visitDate
-      .match(/\d+/g)
-      ?.map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
-      .join('-') ?? '',
+  visitDate: visit?.visitDate ?? '',
+  note: visit?.note ?? null,
 });

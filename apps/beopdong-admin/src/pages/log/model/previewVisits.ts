@@ -9,7 +9,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     phone: '010-0000-0000',
     visitTime: '17:00',
     purposes: ['인터넷', '탁구'],
-    visitDate: '2026년 10월 13일',
+    visitDate: '2026-10-13',
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     phone: '010-0000-0000',
     visitTime: '16:30',
     purposes: ['보드게임'],
-    visitDate: '2026년 10월 13일',
+    visitDate: '2026-10-13',
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     phone: '010-0000-0000',
     visitTime: '15:00',
     purposes: ['컴퓨터', '노래방', '탁구'],
-    visitDate: '2026년 10월 12일',
+    visitDate: '2026-10-12',
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     phone: '010-0000-0000',
     visitTime: '14:30',
     purposes: ['당구대/탁구'],
-    visitDate: '2026년 10월 12일',
+    visitDate: '2026-10-12',
   },
   {
     id: 5,
@@ -49,6 +49,6 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     phone: '010-0000-0000',
     visitTime: '16:00',
     purposes: ['인터넷', '보드게임'],
-    visitDate: '2026년 10월 11일',
+    visitDate: '2026-10-11',
   },
 ];
