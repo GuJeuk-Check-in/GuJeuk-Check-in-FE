@@ -73,7 +73,16 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     }
     if (type === 'select') {
       return (
-        <StyledSelect id={inputId} name={name} value={value} multiple={multiple} onChange={(e) => onChange?.(e)}>
+        <StyledSelect
+          id={inputId}
+          name={name}
+          value={value}
+          multiple={multiple}
+          $invalid={!!errorMessage}
+          aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={errorMessage ? errorId : undefined}
+          onChange={(e) => onChange?.(e)}
+        >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -84,13 +93,15 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     }
     if (type === 'checkbox') {
       return (
-        <EditableCheckboxWrapper isEditable={true}>
+        <EditableCheckboxWrapper isEditable={true} $invalid={!!errorMessage}>
           <EditableCheckbox
             type="checkbox"
             name={name}
             checked={!!value}
             onChange={(e) => onChange?.(e)}
             id={inputId}
+            aria-invalid={errorMessage ? true : undefined}
+            aria-describedby={errorMessage ? errorId : undefined}
           />
         </EditableCheckboxWrapper>
       );
@@ -215,7 +226,7 @@ const ReadOnlyText = styled.p`
   overflow-wrap: anywhere;
 `;
 
-const StyledSelect = styled.select`
+const StyledSelect = styled.select<{ $invalid?: boolean }>`
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -239,6 +250,10 @@ const StyledSelect = styled.select`
     padding-block: 0.5rem;
     background-image: none;
   }
+
+  ${({ $invalid, theme }) => $invalid && `
+    border: 0.0625rem solid ${adminTokens(theme).colors.error};
+  `}
 `;
 
 const EditableCheckboxWrapper = styled(InputContainer)`
