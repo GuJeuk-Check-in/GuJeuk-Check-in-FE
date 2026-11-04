@@ -21,7 +21,6 @@ export interface AdminColors {
   fieldBorder: string;
   secondaryText: string;
   mutedText: string;
-  fieldFocusBackground: string;
   circles: readonly string[];
 }
 
@@ -47,10 +46,64 @@ export const componentMetrics = {
   authPanelRadius: '20px',
   fieldHeight: '3.5rem',
   fieldRadius: '0.5rem',
-  fieldFocus: 'outline' as 'highlight' | 'outline',
   cardRadius: '2.25rem',
   sidebarWidth: 'max(20vw, 17rem)',
 };
+
+export const ColorData = {
+  colors: {
+    primary: '#0066FF',
+    primaryStrong: '#005EEB',
+    primaryLight: '#EAF2FE',
+    primary8: 'rgba(0, 102, 255, 0.08)',
+    labelNormal: '#171719',
+    labelNeutral: 'rgba(46, 47, 51, 0.88)',
+    labelAlternative: 'rgba(55, 56, 60, 0.61)',
+    labelAssistive: 'rgba(55, 56, 60, 0.28)',
+    labelDisabled: 'rgba(55, 56, 60, 0.16)',
+    lineNormal: '#D9DADD',
+    fillNormal: 'rgba(112, 115, 124, 0.08)',
+    background: '#FFFFFF',
+    interactionDisabled: '#F4F4F5',
+    dimmer: 'rgba(23, 23, 25, 0.52)',
+    positive: '#00BF4F',
+    positiveBackground: '#EAFBF0',
+    caution: '#FF9200',
+    cautionBackground: '#FFF4E5',
+    negative: '#FF4242',
+    negativeBackground: '#FFF0F0',
+  },
+  spacing: {
+    4: '0.25rem',
+    8: '0.5rem',
+    12: '0.75rem',
+    16: '1rem',
+    24: '1.5rem',
+    32: '2rem',
+  },
+  radius: {
+    medium: '0.5rem',
+    large: '0.625rem',
+    modal: '1rem',
+    pill: '999px',
+  },
+  shadow: {
+    popover: '0 4px 16px rgba(0, 0, 0, 0.12)',
+    focus: '0 0 0 2px #0066FF',
+  },
+  typography: {
+    fontFamily:
+      'Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
+    title: { fontSize: '1.625rem', fontWeight: 700, lineHeight: 1.3 },
+    body: { fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.5 },
+    label: { fontSize: '0.8125rem', fontWeight: 600, lineHeight: 1.4 },
+    caption: { fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.4 },
+  },
+  interaction: {
+    transitionFast: '150ms ease',
+    transitionNormal: '200ms ease',
+  },
+} as const;
 
 export interface AdminTheme {
   colors: AdminColors;
@@ -68,7 +121,7 @@ export const blueTheme: AdminTheme = {
     error: '#ff5a5a', warning: '#D88282', cardBorder: '#6f95c4',
     selected: '#E9F0FF', selectedHover: '#f4f8ff',
     white: '#ffffff', black: '#000000', text: '#2e2e32',
-    fieldBorder: '#404040', secondaryText: '#828284', mutedText: '#969698', fieldFocusBackground: '#fbfbff',
+    fieldBorder: '#404040', secondaryText: '#828284', mutedText: '#969698',
     circles: ['#0F50A0', '#2ABFEC', '#FBBC18', '#2BBDEC', '#E6222C', '#17A753',
       '#2BBDEC', '#A1298C', '#2BBDEC', '#E8232C', '#2ABFEC', '#FBBC18', '#17A753'],
   },
@@ -78,8 +131,8 @@ export const blueTheme: AdminTheme = {
 
 export const orangePalette = {
   main: '#FF9000', dark: '#9B4D00', light: '#FFF4E4', bright: '#F5C343',
-  red: '#E8232C', redShadow: '#F79CA0', pink: '#EF4B75', pinkShadow: '#F8CBD5',
-  blue: '#2868D8', blueShadow: '#CBD9F5', green: '#00A89D', greenShadow: '#C5DEDB',
+  red: '#E8232C', redShadow: '#F79CA0', pink: '#EF4B75',
+  blue: '#2868D8', green: '#00A89D',
 } as const;
 
 export const orangeTheme: AdminTheme = {
@@ -100,19 +153,6 @@ export const orangeTheme: AdminTheme = {
       orangePalette.pink, orangePalette.blue, orangePalette.green, orangePalette.red],
   },
 };
-
-export const createAdminTheme = (
-  base: AdminTheme,
-  overrides: {
-    colors?: Partial<AdminColors>;
-    typography?: Partial<AdminTheme['typography']>;
-    components?: Partial<AdminTheme['components']>;
-  } = {},
-): AdminTheme => ({
-  colors: { ...base.colors, ...overrides.colors },
-  typography: { ...base.typography, ...overrides.typography },
-  components: { ...base.components, ...overrides.components },
-});
 
 export const adminTokens = (theme: { admin?: AdminTheme }): AdminTheme => theme.admin ?? blueTheme;
 

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 export interface ButtonConfig {
   label: string;
+  icon?: ReactNode;
   variant?: 'primary' | 'secondary';
   bgColor?: string;
   onClick?: () => void;

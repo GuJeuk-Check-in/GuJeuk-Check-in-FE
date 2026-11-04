@@ -1,12 +1,10 @@
 import { ThemeProvider } from '@emotion/react';
-import { createAdminTheme, orangeTheme } from '@center/tokens';
+import { orangeTheme } from '@center/tokens';
 import { Router } from '@app/router';
-
-const beopdongTheme = createAdminTheme(orangeTheme, { components: { fieldFocus: 'highlight' } });
 
 const App = () => {
   return (
-    <ThemeProvider theme={{ admin: beopdongTheme }}>
+    <ThemeProvider theme={{ admin: orangeTheme }}>
       <Router />
     </ThemeProvider>
   );

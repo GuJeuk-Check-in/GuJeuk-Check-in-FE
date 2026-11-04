@@ -13,7 +13,6 @@ import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { IoClose } from 'react-icons/io5';
-import { formatDateKoreanPadded } from '@center/ui/form';
 import type { UserVisitSummary } from '../model/types';
 
 interface UserVisitCardProps {
@@ -35,7 +34,7 @@ export const UserVisitCard = ({ visit, onDelete }: UserVisitCardProps) => {
             <Purposes>{visit.purposes.join(' / ') || '—'}</Purposes>
           </Info>
         </LeftSection>
-        <Date>{visit.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'}</Date>
+        <Date>{visit.visitDate || '—'}</Date>
       </CardContent>
       <RightSection>
         <CloseButton

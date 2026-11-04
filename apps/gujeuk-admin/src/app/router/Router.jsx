@@ -15,6 +15,9 @@ const UserInformationDetail = lazy(
   () => import('@pages/user/UserInformationDetail'),
 );
 const ResidenceCustom = lazy(() => import('@pages/residence/ResidenceCustom'));
+const ReservationDashboardPage = lazy(
+  () => import('@pages/reservation/ReservationDashboardPage'),
+);
 
 const RouteFallback = styled.div`
   position: fixed;
@@ -61,6 +64,10 @@ export const Router = () => {
           />
           <Route path="/purpose/all" element={<PurposeCustom />} />
           <Route path="/residence/all" element={<ResidenceCustom />} />
+          <Route
+            path="/reservation"
+            element={<ReservationDashboardPage />}
+          />
         </Route>
         <Route path="*" element={<Navigate to="/organ/login" replace />} />
       </Routes>

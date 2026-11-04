@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { formatPhone } from '@center/ui/form';
 import styled from '@emotion/styled';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
@@ -63,7 +62,7 @@ export const UserVisitDetail = ({ logId }: UserVisitDetailProps) => {
           isEditable={false}
         />
       </InputRow>
-      <VisitDetailInput label="연락처" value={formatPhone(visit.phone)} isEditable={false} />
+      <VisitDetailInput label="연락처" value={visit.phone} isEditable={false} />
       <VisitDetailInput
         label="방문 목적"
         value={visit.purpose}

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { formatPhone } from '@center/ui/form';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
@@ -71,7 +70,7 @@ export const UserInformationDetailCard = ({
     id,
     name,
     userId,
-    phone: formatPhone(phone),
+    phone,
     gender,
     birthYMD,
     residence,
@@ -83,7 +82,7 @@ export const UserInformationDetailCard = ({
       id,
       name,
       userId,
-      phone: formatPhone(phone),
+      phone,
       gender,
       birthYMD,
       residence,
@@ -126,7 +125,7 @@ export const UserInformationDetailCard = ({
       id,
       name,
       userId,
-      phone: formatPhone(phone),
+      phone,
       gender,
       birthYMD,
       residence,
@@ -158,7 +157,7 @@ export const UserInformationDetailCard = ({
       <VisitDetailInput
         label="연락처"
         name="phone"
-        value={isEditing ? formData.phone : formatPhone(phone)}
+        value={isEditing ? formData.phone : phone}
         onChange={isEditing ? handleChange : null}
         isEditable={isEditing}
         type="tel"

@@ -2,7 +2,6 @@ import { VisitFormInput } from '@shared/ui/input/VisitFormInput';
 import { ToggleSelect } from '@shared/ui/LabeldInput/ToggleSelect';
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { toPhoneDigits } from '@center/ui/form';
 import { CountVisitor } from '@shared/ui/LabeldInput/CountVisitor';
 import { IoIosCall } from 'react-icons/io';
 import { FaLocationDot } from 'react-icons/fa6';
@@ -51,7 +50,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
 
     if (
       !nameInput.value ||
-      !toPhoneDigits(phoneInput.value) ||
+      !phoneInput.value ||
       !trimmedPurpose ||
       !date ||
       !age ||
@@ -93,7 +92,7 @@ const VisitForm = ({ onSubmit, isLoading }: VisitFormProps) => {
     const dataToSend: CreateUserVisitRequest = {
       name: nameInput.value,
       age,
-      phone: toPhoneDigits(phoneInput.value),
+      phone: phoneInput.value,
       maleCount: maleCounter.count,
       femaleCount: femaleCounter.count,
       purpose: trimmedPurpose,

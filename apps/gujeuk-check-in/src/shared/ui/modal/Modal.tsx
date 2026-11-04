@@ -1,5 +1,11 @@
+import { useEffect, useId, useRef, type KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
+import { ColorData } from '@center/tokens';
 import { type ModalConfig } from '@shared/hooks/useModal';
+import { Button } from '../button';
+
+const FOCUSABLE_ELEMENTS_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface ModalProps {
   isOpen: boolean;
@@ -8,40 +14,112 @@ interface ModalProps {
 }
 
 export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const subtitleId = useId();
+  const hasConfig = config !== null;
+
+  useEffect(() => {
+    if (!isOpen || !hasConfig) return;
+
+    const previouslyFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const modalContent = modalContentRef.current;
+    if (!modalContent) return;
+
+    const focusableElements = Array.from(
+      modalContent.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    (focusableElements[0] ?? modalContent).focus();
+
+    return () => {
+      previouslyFocusedElement?.focus();
+    };
+  }, [isOpen, hasConfig]);
+
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
 
-  const handleButtonClick = (onClick?: () => void) => {
-    if (onClick) {
-      onClick();
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      onClose?.();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    const modalContent = modalContentRef.current;
+    if (!modalContent) return;
+
+    const focusableElements = Array.from(
+      modalContent.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      modalContent.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+    const isFocusOutsideItems =
+      activeElement === modalContent || !modalContent.contains(activeElement);
+
+    if (event.shiftKey && (activeElement === firstElement || isFocusOutsideItems)) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (
+      !event.shiftKey &&
+      (activeElement === lastElement || isFocusOutsideItems)
+    ) {
+      event.preventDefault();
+      firstElement.focus();
     }
   };
 
   return (
-    <Overlay onClick={onClose}>
+    <Overlay
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose?.();
+        }
+      }}
+    >
       <ModalContent
-        onClick={(e) => e.stopPropagation()}
+        ref={modalContentRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={subtitle ? subtitleId : undefined}
+        tabIndex={-1}
         $theme={theme}
         data-theme={theme}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleKeyDown}
       >
         {icon && <IconWrapper>{icon}</IconWrapper>}
+        <Title id={titleId}>{title}</Title>
+        {subtitle && <Subtitle id={subtitleId} $theme={theme}>{subtitle}</Subtitle>}
 
-        <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
-
-        <ButtonContainer>
-          {buttons.map((btn, idx) => (
-            <Button
-              key={idx}
-              onClick={() => handleButtonClick(btn.onClick)}
-              $variant={btn.variant || 'secondary'}
-              style={{ backgroundColor: btn.bgColor }}
-            >
-              {btn.label}
-            </Button>
-          ))}
-        </ButtonContainer>
+        {buttons.length > 0 && (
+          <ButtonContainer>
+            {buttons.map((button, index) => (
+              <Button
+                key={`${button.label}-${index}`}
+                variant={button.variant || 'secondary'}
+                onClick={button.onClick}
+                bgColor={button.bgColor}
+              >
+                {button.label}
+              </Button>
+            ))}
+          </ButtonContainer>
+        )}
       </ModalContent>
     </Overlay>
   );
@@ -50,137 +128,77 @@ export const Modal = ({ isOpen, config, onClose }: ModalProps) => {
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  background-color: ${ColorData.colors.dimmer};
 `;
 
-const ModalContent = styled.div<{ $theme?: string }>`
+const ModalContent = styled.div<{ $theme?: ModalConfig['theme'] }>`
+  width: min(90%, 24rem);
+  max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: ${ColorData.spacing[32]};
+  border: 2px solid
+    ${({ $theme }) =>
+      $theme === 'warning'
+        ? ColorData.colors.negative
+        : $theme === 'info'
+          ? ColorData.colors.primary
+          : ColorData.colors.lineNormal};
   border-radius: 1.875rem;
-  background-color: white;
-  padding: 2rem;
-  width: 90%;
-  max-width: 24rem;
-  text-align: center;
+  background-color: ${ColorData.colors.background};
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
-  animation: slideUp 0.3s ease-out;
+  text-align: center;
+  animation: modalEnter ${ColorData.interaction.transitionNormal};
 
-  border: ${(props) => {
-    switch (props.$theme) {
-      case 'warning':
-        return '2px solid #D88282';
-      case 'info':
-        return '2px solid #0F50A0';
-      default:
-        return '2px solid #d1d5db';
-    }
-  }};
-
-  @keyframes slideUp {
+  @keyframes modalEnter {
     from {
       opacity: 0;
-      transform: translateY(1rem);
+      transform: translateY(0.75rem) scale(0.98);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;
 
 const IconWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 1rem;
-
-  svg {
-    width: 3rem;
-    height: 3rem;
-
-    color: #d88282;
-
-    [data-theme='info'] & {
-      color: #0f50a0;
-    }
-
-    [data-theme='default'] & {
-      color: #1f2937;
-    }
-  }
+  margin-bottom: ${ColorData.spacing[16]};
 `;
 
 const Title = styled.h2`
+  margin: 0 0 ${ColorData.spacing[8]};
+  color: ${ColorData.colors.labelNormal};
   font-size: 1.375rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
   white-space: pre-wrap;
 `;
 
-const Subtitle = styled.p`
-  font-size: 0.875rem;
-  color: #ef4444;
-  margin-bottom: 2rem;
+const Subtitle = styled.p<{ $theme?: ModalConfig['theme'] }>`
+  margin: 0 0 ${ColorData.spacing[24]};
+  color: ${({ $theme }) =>
+    $theme === 'warning'
+      ? ColorData.colors.negative
+      : $theme === 'info'
+        ? ColorData.colors.primary
+        : ColorData.colors.labelAlternative};
+  font-size: ${ColorData.typography.body.fontSize};
   white-space: pre-wrap;
-
-  [data-theme='info'] & {
-    color: #0f50a0;
-  }
-  [data-theme='default'] & {
-    color: #6b7280;
-  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
-  gap: 0.75rem;
   justify-content: center;
+  gap: ${ColorData.spacing[12]};
   flex-wrap: wrap;
-`;
-
-const Button = styled.button<{ $variant?: 'primary' | 'secondary' }>`
-  padding: 0.625rem 2rem;
-  border-radius: 1.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 6rem;
-
-  ${(props) => {
-    if (props.$variant === 'primary') {
-      return `
-        background-color: #D88282; 
-        color: white;
-
-        &:hover {
-          opacity: 0.9;
-          transform: translateY(-2px);
-          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
-        }
-
-        &:active {
-          transform: translateY(0);
-        }
-      `;
-    } else {
-      return `
-        background-color: white;
-        color: #6b7280;
-        border: 2px solid #d1d5db;
-
-        &:hover {
-          background-color: #f9fafb;
-          border-color: #9ca3af;
-        }
-
-        &:active {
-          background-color: #f3f4f6;
-        }
-      `;
-    }
-  }}
 `;
