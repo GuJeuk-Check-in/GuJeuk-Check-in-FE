@@ -51,6 +51,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
 }) => {
   const inputId = React.useId();
   const labelId = `${inputId}-label`;
+  const errorId = `${inputId}-error`;
 
   const renderInput = () => {
     if (!isEditable) {
@@ -100,6 +101,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
         <Input
           id={inputId}
           aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={errorMessage ? errorId : undefined}
           type={type}
           inputMode={inputMode}
           name={name}
@@ -119,7 +121,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     <Container width={width}>
       <Label id={labelId} htmlFor={isEditable ? inputId : undefined}>{label}</Label>
       {renderInput()}
-      {isEditable && errorMessage && <ErrorText role="alert">{errorMessage}</ErrorText>}
+      {isEditable && errorMessage && <ErrorText id={errorId} role="alert">{errorMessage}</ErrorText>}
     </Container>
   );
 };
