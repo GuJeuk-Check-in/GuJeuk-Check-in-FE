@@ -76,7 +76,6 @@ export const TimePickerField = ({
 
   const typeHour = (digits: string) => {
     const typed = Math.min(Number(digits), 12);
-    if (typed < 1) return;
     setDraft(({ hour, minute }) => ({ hour: (typed % 12) + (hour >= 12 ? 12 : 0), minute }));
   };
 
