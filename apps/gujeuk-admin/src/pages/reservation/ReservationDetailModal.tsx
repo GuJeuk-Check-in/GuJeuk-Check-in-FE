@@ -62,6 +62,7 @@ const Badge = styled.span`
   font-weight: 600;
   font-family: inherit;
   line-height: 1;
+  transform: translateY(-0.125rem);
 `;
 
 const DetailList = styled.div`

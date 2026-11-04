@@ -126,8 +126,11 @@ export const ReservationTable = ({
   ) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
+    const rootFontSize = parseFloat(
+      getComputedStyle(document.documentElement).fontSize,
+    );
     const popoverWidth = Math.min(
-      296,
+      18.5 * rootFontSize,
       window.innerWidth - viewportPadding * 2,
     );
     const popoverHeight = 282;
@@ -198,12 +201,13 @@ export const ReservationTable = ({
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
-                  onAddClick={(selectedPlace, selectedTime) =>
+                  onAddClick={(selectedPlace, selectedTime) => {
+                    setSelectedReservation(null);
                     setCreateTarget({
                       place: selectedPlace,
                       time: selectedTime,
-                    })
-                  }
+                    });
+                  }}
                 />
               );
             })}

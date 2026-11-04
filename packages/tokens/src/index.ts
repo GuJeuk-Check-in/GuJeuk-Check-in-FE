@@ -54,16 +54,13 @@ export const ColorData = {
   colors: {
     primary: '#0066FF',
     primaryStrong: '#005EEB',
-    primaryHeavy: '#0054D1',
     primaryLight: '#EAF2FE',
     primary8: 'rgba(0, 102, 255, 0.08)',
-    labelStrong: '#000000',
     labelNormal: '#171719',
     labelNeutral: 'rgba(46, 47, 51, 0.88)',
     labelAlternative: 'rgba(55, 56, 60, 0.61)',
     labelAssistive: 'rgba(55, 56, 60, 0.28)',
     labelDisabled: 'rgba(55, 56, 60, 0.16)',
-    lineAlternative: 'rgba(112, 115, 124, 0.16)',
     lineNormal: '#D9DADD',
     fillNormal: 'rgba(112, 115, 124, 0.08)',
     background: '#FFFFFF',
@@ -85,7 +82,6 @@ export const ColorData = {
     32: '2rem',
   },
   radius: {
-    small: '0.375rem',
     medium: '0.5rem',
     large: '0.625rem',
     modal: '1rem',
@@ -93,13 +89,11 @@ export const ColorData = {
   },
   shadow: {
     popover: '0 4px 16px rgba(0, 0, 0, 0.12)',
-    modal: '0 16px 24px rgba(0, 0, 0, 0.16)',
     focus: '0 0 0 2px #0066FF',
   },
   typography: {
     fontFamily:
       'Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
-    modalTitle: { fontSize: '1.125rem', fontWeight: 700, lineHeight: 1.4 },
     title: { fontSize: '1.625rem', fontWeight: 700, lineHeight: 1.3 },
     body: { fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.5 },
     label: { fontSize: '0.8125rem', fontWeight: 600, lineHeight: 1.4 },
@@ -110,8 +104,6 @@ export const ColorData = {
     transitionNormal: '200ms ease',
   },
 } as const;
-
-export type DesignTokens = typeof ColorData;
 
 export interface AdminTheme {
   colors: AdminColors;
@@ -139,8 +131,8 @@ export const blueTheme: AdminTheme = {
 
 export const orangePalette = {
   main: '#FF9000', dark: '#9B4D00', light: '#FFF4E4', bright: '#F5C343',
-  red: '#E8232C', redShadow: '#F79CA0', pink: '#EF4B75', pinkShadow: '#F8CBD5',
-  blue: '#2868D8', blueShadow: '#CBD9F5', green: '#00A89D', greenShadow: '#C5DEDB',
+  red: '#E8232C', redShadow: '#F79CA0', pink: '#EF4B75',
+  blue: '#2868D8', green: '#00A89D',
 } as const;
 
 export const orangeTheme: AdminTheme = {
@@ -161,19 +153,6 @@ export const orangeTheme: AdminTheme = {
       orangePalette.pink, orangePalette.blue, orangePalette.green, orangePalette.red],
   },
 };
-
-export const createAdminTheme = (
-  base: AdminTheme,
-  overrides: {
-    colors?: Partial<AdminColors>;
-    typography?: Partial<AdminTheme['typography']>;
-    components?: Partial<AdminTheme['components']>;
-  } = {},
-): AdminTheme => ({
-  colors: { ...base.colors, ...overrides.colors },
-  typography: { ...base.typography, ...overrides.typography },
-  components: { ...base.components, ...overrides.components },
-});
 
 export const adminTokens = (theme: { admin?: AdminTheme }): AdminTheme => theme.admin ?? blueTheme;
 

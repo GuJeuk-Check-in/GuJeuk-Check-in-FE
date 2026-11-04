@@ -14,6 +14,7 @@ const FOCUSABLE_ELEMENTS_SELECTOR =
 
 interface ModalProps {
   isOpen: boolean;
+  className?: string;
   config: ModalConfig | null;
   onClose?: () => void;
   children?: ReactNode;
@@ -23,6 +24,7 @@ interface ModalProps {
 
 export const Modal = ({
   isOpen,
+  className,
   config,
   children,
   onClose,
@@ -107,6 +109,7 @@ export const Modal = ({
       }}
     >
       <ModalContent
+        className={className}
         ref={contentRef}
         role="dialog"
         aria-modal="true"
@@ -125,7 +128,13 @@ export const Modal = ({
           </CloseButton>
         )}
         {icon && <IconWrapper>{icon}</IconWrapper>}
-        <Title id={titleId} $size={size}>{title}</Title>
+        <Title
+          id={titleId}
+          $size={size}
+          $hasCloseButton={showCloseButton && !!onClose}
+        >
+          {title}
+        </Title>
         {subtitle && (
           <Subtitle id={subtitleId} $size={size}>
             {subtitle}
@@ -235,7 +244,10 @@ const IconWrapper = styled.div`
   }
 `;
 
-const Title = styled.h2<{ $size: 'default' | 'compact' | 'large' }>`
+const Title = styled.h2<{
+  $size: 'default' | 'compact' | 'large';
+  $hasCloseButton: boolean;
+}>`
   margin: 0 0 0.5rem;
   color: #1f2937;
   font-size: ${({ $size }) =>
@@ -245,6 +257,7 @@ const Title = styled.h2<{ $size: 'default' | 'compact' | 'large' }>`
   white-space: pre-wrap;
   word-break: keep-all;
   overflow-wrap: anywhere;
+  padding-right: ${({ $hasCloseButton }) => ($hasCloseButton ? '2.25rem' : '0')};
 `;
 
 const CloseButton = styled.button`

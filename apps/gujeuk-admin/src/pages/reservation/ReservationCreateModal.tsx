@@ -12,6 +12,15 @@ import {
 
 const PHONE_PATTERN = /^010-\d{4}-\d{4}$/;
 
+const formatPhoneNumber = (value: string) => {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
 export interface ReservationCreateValues {
   userName: string;
   phone: string;
@@ -86,9 +95,10 @@ export const ReservationCreateModal = ({
           <Input
             id="reservation-phone"
             value={phone}
-            onChange={(event) => setPhone(event.target.value)}
+            onChange={(event) => setPhone(formatPhoneNumber(event.target.value))}
             placeholder="010-0000-0000"
             inputMode="tel"
+            maxLength={13}
             required
           />
         </Field>

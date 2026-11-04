@@ -114,6 +114,7 @@ const Description = styled.p`
 
 const RefreshButton = styled.button`
   min-height: 2.5rem;
+  margin-right: ${ColorData.spacing[16]};
   padding: 0 ${ColorData.spacing[16]};
   border: 0;
   border-radius: ${ColorData.radius.large};
@@ -131,7 +132,7 @@ const RefreshButton = styled.button`
 `;
 
 const TableViewport = styled.div`
-  width: 100%;
+  width: calc(100% - ${ColorData.spacing[32]});
   margin: 0 auto;
   overflow-x: auto;
   border-radius: ${ColorData.radius.modal};
