@@ -1,8 +1,16 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
-import { useId, type ReactNode } from 'react';
-import { Dialog } from './Dialog';
+import {
+  useEffect,
+  useId,
+  useRef,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react';
 import { type ModalConfig } from './types';
+
+const FOCUSABLE_ELEMENTS_SELECTOR =
+  'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface ModalProps {
   isOpen: boolean;
@@ -21,59 +29,143 @@ export const Modal = ({
   size = 'default',
   showCloseButton = false,
 }: ModalProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const subtitleId = useId();
+  const hasConfig = config !== null;
+
+  useEffect(() => {
+    if (!isOpen || !hasConfig) return;
+
+    const previousFocus = document.activeElement;
+    const content = contentRef.current;
+    if (!content) return;
+
+    const focusableElements = Array.from(
+      content.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    (focusableElements[0] ?? content).focus();
+
+    return () => {
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus();
+      }
+    };
+  }, [isOpen, hasConfig]);
 
   if (!isOpen || !config) return null;
 
   const { icon, title, subtitle, buttons = [], theme = 'default' } = config;
 
-  return (
-    <ModalContent
-      onClose={onClose}
-      refocusKey={config}
-      aria-labelledby={titleId}
-      aria-describedby={subtitle ? subtitleId : undefined}
-      data-theme={theme}
-      $theme={theme}
-      $size={size}
-    >
-      {showCloseButton && onClose && (
-        <CloseButton type="button" onClick={onClose} aria-label="모달 닫기">
-          ×
-        </CloseButton>
-      )}
-      {icon && <IconWrapper>{icon}</IconWrapper>}
-      <Title id={titleId} $size={size}>{title}</Title>
-      {subtitle && (
-        <Subtitle id={subtitleId} $size={size}>
-          {subtitle}
-        </Subtitle>
-      )}
-      {children}
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      onClose?.();
+      return;
+    }
 
-      {buttons.length > 0 && (
-        <ButtonContainer>
-          {buttons.map((button, index) => (
-            <Button
-              type="button"
-              key={`${button.label}-${index}`}
-              onClick={button.onClick}
-              $variant={button.variant || 'secondary'}
-              style={{ backgroundColor: button.bgColor }}
-            >
-              {button.icon}
-              {button.label}
-            </Button>
-          ))}
-        </ButtonContainer>
-      )}
-    </ModalContent>
+    if (event.key !== 'Tab') return;
+
+    const content = contentRef.current;
+    if (!content) return;
+
+    const focusableElements = Array.from(
+      content.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR),
+    ).filter((element) => element.getClientRects().length > 0);
+
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      content.focus();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+    const isFocusOutsideItems =
+      activeElement === content || !content.contains(activeElement);
+
+    if (event.shiftKey && (activeElement === firstElement || isFocusOutsideItems)) {
+      event.preventDefault();
+      lastElement.focus();
+    } else if (
+      !event.shiftKey &&
+      (activeElement === lastElement || isFocusOutsideItems)
+    ) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  };
+
+  return (
+    <Overlay
+      onClick={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose?.();
+        }
+      }}
+    >
+      <ModalContent
+        ref={contentRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={subtitle ? subtitleId : undefined}
+        tabIndex={-1}
+        $theme={theme}
+        $size={size}
+        data-theme={theme}
+        onClick={(event) => event.stopPropagation()}
+        onKeyDown={handleKeyDown}
+      >
+        {showCloseButton && onClose && (
+          <CloseButton type="button" onClick={onClose} aria-label="모달 닫기">
+            ×
+          </CloseButton>
+        )}
+        {icon && <IconWrapper>{icon}</IconWrapper>}
+        <Title id={titleId} $size={size}>{title}</Title>
+        {subtitle && (
+          <Subtitle id={subtitleId} $size={size}>
+            {subtitle}
+          </Subtitle>
+        )}
+        {children}
+
+        {buttons.length > 0 && (
+          <ButtonContainer>
+            {buttons.map((button, index) => (
+              <Button
+                type="button"
+                key={`${button.label}-${index}`}
+                onClick={button.onClick}
+                $variant={button.variant || 'secondary'}
+                style={{ backgroundColor: button.bgColor }}
+              >
+                {button.icon}
+                {button.label}
+              </Button>
+            ))}
+          </ButtonContainer>
+        )}
+      </ModalContent>
+    </Overlay>
   );
 };
 
-const ModalContent = styled(Dialog)<{
-  $theme: string;
+const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const ModalContent = styled.div<{
+  $theme?: string;
   $size: 'default' | 'compact' | 'large';
 }>`
   width: ${({ $size }) =>
@@ -88,14 +180,14 @@ const ModalContent = styled(Dialog)<{
   overflow-y: auto;
   padding: ${({ $size }) =>
     $size === 'compact' ? '1.5rem' : $size === 'large' ? '2.5rem' : '2rem'};
-  border: ${({ $size, $theme, theme }) => {
-    const borderWidth = $size === 'compact' ? '1px' : '2px';
+  border: ${(props) => {
+    const borderWidth = props.$size === 'compact' ? '1px' : '2px';
 
-    switch ($theme) {
+    switch (props.$theme) {
       case 'warning':
-        return `${borderWidth} solid ${adminTokens(theme).colors.warning}`;
+        return `${borderWidth} solid ${adminTokens(props.theme).colors.warning}`;
       case 'info':
-        return `${borderWidth} solid ${adminTokens(theme).colors.primary}`;
+        return `${borderWidth} solid ${adminTokens(props.theme).colors.primary}`;
       default:
         return `${borderWidth} solid #d1d5db`;
     }
@@ -105,11 +197,6 @@ const ModalContent = styled(Dialog)<{
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
   text-align: center;
   animation: slideUp 0.3s ease-out;
-
-  @media (max-width: 32rem) {
-    width: calc(100% - 2rem);
-    padding: 1.5rem;
-  }
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
@@ -135,6 +222,7 @@ const IconWrapper = styled.div`
   svg {
     width: 3rem;
     height: 3rem;
+
     color: ${({ theme }) => adminTokens(theme).colors.warning};
 
     [data-theme='info'] & {

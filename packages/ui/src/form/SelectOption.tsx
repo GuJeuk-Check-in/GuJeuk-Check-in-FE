@@ -1,7 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
-import { fieldFocusStyle } from './fieldFocusStyle';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import {
   DropdownContainer, DropdownLabel, DropdownHeader,
@@ -109,7 +108,10 @@ const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolea
     padding: 0.5rem 0.9375rem;
   `}
 
-  ${({ theme }) => fieldFocusStyle(theme)}
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
+    outline-offset: 2px;
+  }
 `;
 
 const Icon = styled.span`

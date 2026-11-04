@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { formatPhone, toPhoneDigits } from '@center/ui/form';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
@@ -35,7 +34,7 @@ export const UserVisitForm = ({
     id: visit.id || 0,
     name: visit.name || '',
     age: visit.age || 'ADULT',
-    phone: formatPhone(visit.phone || ''),
+    phone: visit.phone || '',
     maleCount: visit.maleCount || 0,
     femaleCount: visit.femaleCount || 0,
     purpose: visit.purpose || '',
@@ -74,7 +73,7 @@ export const UserVisitForm = ({
   const handleSave = () => {
     if (
       !formData.name ||
-      !toPhoneDigits(formData.phone) ||
+      !formData.phone ||
       !formData.purpose.trim() ||
       !formData.visitDate
     ) {
@@ -88,7 +87,7 @@ export const UserVisitForm = ({
       return;
     }
 
-    updateMutation.mutate({ ...formData, phone: toPhoneDigits(formData.phone) }, {
+    updateMutation.mutate(formData, {
       onSuccess: () => {
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
