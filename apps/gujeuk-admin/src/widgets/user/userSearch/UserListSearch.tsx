@@ -42,19 +42,26 @@ export const UserListWithSearch = ({
     isSearchLoading,
     isSearchError,
     searchedUsers,
+    searchTotalCount,
+    hasNextSearchPage,
+    isFetchingNextSearchPage,
+    fetchNextSearchPage,
     handleSearchChange,
     handleClearSearch,
   } = useSearchUser();
 
   const visibleUsers = isSearching ? searchedUsers : allUsers;
+  const hasMoreUsers = isSearching ? hasNextSearchPage : hasNextPage;
+  const isFetchingMoreUsers = isSearching
+    ? isFetchingNextSearchPage
+    : isFetchingNextPage;
+  const fetchMoreUsers = isSearching ? fetchNextSearchPage : fetchNextPage;
 
   useEffect(() => {
-    if (isSearching) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+        if (entries[0].isIntersecting && hasMoreUsers && !isFetchingMoreUsers) {
+          fetchMoreUsers();
         }
       },
       { threshold: 0.5 }
@@ -65,7 +72,7 @@ export const UserListWithSearch = ({
     }
 
     return () => observer.disconnect();
-  }, [isSearching, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [hasMoreUsers, isFetchingMoreUsers, fetchMoreUsers]);
 
   if (isLoading) {
     return (
@@ -92,7 +99,7 @@ export const UserListWithSearch = ({
       totalCount={totalUsersCount}
       totalCountText={totalCountText}
       searchName={searchName}
-      resultCount={visibleUsers.length}
+      resultCount={isSearching ? searchTotalCount : visibleUsers.length}
       onSearchChange={handleSearchChange}
       onClearSearch={handleClearSearch}
       filter={
@@ -115,12 +122,10 @@ export const UserListWithSearch = ({
           : '등록된 회원이 없습니다.'
       }
       afterList={
-        !isSearching && (
-          <>
-            <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
-            {isFetchingNextPage && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
-          </>
-        )
+        <>
+          <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
+          {isFetchingMoreUsers && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
+        </>
       }
     >
       {visibleUsers.map((user) => (

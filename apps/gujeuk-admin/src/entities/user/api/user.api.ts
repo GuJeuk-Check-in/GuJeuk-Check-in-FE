@@ -49,13 +49,14 @@ export const usersByResidence = async (
 };
 
 export const searchUsers = async (
-  name: string
+  name: string,
+  page = 0
 ): Promise<UserSearchResponse> => {
   try {
     const response = await axiosInstance.get<UserSearchResponse>(
       '/organ/search',
       {
-        params: { name },
+        params: { name, page },
       }
     );
     return response.data;
