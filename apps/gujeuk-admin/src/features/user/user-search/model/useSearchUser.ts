@@ -50,11 +50,9 @@ export const useSearchUser = () => {
     retry: false,
   });
 
-  const handleSearchChange = useCallback(
-    (value: string) => setSearchName(value),
-    []
-  );
   const handleClearSearch = useCallback(() => setSearchName(''), []);
+
+  const pages = isError ? [] : data?.pages ?? [];
 
   return {
     searchName,
@@ -63,12 +61,14 @@ export const useSearchUser = () => {
       !isError &&
       (!data || isPlaceholderData || trimmedName !== debouncedName),
     isSearchError: isError,
-    searchedUsers: isError ? [] : data?.pages.flatMap((page) => page.users) ?? [],
-    searchTotalCount: isError ? 0 : data?.pages[0]?.totalCount ?? 0,
-    hasNextSearchPage: hasNextPage && !isPlaceholderData,
-    isFetchingNextSearchPage: isFetchingNextPage,
-    fetchNextSearchPage: fetchNextPage,
-    handleSearchChange,
+    searchedUsers: pages.flatMap((page) => page.users),
+    searchTotalCount: pages[0]?.totalCount ?? 0,
+    searchPagination: {
+      hasNextPage: hasNextPage && !isPlaceholderData,
+      isFetchingNextPage,
+      fetchNextPage,
+    },
+    handleSearchChange: setSearchName,
     handleClearSearch,
   };
 };

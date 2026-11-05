@@ -48,6 +48,8 @@ export const usersByResidence = async (
   return response.data;
 };
 
+const EMPTY_SEARCH_STATUSES = [400, 404];
+
 export const searchUsers = async (
   name: string,
   page = 0
@@ -63,8 +65,7 @@ export const searchUsers = async (
   } catch (error: unknown) {
     const status = isAxiosError(error) ? error.response?.status : undefined;
 
-    // 400(이름 형식 오류), 404(일치하는 이름 없음)는 검색 결과가 없는 것으로 처리
-    if (status === 400 || status === 404) {
+    if (status && EMPTY_SEARCH_STATUSES.includes(status)) {
       return { totalCount: 0, content: [] };
     }
 

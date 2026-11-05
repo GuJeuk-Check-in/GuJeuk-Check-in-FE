@@ -23,15 +23,8 @@ export const UserListWithSearch = ({
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteUserList({ residence: filters.residence });
+  const userList = useInfiniteUserList({ residence: filters.residence });
+  const { data, isLoading, isError, error } = userList;
 
   const allUsers = data?.pages.flatMap((page) => page.users) ?? [];
   const totalUsersCount = data?.pages[0]?.totalCount ?? 0;
@@ -43,25 +36,21 @@ export const UserListWithSearch = ({
     isSearchError,
     searchedUsers,
     searchTotalCount,
-    hasNextSearchPage,
-    isFetchingNextSearchPage,
-    fetchNextSearchPage,
+    searchPagination,
     handleSearchChange,
     handleClearSearch,
   } = useSearchUser();
 
   const visibleUsers = isSearching ? searchedUsers : allUsers;
-  const hasMoreUsers = isSearching ? hasNextSearchPage : hasNextPage;
-  const isFetchingMoreUsers = isSearching
-    ? isFetchingNextSearchPage
-    : isFetchingNextPage;
-  const fetchMoreUsers = isSearching ? fetchNextSearchPage : fetchNextPage;
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = isSearching
+    ? searchPagination
+    : userList;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMoreUsers && !isFetchingMoreUsers) {
-          fetchMoreUsers();
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
         }
       },
       { threshold: 0.5 }
@@ -72,7 +61,7 @@ export const UserListWithSearch = ({
     }
 
     return () => observer.disconnect();
-  }, [hasMoreUsers, isFetchingMoreUsers, fetchMoreUsers]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading && !isSearching) {
     return (
@@ -94,6 +83,16 @@ export const UserListWithSearch = ({
     );
   }
 
+  const getEmptyText = () => {
+    if (isSearching) {
+      if (isSearchError) return '회원 검색에 실패했습니다.';
+      if (isSearchLoading) return '회원을 검색하는 중입니다.';
+      return `"${searchName}"에 해당하는 회원이 없습니다.`;
+    }
+    if (filters.residence) return `${filters.residence}에 등록된 회원이 없습니다.`;
+    return '등록된 회원이 없습니다.';
+  };
+
   return (
     <UserListLayout
       totalCount={totalUsersCount}
@@ -112,21 +111,11 @@ export const UserListWithSearch = ({
           />
         )
       }
-      emptyText={
-        isSearching
-          ? isSearchError
-            ? '회원 검색에 실패했습니다.'
-            : isSearchLoading
-            ? '회원을 검색하는 중입니다.'
-            : `"${searchName}"에 해당하는 회원이 없습니다.`
-          : filters.residence
-          ? `${filters.residence}에 등록된 회원이 없습니다.`
-          : '등록된 회원이 없습니다.'
-      }
+      emptyText={getEmptyText()}
       afterList={
         <>
           <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
-          {isFetchingMoreUsers && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
+          {isFetchingNextPage && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
         </>
       }
     >
