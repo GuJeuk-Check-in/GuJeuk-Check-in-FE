@@ -59,7 +59,9 @@ export const useSearchUser = () => {
   return {
     searchName,
     isSearching: trimmedName !== '',
-    isSearchLoading: !data && !isError,
+    isSearchLoading:
+      !isError &&
+      (!data || isPlaceholderData || trimmedName !== debouncedName),
     isSearchError: isError,
     searchedUsers: isError ? [] : data?.pages.flatMap((page) => page.users) ?? [],
     searchTotalCount: isError ? 0 : data?.pages[0]?.totalCount ?? 0,

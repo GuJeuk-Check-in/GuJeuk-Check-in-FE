@@ -74,7 +74,7 @@ export const UserListWithSearch = ({
     return () => observer.disconnect();
   }, [hasMoreUsers, isFetchingMoreUsers, fetchMoreUsers]);
 
-  if (isLoading) {
+  if (isLoading && !isSearching) {
     return (
       <LoadingOverlay>
         <LoadingBox>
@@ -85,7 +85,7 @@ export const UserListWithSearch = ({
     );
   }
 
-  if (isError) {
+  if (isError && !isSearching) {
     return (
       <ErrorText>
         회원 목록을 불러오는 데 실패했습니다:{' '}
@@ -103,12 +103,14 @@ export const UserListWithSearch = ({
       onSearchChange={handleSearchChange}
       onClearSearch={handleClearSearch}
       filter={
-        <UserFilter
-          selectedLocation={filters.residence ?? '전체 지역'}
-          setSelectedLocation={(location) =>
-            setFilters({ residence: location === '전체 지역' ? null : location })
-          }
-        />
+        !isSearching && (
+          <UserFilter
+            selectedLocation={filters.residence ?? '전체 지역'}
+            setSelectedLocation={(location) =>
+              setFilters({ residence: location === '전체 지역' ? null : location })
+            }
+          />
+        )
       }
       emptyText={
         isSearching
