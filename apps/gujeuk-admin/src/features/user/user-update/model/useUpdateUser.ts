@@ -17,6 +17,7 @@ export const useUpdateUserInformation = () => {
       queryClient.invalidateQueries({
         queryKey: ['user', String(data.id)],
       });
+      queryClient.removeQueries({ queryKey: ['userSearch'] });
     },
   });
 };
