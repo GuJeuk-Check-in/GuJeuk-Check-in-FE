@@ -1,13 +1,37 @@
-import { useCallback } from 'react';
-import { useNameSearch } from '@center/ui/search';
-import { User, UserSearchFilters } from '@entities/user';
+import { useCallback, useState } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { searchUsers, UserSearchResponse } from '@entities/user';
+import { useDebouncedValue } from '@shared/hooks';
 
-export const useSearchUser = (allUsers: User[], filters: UserSearchFilters) => {
-  const matchesResidence = useCallback(
-    (user: User) => !filters.residence || user.residence === filters.residence,
-    [filters.residence],
+const SEARCH_DEBOUNCE_MS = 300;
+
+export const useSearchUser = () => {
+  const [searchName, setSearchName] = useState('');
+  const trimmedName = searchName.trim();
+  const debouncedName = useDebouncedValue(trimmedName, SEARCH_DEBOUNCE_MS);
+
+  const { data, isError } = useQuery<UserSearchResponse, AxiosError>({
+    queryKey: ['userSearch', debouncedName],
+    queryFn: () => searchUsers(debouncedName),
+    enabled: debouncedName !== '',
+    placeholderData: keepPreviousData,
+    retry: false,
+  });
+
+  const handleSearchChange = useCallback(
+    (value: string) => setSearchName(value),
+    []
   );
-  const { filteredItems, ...search } = useNameSearch(allUsers, matchesResidence);
+  const handleClearSearch = useCallback(() => setSearchName(''), []);
 
-  return { ...search, filteredUsers: filteredItems };
+  return {
+    searchName,
+    isSearching: trimmedName !== '',
+    isSearchLoading: !data && !isError,
+    isSearchError: isError,
+    searchedUsers: isError ? [] : data?.content ?? [],
+    handleSearchChange,
+    handleClearSearch,
+  };
 };

@@ -38,16 +38,19 @@ export const UserListWithSearch = ({
 
   const {
     searchName,
-    filteredUsers,
+    isSearching,
+    isSearchLoading,
+    isSearchError,
+    searchedUsers,
     handleSearchChange,
     handleClearSearch,
-    resultCount,
-  } = useSearchUser(allUsers, {
-    residence: null,
-    searchName: '',
-  });
+  } = useSearchUser();
+
+  const visibleUsers = isSearching ? searchedUsers : allUsers;
 
   useEffect(() => {
+    if (isSearching) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
@@ -62,7 +65,7 @@ export const UserListWithSearch = ({
     }
 
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [isSearching, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -89,7 +92,7 @@ export const UserListWithSearch = ({
       totalCount={totalUsersCount}
       totalCountText={totalCountText}
       searchName={searchName}
-      resultCount={resultCount}
+      resultCount={visibleUsers.length}
       onSearchChange={handleSearchChange}
       onClearSearch={handleClearSearch}
       filter={
@@ -101,20 +104,26 @@ export const UserListWithSearch = ({
         />
       }
       emptyText={
-        searchName
-          ? `"${searchName}"에 해당하는 회원이 없습니다.`
+        isSearching
+          ? isSearchError
+            ? '회원 검색에 실패했습니다.'
+            : isSearchLoading
+            ? '회원을 검색하는 중입니다.'
+            : `"${searchName}"에 해당하는 회원이 없습니다.`
           : filters.residence
           ? `${filters.residence}에 등록된 회원이 없습니다.`
           : '등록된 회원이 없습니다.'
       }
       afterList={
-        <>
-          <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
-          {isFetchingNextPage && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
-        </>
+        !isSearching && (
+          <>
+            <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
+            {isFetchingNextPage && <InfoMessage>다음 페이지를 로딩 중...</InfoMessage>}
+          </>
+        )
       }
     >
-      {filteredUsers.map((user) => (
+      {visibleUsers.map((user) => (
         <UserInformationCard
           key={user.id}
           id={user.id}
