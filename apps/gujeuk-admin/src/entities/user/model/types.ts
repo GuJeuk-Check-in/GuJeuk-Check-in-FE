@@ -41,6 +41,11 @@ export interface UserListResponse {
   users?: User[];
 }
 
+export interface UserSearchResponse {
+  totalCount: number;
+  content: User[];
+}
+
 export interface NormalizedUserPage {
   users: User[];
   totalCount: number;

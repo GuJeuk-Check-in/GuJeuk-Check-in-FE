@@ -4,7 +4,11 @@ import {
   readErrorBodyPreview,
 } from '@shared/api';
 import { isAxiosError } from 'axios';
-import type { UserListResponse, UserInformation } from '../model/types';
+import type {
+  UserListResponse,
+  UserInformation,
+  UserSearchResponse,
+} from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(
@@ -42,6 +46,29 @@ export const usersByResidence = async (
   });
 
   return response.data;
+};
+
+export const searchUsers = async (
+  name: string
+): Promise<UserSearchResponse> => {
+  try {
+    const response = await axiosInstance.get<UserSearchResponse>(
+      '/organ/search',
+      {
+        params: { name },
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    const status = isAxiosError(error) ? error.response?.status : undefined;
+
+    // 400(이름 형식 오류), 404(일치하는 이름 없음)는 검색 결과가 없는 것으로 처리
+    if (status === 400 || status === 404) {
+      return { totalCount: 0, content: [] };
+    }
+
+    throw error;
+  }
 };
 
 export const exportUserListToExcel = async (): Promise<string> => {
