@@ -1,15 +1,18 @@
 export interface CreatePurposeRequest {
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export interface UpdatePurposeRequest {
   id: number;
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export interface PurposeResponse {
   id: number;
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export type UpdatePurposeMovementRequest = {

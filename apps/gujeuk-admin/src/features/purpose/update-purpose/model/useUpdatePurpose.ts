@@ -17,8 +17,8 @@ export const useUpdatePurpose = () => {
   >({
     mutationFn: (variables) => {
       return updatePurpose(variables.id, {
-        id: variables.id,
         purpose: variables.purpose,
+        reservationStatus: variables.reservationStatus,
       });
     },
     onSuccess: (_, variables) => {

@@ -20,7 +20,7 @@ export const createPurpose = async (
 
 export const updatePurpose = async (
   id: number,
-  payload: UpdatePurposeRequest
+  payload: Omit<UpdatePurposeRequest, 'id'>
 ): Promise<void> => {
   await axiosInstance.patch(`/purpose/${id}`, payload);
 };

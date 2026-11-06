@@ -8,8 +8,21 @@ export const useUpdatePurposeHandler = () => {
   const mutation = useUpdatePurpose();
 
   const handleUpdate = (id: number, newPurpose: string) => {
+    openModal({
+      title: '예약 필요 여부',
+      subtitle: '이 시설을 이용할 때 예약이 필요한가요?',
+      buttons: [
+        { label: '취소', variant: 'secondary', onClick: closeModal },
+        { label: '예약 불필요', variant: 'secondary', onClick: () => executeUpdate(id, newPurpose, false) },
+        { label: '예약 필요', variant: 'primary', onClick: () => executeUpdate(id, newPurpose, true) },
+      ],
+    });
+  };
+
+  const executeUpdate = (id: number, newPurpose: string, reservationStatus: boolean) => {
+    closeModal();
     mutation.mutate(
-      { id, purpose: newPurpose },
+      { id, purpose: newPurpose, reservationStatus },
       {
         onSuccess: () => {
           openModal({

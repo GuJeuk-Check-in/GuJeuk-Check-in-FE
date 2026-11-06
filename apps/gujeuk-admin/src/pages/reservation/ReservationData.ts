@@ -33,8 +33,9 @@ export interface ReservationPeople {
 export interface Reservation {
   id: number;
   userName: string;
-  place: ReservationPlace;
-  startTime: ReservationTime;
+  place: string;
+  startTime: string;
+  endTime: string;
   people: ReservationPeople;
   phone: string;
 }
@@ -79,6 +80,7 @@ export const ReservationData: Reservation[] = [
     userName: '김정욱',
     place: '동아리실 1',
     startTime: '10:30',
+    endTime: '11:30',
     people: { male: 1, female: 1 },
     phone: '010-1234-5678',
   },
@@ -87,6 +89,7 @@ export const ReservationData: Reservation[] = [
     userName: '박민건',
     place: '음악실',
     startTime: '9:30',
+    endTime: '10:30',
     people: { male: 2, female: 0 },
     phone: '010-2345-6789',
   },
@@ -95,6 +98,7 @@ export const ReservationData: Reservation[] = [
     userName: '오혜민',
     place: '요리실',
     startTime: '10:30',
+    endTime: '11:30',
     people: { male: 0, female: 1 },
     phone: '010-3456-7890',
   },
@@ -103,6 +107,7 @@ export const ReservationData: Reservation[] = [
     userName: '윤지원',
     place: '스터디룸',
     startTime: '11:30',
+    endTime: '12:30',
     people: { male: 1, female: 0 },
     phone: '010-4567-8901',
   },
@@ -111,6 +116,7 @@ export const ReservationData: Reservation[] = [
     userName: '오은샘',
     place: '동아리실 2',
     startTime: '13:30',
+    endTime: '14:30',
     people: { male: 0, female: 1 },
     phone: '010-5678-9012',
   },
@@ -119,6 +125,7 @@ export const ReservationData: Reservation[] = [
     userName: '김지우',
     place: '미디어실',
     startTime: '13:30',
+    endTime: '14:30',
     people: { male: 1, female: 0 },
     phone: '010-6789-0123',
   },
@@ -127,6 +134,7 @@ export const ReservationData: Reservation[] = [
     userName: '바둑이',
     place: '동아리실 1',
     startTime: '14:30',
+    endTime: '15:30',
     people: { male: 0, female: 1 },
     phone: '010-7890-1234',
   },
@@ -135,6 +143,7 @@ export const ReservationData: Reservation[] = [
     userName: '윤건호',
     place: '음악실',
     startTime: '14:30',
+    endTime: '15:30',
     people: { male: 1, female: 0 },
     phone: '010-8901-2345',
   },
@@ -143,6 +152,7 @@ export const ReservationData: Reservation[] = [
     userName: '정일웅',
     place: '댄스 연습실',
     startTime: '15:30',
+    endTime: '16:30',
     people: { male: 0, female: 2 },
     phone: '010-9012-3456',
   },
@@ -151,6 +161,7 @@ export const ReservationData: Reservation[] = [
     userName: '이선우',
     place: '체육실',
     startTime: '15:30',
+    endTime: '16:30',
     people: { male: 2, female: 0 },
     phone: '010-0123-4567',
   },
@@ -159,6 +170,7 @@ export const ReservationData: Reservation[] = [
     userName: '유예선',
     place: '동아리실 2',
     startTime: '16:30',
+    endTime: '17:30',
     people: { male: 0, female: 1 },
     phone: '010-1234-5678',
   },
@@ -167,6 +179,7 @@ export const ReservationData: Reservation[] = [
     userName: '최승우',
     place: '미디어실',
     startTime: '16:30',
+    endTime: '17:30',
     people: { male: 1, female: 0 },
     phone: '010-2345-6789',
   },
@@ -175,6 +188,7 @@ export const ReservationData: Reservation[] = [
     userName: '강건우',
     place: '동아리실 1',
     startTime: '17:30',
+    endTime: '18:30',
     people: { male: 0, female: 1 },
     phone: '010-3456-7890',
   },
@@ -183,6 +197,7 @@ export const ReservationData: Reservation[] = [
     userName: '김아무개',
     place: '다목적실',
     startTime: '17:30',
+    endTime: '18:30',
     people: { male: 1, female: 0 },
     phone: '010-4567-8901',
   },

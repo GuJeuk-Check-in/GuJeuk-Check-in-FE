@@ -32,6 +32,7 @@ interface ReservationCreateModalProps {
   time: ReservationTime;
   onClose: () => void;
   onSubmit: (values: ReservationCreateValues) => void;
+  isPending: boolean;
 }
 
 export const ReservationCreateModal = ({
@@ -39,17 +40,28 @@ export const ReservationCreateModal = ({
   time,
   onClose,
   onSubmit,
+  isPending,
 }: ReservationCreateModalProps) => {
   const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
+  const [male, setMale] = useState("0");
+  const [female, setFemale] = useState("0");
+  const validCount = (value: string) =>
+    /^\d+$/.test(value) && Number.isSafeInteger(Number(value));
+  const canSubmit =
+    !isPending &&
+    Boolean(userName.trim()) &&
+    PHONE_PATTERN.test(phone.trim()) &&
+    validCount(male) &&
+    validCount(female);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!userName.trim() || !PHONE_PATTERN.test(phone.trim())) return;
+    if (!canSubmit) return;
     onSubmit({
       userName: userName.trim(),
       phone: phone.trim(),
-      people: { male: 0, female: 0 },
+      people: { male: Number(male), female: Number(female) },
     });
   };
 
@@ -95,24 +107,59 @@ export const ReservationCreateModal = ({
           <Input
             id="reservation-phone"
             value={phone}
-            onChange={(event) => setPhone(formatPhoneNumber(event.target.value))}
+            onChange={(event) =>
+              setPhone(formatPhoneNumber(event.target.value))
+            }
             placeholder="010-0000-0000"
             inputMode="tel"
             maxLength={13}
             required
           />
         </Field>
+        <CompanionRow>
+          <Field>
+            <Label htmlFor="reservation-male">남자 동반 인원</Label>
+            <Input
+              id="reservation-male"
+              type="number"
+              min="0"
+              step="1"
+              value={male}
+              onChange={(event) => setMale(event.target.value)}
+              disabled={isPending}
+              required
+            />
+          </Field>
+          <Field>
+            <Label htmlFor="reservation-female">여자 동반 인원</Label>
+            <Input
+              id="reservation-female"
+              type="number"
+              min="0"
+              step="1"
+              value={female}
+              onChange={(event) => setFemale(event.target.value)}
+              required
+            />
+          </Field>
+        </CompanionRow>
+        <Notice>ⓘ 동반 인원에는 예약자 본인을 제외해 주세요.</Notice>
         <Notice>ⓘ 예약은 1인 1시간만 가능해요.</Notice>
         <ActionRow>
-          <ActionButton type="button" $variant="secondary" onClick={onClose}>
+          <ActionButton
+            type="button"
+            $variant="secondary"
+            onClick={onClose}
+            disabled={isPending}
+          >
             취소
           </ActionButton>
           <ActionButton
             type="submit"
             $variant="primary"
-            disabled={!userName.trim() || !PHONE_PATTERN.test(phone.trim())}
+            disabled={!canSubmit}
           >
-            예약하기
+            {isPending ? "예약 중..." : "예약하기"}
           </ActionButton>
         </ActionRow>
       </Form>
@@ -172,6 +219,12 @@ const Field = styled.div`
   gap: ${ColorData.spacing[8]};
 `;
 
+const CompanionRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${ColorData.spacing[16]};
+`;
+
 const Label = styled.label`
   color: ${ColorData.colors.labelNeutral};
   font-size: ${ColorData.typography.label.fontSize};
@@ -206,7 +259,8 @@ const Input = styled.input`
   font-family: ${ColorData.typography.fontFamily};
   font-size: ${ColorData.typography.body.fontSize};
   outline: none;
-  transition: border-color ${ColorData.interaction.transitionFast},
+  transition:
+    border-color ${ColorData.interaction.transitionFast},
     box-shadow ${ColorData.interaction.transitionFast};
 
   &::placeholder {

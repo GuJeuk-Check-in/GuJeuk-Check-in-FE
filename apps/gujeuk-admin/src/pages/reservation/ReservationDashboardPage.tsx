@@ -2,17 +2,16 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { ColorData } from "@center/tokens";
+import { useReservationList } from "@entities/reservation";
 import { ReservationTable } from "./ReservationTable";
 import {
   PlaceData,
-  ReservationData,
   TimeData,
   getActiveTimeIndex,
-  type Reservation,
 } from "./ReservationData";
 
 const ReservationDashboardPage = () => {
-  const [reservations, setReservations] = useState<Reservation[]>(ReservationData);
+  const { data, isLoading, isError, refetch } = useReservationList();
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
@@ -21,24 +20,19 @@ const ReservationDashboardPage = () => {
   }, []);
 
   const activeTimeIndex = getActiveTimeIndex(currentTime);
-  const activeTime = TimeData[activeTimeIndex] ?? null;
-  const inUse = reservations.filter(
-    (reservation) => reservation.startTime === activeTime,
-  ).length;
-  const availability = {
-    inUse,
-    available: Math.max(PlaceData.length - inUse, 0),
-  };
-
-  const handleCreateReservation = (reservation: Reservation) => {
-    setReservations((current) => [...current, reservation]);
-  };
-
-  const handleDeleteReservation = (reservation: Reservation) => {
-    setReservations((current) =>
-      current.filter((item) => item.id !== reservation.id),
-    );
-  };
+  const reservations = (data?.reservations ?? []).map((item) => ({
+    id: item.id,
+    userName: item.name,
+    place: item.purpose,
+    startTime: item.startTime.slice(0, 5).replace(/^0/, ''),
+    endTime: item.endTime.slice(0, 5).replace(/^0/, ''),
+    people: { male: item.maleCount, female: item.femaleCount },
+    phone: item.phone,
+  }));
+  const hasUnmappedReservations = reservations.some(
+    (item) => !PlaceData.some((place) => place === item.place) ||
+      !TimeData.some((time) => time === item.startTime),
+  );
 
   return (
     <Page>
@@ -47,24 +41,25 @@ const ReservationDashboardPage = () => {
           <Eyebrow>운영</Eyebrow>
           <Title>시설 예약 현황</Title>
           <Description>
-            사용 중 <strong>{availability.inUse}곳</strong> · 사용 가능{" "}
-            <strong>{availability.available}곳</strong>
+            사용 중 <strong>{data ? `${data.inUseCount}곳` : '-'}</strong> · 사용 가능{" "}
+            <strong>{data ? `${data.availableCount}곳` : '-'}</strong>
           </Description>
         </div>
-        <RefreshButton type="button" onClick={() => window.location.reload()}>
+        <RefreshButton type="button" onClick={() => void refetch()}>
           <FiRefreshCw aria-hidden="true" />
           새로고침
         </RefreshButton>
       </Header>
 
-      <TableViewport>
+      {isLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
+      {isError && <p role="alert">예약 목록을 불러오지 못했어요. 새로고침을 눌러 다시 시도해 주세요.</p>}
+      {hasUnmappedReservations && <p role="alert">일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.</p>}
+      {data && <TableViewport>
         <ReservationTable
           reservations={reservations}
           activeTimeIndex={activeTimeIndex}
-          onCreateReservation={handleCreateReservation}
-          onDeleteReservation={handleDeleteReservation}
         />
-      </TableViewport>
+      </TableViewport>}
       <HelpText>
         빈 칸을 누르면 예약을 추가하고, 예약된 칸을 누르면 취소할 수 있어요.
         예약은 1인 1시간만 가능해요.

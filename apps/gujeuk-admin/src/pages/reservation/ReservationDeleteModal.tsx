@@ -2,18 +2,20 @@ import styled from "@emotion/styled";
 import { ColorData } from "@center/tokens";
 import { Modal } from "@shared/ui/modal";
 import { DeleteIcon } from "@shared/assets";
-import { getNextTime, type Reservation } from "./ReservationData";
+import { type Reservation } from "./ReservationData";
 
 interface ReservationDeleteModalProps {
   reservation: Reservation;
   onClose: () => void;
   onConfirm: () => void;
+  isPending: boolean;
 }
 
 export const ReservationDeleteModal = ({
   reservation,
   onClose,
   onConfirm,
+  isPending,
 }: ReservationDeleteModalProps) => (
   <DeleteModal
     isOpen
@@ -30,12 +32,21 @@ export const ReservationDeleteModal = ({
     }}
   >
     <TargetInfo>
-      {reservation.place} · 오늘 {reservation.startTime} - {getNextTime(reservation.startTime)}
+      {reservation.place} · 오늘 {reservation.startTime} - {reservation.endTime}
     </TargetInfo>
     <Notice>삭제한 예약은 되돌릴 수 없어요.</Notice>
     <Actions>
-      <ActionButton type="button" onClick={onClose}>취소</ActionButton>
-      <ActionButton type="button" $danger onClick={onConfirm}>삭제하기</ActionButton>
+      <ActionButton type="button" onClick={onClose} disabled={isPending}>
+        취소
+      </ActionButton>
+      <ActionButton
+        type="button"
+        $danger
+        onClick={onConfirm}
+        disabled={isPending}
+      >
+        {isPending ? "삭제 중..." : "삭제하기"}
+      </ActionButton>
     </Actions>
   </DeleteModal>
 );
@@ -89,8 +100,15 @@ const ActionButton = styled.button<{ $danger?: boolean }>`
   min-height: 2.75rem;
   border: 0;
   border-radius: ${ColorData.radius.medium};
-  background-color: ${({ $danger }) => $danger ? ColorData.colors.negative : ColorData.colors.fillNormal};
-  color: ${({ $danger }) => $danger ? ColorData.colors.background : ColorData.colors.labelNormal};
+  background-color: ${({ $danger }) =>
+    $danger ? ColorData.colors.negative : ColorData.colors.fillNormal};
+  color: ${({ $danger }) =>
+    $danger ? ColorData.colors.background : ColorData.colors.labelNormal};
   font: inherit;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;

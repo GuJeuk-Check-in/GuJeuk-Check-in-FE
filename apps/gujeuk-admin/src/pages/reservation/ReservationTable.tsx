@@ -1,10 +1,4 @@
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type MouseEvent,
-} from "react";
+import { Fragment, useEffect, useRef, useState, type MouseEvent } from "react";
 import styled from "@emotion/styled";
 import { ColorData } from "@center/tokens";
 import { SucceedIcon } from "@shared/assets";
@@ -18,12 +12,14 @@ import { ReservationDetailModal } from "./ReservationDetailModal";
 import {
   PlaceData,
   TimeData,
-  getNextTime,
   type Reservation,
   type ReservationPlace,
   type ReservationTime,
 } from "./ReservationData";
 import { ReservationEmptyCell } from "./ReservationEmptyCell";
+import { useDeleteReservation } from "@features/reservation/delete-reservation";
+import { useCreateReservation } from "@features/reservation/create-reservation";
+import { isAxiosError } from "axios";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -33,8 +29,6 @@ interface CreateTarget {
 interface ReservationTableProps {
   reservations: Reservation[];
   activeTimeIndex: number;
-  onCreateReservation: (reservation: Reservation) => void;
-  onDeleteReservation: (reservation: Reservation) => void;
 }
 
 type ToastVariant = "positive" | "caution";
@@ -47,16 +41,42 @@ interface ToastState {
 export const ReservationTable = ({
   reservations,
   activeTimeIndex,
-  onCreateReservation,
-  onDeleteReservation,
 }: ReservationTableProps) => {
-  const [selectedReservation, setSelectedReservation] =
-    useState<Reservation | null>(null);
+  const [selectedReservationId, setSelectedReservationId] = useState<
+    Reservation["id"] | null
+  >(null);
   const [detailPosition, setDetailPosition] = useState({ top: 0, left: 0 });
-  const [deleteTarget, setDeleteTarget] = useState<Reservation | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<
+    Reservation["id"] | null
+  >(null);
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
+  const { mutate: deleteReservation, isPending } = useDeleteReservation();
+  const { mutate: createReservation, isPending: isCreating } =
+    useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const selectedReservation =
+    reservations.find(
+      (reservation) => reservation.id === selectedReservationId,
+    ) ?? null;
+  const deleteTarget =
+    reservations.find((reservation) => reservation.id === deleteTargetId) ??
+    null;
+
+  useEffect(() => {
+    if (selectedReservationId !== null && !selectedReservation) {
+      setSelectedReservationId(null);
+    }
+    if (deleteTargetId !== null && !deleteTarget) {
+      setDeleteTargetId(null);
+    }
+  }, [
+    reservations,
+    selectedReservationId,
+    selectedReservation,
+    deleteTargetId,
+    deleteTarget,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -66,10 +86,7 @@ export const ReservationTable = ({
     };
   }, []);
 
-  const showToast = (
-    message: string,
-    variant: ToastVariant = "positive",
-  ) => {
+  const showToast = (message: string, variant: ToastVariant = "positive") => {
     if (toastTimerRef.current !== null) {
       window.clearTimeout(toastTimerRef.current);
     }
@@ -82,42 +99,53 @@ export const ReservationTable = ({
   };
 
   const handleCreate = (values: ReservationCreateValues) => {
-    if (!createTarget) return;
+    if (!createTarget || isCreating) return;
 
-    const phone = values.phone.trim();
-    if (reservations.some((reservation) => reservation.phone === phone)) {
-      showToast(
-        "이미 예약된 전화번호예요. 예약은 1인 1시간만 가능해요.",
-        "caution",
-      );
-      return;
-    }
-
-    const reservation: Reservation = {
-      id: Date.now(),
-      userName: values.userName,
-      place: createTarget.place,
-      startTime: createTarget.time,
-      people: values.people,
-      phone,
-    };
-
-    onCreateReservation(reservation);
-    setCreateTarget(null);
-    showToast(
-      `${reservation.userName}님의 ${reservation.place} · ${reservation.startTime} - ${getNextTime(reservation.startTime)} 예약이 추가됐어요.`,
+    const [hour, minute] = createTarget.time.split(":");
+    createReservation(
+      {
+        name: values.userName,
+        phone: values.phone,
+        maleCount: values.people.male,
+        femaleCount: values.people.female,
+        purpose: createTarget.place,
+        startTime: `${hour.padStart(2, "0")}:${minute}:00`,
+      },
+      {
+        onSuccess: () => {
+          setCreateTarget(null);
+          showToast(`${values.userName}님의 예약이 추가됐어요.`);
+        },
+        onError: (error) => {
+          const message = isAxiosError<{ message?: string }>(error)
+            ? error.response?.data?.message
+            : undefined;
+          showToast(
+            message || "예약을 추가하지 못했어요. 다시 시도해 주세요.",
+            "caution",
+          );
+        },
+      },
     );
   };
 
   const handleDelete = () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || isPending) return;
 
-    onDeleteReservation(deleteTarget);
-    setDeleteTarget(null);
-    setSelectedReservation(null);
-    showToast(
-      `${deleteTarget.userName}님의 ${deleteTarget.place} · ${deleteTarget.startTime} - ${getNextTime(deleteTarget.startTime)} 예약을 삭제했어요.`,
-    );
+    deleteReservation(deleteTarget.id, {
+      onSuccess: () => {
+        setDeleteTargetId(null);
+        setSelectedReservationId(null);
+        showToast("예약을 삭제했어요");
+      },
+      onError: (error) => {
+        showToast(
+          error.response?.data?.message ||
+            "예약을 삭제하지 못했어요. 다시 시도해 주세요.",
+          "caution",
+        );
+      },
+    });
   };
 
   const handleReservationClick = (
@@ -141,10 +169,7 @@ export const ReservationTable = ({
         ? rect.right + gap
         : rect.left - gap - popoverWidth;
 
-    const left = Math.min(
-      Math.max(viewportPadding, preferredLeft),
-      maxLeft,
-    );
+    const left = Math.min(Math.max(viewportPadding, preferredLeft), maxLeft);
 
     const top = Math.min(
       Math.max(viewportPadding, rect.top),
@@ -152,7 +177,7 @@ export const ReservationTable = ({
     );
 
     setDetailPosition({ top, left });
-    setSelectedReservation(reservation);
+    setSelectedReservationId(reservation.id);
   };
 
   return (
@@ -202,7 +227,7 @@ export const ReservationTable = ({
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   onAddClick={(selectedPlace, selectedTime) => {
-                    setSelectedReservation(null);
+                    setSelectedReservationId(null);
                     setCreateTarget({
                       place: selectedPlace,
                       time: selectedTime,
@@ -213,17 +238,16 @@ export const ReservationTable = ({
             })}
           </Fragment>
         ))}
-
       </TableGrid>
 
       {selectedReservation && (
         <ReservationDetailModal
           reservation={selectedReservation}
           position={detailPosition}
-          onClose={() => setSelectedReservation(null)}
+          onClose={() => setSelectedReservationId(null)}
           onDelete={() => {
-            setDeleteTarget(selectedReservation);
-            setSelectedReservation(null);
+            setDeleteTargetId(selectedReservation.id);
+            setSelectedReservationId(null);
           }}
         />
       )}
@@ -231,8 +255,11 @@ export const ReservationTable = ({
       {deleteTarget && (
         <ReservationDeleteModal
           reservation={deleteTarget}
-          onClose={() => setDeleteTarget(null)}
+          onClose={() => {
+            if (!isPending) setDeleteTargetId(null);
+          }}
           onConfirm={handleDelete}
+          isPending={isPending}
         />
       )}
 
@@ -240,8 +267,11 @@ export const ReservationTable = ({
         <ReservationCreateModal
           place={createTarget.place}
           time={createTarget.time}
-          onClose={() => setCreateTarget(null)}
+          onClose={() => {
+            if (!isCreating) setCreateTarget(null);
+          }}
           onSubmit={handleCreate}
+          isPending={isCreating}
         />
       )}
 
@@ -297,7 +327,7 @@ const ToastPosition = styled.div`
   position: fixed;
   right: ${ColorData.spacing[24]};
   bottom: ${ColorData.spacing[24]};
-  z-index: 1200;
+  z-index: 10001;
 `;
 
 const Toast = styled.div<{ $variant: ToastVariant }>`
@@ -309,9 +339,7 @@ const Toast = styled.div<{ $variant: ToastVariant }>`
   border-radius: ${ColorData.radius.large};
   border-left: 0.25rem solid
     ${({ $variant }) =>
-      $variant === "caution"
-        ? ColorData.colors.caution
-        : "transparent"};
+      $variant === "caution" ? ColorData.colors.caution : "transparent"};
   background-color: ${ColorData.colors.background};
   color: ${ColorData.colors.labelNormal};
   box-shadow: ${ColorData.shadow.popover};
