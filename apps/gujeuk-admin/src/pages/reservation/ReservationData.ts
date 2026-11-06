@@ -8,6 +8,12 @@ export const TimeData = [
   "15:30",
   "16:30",
   "17:30",
+  "18:30",
+  "19:30",
+  "20:30",
+  "21:30",
+  "22:30",
+  "23:30",
 ] as const;
 
 export const PlaceData = [
@@ -53,7 +59,7 @@ export const formatPeople = ({ male, female }: ReservationPeople) => {
 
 export const getNextTime = (time: string) => {
   const [hour, minute] = time.split(":").map(Number);
-  return `${String(hour + 1).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  return `${String((hour + 1) % 24).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 };
 
 export const getActiveTimeIndex = (date: Date) => {
