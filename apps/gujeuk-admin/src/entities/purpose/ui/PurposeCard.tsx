@@ -2,43 +2,42 @@ import {
   TileContainer as Container,
   TileDeleteIcon as DeleteIcon,
   TileLabel as Label,
-  TileEditInput as EditInput,
   TileStyledEditIcon as StyledEditIcon,
   stopTileDrag,
-  useInlineEdit,
-} from "@center/ui/card";
-import styled from "@emotion/styled";
-import type { PurposeResponse } from "../model/types";
-import { IoClose } from "react-icons/io5";
+} from '@center/ui/card';
+import { ColorData } from '@center/tokens';
+import styled from '@emotion/styled';
+import { IoClose } from 'react-icons/io5';
+import { ReservationBadgeIcon } from '@shared/assets';
+import type { Purpose } from '../model/types';
 
-const ReservationStatusButton = styled.button<{ $isReservable: boolean }>`
+const PurposeContainer = styled(Container)<{ $isReservable: boolean }>`
+  outline: ${({ $isReservable }) =>
+    $isReservable ? '2px solid rgba(0, 102, 255, 0.5)' : 'none'};
+  outline-offset: -2px;
+`;
+
+const ReservationBadge = styled.span`
   position: absolute;
-  top: 0.625rem;
-  left: 0.75rem;
+  top: 1rem;
+  left: 1.125rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.2rem 0.4rem;
-  border: none;
-  border-radius: 0.25rem;
-  background: ${({ $isReservable }) => ($isReservable ? "#e6f0ff" : "#f1f1f1")};
-  color: ${({ $isReservable }) => ($isReservable ? "#2866ad" : "#777")};
-  font-size: 0.625rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
+  gap: ${ColorData.spacing[4]};
+  padding: ${ColorData.spacing[4]} 0.625rem ${ColorData.spacing[4]}
+    ${ColorData.spacing[8]};
+  border-radius: ${ColorData.radius.pill};
+  background-color: rgba(0, 102, 255, 0.1);
+  color: ${ColorData.colors.primary};
+  font-size: 0.8125rem;
+  font-weight: 700;
 `;
 
 interface PurposeProps {
-  purpose: PurposeResponse;
+  purpose: Purpose;
   index: number;
   onDelete: (id: number) => void;
-  onEditReservation: (id: number) => void;
-  onUpdate: (params: { id: number; newPurpose: string }) => void;
+  onEdit: (purpose: Purpose) => void;
   isDeleting: boolean;
 }
 
@@ -46,32 +45,19 @@ export const PurposeCard = ({
   index,
   purpose,
   onDelete,
-  onEditReservation,
-  onUpdate,
+  onEdit,
   isDeleting,
 }: PurposeProps) => {
-  const edit = useInlineEdit({
-    value: purpose.purpose,
-    onSubmit: (newPurpose) => onUpdate({ id: purpose.id, newPurpose }),
-    disabled: isDeleting,
-  });
-
   return (
-    <Container isDisabled={isDeleting}>
-      {!edit.isEditing && (
-        <ReservationStatusButton
-          type="button"
-          aria-label={`예약 필요 여부 수정: 현재 ${purpose.reservationStatus ? "예약 가능" : "예약 불가"}`}
-          title="예약 필요 여부 수정"
-          $isReservable={purpose.reservationStatus}
-          onClick={() => onEditReservation(purpose.id)}
-          onPointerDown={stopTileDrag}
-          onMouseDown={stopTileDrag}
-          onKeyDown={stopTileDrag}
-          disabled={isDeleting}
-        >
-          {purpose.reservationStatus ? "예약 가능" : "예약 불가"}
-        </ReservationStatusButton>
+    <PurposeContainer
+      isDisabled={isDeleting}
+      $isReservable={purpose.reservationStatus}
+    >
+      {purpose.reservationStatus && (
+        <ReservationBadge>
+          <img src={ReservationBadgeIcon} alt="" width={14} height={14} />
+          예약 가능
+        </ReservationBadge>
       )}
       <DeleteIcon
         type="button"
@@ -82,26 +68,24 @@ export const PurposeCard = ({
         disabled={isDeleting}
       >
         {isDeleting ? (
-          "..."
+          '...'
         ) : (
-          <IoClose size="1.25rem" style={{ pointerEvents: "none" }} />
+          <IoClose size="1.25rem" style={{ pointerEvents: 'none' }} />
         )}
       </DeleteIcon>
 
-      {edit.isEditing ? (
-        <EditInput type="text" {...edit.inputProps} />
-      ) : (
-        <Label>
-          {index}. {purpose.purpose}
-          <StyledEditIcon
-            size={18}
-            onClick={edit.start}
-            onPointerDown={stopTileDrag}
-            onMouseDown={stopTileDrag}
-            isDeleting={isDeleting}
-          />
-        </Label>
-      )}
-    </Container>
+      <Label>
+        {index}. {purpose.purpose}
+        <StyledEditIcon
+          size={18}
+          onClick={() => {
+            if (!isDeleting) onEdit(purpose);
+          }}
+          onPointerDown={stopTileDrag}
+          onMouseDown={stopTileDrag}
+          isDeleting={isDeleting}
+        />
+      </Label>
+    </PurposeContainer>
   );
 };

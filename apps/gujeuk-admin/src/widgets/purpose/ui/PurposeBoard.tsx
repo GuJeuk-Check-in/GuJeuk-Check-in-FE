@@ -1,6 +1,7 @@
 import {
   usePurposeList,
   PurposeCard,
+  PurposeFormModal,
   SortablePurposeItem,
 } from '@entities/purpose/index';
 import {
@@ -22,6 +23,9 @@ export const PurposeBoard = () => {
   } = usePurposeList();
   const { items, sensors, handleDragEnd, modal: reorderModal } = useReorderPurpose(purposes);
   const {
+    editingPurpose,
+    startEdit,
+    cancelEdit,
     handleUpdate,
     isLoading: isUpdating,
     isOpen: isUpdateOpen,
@@ -41,6 +45,16 @@ export const PurposeBoard = () => {
       trailingSlot={<PurposeAddBox />}
       afterGridSlot={
         <>
+          {editingPurpose && (
+            <PurposeFormModal
+              key={editingPurpose.id}
+              mode="update"
+              initialValues={editingPurpose}
+              isSubmitting={isUpdating}
+              onClose={cancelEdit}
+              onSubmit={handleUpdate}
+            />
+          )}
           {isOpen && config && <Modal isOpen={isOpen} config={config} />}
           {isUpdateOpen && updateConfig && (
             <Modal isOpen={isUpdateOpen} config={updateConfig} />
@@ -55,14 +69,7 @@ export const PurposeBoard = () => {
             index={index + 1}
             purpose={purpose}
             onDelete={handleDelete}
-            onEditReservation={(id) => handleUpdate(id, purpose.purpose)}
-            onUpdate={({
-              id,
-              newPurpose,
-            }: {
-              id: number;
-              newPurpose: string;
-            }) => handleUpdate(id, newPurpose)}
+            onEdit={startEdit}
             isDeleting={deletingId === purpose.id || isUpdating}
           />
         </SortablePurposeItem>
