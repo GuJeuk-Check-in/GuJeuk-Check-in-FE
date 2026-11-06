@@ -55,6 +55,7 @@ export const PurposeBoard = () => {
             index={index + 1}
             purpose={purpose}
             onDelete={handleDelete}
+            onEditReservation={(id) => handleUpdate(id, purpose.purpose)}
             onUpdate={({
               id,
               newPurpose,

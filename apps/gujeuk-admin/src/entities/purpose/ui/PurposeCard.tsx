@@ -7,7 +7,27 @@ import {
   stopTileDrag,
   useInlineEdit,
 } from '@center/ui/card';
+import styled from '@emotion/styled';
+import { FaRegCalendarCheck } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
+
+const ReservationEditButton = styled.button`
+  position: absolute;
+  top: 0.625rem;
+  left: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #666;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
 
 interface Purpose {
   id: number;
@@ -18,6 +38,7 @@ interface PurposeProps {
   purpose: Purpose;
   index: number;
   onDelete: (id: number) => void;
+  onEditReservation: (id: number) => void;
   onUpdate: (params: { id: number; newPurpose: string }) => void;
   isDeleting: boolean;
 }
@@ -26,6 +47,7 @@ export const PurposeCard = ({
   index,
   purpose,
   onDelete,
+  onEditReservation,
   onUpdate,
   isDeleting,
 }: PurposeProps) => {
@@ -37,6 +59,19 @@ export const PurposeCard = ({
 
   return (
     <Container isDisabled={isDeleting}>
+      {!edit.isEditing && (
+        <ReservationEditButton
+          type="button"
+          aria-label="예약 필요 여부 수정"
+          title="예약 필요 여부 수정"
+          onClick={() => onEditReservation(purpose.id)}
+          onPointerDown={stopTileDrag}
+          onMouseDown={stopTileDrag}
+          disabled={isDeleting}
+        >
+          <FaRegCalendarCheck size={18} />
+        </ReservationEditButton>
+      )}
       <DeleteIcon
         type="button"
         onClick={() => onDelete(purpose.id)}
