@@ -72,7 +72,9 @@ export const PurposeFormModal = ({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !isSubmitting) onClose();
+      if (event.key === 'Escape' && !event.defaultPrevented && !isSubmitting) {
+        onClose();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);

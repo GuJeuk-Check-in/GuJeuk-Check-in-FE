@@ -3,6 +3,7 @@ import { AxiosError } from 'axios';
 import {
   updatePurpose,
   usePurposeStore,
+  PurposeResponse,
   UpdatePurposeRequest,
 } from '@entities/purpose';
 
@@ -23,6 +24,17 @@ export const useUpdatePurpose = () => {
     },
     onSuccess: (_, variables) => {
       updateLocalPurpose(variables.id, variables.purpose);
+      queryClient.setQueryData<PurposeResponse[]>(['purposeList'], (purposes) =>
+        purposes?.map((purpose) =>
+          purpose.id === variables.id
+            ? {
+                ...purpose,
+                purpose: variables.purpose,
+                reservationStatus: variables.reservationStatus,
+              }
+            : purpose
+        )
+      );
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
     },
   });
