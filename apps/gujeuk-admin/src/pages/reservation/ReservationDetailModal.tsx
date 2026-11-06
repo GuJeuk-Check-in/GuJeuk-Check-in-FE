@@ -4,7 +4,6 @@ import { Popover } from '@shared/ui/popover';
 import { FiTrash2 } from 'react-icons/fi';
 import {
   formatPeople,
-  getNextTime,
   type Reservation,
 } from './ReservationData';
 
@@ -43,7 +42,7 @@ export const ReservationDetailModal = ({
   >
     <DetailList>
       <DetailRow><Label>시설</Label><Value>{reservation.place}</Value></DetailRow>
-      <DetailRow><Label>시간</Label><Value>오늘 {reservation.startTime} - {getNextTime(reservation.startTime)}</Value></DetailRow>
+      <DetailRow><Label>시간</Label><Value>오늘 {reservation.startTime} - {reservation.endTime}</Value></DetailRow>
       <DetailRow><Label>인원</Label><Value>{formatPeople(reservation.people)}</Value></DetailRow>
       <DetailRow><Label>연락처</Label><Value>{reservation.phone}</Value></DetailRow>
     </DetailList>

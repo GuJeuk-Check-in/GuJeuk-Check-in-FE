@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { ColorData } from "@center/tokens";
 import { Modal } from "@shared/ui/modal";
 import { DeleteIcon } from "@shared/assets";
-import { getNextTime, type Reservation } from "./ReservationData";
+import { type Reservation } from "./ReservationData";
 
 interface ReservationDeleteModalProps {
   reservation: Reservation;
@@ -32,8 +32,7 @@ export const ReservationDeleteModal = ({
     }}
   >
     <TargetInfo>
-      {reservation.place} · 오늘 {reservation.startTime} -{" "}
-      {getNextTime(reservation.startTime)}
+      {reservation.place} · 오늘 {reservation.startTime} - {reservation.endTime}
     </TargetInfo>
     <Notice>삭제한 예약은 되돌릴 수 없어요.</Notice>
     <Actions>

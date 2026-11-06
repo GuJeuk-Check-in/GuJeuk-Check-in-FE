@@ -25,6 +25,7 @@ const ReservationDashboardPage = () => {
     userName: item.name,
     place: item.purpose,
     startTime: item.startTime.slice(0, 5).replace(/^0/, ''),
+    endTime: item.endTime.slice(0, 5).replace(/^0/, ''),
     people: { male: item.maleCount, female: item.femaleCount },
     phone: item.phone,
   }));
