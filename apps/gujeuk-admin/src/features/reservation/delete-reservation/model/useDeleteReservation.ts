@@ -6,6 +6,6 @@ export const useDeleteReservation = () => {
   const queryClient = useQueryClient();
   return useMutation<void, AxiosError<{ message?: string }>, number>({
     mutationFn: deleteReservation,
-    onSuccess: () => { void queryClient.invalidateQueries({ queryKey: reservationListKey }); },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: reservationListKey }),
   });
 };

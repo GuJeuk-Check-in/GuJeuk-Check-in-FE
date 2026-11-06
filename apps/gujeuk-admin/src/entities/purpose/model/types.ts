@@ -1,5 +1,6 @@
 export interface CreatePurposeRequest {
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export interface UpdatePurposeRequest {
@@ -11,6 +12,7 @@ export interface UpdatePurposeRequest {
 export interface PurposeResponse {
   id: number;
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export type UpdatePurposeMovementRequest = {
