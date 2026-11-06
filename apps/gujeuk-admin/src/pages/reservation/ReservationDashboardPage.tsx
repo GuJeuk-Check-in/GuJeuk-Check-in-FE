@@ -2,16 +2,23 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { ColorData } from "@center/tokens";
+import { usePurposeList } from "@entities/purpose";
 import { useReservationList } from "@entities/reservation";
 import { ReservationTable } from "./ReservationTable";
 import {
-  PlaceData,
   TimeData,
   getActiveTimeIndex,
+  toReservation,
 } from "./ReservationData";
 
 const ReservationDashboardPage = () => {
   const { data, isLoading, isError, refetch } = useReservationList();
+  const {
+    data: purposes,
+    isLoading: isPurposeLoading,
+    isError: isPurposeError,
+    refetch: refetchPurposes,
+  } = usePurposeList();
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
@@ -20,19 +27,21 @@ const ReservationDashboardPage = () => {
   }, []);
 
   const activeTimeIndex = getActiveTimeIndex(currentTime);
-  const reservations = (data?.reservations ?? []).map((item) => ({
-    id: item.id,
-    userName: item.name,
-    place: item.purpose,
-    startTime: item.startTime.slice(0, 5).replace(/^0/, ''),
-    endTime: item.endTime.slice(0, 5).replace(/^0/, ''),
-    people: { male: item.maleCount, female: item.femaleCount },
-    phone: item.phone,
-  }));
+  const places = (purposes ?? [])
+    .filter((purpose) => purpose.reservationStatus)
+    .map((purpose) => purpose.purpose);
+  const reservations = (data?.reservations ?? []).map(toReservation);
   const hasUnmappedReservations = reservations.some(
-    (item) => !PlaceData.some((place) => place === item.place) ||
+    (item) => !places.includes(item.place) ||
       !TimeData.some((time) => time === item.startTime),
   );
+  const isTableLoading = isLoading || isPurposeLoading;
+  const isTableError = isError || isPurposeError;
+
+  const handleRefresh = () => {
+    void refetch();
+    void refetchPurposes();
+  };
 
   return (
     <Page>
@@ -45,17 +54,21 @@ const ReservationDashboardPage = () => {
             <strong>{data ? `${data.availableCount}곳` : '-'}</strong>
           </Description>
         </div>
-        <RefreshButton type="button" onClick={() => void refetch()}>
+        <RefreshButton type="button" onClick={handleRefresh}>
           <FiRefreshCw aria-hidden="true" />
           새로고침
         </RefreshButton>
       </Header>
 
-      {isLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
-      {isError && <p role="alert">예약 목록을 불러오지 못했어요. 새로고침을 눌러 다시 시도해 주세요.</p>}
+      {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
+      {isTableError && <p role="alert">예약 목록을 불러오지 못했어요. 새로고침을 눌러 다시 시도해 주세요.</p>}
       {hasUnmappedReservations && <p role="alert">일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.</p>}
-      {data && <TableViewport>
+      {data && purposes && places.length === 0 && (
+        <p role="status">예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을 설정해 주세요.</p>
+      )}
+      {data && places.length > 0 && <TableViewport>
         <ReservationTable
+          places={places}
           reservations={reservations}
           activeTimeIndex={activeTimeIndex}
         />
