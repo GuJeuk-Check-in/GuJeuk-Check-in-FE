@@ -23,29 +23,28 @@ export const UserListWithSearch = ({
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteUserList({ residence: filters.residence });
+  const userList = useInfiniteUserList({ residence: filters.residence });
+  const { data, isLoading, isError, error } = userList;
 
   const allUsers = data?.pages.flatMap((page) => page.users) ?? [];
   const totalUsersCount = data?.pages[0]?.totalCount ?? 0;
 
   const {
     searchName,
-    filteredUsers,
+    isSearching,
+    isSearchLoading,
+    isSearchError,
+    searchedUsers,
+    searchTotalCount,
+    searchPagination,
     handleSearchChange,
     handleClearSearch,
-    resultCount,
-  } = useSearchUser(allUsers, {
-    residence: null,
-    searchName: '',
-  });
+  } = useSearchUser();
+
+  const visibleUsers = isSearching ? searchedUsers : allUsers;
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = isSearching
+    ? searchPagination
+    : userList;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -64,7 +63,7 @@ export const UserListWithSearch = ({
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (isLoading) {
+  if (isLoading && !isSearching) {
     return (
       <LoadingOverlay>
         <LoadingBox>
@@ -75,7 +74,7 @@ export const UserListWithSearch = ({
     );
   }
 
-  if (isError) {
+  if (isError && !isSearching) {
     return (
       <ErrorText>
         회원 목록을 불러오는 데 실패했습니다:{' '}
@@ -84,29 +83,35 @@ export const UserListWithSearch = ({
     );
   }
 
+  const getEmptyText = () => {
+    if (isSearching) {
+      if (isSearchError) return '회원 검색에 실패했습니다.';
+      if (isSearchLoading) return '회원을 검색하는 중입니다.';
+      return `"${searchName}"에 해당하는 회원이 없습니다.`;
+    }
+    if (filters.residence) return `${filters.residence}에 등록된 회원이 없습니다.`;
+    return '등록된 회원이 없습니다.';
+  };
+
   return (
     <UserListLayout
       totalCount={totalUsersCount}
       totalCountText={totalCountText}
       searchName={searchName}
-      resultCount={resultCount}
+      resultCount={isSearching ? searchTotalCount : visibleUsers.length}
       onSearchChange={handleSearchChange}
       onClearSearch={handleClearSearch}
       filter={
-        <UserFilter
-          selectedLocation={filters.residence ?? '전체 지역'}
-          setSelectedLocation={(location) =>
-            setFilters({ residence: location === '전체 지역' ? null : location })
-          }
-        />
+        !isSearching && (
+          <UserFilter
+            selectedLocation={filters.residence ?? '전체 지역'}
+            setSelectedLocation={(location) =>
+              setFilters({ residence: location === '전체 지역' ? null : location })
+            }
+          />
+        )
       }
-      emptyText={
-        searchName
-          ? `"${searchName}"에 해당하는 회원이 없습니다.`
-          : filters.residence
-          ? `${filters.residence}에 등록된 회원이 없습니다.`
-          : '등록된 회원이 없습니다.'
-      }
+      emptyText={getEmptyText()}
       afterList={
         <>
           <div ref={observerTarget} style={{ height: '20px', margin: '10px 0' }} />
@@ -114,7 +119,7 @@ export const UserListWithSearch = ({
         </>
       }
     >
-      {filteredUsers.map((user) => (
+      {visibleUsers.map((user) => (
         <UserInformationCard
           key={user.id}
           id={user.id}
