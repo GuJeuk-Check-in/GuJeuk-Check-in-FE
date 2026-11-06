@@ -162,6 +162,7 @@ export type FacilityUsageValue = {
 
 export type FacilityUsageRequest = {
   readonly year: number;
+  readonly month: number;
 };
 
 export type FacilityUsageResponse = {
