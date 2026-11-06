@@ -185,7 +185,7 @@ export const AdminHeader = () => {
         />
         <ExcelButton
           onClick={handleOperationStatusPreviewClick}
-          disabled={isOperationPreviewInitialLoading}
+          disabled={isOperationReportLoading}
           label="한글 파일 미리보기"
         />
         <ExcelButton
