@@ -46,6 +46,7 @@ export const ReservationTable = ({
     Reservation["id"] | null
   >(null);
   const [detailPosition, setDetailPosition] = useState({ top: 0, left: 0 });
+  const [detailAutoFocus, setDetailAutoFocus] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<
     Reservation["id"] | null
   >(null);
@@ -151,7 +152,9 @@ export const ReservationTable = ({
   const handleReservationClick = (
     reservation: Reservation,
     event: MouseEvent<HTMLButtonElement>,
+    autoFocus: boolean,
   ) => {
+    if (createTarget || deleteTarget) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
     const rootFontSize = parseFloat(
@@ -177,6 +180,7 @@ export const ReservationTable = ({
     );
 
     setDetailPosition({ top, left });
+    setDetailAutoFocus(autoFocus);
     setSelectedReservationId(reservation.id);
   };
 
@@ -216,7 +220,10 @@ export const ReservationTable = ({
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   onClick={(event) =>
-                    handleReservationClick(reservation, event)
+                    handleReservationClick(reservation, event, true)
+                  }
+                  onMouseEnter={(event) =>
+                    handleReservationClick(reservation, event, false)
                   }
                 />
               ) : (
@@ -244,6 +251,7 @@ export const ReservationTable = ({
         <ReservationDetailModal
           reservation={selectedReservation}
           position={detailPosition}
+          autoFocus={detailAutoFocus}
           onClose={() => setSelectedReservationId(null)}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);

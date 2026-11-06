@@ -9,6 +9,7 @@ interface ReservationCardProps {
   column: number;
   row: number;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ReservationCard = ({
@@ -18,6 +19,7 @@ export const ReservationCard = ({
   column,
   row,
   onClick,
+  onMouseEnter,
 }: ReservationCardProps) => {
   return (
     <Card
@@ -25,6 +27,7 @@ export const ReservationCard = ({
       $row={row}
       aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
       type="button"
     >
       {userName}
@@ -43,14 +46,15 @@ const Card = styled.button<{ $column: number; $row: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 0;
+  border: 1px solid ${ColorData.colors.primary};
   background-color: ${ColorData.colors.fillNormal};
   color: ${ColorData.colors.labelNormal};
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 1.25rem;
   text-align: center;
   cursor: pointer;
-  transition: background-color ${ColorData.interaction.transitionFast},
+  transition:
+    background-color ${ColorData.interaction.transitionFast},
     box-shadow ${ColorData.interaction.transitionFast};
 
   &:hover {

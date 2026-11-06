@@ -12,6 +12,7 @@ interface ReservationDetailModalProps {
   position: { top: number; left: number };
   onClose: () => void;
   onDelete: () => void;
+  autoFocus: boolean;
 }
 
 export const ReservationDetailModal = ({
@@ -19,9 +20,11 @@ export const ReservationDetailModal = ({
   position,
   onClose,
   onDelete,
+  autoFocus,
 }: ReservationDetailModalProps) => (
   <Popover
     isOpen
+    autoFocus={autoFocus}
     onClose={onClose}
     config={{
       title: reservation.userName,

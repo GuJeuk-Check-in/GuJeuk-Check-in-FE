@@ -13,6 +13,7 @@ interface PopoverProps {
   children?: ReactNode;
   onClose?: () => void;
   titleExtra?: ReactNode;
+  autoFocus?: boolean;
 }
 
 export const Popover = ({
@@ -22,6 +23,7 @@ export const Popover = ({
   children,
   onClose,
   titleExtra,
+  autoFocus = true,
 }: PopoverProps) => {
   const titleId = useId();
   const subtitleId = useId();
@@ -42,7 +44,7 @@ export const Popover = ({
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (!isOpen || !hasConfig) return;
+    if (!isOpen || !hasConfig || !autoFocus) return;
 
     const previousFocus = document.activeElement;
     const content = contentRef.current;
@@ -59,7 +61,7 @@ export const Popover = ({
         previousFocus.focus();
       }
     };
-  }, [isOpen, hasConfig]);
+  }, [isOpen, hasConfig, autoFocus]);
 
   if (!isOpen || !config) return null;
 
