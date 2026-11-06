@@ -42,15 +42,41 @@ export const ReservationTable = ({
   reservations,
   activeTimeIndex,
 }: ReservationTableProps) => {
-  const [selectedReservation, setSelectedReservation] =
-    useState<Reservation | null>(null);
+  const [selectedReservationId, setSelectedReservationId] = useState<
+    Reservation["id"] | null
+  >(null);
   const [detailPosition, setDetailPosition] = useState({ top: 0, left: 0 });
-  const [deleteTarget, setDeleteTarget] = useState<Reservation | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<
+    Reservation["id"] | null
+  >(null);
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
   const { mutate: deleteReservation, isPending } = useDeleteReservation();
-  const { mutate: createReservation, isPending: isCreating } = useCreateReservation();
+  const { mutate: createReservation, isPending: isCreating } =
+    useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const selectedReservation =
+    reservations.find(
+      (reservation) => reservation.id === selectedReservationId,
+    ) ?? null;
+  const deleteTarget =
+    reservations.find((reservation) => reservation.id === deleteTargetId) ??
+    null;
+
+  useEffect(() => {
+    if (selectedReservationId !== null && !selectedReservation) {
+      setSelectedReservationId(null);
+    }
+    if (deleteTargetId !== null && !deleteTarget) {
+      setDeleteTargetId(null);
+    }
+  }, [
+    reservations,
+    selectedReservationId,
+    selectedReservation,
+    deleteTargetId,
+    deleteTarget,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -75,26 +101,32 @@ export const ReservationTable = ({
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget || isCreating) return;
 
-    const [hour, minute] = createTarget.time.split(':');
-    createReservation({
-      name: values.userName,
-      phone: values.phone,
-      maleCount: values.people.male,
-      femaleCount: values.people.female,
-      purpose: createTarget.place,
-      startTime: `${hour.padStart(2, '0')}:${minute}:00`,
-    }, {
-      onSuccess: () => {
-        setCreateTarget(null);
-        showToast(`${values.userName}님의 예약이 추가됐어요.`);
+    const [hour, minute] = createTarget.time.split(":");
+    createReservation(
+      {
+        name: values.userName,
+        phone: values.phone,
+        maleCount: values.people.male,
+        femaleCount: values.people.female,
+        purpose: createTarget.place,
+        startTime: `${hour.padStart(2, "0")}:${minute}:00`,
       },
-      onError: (error) => {
-        const message = isAxiosError<{ message?: string }>(error)
-          ? error.response?.data?.message
-          : undefined;
-        showToast(message || '예약을 추가하지 못했어요. 다시 시도해 주세요.', 'caution');
+      {
+        onSuccess: () => {
+          setCreateTarget(null);
+          showToast(`${values.userName}님의 예약이 추가됐어요.`);
+        },
+        onError: (error) => {
+          const message = isAxiosError<{ message?: string }>(error)
+            ? error.response?.data?.message
+            : undefined;
+          showToast(
+            message || "예약을 추가하지 못했어요. 다시 시도해 주세요.",
+            "caution",
+          );
+        },
       },
-    });
+    );
   };
 
   const handleDelete = () => {
@@ -102,12 +134,16 @@ export const ReservationTable = ({
 
     deleteReservation(deleteTarget.id, {
       onSuccess: () => {
-        setDeleteTarget(null);
-        setSelectedReservation(null);
+        setDeleteTargetId(null);
+        setSelectedReservationId(null);
         showToast("예약을 삭제했어요");
       },
       onError: (error) => {
-        showToast(error.response?.data?.message || "예약을 삭제하지 못했어요. 다시 시도해 주세요.", "caution");
+        showToast(
+          error.response?.data?.message ||
+            "예약을 삭제하지 못했어요. 다시 시도해 주세요.",
+          "caution",
+        );
       },
     });
   };
@@ -141,7 +177,7 @@ export const ReservationTable = ({
     );
 
     setDetailPosition({ top, left });
-    setSelectedReservation(reservation);
+    setSelectedReservationId(reservation.id);
   };
 
   return (
@@ -191,7 +227,7 @@ export const ReservationTable = ({
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   onAddClick={(selectedPlace, selectedTime) => {
-                    setSelectedReservation(null);
+                    setSelectedReservationId(null);
                     setCreateTarget({
                       place: selectedPlace,
                       time: selectedTime,
@@ -208,10 +244,10 @@ export const ReservationTable = ({
         <ReservationDetailModal
           reservation={selectedReservation}
           position={detailPosition}
-          onClose={() => setSelectedReservation(null)}
+          onClose={() => setSelectedReservationId(null)}
           onDelete={() => {
-            setDeleteTarget(selectedReservation);
-            setSelectedReservation(null);
+            setDeleteTargetId(selectedReservation.id);
+            setSelectedReservationId(null);
           }}
         />
       )}
@@ -219,7 +255,9 @@ export const ReservationTable = ({
       {deleteTarget && (
         <ReservationDeleteModal
           reservation={deleteTarget}
-          onClose={() => { if (!isPending) setDeleteTarget(null); }}
+          onClose={() => {
+            if (!isPending) setDeleteTargetId(null);
+          }}
           onConfirm={handleDelete}
           isPending={isPending}
         />
@@ -229,7 +267,9 @@ export const ReservationTable = ({
         <ReservationCreateModal
           place={createTarget.place}
           time={createTarget.time}
-          onClose={() => { if (!isCreating) setCreateTarget(null); }}
+          onClose={() => {
+            if (!isCreating) setCreateTarget(null);
+          }}
           onSubmit={handleCreate}
           isPending={isCreating}
         />
