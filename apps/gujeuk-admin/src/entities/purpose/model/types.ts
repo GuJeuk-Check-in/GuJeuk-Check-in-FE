@@ -22,6 +22,7 @@ export type UpdatePurposeMovementRequest = {
 export interface Purpose {
   id: number;
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export interface PurposeStore {
