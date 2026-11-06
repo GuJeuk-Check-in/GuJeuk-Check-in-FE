@@ -33,8 +33,8 @@ export interface ReservationPeople {
 export interface Reservation {
   id: number;
   userName: string;
-  place: ReservationPlace;
-  startTime: ReservationTime;
+  place: string;
+  startTime: string;
   people: ReservationPeople;
   phone: string;
 }

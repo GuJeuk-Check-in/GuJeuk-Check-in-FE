@@ -5,6 +5,7 @@ export interface CreatePurposeRequest {
 export interface UpdatePurposeRequest {
   id: number;
   purpose: string;
+  reservationStatus: boolean;
 }
 
 export interface PurposeResponse {

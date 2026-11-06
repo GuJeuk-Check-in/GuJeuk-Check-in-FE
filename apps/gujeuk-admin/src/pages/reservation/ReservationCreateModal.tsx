@@ -32,6 +32,7 @@ interface ReservationCreateModalProps {
   time: ReservationTime;
   onClose: () => void;
   onSubmit: (values: ReservationCreateValues) => void;
+  isPending: boolean;
 }
 
 export const ReservationCreateModal = ({
@@ -39,17 +40,21 @@ export const ReservationCreateModal = ({
   time,
   onClose,
   onSubmit,
+  isPending,
 }: ReservationCreateModalProps) => {
   const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
+  const [male, setMale] = useState("0");
+  const [female, setFemale] = useState("0");
+  const validCount = (value: string) => /^\d+$/.test(value) && Number.isSafeInteger(Number(value));
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!userName.trim() || !PHONE_PATTERN.test(phone.trim())) return;
+    if (isPending || !userName.trim() || !PHONE_PATTERN.test(phone.trim()) || !validCount(male) || !validCount(female)) return;
     onSubmit({
       userName: userName.trim(),
       phone: phone.trim(),
-      people: { male: 0, female: 0 },
+      people: { male: Number(male), female: Number(female) },
     });
   };
 
@@ -102,17 +107,28 @@ export const ReservationCreateModal = ({
             required
           />
         </Field>
+        <CompanionRow>
+          <Field>
+            <Label htmlFor="reservation-male">남자 동반 인원</Label>
+            <Input id="reservation-male" type="number" min="0" step="1" value={male} onChange={(event) => setMale(event.target.value)} required />
+          </Field>
+          <Field>
+            <Label htmlFor="reservation-female">여자 동반 인원</Label>
+            <Input id="reservation-female" type="number" min="0" step="1" value={female} onChange={(event) => setFemale(event.target.value)} required />
+          </Field>
+        </CompanionRow>
+        <Notice>ⓘ 동반 인원에는 예약자 본인을 제외해 주세요.</Notice>
         <Notice>ⓘ 예약은 1인 1시간만 가능해요.</Notice>
         <ActionRow>
-          <ActionButton type="button" $variant="secondary" onClick={onClose}>
+          <ActionButton type="button" $variant="secondary" onClick={onClose} disabled={isPending}>
             취소
           </ActionButton>
           <ActionButton
             type="submit"
             $variant="primary"
-            disabled={!userName.trim() || !PHONE_PATTERN.test(phone.trim())}
+            disabled={isPending || !userName.trim() || !PHONE_PATTERN.test(phone.trim()) || !validCount(male) || !validCount(female)}
           >
-            예약하기
+            {isPending ? "예약 중..." : "예약하기"}
           </ActionButton>
         </ActionRow>
       </Form>
@@ -170,6 +186,12 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${ColorData.spacing[8]};
+`;
+
+const CompanionRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${ColorData.spacing[16]};
 `;
 
 const Label = styled.label`
