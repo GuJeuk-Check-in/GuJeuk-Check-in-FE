@@ -17,8 +17,28 @@ const PurposeContainer = styled(Container)<{ $isReservable: boolean }>`
   outline-offset: -2px;
 `;
 
+const EditArea = styled.button`
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: none;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${ColorData.shadow.focus};
+  }
+`;
+
 const ReservationBadge = styled.span`
   position: absolute;
+  pointer-events: none;
   top: 1rem;
   left: 1.125rem;
   display: flex;
@@ -53,6 +73,13 @@ export const PurposeCard = ({
       isDisabled={isDeleting}
       $isReservable={purpose.reservationStatus}
     >
+      <EditArea
+        type="button"
+        aria-label={`${purpose.purpose} 수정`}
+        onClick={() => onEdit(purpose)}
+        onKeyDown={stopTileDrag}
+        disabled={isDeleting}
+      />
       {purpose.reservationStatus && (
         <ReservationBadge>
           <img src={ReservationBadgeIcon} alt="" width={14} height={14} />
@@ -61,6 +88,7 @@ export const PurposeCard = ({
       )}
       <DeleteIcon
         type="button"
+        aria-label={`${purpose.purpose} 삭제`}
         onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -74,17 +102,9 @@ export const PurposeCard = ({
         )}
       </DeleteIcon>
 
-      <Label>
+      <Label aria-hidden="true">
         {index}. {purpose.purpose}
-        <StyledEditIcon
-          size={18}
-          onClick={() => {
-            if (!isDeleting) onEdit(purpose);
-          }}
-          onPointerDown={stopTileDrag}
-          onMouseDown={stopTileDrag}
-          isDeleting={isDeleting}
-        />
+        <StyledEditIcon size={18} isDeleting={isDeleting} />
       </Label>
     </PurposeContainer>
   );
