@@ -56,8 +56,10 @@ export const AdminHeader = () => {
     isPending: isFacilityUsageLoading,
   } = useFacilityUsageReport(modal);
 
+  const isOperationReportLoading =
+    isPerformanceLoading || isFacilityUsageLoading;
   const isOperationPreviewInitialLoading =
-    (isPerformanceLoading || isFacilityUsageLoading) && !operationPreviewData;
+    isOperationReportLoading && !operationPreviewData;
 
   const handleVisitListExcelExportClick = () => {
     setIsModalOpen(true);
@@ -82,7 +84,7 @@ export const AdminHeader = () => {
     try {
       const [performance, facilityUsage] = await Promise.all([
         fetchPerformanceReport({ year: currentReportPeriod.year, month }),
-        fetchFacilityUsageReport({ year: currentReportPeriod.year }),
+        fetchFacilityUsageReport({ year: currentReportPeriod.year, month }),
       ]);
 
       setSelectedReportPeriod({ year: currentReportPeriod.year, month });
@@ -103,10 +105,10 @@ export const AdminHeader = () => {
     setPerformanceExportingDate(dataString);
 
     try {
-      const performance = await fetchPerformanceReport({
-        year: selectedReportPeriod.year,
-        month,
-      });
+      const [performance, facilityUsage] = await Promise.all([
+        fetchPerformanceReport({ year: selectedReportPeriod.year, month }),
+        fetchFacilityUsageReport({ year: selectedReportPeriod.year, month }),
+      ]);
 
       setSelectedReportPeriod((currentPeriod) => ({
         ...currentPeriod,
@@ -120,6 +122,7 @@ export const AdminHeader = () => {
         return {
           ...currentData,
           performance,
+          facilityUsage,
         };
       });
     } catch (error) {
@@ -182,7 +185,7 @@ export const AdminHeader = () => {
         />
         <ExcelButton
           onClick={handleOperationStatusPreviewClick}
-          disabled={isOperationPreviewInitialLoading}
+          disabled={isOperationReportLoading}
           label="한글 파일 미리보기"
         />
         <ExcelButton
@@ -224,7 +227,9 @@ export const AdminHeader = () => {
           isOpen={Boolean(operationPreviewData)}
           data={operationPreviewData}
           selectedMonth={selectedReportPeriod.month}
-          isMonthLoading={isPerformanceLoading && Boolean(operationPreviewData)}
+          isMonthLoading={
+            isOperationReportLoading && Boolean(operationPreviewData)
+          }
           onMonthChange={(month) => {
             void handleReportMonthChange(month);
           }}

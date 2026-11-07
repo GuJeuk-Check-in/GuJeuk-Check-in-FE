@@ -10,7 +10,6 @@ import {
 import { ReservationDeleteModal } from "./ReservationDeleteModal";
 import { ReservationDetailModal } from "./ReservationDetailModal";
 import {
-  PlaceData,
   TimeData,
   type Reservation,
   type ReservationPlace,
@@ -27,6 +26,7 @@ interface CreateTarget {
 }
 
 interface ReservationTableProps {
+  places: ReservationPlace[];
   reservations: Reservation[];
   activeTimeIndex: number;
 }
@@ -39,6 +39,7 @@ interface ToastState {
 }
 
 export const ReservationTable = ({
+  places,
   reservations,
   activeTimeIndex,
 }: ReservationTableProps) => {
@@ -106,7 +107,6 @@ export const ReservationTable = ({
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget || isCreating) return;
 
-    const [hour, minute] = createTarget.time.split(":");
     createReservation(
       {
         name: values.userName,
@@ -114,7 +114,7 @@ export const ReservationTable = ({
         maleCount: values.people.male,
         femaleCount: values.people.female,
         purpose: createTarget.place,
-        startTime: `${hour.padStart(2, "0")}:${minute}:00`,
+        startTime: createTarget.time,
       },
       {
         onSuccess: () => {
@@ -207,12 +207,12 @@ export const ReservationTable = ({
 
   return (
     <>
-      <TableGrid>
+      <TableGrid $placeCount={places.length}>
         <HeaderCell $column={1} $row={1}>
           시간
         </HeaderCell>
 
-        {PlaceData.map((place, index) => (
+        {places.map((place, index) => (
           <HeaderCell key={place} $column={index + 2} $row={1}>
             {place}
           </HeaderCell>
@@ -227,7 +227,7 @@ export const ReservationTable = ({
               {time}
             </TimeCell>
 
-            {PlaceData.map((place, placeIndex) => {
+            {places.map((place, placeIndex) => {
               const reservation = reservations.find(
                 (item) => item.place === place && item.startTime === time,
               );
@@ -321,11 +321,11 @@ export const ReservationTable = ({
   );
 };
 
-const TableGrid = styled.div`
+const TableGrid = styled.div<{ $placeCount: number }>`
   display: grid;
-  grid-template-columns: 5rem repeat(9, minmax(7rem, 1fr));
+  grid-template-columns: 5rem repeat(${({ $placeCount }) => $placeCount}, minmax(7rem, 1fr));
   grid-template-rows: 4.5rem repeat(${TimeData.length}, 5rem);
-  min-width: 68rem;
+  min-width: ${({ $placeCount }) => 5 + $placeCount * 7}rem;
   overflow: hidden;
   position: relative;
   border-radius: ${ColorData.radius.modal};

@@ -144,10 +144,12 @@ export const fetchVisitStatistics = async ({
 
 export const fetchFacilityUsage = async ({
   year,
+  month,
 }: FacilityUsageRequest): Promise<FacilityUsageResponse> => {
   const response = await axiosInstance.get('/organ/usage', {
     params: {
       year,
+      month,
     },
   });
 

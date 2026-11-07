@@ -4,7 +4,11 @@ import {
   readErrorBodyPreview,
 } from '@shared/api';
 import { isAxiosError } from 'axios';
-import type { UserListResponse, UserInformation } from '../model/types';
+import type {
+  UserListResponse,
+  UserInformation,
+  UserSearchResponse,
+} from '../model/types';
 
 export const userList = async (page = 0): Promise<UserListResponse> => {
   const response = await axiosInstance.get<UserListResponse>(
@@ -42,6 +46,31 @@ export const usersByResidence = async (
   });
 
   return response.data;
+};
+
+const EMPTY_SEARCH_STATUSES = [400, 404];
+
+export const searchUsers = async (
+  name: string,
+  page = 0
+): Promise<UserSearchResponse> => {
+  try {
+    const response = await axiosInstance.get<UserSearchResponse>(
+      '/organ/search',
+      {
+        params: { name, page },
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    const status = isAxiosError(error) ? error.response?.status : undefined;
+
+    if (status && EMPTY_SEARCH_STATUSES.includes(status)) {
+      return { totalCount: 0, content: [] };
+    }
+
+    throw error;
+  }
 };
 
 export const exportUserListToExcel = async (): Promise<string> => {
