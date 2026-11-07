@@ -14,6 +14,8 @@ interface PopoverProps {
   onClose?: () => void;
   titleExtra?: ReactNode;
   autoFocus?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 export const Popover = ({
@@ -24,6 +26,8 @@ export const Popover = ({
   onClose,
   titleExtra,
   autoFocus = true,
+  onMouseEnter,
+  onMouseLeave,
 }: PopoverProps) => {
   const titleId = useId();
   const subtitleId = useId();
@@ -71,6 +75,8 @@ export const Popover = ({
     <PopoverLayer>
       <PopoverContent
         ref={contentRef}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         role="dialog"
         aria-labelledby={titleId}
         aria-describedby={subtitle ? subtitleId : undefined}

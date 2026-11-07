@@ -56,6 +56,7 @@ export const ReservationTable = ({
   const { mutate: createReservation, isPending: isCreating } =
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const detailCloseTimerRef = useRef<number | null>(null);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -83,6 +84,9 @@ export const ReservationTable = ({
     return () => {
       if (toastTimerRef.current !== null) {
         window.clearTimeout(toastTimerRef.current);
+      }
+      if (detailCloseTimerRef.current !== null) {
+        window.clearTimeout(detailCloseTimerRef.current);
       }
     };
   }, []);
@@ -149,12 +153,29 @@ export const ReservationTable = ({
     });
   };
 
+  const cancelDetailClose = () => {
+    if (detailCloseTimerRef.current !== null) {
+      window.clearTimeout(detailCloseTimerRef.current);
+      detailCloseTimerRef.current = null;
+    }
+  };
+
+  const scheduleDetailClose = () => {
+    if (detailAutoFocus) return;
+    cancelDetailClose();
+    detailCloseTimerRef.current = window.setTimeout(() => {
+      setSelectedReservationId(null);
+      detailCloseTimerRef.current = null;
+    }, 200);
+  };
+
   const handleReservationClick = (
     reservation: Reservation,
     event: MouseEvent<HTMLButtonElement>,
     autoFocus: boolean,
   ) => {
     if (createTarget || deleteTarget) return;
+    cancelDetailClose();
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
     const rootFontSize = parseFloat(
@@ -225,6 +246,7 @@ export const ReservationTable = ({
                   onMouseEnter={(event) =>
                     handleReservationClick(reservation, event, false)
                   }
+                  onMouseLeave={scheduleDetailClose}
                 />
               ) : (
                 <ReservationEmptyCell
@@ -252,6 +274,8 @@ export const ReservationTable = ({
           reservation={selectedReservation}
           position={detailPosition}
           autoFocus={detailAutoFocus}
+          onMouseEnter={cancelDetailClose}
+          onMouseLeave={scheduleDetailClose}
           onClose={() => setSelectedReservationId(null)}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);

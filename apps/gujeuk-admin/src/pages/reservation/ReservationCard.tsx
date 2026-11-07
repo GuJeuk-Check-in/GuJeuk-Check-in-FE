@@ -10,6 +10,7 @@ interface ReservationCardProps {
   row: number;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onMouseLeave?: () => void;
 }
 
 export const ReservationCard = ({
@@ -20,6 +21,7 @@ export const ReservationCard = ({
   row,
   onClick,
   onMouseEnter,
+  onMouseLeave,
 }: ReservationCardProps) => {
   return (
     <Card
@@ -28,6 +30,7 @@ export const ReservationCard = ({
       aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       type="button"
     >
       {userName}
@@ -46,7 +49,7 @@ const Card = styled.button<{ $column: number; $row: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${ColorData.colors.primary};
+  border: 1px solid transparent;
   background-color: ${ColorData.colors.fillNormal};
   color: ${ColorData.colors.labelNormal};
   font-family: inherit;
@@ -58,7 +61,8 @@ const Card = styled.button<{ $column: number; $row: number }>`
     box-shadow ${ColorData.interaction.transitionFast};
 
   &:hover {
-    background-color: ${ColorData.colors.primary8};
+    background-color: ${ColorData.colors.primaryLight};
+    border-color: ${ColorData.colors.primary};
     box-shadow: ${ColorData.shadow.focus};
   }
 `;
