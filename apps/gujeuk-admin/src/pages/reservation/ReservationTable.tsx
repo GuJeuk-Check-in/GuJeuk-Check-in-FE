@@ -1,4 +1,11 @@
-import { Fragment, useEffect, useRef, useState, type MouseEvent } from "react";
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type MouseEvent,
+} from "react";
 import styled from "@emotion/styled";
 import { ColorData } from "@center/tokens";
 import { SucceedIcon } from "@shared/assets";
@@ -58,6 +65,8 @@ export const ReservationTable = ({
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
   const detailCloseTimerRef = useRef<number | null>(null);
+  const detailHasFocusRef = useRef(false);
+  const detailPointerInsideRef = useRef(false);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -161,12 +170,48 @@ export const ReservationTable = ({
   };
 
   const scheduleDetailClose = () => {
-    if (detailAutoFocus) return;
     cancelDetailClose();
     detailCloseTimerRef.current = window.setTimeout(() => {
-      setSelectedReservationId(null);
       detailCloseTimerRef.current = null;
+      if (detailHasFocusRef.current) return;
+      setSelectedReservationId(null);
+      detailPointerInsideRef.current = false;
     }, 200);
+  };
+
+  const handleDetailPointerEnter = () => {
+    detailPointerInsideRef.current = true;
+    cancelDetailClose();
+  };
+
+  const handleDetailPointerLeave = () => {
+    detailPointerInsideRef.current = false;
+    scheduleDetailClose();
+  };
+
+  const handleDetailBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+
+    detailHasFocusRef.current = false;
+    if (detailPointerInsideRef.current) {
+      cancelDetailClose();
+      return;
+    }
+
+    cancelDetailClose();
+    setSelectedReservationId(null);
+  };
+
+  const closeDetail = () => {
+    cancelDetailClose();
+    detailHasFocusRef.current = false;
+    detailPointerInsideRef.current = false;
+    setSelectedReservationId(null);
   };
 
   const handleReservationClick = (
@@ -243,10 +288,12 @@ export const ReservationTable = ({
                   onClick={(event) =>
                     handleReservationClick(reservation, event, true)
                   }
-                  onMouseEnter={(event) =>
-                    handleReservationClick(reservation, event, false)
-                  }
-                  onMouseLeave={scheduleDetailClose}
+                  onMouseEnter={(event) => {
+                    if (createTarget || deleteTarget) return;
+                    detailPointerInsideRef.current = true;
+                    handleReservationClick(reservation, event, false);
+                  }}
+                  onMouseLeave={handleDetailPointerLeave}
                 />
               ) : (
                 <ReservationEmptyCell
@@ -274,12 +321,16 @@ export const ReservationTable = ({
           reservation={selectedReservation}
           position={detailPosition}
           autoFocus={detailAutoFocus}
-          onMouseEnter={cancelDetailClose}
-          onMouseLeave={scheduleDetailClose}
-          onClose={() => setSelectedReservationId(null)}
+          onMouseEnter={handleDetailPointerEnter}
+          onMouseLeave={handleDetailPointerLeave}
+          onFocus={() => {
+            detailHasFocusRef.current = true;
+          }}
+          onBlur={handleDetailBlur}
+          onClose={closeDetail}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);
-            setSelectedReservationId(null);
+            closeDetail();
           }}
         />
       )}

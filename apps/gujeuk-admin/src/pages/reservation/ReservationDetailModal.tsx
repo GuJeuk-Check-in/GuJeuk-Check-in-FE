@@ -1,3 +1,4 @@
+import { type FocusEvent } from 'react';
 import styled from '@emotion/styled';
 import { ColorData } from '@center/tokens';
 import { Popover } from '@shared/ui/popover';
@@ -15,6 +16,8 @@ interface ReservationDetailModalProps {
   autoFocus: boolean;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  onFocus: () => void;
+  onBlur: (event: FocusEvent<HTMLDivElement>) => void;
 }
 
 export const ReservationDetailModal = ({
@@ -25,12 +28,16 @@ export const ReservationDetailModal = ({
   autoFocus,
   onMouseEnter,
   onMouseLeave,
+  onFocus,
+  onBlur,
 }: ReservationDetailModalProps) => (
   <Popover
     isOpen
     autoFocus={autoFocus}
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
+    onFocus={onFocus}
+    onBlur={onBlur}
     onClose={onClose}
     config={{
       title: reservation.userName,
