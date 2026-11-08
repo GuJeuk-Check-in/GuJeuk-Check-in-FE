@@ -132,9 +132,21 @@ export const blueTheme: AdminTheme = {
 };
 
 export const orangePalette = {
-  main: '#FF9000', dark: '#9B4D00', light: '#FFF4E4', bright: '#F5C343',
-  red: '#E8232C', redShadow: '#F79CA0', pink: '#EF4B75',
-  blue: '#2868D8', green: '#00A89D',
+  main: '#FF9200', mainPressed: '#CE7600', dark: '#9B4D00',
+  light: '#FFF4E4', bright: '#F5C343', brightPressed: '#E2A60E',
+  red: '#E8232C', redLine: '#A21118', redPressed: '#EE3D45', redShadow: '#F79CA0',
+  pink: '#EF4B75', pinkShadow: '#F8CBD5',
+  blue: '#2868D8', blueShadow: '#CBD9F5',
+  green: '#00A89D', greenShadow: '#C5DEDB',
+  yellow: '#FFDA7E',
+  page: '#FFFFFF', field: '#FBFBFF',
+  karaoke: '#EFF9F8', boardGame: '#E1E6F2', internet: '#FFF4E4',
+} as const;
+
+export const grayPalette = {
+  0: '#000000', 10: '#1A1A1A', 20: '#333333', 30: '#4D4D4D', 40: '#666666',
+  50: '#808080', 60: '#999999', 70: '#B2B2B2', 80: '#A3A3A3', 90: '#B7B7B7',
+  100: '#CCCCCC',
 } as const;
 
 export const orangeTheme: AdminTheme = {
@@ -155,6 +167,19 @@ export const orangeTheme: AdminTheme = {
       orangePalette.pink, orangePalette.blue, orangePalette.green, orangePalette.red],
   },
 };
+
+export const createAdminTheme = (
+  base: AdminTheme,
+  overrides: {
+    colors?: Partial<AdminColors>;
+    typography?: Partial<AdminTheme['typography']>;
+    components?: Partial<AdminTheme['components']>;
+  } = {},
+): AdminTheme => ({
+  colors: { ...base.colors, ...overrides.colors },
+  typography: { ...base.typography, ...overrides.typography },
+  components: { ...base.components, ...overrides.components },
+});
 
 export const adminTokens = (theme: { admin?: AdminTheme }): AdminTheme => theme.admin ?? blueTheme;
 

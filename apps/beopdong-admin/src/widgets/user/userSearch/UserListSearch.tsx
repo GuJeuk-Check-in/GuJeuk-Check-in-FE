@@ -1,4 +1,5 @@
 import { Modal } from '@center/ui/modal';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { UserListLayout } from '@center/ui/search';
 import { UserInformationCard, type User } from '@entities/user';
 import { useDeleteUser } from '@features/user/delete-user';
@@ -12,7 +13,7 @@ export const UserListWithSearch = ({ users }: UserListWithSearchProps) => {
   const {
     searchName, filteredUsers, handleSearchChange, handleClearSearch, resultCount,
   } = useSearchUser(users);
-  const { modal, handleDelete } = useDeleteUser();
+  const { modal, confirmModal, handleDelete } = useDeleteUser();
 
   return (
     <>
@@ -31,6 +32,7 @@ export const UserListWithSearch = ({ users }: UserListWithSearchProps) => {
         ))}
       </UserListLayout>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <ConfirmModal isOpen={confirmModal.isOpen} config={confirmModal.config} onClose={confirmModal.closeModal} />
     </>
   );
 };

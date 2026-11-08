@@ -1,17 +1,15 @@
 import { useState } from 'react';
-import { useTheme } from '@emotion/react';
-import { adminTokens } from '@center/tokens';
 import { useModal } from '@center/ui/modal';
 import { useSortableItems } from '@center/ui/sortable-board';
-import { MdWarning } from 'react-icons/md';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
+import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
 
 export const usePurposeManagement = (initialPurposes: readonly Purpose[]) => {
   const [announcement, setAnnouncement] = useState('');
   const modal = useModal();
-  const tokens = adminTokens(useTheme());
+  const { confirmModal, openConfirm } = useConfirmModal();
   const sortable = useSortableItems({
     initialItems: initialPurposes,
     onReorder: ({ movedItem }) => {
@@ -37,17 +35,12 @@ export const usePurposeManagement = (initialPurposes: readonly Purpose[]) => {
 
   const handleDelete = (purpose: Purpose) => {
     if (purpose.isLocked) return;
-    modal.openModal({
-      icon: <MdWarning size="2.5rem" color={tokens.colors.error} />,
-      title: '이용대장을 삭제하시겠습니까?',
-      subtitle: `‘${purpose.purpose}’ 이용대장을 삭제합니다.`,
-      theme: 'warning',
-      buttons: [
-        { label: '취소', variant: 'secondary', onClick: modal.closeModal },
-        { label: '삭제', bgColor: tokens.colors.error, onClick: () => showApiNotice('삭제') },
-      ],
+    openConfirm({
+      title: '이 이용대장을 삭제하시겠습니까?',
+      subtitle: purpose.purpose,
+      onConfirm: () => showApiNotice('삭제'),
     });
   };
 
-  return { ...sortable, announcement, modal, handleCreate, handleUpdate, handleDelete };
+  return { ...sortable, announcement, modal, confirmModal, handleCreate, handleUpdate, handleDelete };
 };

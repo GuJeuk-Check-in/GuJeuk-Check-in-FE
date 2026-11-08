@@ -1,40 +1,32 @@
-import { useTheme } from '@emotion/react';
-import { adminTokens } from '@center/tokens';
 import { useModal } from '@center/ui/modal';
-import { IoWarningOutline } from 'react-icons/io5';
 import { openApiPendingNotice } from './openApiPendingNotice';
+import { useConfirmModal } from './useConfirmModal';
 
-interface ConfirmDeleteMessages {
-  readonly title: (name: string) => string;
-  readonly subtitle: string;
+interface DeleteTarget {
+  readonly name: string | null;
+}
+
+interface ConfirmDeleteMessages<T extends DeleteTarget> {
+  readonly title: string | ((name: string) => string);
+  readonly subtitle: string | ((target: T) => string);
   readonly pendingSubtitle: string;
 }
 
-interface DeleteTarget {
-  readonly name: string;
-}
-
-export const useConfirmDelete = ({ title, subtitle, pendingSubtitle }: ConfirmDeleteMessages) => {
+export const useConfirmDelete = <T extends DeleteTarget = DeleteTarget>({
+  title,
+  subtitle,
+  pendingSubtitle,
+}: ConfirmDeleteMessages<T>) => {
   const modal = useModal();
-  const { colors } = adminTokens(useTheme());
+  const { confirmModal, openConfirm } = useConfirmModal();
 
-  const handleDelete = (target: DeleteTarget) => {
-    modal.openModal({
-      icon: <IoWarningOutline />,
-      title: title(target.name),
-      subtitle,
-      theme: 'warning',
-      buttons: [
-        { label: '아니요', onClick: modal.closeModal },
-        {
-          label: '네, 삭제합니다',
-          variant: 'primary',
-          bgColor: colors.error,
-          onClick: () => openApiPendingNotice(modal, '삭제', pendingSubtitle),
-        },
-      ],
+  const handleDelete = (target: T) => {
+    openConfirm({
+      title: typeof title === 'function' ? title(target.name ?? '') : title,
+      subtitle: typeof subtitle === 'function' ? subtitle(target) : subtitle,
+      onConfirm: () => openApiPendingNotice(modal, '삭제', pendingSubtitle),
     });
   };
 
-  return { modal, handleDelete };
+  return { modal, confirmModal, handleDelete };
 };
