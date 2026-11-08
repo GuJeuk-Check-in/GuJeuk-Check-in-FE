@@ -10,6 +10,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     visitTime: '17:00',
     purposes: ['인터넷', '탁구'],
     visitDate: '2026-10-13',
+    canCheckOut: true,
   },
   {
     id: 2,
@@ -23,8 +24,9 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
   },
   {
     id: 3,
-    name: '박지우',
-    age: 17,
+    name: null,
+    age: 24,
+    visitPurpose: '프로그램 참여',
     gender: '여자',
     phone: '010-0000-0000',
     visitTime: '15:00',
@@ -38,7 +40,7 @@ export const previewVisits: readonly (UserVisitSummary & UserVisitDetailRecord)[
     gender: '남자',
     phone: '010-0000-0000',
     visitTime: '14:30',
-    purposes: ['당구대/탁구'],
+    purposes: ['탁구'],
     visitDate: '2026-10-12',
   },
   {

@@ -5,6 +5,7 @@ import {
 } from '@center/ui/card';
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
+import { OutlineDangerButton } from '@shared/ui/Button';
 import type { UsageRecord } from '../model/types';
 
 interface UsageRecordRowProps {
@@ -24,13 +25,13 @@ export const UsageRecordRow = ({ record, onEndEarly }: UsageRecordRowProps) => {
         <Divider aria-hidden="true" />
         <RecordMeta>{`남은 시간 : ${record.purposeRemainTime}분`}</RecordMeta>
       </Time>
-      <EndButton
+      <OutlineDangerButton
         type="button"
         onClick={() => onEndEarly(record)}
         aria-label={`${record.name} ${record.purposeName} 조기종료`}
       >
         조기종료
-      </EndButton>
+      </OutlineDangerButton>
     </Row>
   );
 };
@@ -78,32 +79,4 @@ const Time = styled.div`
 
 const Divider = styled(RecordDivider)`
   height: 16px;
-`;
-
-const EndButton = styled.button`
-box-sizing: border-box;
-display: flex;
-flex-direction: row;
-justify-content: center;
-align-items: center;
-padding: 0px 40px;
-gap: 16px;
-width: 200px;
-height: 56px;
-background: ${({ theme }) => adminTokens(theme).colors.warning}66;
-border: 4px solid ${({ theme }) => adminTokens(theme).colors.error};
-border-radius: 40px;
-flex: none;
-order: 1;
-flex-grow: 0;
-color: ${({ theme }) => adminTokens(theme).colors.error};
-font-size: 20px;
-font-weight: 600;
-line-height: 1.4;
-white-space: nowrap;
-
-&:hover {
-    color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
-  }
-
 `;

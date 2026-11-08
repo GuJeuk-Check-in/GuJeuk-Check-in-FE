@@ -1,8 +1,11 @@
 import { Modal } from '@center/ui/modal';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { adminTokens } from '@center/tokens';
-import { UserVisitCard, type UserVisitSummary } from '@entities/log';
+import { formatDateKoreanPadded } from '@center/ui/form';
+import { UserVisitCard, getVisitDisplayName, type UserVisitSummary } from '@entities/log';
 import styled from '@emotion/styled';
 import { useConfirmDelete } from '@shared/lib/useConfirmDelete';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { PageTitle } from '@shared/ui';
 
 interface UserVisitListFeatureProps {
@@ -10,13 +13,14 @@ interface UserVisitListFeatureProps {
 }
 
 const DELETE_MESSAGES = {
-  title: (name: string) => `정말 ${name}님의 기록을 삭제하시겠나요?`,
-  subtitle: '삭제된 기록은 복구할 수 없습니다.',
+  title: '이 방명록을 삭제하시겠습니까?',
+  subtitle: (visit: UserVisitSummary) =>
+    [getVisitDisplayName(visit), formatDateKoreanPadded(visit.visitDate), visit.purposes.join(', ')].join(' · '),
   pendingSubtitle: '현재 기록은 삭제되지 않았습니다.',
 };
 
 export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps) => {
-  const { modal, handleDelete } = useConfirmDelete(DELETE_MESSAGES);
+  const { modal, confirmModal, handleDelete } = useConfirmDelete<UserVisitSummary>(DELETE_MESSAGES);
 
   return (
     <Container>
@@ -25,7 +29,11 @@ export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps)
         <List aria-label="방명록 목록">
           {visits.map((visit) => (
             <li key={visit.id}>
-              <UserVisitCard visit={visit} onDelete={() => handleDelete(visit)} />
+              <UserVisitCard
+                visit={visit}
+                onDelete={() => handleDelete(visit)}
+                onCheckOut={() => openApiPendingNotice(modal, '퇴실', '현재 퇴실 처리되지 않았습니다.')}
+              />
             </li>
           ))}
         </List>
@@ -35,6 +43,7 @@ export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps)
         </EmptyState>
       )}
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <ConfirmModal isOpen={confirmModal.isOpen} config={confirmModal.config} onClose={confirmModal.closeModal} />
     </Container>
   );
 };
