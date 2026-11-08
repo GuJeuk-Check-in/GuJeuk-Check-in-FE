@@ -1,18 +1,24 @@
 import { toPhoneDigits } from '@center/ui/form';
 import { getPhoneError } from '@shared/lib/phoneError';
-import type { VisitFormData } from './visitForm';
+import type { VisitFormData, VisitFormVariant } from './visitForm';
 
-export const validateVisitForm = (value: VisitFormData): string | null => {
+export const validateVisitForm = (
+  value: VisitFormData,
+  variant: VisitFormVariant = 'minor',
+): string | null => {
+  const isAdult = variant === 'adult';
   if (
-    !value.name.trim() || !value.age.trim() || !value.gender ||
-    !toPhoneDigits(value.phone) || !value.visitTime.trim() ||
+    (!isAdult && !value.name.trim()) || !value.age.trim() || !value.gender ||
+    (!isAdult && !toPhoneDigits(value.phone)) || !value.visitTime.trim() ||
     value.purposes.length === 0 || !value.visitDate
   ) {
     return '모든 필수 필드를 입력해주세요.';
   }
 
-  const phoneError = getPhoneError(value.phone);
-  if (phoneError) return phoneError;
+  if (!isAdult) {
+    const phoneError = getPhoneError(value.phone);
+    if (phoneError) return phoneError;
+  }
 
   if (!/^\d+(?:\s*세)?$/.test(value.age.trim())) {
     return '연령은 0 이상의 정수로 입력해주세요. 예) 16세';

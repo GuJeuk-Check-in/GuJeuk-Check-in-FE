@@ -5,13 +5,15 @@ import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
-import type { UserVisitDetailRecord } from '@entities/log';
+import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
 import { formatDateKoreanPadded } from '@center/ui/form';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, BackLink } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
+import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { VisitFormFields } from './VisitFormFields';
 
 interface UserVisitDetailProps {
@@ -25,7 +27,13 @@ export const UserVisitDetail = ({
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => createVisitFormData(visit));
-  const modal = useVisitSubmission(formData, '수정');
+  const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
+  const modal = useVisitSubmission(formData, '수정', variant);
+  const { isDirty, guard } = useUnsavedChanges({
+    value: formData,
+    initial: createVisitFormData(visit),
+    enabled: isEditing,
+  });
 
   const handleEdit = () => {
     setFormData(createVisitFormData(visit));
@@ -44,23 +52,29 @@ export const UserVisitDetail = ({
         <VisitFormFields
           value={formData}
           onChange={setFormData}
+          variant={variant}
           purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
         >
           <ActionButtons>
-            <ActionButton content="저장" onClick={modal.handleSubmit} />
+            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty} />
           </ActionButtons>
         </VisitFormFields>
       ) : (
         <Fields>
           <InputRow>
-            <DetailInput label="이름" value={visit?.name ?? '—'} icon={<IoMdPerson />} />
+            <DetailInput label="이름" value={visit ? getVisitDisplayName(visit) : '—'} icon={<IoMdPerson />} />
             <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<CalendarIcon />} />
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
-          <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
+          {variant === 'minor' && (
+            <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
+          )}
           <DetailInput label="방문 시각" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
           <DetailInput label="방문날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<CalendarIcon />} />
+          {variant === 'adult' && (
+            <DetailInput label="방문목적" value={visit?.visitPurpose || '—'} icon={<IoLocationSharp />} />
+          )}
           <DetailInput label="비고사항" value={visit?.note || '—'} icon={<MdDescription />} />
           {visit && (
             <ActionButtons>
@@ -74,6 +88,7 @@ export const UserVisitDetail = ({
         config={modal.config}
         onClose={modal.closeModal}
       />
+      <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </DetailWrapper>
   );
 };

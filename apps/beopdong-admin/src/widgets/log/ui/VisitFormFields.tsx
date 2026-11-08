@@ -8,12 +8,13 @@ import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { formatAge } from '@shared/lib/formatAge';
 import { getPhoneError } from '@shared/lib/phoneError';
-import type { VisitFormData } from '../model/visitForm';
+import type { VisitFormData, VisitFormVariant } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
   readonly value: VisitFormData;
   readonly onChange: (value: VisitFormData) => void;
   readonly purposeOptions: readonly string[];
+  readonly variant?: VisitFormVariant;
   readonly children?: ReactNode;
 }
 
@@ -21,6 +22,7 @@ export const VisitFormFields = ({
   value,
   onChange,
   purposeOptions,
+  variant = 'minor',
   children,
 }: VisitFormFieldsProps) => (
   <Fields>
@@ -54,19 +56,21 @@ export const VisitFormFields = ({
       icon={<IoMdPerson />}
       onChange={(gender) => onChange({ ...value, gender })}
     />
-    <DetailInput
-      label="연락처"
-      value={value.phone}
-      placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
-      icon={<PhoneIcon />}
-      type="tel"
-      isEditable
-      errorMessage={getPhoneError(value.phone)}
-      onChange={(event) => onChange({ ...value, phone: event.target.value })}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });
-      }}
-    />
+    {variant === 'minor' && (
+      <DetailInput
+        label="연락처"
+        value={value.phone}
+        placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
+        icon={<PhoneIcon />}
+        type="tel"
+        isEditable
+        errorMessage={getPhoneError(value.phone)}
+        onChange={(event) => onChange({ ...value, phone: event.target.value })}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });
+        }}
+      />
+    )}
     <TimePickerField
       label="방문 시각"
       value={value.visitTime}
@@ -74,6 +78,7 @@ export const VisitFormFields = ({
     />
     <SelectOption
       label="이용대장"
+      variant="outline"
       multiple
       value={value.purposes}
       placeholder="이용대장을 선택해주세요"
@@ -88,6 +93,16 @@ export const VisitFormFields = ({
       value={value.visitDate}
       onChange={(visitDate) => onChange({ ...value, visitDate })}
     />
+    {variant === 'adult' && (
+      <DetailInput
+        label="방문목적"
+        value={value.visitPurpose}
+        placeholder="방문목적을 입력해주세요"
+        icon={<IoLocationSharp />}
+        isEditable
+        onChange={(event) => onChange({ ...value, visitPurpose: event.target.value })}
+      />
+    )}
     <NoteField>
       <DetailInput
         label="비고사항"

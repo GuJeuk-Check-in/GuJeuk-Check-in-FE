@@ -32,7 +32,9 @@ export const Router = () => {
         <Route path="/organ/change" element={<OrganChange />} />
         <Route element={<AppLayout />}>
           <Route path="/log" element={<UserVisitList />} />
-          <Route path="/log/create" element={<UserDetail />} />
+          <Route path="/log/create" element={<Navigate to="/log/create/adult" replace />} />
+          <Route path="/log/create/minor" element={<UserDetail title="미성년자 방명록 추가" variant="minor" />} />
+          <Route path="/log/create/adult" element={<UserDetail title="성인 방명록 추가" variant="adult" />} />
           <Route path="/log/:logId" element={<UserDetailView />} />
           <Route path="/usage/current" element={<CurrentUsage />} />
           <Route path="/usage/history" element={<UsageHistory />} />
