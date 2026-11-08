@@ -21,6 +21,7 @@ export interface AdminColors {
   fieldBorder: string;
   secondaryText: string;
   mutedText: string;
+  fieldFocusBackground: string;
   circles: readonly string[];
 }
 
@@ -46,6 +47,7 @@ export const componentMetrics = {
   authPanelRadius: '20px',
   fieldHeight: '3.5rem',
   fieldRadius: '0.5rem',
+  fieldFocus: 'outline' as 'highlight' | 'outline',
   cardRadius: '2.25rem',
   sidebarWidth: 'max(20vw, 17rem)',
 };
@@ -121,7 +123,7 @@ export const blueTheme: AdminTheme = {
     error: '#ff5a5a', warning: '#D88282', cardBorder: '#6f95c4',
     selected: '#E9F0FF', selectedHover: '#f4f8ff',
     white: '#ffffff', black: '#000000', text: '#2e2e32',
-    fieldBorder: '#404040', secondaryText: '#828284', mutedText: '#969698',
+    fieldBorder: '#404040', secondaryText: '#828284', mutedText: '#969698', fieldFocusBackground: '#fbfbff',
     circles: ['#0F50A0', '#2ABFEC', '#FBBC18', '#2BBDEC', '#E6222C', '#17A753',
       '#2BBDEC', '#A1298C', '#2BBDEC', '#E8232C', '#2ABFEC', '#FBBC18', '#17A753'],
   },

@@ -4,6 +4,8 @@ import { adminTokens } from '@center/tokens';
 import { useModal } from '@center/ui/modal';
 import { useSortableItems } from '@center/ui/sortable-board';
 import { MdWarning } from 'react-icons/md';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
+import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { Purpose } from '@entities/purpose';
 
 export const usePurposeManagement = (initialPurposes: readonly Purpose[]) => {
@@ -18,20 +20,12 @@ export const usePurposeManagement = (initialPurposes: readonly Purpose[]) => {
   });
 
   const showApiNotice = (action: string) => {
-    modal.openModal({
-      title: `${action} API 연결 전입니다.`,
-      subtitle: '변경 내용은 아직 저장되지 않았습니다.',
-      buttons: [{ label: '확인', onClick: modal.closeModal }],
-    });
+    openApiPendingNotice(modal, action, '변경 내용은 아직 저장되지 않았습니다.');
   };
 
   const handleCreate = (label: string) => {
     if (!label.trim()) {
-      modal.openModal({
-        title: '입력 확인',
-        subtitle: '이용대장 이름을 입력해주세요.',
-        buttons: [{ label: '확인', onClick: modal.closeModal }],
-      });
+      openInputCheckNotice(modal, '이용대장 이름을 입력해주세요.');
       return;
     }
     showApiNotice('추가');

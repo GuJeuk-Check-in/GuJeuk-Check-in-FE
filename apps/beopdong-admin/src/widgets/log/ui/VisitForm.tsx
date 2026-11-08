@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
+import { ActionButton, ActionButtons } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
-import { VisitFormActions, VisitFormButton, VisitFormFields } from './VisitFormFields';
+import { VisitFormFields } from './VisitFormFields';
 
 interface VisitFormProps {
   readonly purposeOptions: readonly string[];
@@ -19,9 +20,9 @@ export const VisitForm = ({ purposeOptions }: VisitFormProps) => {
         onChange={setFormData}
         purposeOptions={purposeOptions}
       >
-        <VisitFormActions>
-          <VisitFormButton content="추가" onClick={modal.handleSubmit} />
-        </VisitFormActions>
+        <ActionButtons>
+          <ActionButton content="추가" onClick={modal.handleSubmit} />
+        </ActionButtons>
       </VisitFormFields>
       <Modal
         isOpen={modal.isOpen}

@@ -1,43 +1,26 @@
-import { Modal, useModal } from '@center/ui/modal';
+import { Modal } from '@center/ui/modal';
 import { adminTokens } from '@center/tokens';
-import { useTheme } from '@emotion/react';
 import { UserVisitCard, type UserVisitSummary } from '@entities/log';
 import styled from '@emotion/styled';
-import { IoWarningOutline } from 'react-icons/io5';
+import { useConfirmDelete } from '@shared/lib/useConfirmDelete';
+import { PageTitle } from '@shared/ui';
 
 interface UserVisitListFeatureProps {
   visits?: readonly UserVisitSummary[];
 }
 
-export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps) => {
-  const modal = useModal();
-  const { colors } = adminTokens(useTheme());
+const DELETE_MESSAGES = {
+  title: (name: string) => `정말 ${name}님의 기록을 삭제하시겠나요?`,
+  subtitle: '삭제된 기록은 복구할 수 없습니다.',
+  pendingSubtitle: '현재 기록은 삭제되지 않았습니다.',
+};
 
-  const handleDelete = (visit: UserVisitSummary) => {
-    modal.openModal({
-      icon: <IoWarningOutline />,
-      title: `정말 ${visit.name}님의 기록을 삭제하시겠나요?`,
-      subtitle: '삭제된 기록은 복구할 수 없습니다.',
-      theme: 'warning',
-      buttons: [
-        { label: '아니요', onClick: modal.closeModal },
-        {
-          label: '네, 삭제합니다',
-          variant: 'primary',
-          bgColor: colors.error,
-          onClick: () => modal.openModal({
-            title: '삭제 API 연결 전입니다.',
-            subtitle: '현재 기록은 삭제되지 않았습니다.',
-            buttons: [{ label: '확인', onClick: modal.closeModal }],
-          }),
-        },
-      ],
-    });
-  };
+export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps) => {
+  const { modal, handleDelete } = useConfirmDelete(DELETE_MESSAGES);
 
   return (
     <Container>
-      <Title id="admin-page-title" tabIndex={-1}>방명록 조회</Title>
+      <Title>방명록 조회</Title>
       {visits.length > 0 ? (
         <List aria-label="방명록 목록">
           {visits.map((visit) => (
@@ -61,12 +44,9 @@ const Container = styled.section`
   min-width: 0;
 `;
 
-const Title = styled.h1`
+const Title = styled(PageTitle)`
   width: min(100%, 80rem);
   margin: 0 auto 2rem;
-  font-size: 2rem;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
 `;
 
 const List = styled.ul`

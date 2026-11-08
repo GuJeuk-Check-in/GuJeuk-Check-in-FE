@@ -1,4 +1,5 @@
 import { adminTokens } from '@center/tokens';
+import { fieldFocusStyle } from './fieldFocusStyle';
 import styled from '@emotion/styled';
 import React from 'react';
 
@@ -17,6 +18,7 @@ export interface DetailInputProps {
     | ((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void)
     | null;
   type?: string;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
@@ -25,6 +27,7 @@ export interface DetailInputProps {
   trailingIcon?: React.ReactNode;
   multiple?: boolean;
   hideNumberSpinner?: boolean;
+  errorMessage?: string;
 }
 
 export const DetailInput: React.FC<DetailInputProps> = ({
@@ -35,6 +38,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   name,
   onChange,
   type = 'text',
+  onKeyDown,
   inputMode,
   options = [],
   placeholder = '',
@@ -43,9 +47,11 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   trailingIcon,
   multiple = false,
   hideNumberSpinner = false,
+  errorMessage,
 }) => {
   const inputId = React.useId();
   const labelId = `${inputId}-label`;
+  const errorId = `${inputId}-error`;
 
   const renderInput = () => {
     if (!isEditable) {
@@ -67,7 +73,16 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     }
     if (type === 'select') {
       return (
-        <StyledSelect id={inputId} name={name} value={value} multiple={multiple} onChange={(e) => onChange?.(e)}>
+        <StyledSelect
+          id={inputId}
+          name={name}
+          value={value}
+          multiple={multiple}
+          $invalid={!!errorMessage}
+          aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={errorMessage ? errorId : undefined}
+          onChange={(e) => onChange?.(e)}
+        >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -78,27 +93,32 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     }
     if (type === 'checkbox') {
       return (
-        <EditableCheckboxWrapper isEditable={true}>
+        <EditableCheckboxWrapper isEditable={true} $invalid={!!errorMessage}>
           <EditableCheckbox
             type="checkbox"
             name={name}
             checked={!!value}
             onChange={(e) => onChange?.(e)}
             id={inputId}
+            aria-invalid={errorMessage ? true : undefined}
+            aria-describedby={errorMessage ? errorId : undefined}
           />
         </EditableCheckboxWrapper>
       );
     }
     return (
-      <InputContainer isEditable={true} $hasIcon={!!icon}>
+      <InputContainer isEditable={true} $hasIcon={!!icon} $invalid={!!errorMessage}>
         {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
           id={inputId}
+          aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={errorMessage ? errorId : undefined}
           type={type}
           inputMode={inputMode}
           name={name}
           value={value}
           onChange={(e) => onChange?.(e)}
+          onKeyDown={onKeyDown}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}
@@ -112,6 +132,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     <Container width={width}>
       <Label id={labelId} htmlFor={isEditable ? inputId : undefined}>{label}</Label>
       {renderInput()}
+      {isEditable && errorMessage && <ErrorText id={errorId} role="alert">{errorMessage}</ErrorText>}
     </Container>
   );
 };
@@ -124,6 +145,12 @@ const Container = styled.div<{ width: string }>`
   box-sizing: border-box;
 `;
 
+const ErrorText = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  color: ${({ theme }) => adminTokens(theme).colors.error};
+`;
+
 const Label = styled.label`
   display: block;
   font-size: ${({ theme }) => adminTokens(theme).typography.input};
@@ -131,7 +158,7 @@ const Label = styled.label`
   font-weight: 500;
 `;
 
-const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
+const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean; $invalid?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -150,6 +177,15 @@ const InputContainer = styled.div<{ isEditable: boolean; $hasIcon?: boolean }>`
     height: auto;
     padding-block: 0.75rem;
     min-width: 0;
+  `}
+
+  ${({ theme }) => fieldFocusStyle(theme, { selector: '&:focus-within', outlineFallback: false })}
+
+  ${({ $invalid, theme }) => $invalid && `
+    &&,
+    &&:focus-within {
+      border-color: ${adminTokens(theme).colors.error};
+    }
   `}
 `;
 
@@ -190,7 +226,7 @@ const ReadOnlyText = styled.p`
   overflow-wrap: anywhere;
 `;
 
-const StyledSelect = styled.select`
+const StyledSelect = styled.select<{ $invalid?: boolean }>`
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -214,6 +250,10 @@ const StyledSelect = styled.select`
     padding-block: 0.5rem;
     background-image: none;
   }
+
+  ${({ $invalid, theme }) => $invalid && `
+    border: 0.0625rem solid ${adminTokens(theme).colors.error};
+  `}
 `;
 
 const EditableCheckboxWrapper = styled(InputContainer)`
