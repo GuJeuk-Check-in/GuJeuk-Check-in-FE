@@ -4,6 +4,8 @@ import { adminTokens } from '@center/tokens';
 import { Modal, useModal } from '@center/ui/modal';
 import { ActionButton, BackLink, DetailPanel } from '@shared/ui';
 import { applyUsageHistoryPatch, UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
+import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UsageHistoryDetail, UsageTimeField } from '@entities/usage';
@@ -17,6 +19,7 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
   const [isEditing, setIsEditing] = useState(false);
   const [openField, setOpenField] = useState<UsageTimeField | null>(null);
   const modal = useModal();
+  const { isDirty, guard } = useUnsavedChanges({ value: draft, initial: detail, enabled: isEditing });
 
   const handleEdit = () => setIsEditing(true);
 
@@ -43,7 +46,7 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
           />
           <Actions>
             {isEditing ? (
-              <ActionButton content="저장" onClick={handleSave} />
+              <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
             ) : (
               <ActionButton content="수정" onClick={handleEdit} />
             )}
@@ -53,6 +56,7 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
         <StatusText role="status">종료된 이용대장 기록을 찾을 수 없습니다.</StatusText>
       )}
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </Card>
   );
 };

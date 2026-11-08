@@ -3,6 +3,8 @@ import styled from '@emotion/styled';
 import { Modal, useModal } from '@center/ui/modal';
 import { ActionButton, BackLink, DetailPanel } from '@shared/ui';
 import { UserDetailFields, validateUserDetail } from '@entities/user';
+import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import type { UserDetail } from '@entities/user';
@@ -15,6 +17,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
   const [draft, setDraft] = useState(user);
   const [isEditing, setIsEditing] = useState(false);
   const modal = useModal();
+  const { isDirty, guard } = useUnsavedChanges({ value: draft, initial: user, enabled: isEditing });
 
   const handleSave = () => {
     const error = draft && validateUserDetail(draft);
@@ -37,7 +40,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
         {user && draft && (
           <Actions>
             {isEditing ? (
-              <ActionButton content="저장" onClick={handleSave} />
+              <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
             ) : (
               <ActionButton content="수정" onClick={() => setIsEditing(true)} />
             )}
@@ -45,6 +48,7 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
         )}
       </Content>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </Card>
   );
 };

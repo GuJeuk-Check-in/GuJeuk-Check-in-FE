@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { adminTokens } from '@center/tokens';
+import { adminTokens, grayPalette } from '@center/tokens';
 import { PasswordButton } from './PasswordButton';
 
 export const ActionButtons = styled.div`
@@ -20,6 +20,17 @@ export const ActionButton = styled(PasswordButton)`
 
   &:hover {
     background-color: ${({ theme }) => adminTokens(theme).colors.primaryDark};
+  }
+
+  &:disabled,
+  &:disabled:hover {
+    background-color: ${grayPalette[60]};
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &:disabled > span {
+    color: ${grayPalette[30]};
   }
 
   @media (prefers-reduced-motion: reduce) {
