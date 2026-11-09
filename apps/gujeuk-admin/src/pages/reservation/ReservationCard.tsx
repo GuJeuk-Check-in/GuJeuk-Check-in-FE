@@ -11,6 +11,7 @@ interface ReservationCardProps {
   readOnly?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onMouseLeave?: () => void;
 }
 
 export const ReservationCard = ({
@@ -22,6 +23,7 @@ export const ReservationCard = ({
   readOnly = false,
   onClick,
   onMouseEnter,
+  onMouseLeave,
 }: ReservationCardProps) => {
   return (
     <Card
@@ -50,7 +52,7 @@ const Card = styled.button<{ $column: number; $row: number; $readOnly: boolean }
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid ${ColorData.colors.primary};
+  border: 1px solid transparent;
   background-color: ${ColorData.colors.fillNormal};
   color: ${ColorData.colors.labelNormal};
   font-family: inherit;

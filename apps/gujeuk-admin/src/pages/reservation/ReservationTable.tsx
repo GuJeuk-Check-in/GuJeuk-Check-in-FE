@@ -1,4 +1,11 @@
-import { Fragment, useEffect, useRef, useState, type MouseEvent } from "react";
+import {
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type MouseEvent,
+} from "react";
 import styled from "@emotion/styled";
 import { ColorData } from "@center/tokens";
 import { SucceedIcon } from "@shared/assets";
@@ -59,6 +66,9 @@ export const ReservationTable = ({
   const { mutate: createReservation, isPending: isCreating } =
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const detailCloseTimerRef = useRef<number | null>(null);
+  const detailHasFocusRef = useRef(false);
+  const detailPointerInsideRef = useRef(false);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -86,6 +96,9 @@ export const ReservationTable = ({
     return () => {
       if (toastTimerRef.current !== null) {
         window.clearTimeout(toastTimerRef.current);
+      }
+      if (detailCloseTimerRef.current !== null) {
+        window.clearTimeout(detailCloseTimerRef.current);
       }
     };
   }, []);
@@ -151,12 +164,65 @@ export const ReservationTable = ({
     });
   };
 
+  const cancelDetailClose = () => {
+    if (detailCloseTimerRef.current !== null) {
+      window.clearTimeout(detailCloseTimerRef.current);
+      detailCloseTimerRef.current = null;
+    }
+  };
+
+  const scheduleDetailClose = () => {
+    cancelDetailClose();
+    detailCloseTimerRef.current = window.setTimeout(() => {
+      detailCloseTimerRef.current = null;
+      if (detailHasFocusRef.current) return;
+      setSelectedReservationId(null);
+      detailPointerInsideRef.current = false;
+    }, 200);
+  };
+
+  const handleDetailPointerEnter = () => {
+    detailPointerInsideRef.current = true;
+    cancelDetailClose();
+  };
+
+  const handleDetailPointerLeave = () => {
+    detailPointerInsideRef.current = false;
+    scheduleDetailClose();
+  };
+
+  const handleDetailBlur = (event: FocusEvent<HTMLDivElement>) => {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+
+    detailHasFocusRef.current = false;
+    if (detailPointerInsideRef.current) {
+      cancelDetailClose();
+      return;
+    }
+
+    cancelDetailClose();
+    setSelectedReservationId(null);
+  };
+
+  const closeDetail = () => {
+    cancelDetailClose();
+    detailHasFocusRef.current = false;
+    detailPointerInsideRef.current = false;
+    setSelectedReservationId(null);
+  };
+
   const handleReservationClick = (
     reservation: Reservation,
     event: MouseEvent<HTMLButtonElement>,
     autoFocus: boolean,
   ) => {
     if (createTarget || deleteTarget) return;
+    cancelDetailClose();
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
     const rootFontSize = parseFloat(
@@ -261,10 +327,16 @@ export const ReservationTable = ({
           reservation={selectedReservation}
           position={detailPosition}
           autoFocus={detailAutoFocus}
-          onClose={() => setSelectedReservationId(null)}
+          onMouseEnter={handleDetailPointerEnter}
+          onMouseLeave={handleDetailPointerLeave}
+          onFocus={() => {
+            detailHasFocusRef.current = true;
+          }}
+          onBlur={handleDetailBlur}
+          onClose={closeDetail}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);
-            setSelectedReservationId(null);
+            closeDetail();
           }}
         />
       )}

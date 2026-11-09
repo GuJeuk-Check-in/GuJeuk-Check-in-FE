@@ -1,6 +1,12 @@
 import { adminTokens } from '@center/tokens';
 import styled from '@emotion/styled';
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  type FocusEvent,
+  type ReactNode,
+} from 'react';
 import { type ModalConfig } from '../modal/types';
 
 const FOCUSABLE_ELEMENTS_SELECTOR =
@@ -14,6 +20,10 @@ interface PopoverProps {
   onClose?: () => void;
   titleExtra?: ReactNode;
   autoFocus?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  onFocus?: () => void;
+  onBlur?: (event: FocusEvent<HTMLDivElement>) => void;
 }
 
 export const Popover = ({
@@ -24,6 +34,10 @@ export const Popover = ({
   onClose,
   titleExtra,
   autoFocus = true,
+  onMouseEnter,
+  onMouseLeave,
+  onFocus,
+  onBlur,
 }: PopoverProps) => {
   const titleId = useId();
   const subtitleId = useId();
@@ -71,6 +85,10 @@ export const Popover = ({
     <PopoverLayer>
       <PopoverContent
         ref={contentRef}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onFocus={onFocus}
+        onBlur={onBlur}
         role="dialog"
         aria-labelledby={titleId}
         aria-describedby={subtitle ? subtitleId : undefined}
