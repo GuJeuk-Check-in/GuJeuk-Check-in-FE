@@ -11,7 +11,6 @@ interface ReservationCardProps {
   readOnly?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
-  onMouseLeave?: () => void;
 }
 
 export const ReservationCard = ({
@@ -23,7 +22,6 @@ export const ReservationCard = ({
   readOnly = false,
   onClick,
   onMouseEnter,
-  onMouseLeave,
 }: ReservationCardProps) => {
   return (
     <Card
