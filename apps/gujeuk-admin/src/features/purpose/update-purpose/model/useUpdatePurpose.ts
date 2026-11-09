@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import {
   updatePurpose,
   usePurposeStore,
   UpdatePurposeRequest,
-} from "@entities/purpose";
-import { reservationListKey } from "@entities/reservation";
+} from '@entities/purpose';
+import { reservationListKey } from '@entities/reservation';
 
 export const useUpdatePurpose = () => {
   const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ export const useUpdatePurpose = () => {
     },
     onSuccess: (_, variables) => {
       updateLocalPurpose(variables.id, variables.purpose);
-      queryClient.invalidateQueries({ queryKey: ["purposeList"] });
+      queryClient.invalidateQueries({ queryKey: ['purposeList'] });
       queryClient.invalidateQueries({ queryKey: reservationListKey });
     },
   });
