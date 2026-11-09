@@ -300,6 +300,7 @@ export const ReservationTable = ({
                       : (event) =>
                           handleReservationClick(reservation, event, false)
                   }
+                  onMouseLeave={readOnly ? undefined : scheduleDetailClose}
                 />
               ) : !readOnly ? (
                 <ReservationEmptyCell

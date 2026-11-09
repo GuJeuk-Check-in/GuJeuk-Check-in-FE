@@ -11,6 +11,7 @@ interface ReservationCardProps {
   readOnly?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
+  onMouseLeave?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ReservationCard = ({
@@ -22,6 +23,7 @@ export const ReservationCard = ({
   readOnly = false,
   onClick,
   onMouseEnter,
+  onMouseLeave,
 }: ReservationCardProps) => {
   return (
     <Card
@@ -31,6 +33,7 @@ export const ReservationCard = ({
       aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       type={readOnly ? undefined : 'button'}
       $readOnly={readOnly}
     >

@@ -20,7 +20,7 @@ const ReservationDashboardPage = ({
     isLoading: isPurposeLoading,
     isError: isPurposeError,
     refetch: refetchPurposes,
-  } = usePurposeList();
+  } = usePurposeList(readOnly ? 5_000 : undefined);
   const [currentTime, setCurrentTime] = useState(() => new Date());
 
   useEffect(() => {
@@ -47,24 +47,28 @@ const ReservationDashboardPage = ({
   };
 
   return (
-    <Page>
-      {!readOnly && (
-        <Header>
-          <div>
+    <Page $readOnly={readOnly}>
+      <Header>
+        <div>
+          {!readOnly && (
             <Eyebrow>운영</Eyebrow>
-            <Title>시설 예약 현황</Title>
+          )}
+          <Title>시설 예약 현황</Title>
+          {!readOnly && (
             <Description>
               사용 중 <strong>{data ? `${data.inUseCount}곳` : "-"}</strong> ·
               사용 가능{" "}
               <strong>{data ? `${data.availableCount}곳` : "-"}</strong>
             </Description>
-          </div>
+          )}
+        </div>
+        {!readOnly && (
           <RefreshButton type="button" onClick={handleRefresh}>
             <FiRefreshCw aria-hidden="true" />
             새로고침
           </RefreshButton>
-        </Header>
-      )}
+        )}
+      </Header>
 
       {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
       {isTableError && (
@@ -80,8 +84,9 @@ const ReservationDashboardPage = ({
       )}
       {data && purposes && places.length === 0 && (
         <p role="status">
-          예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을
-          설정해 주세요.
+          {readOnly
+            ? "예약 가능한 시설이 없어요. 관리자에게 문의해 주세요."
+            : "예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을 설정해 주세요."}
         </p>
       )}
       {data && places.length > 0 && (
@@ -106,9 +111,12 @@ const ReservationDashboardPage = ({
 
 export default ReservationDashboardPage;
 
-const Page = styled.div`
+const Page = styled.div<{ $readOnly: boolean }>`
   width: 100%;
+  min-height: ${({ $readOnly }) => ($readOnly ? "100vh" : "auto")};
   margin: 0 auto;
+  background-color: ${({ $readOnly }) =>
+    $readOnly ? ColorData.colors.primary : "transparent"};
   color: ${ColorData.colors.background};
 `;
 
