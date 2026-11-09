@@ -32,7 +32,9 @@ interface ReservationCreateModalProps {
   time: ReservationTime;
   onClose: () => void;
   onSubmit: (values: ReservationCreateValues) => void;
+  onEdit: () => void;
   isPending: boolean;
+  errorMessage: string | null;
 }
 
 export const ReservationCreateModal = ({
@@ -40,7 +42,9 @@ export const ReservationCreateModal = ({
   time,
   onClose,
   onSubmit,
+  onEdit,
   isPending,
+  errorMessage,
 }: ReservationCreateModalProps) => {
   const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
@@ -91,7 +95,7 @@ export const ReservationCreateModal = ({
         </InfoRow>
       </TargetInfo>
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} onChange={onEdit}>
         <Field>
           <Label htmlFor="reservation-user-name">이름</Label>
           <Input
@@ -145,6 +149,7 @@ export const ReservationCreateModal = ({
         </CompanionRow>
         <Notice>ⓘ 동반 인원에는 예약자 본인을 제외해 주세요.</Notice>
         <Notice>ⓘ 예약은 1인 1시간만 가능해요.</Notice>
+        {errorMessage && <ErrorMessage role="alert">{errorMessage}</ErrorMessage>}
         <ActionRow>
           <ActionButton
             type="button"
@@ -245,6 +250,16 @@ const Notice = styled.p`
   margin: -${ColorData.spacing[8]} 0 0;
   color: ${ColorData.colors.labelAlternative};
   font-size: ${ColorData.typography.caption.fontSize};
+`;
+
+const ErrorMessage = styled.p`
+  margin: 0;
+  padding: ${ColorData.spacing[8]} ${ColorData.spacing[12]};
+  border-radius: ${ColorData.radius.medium};
+  background-color: ${ColorData.colors.negativeBackground};
+  color: ${ColorData.colors.negative};
+  font-size: ${ColorData.typography.caption.fontSize};
+  line-height: 1.5;
 `;
 
 const Input = styled.input`

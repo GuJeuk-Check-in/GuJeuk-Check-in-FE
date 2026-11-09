@@ -25,7 +25,7 @@ import {
 import { ReservationEmptyCell } from "./ReservationEmptyCell";
 import { useDeleteReservation } from "@features/reservation/delete-reservation";
 import { useCreateReservation } from "@features/reservation/create-reservation";
-import { isAxiosError } from "axios";
+import { getCreateReservationErrorMessage } from "./reservationErrorMessage";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -61,11 +61,13 @@ export const ReservationTable = ({
     Reservation["id"] | null
   >(null);
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
   const { mutate: deleteReservation, isPending } = useDeleteReservation();
   const { mutate: createReservation, isPending: isCreating } =
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const createEditVersionRef = useRef(0);
   const detailCloseTimerRef = useRef<number | null>(null);
   const detailHasFocusRef = useRef(false);
   const detailPointerInsideRef = useRef(false);
@@ -117,6 +119,8 @@ export const ReservationTable = ({
 
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget || isCreating) return;
+    setCreateError(null);
+    const editVersion = createEditVersionRef.current;
 
     createReservation(
       {
@@ -133,13 +137,9 @@ export const ReservationTable = ({
           showToast(`${values.userName}님의 예약이 추가됐어요.`);
         },
         onError: (error) => {
-          const message = isAxiosError<{ message?: string }>(error)
-            ? error.response?.data?.message
-            : undefined;
-          showToast(
-            message || "예약을 추가하지 못했어요. 다시 시도해 주세요.",
-            "caution",
-          );
+          // 요청 뒤에 입력을 고쳤다면 이전 입력의 오류이므로 띄우지 않음
+          if (createEditVersionRef.current !== editVersion) return;
+          setCreateError(getCreateReservationErrorMessage(error));
         },
       },
     );
@@ -311,6 +311,7 @@ export const ReservationTable = ({
                   row={timeIndex + 2}
                   onAddClick={(selectedPlace, selectedTime) => {
                     setSelectedReservationId(null);
+                    setCreateError(null);
                     setCreateTarget({
                       place: selectedPlace,
                       time: selectedTime,
@@ -361,7 +362,12 @@ export const ReservationTable = ({
             if (!isCreating) setCreateTarget(null);
           }}
           onSubmit={handleCreate}
+          onEdit={() => {
+            createEditVersionRef.current += 1;
+            setCreateError(null);
+          }}
           isPending={isCreating}
+          errorMessage={createError}
         />
       )}
 
