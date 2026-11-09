@@ -5,14 +5,16 @@ import { ColorData } from "@center/tokens";
 import { usePurposeList } from "@entities/purpose";
 import { useReservationList } from "@entities/reservation";
 import { ReservationTable } from "./ReservationTable";
-import {
-  TimeData,
-  getActiveTimeIndex,
-  toReservation,
-} from "./ReservationData";
+import { TimeData, getActiveTimeIndex, toReservation } from "./ReservationData";
 
-const ReservationDashboardPage = () => {
-  const { data, isLoading, isError, refetch } = useReservationList();
+const ReservationDashboardPage = ({
+  readOnly = false,
+}: {
+  readOnly?: boolean;
+}) => {
+  const { data, isLoading, isError, refetch } = useReservationList(
+    readOnly ? 5_000 : undefined,
+  );
   const {
     data: purposes,
     isLoading: isPurposeLoading,
@@ -32,7 +34,8 @@ const ReservationDashboardPage = () => {
     .map((purpose) => purpose.purpose);
   const reservations = (data?.reservations ?? []).map(toReservation);
   const hasUnmappedReservations = reservations.some(
-    (item) => !places.includes(item.place) ||
+    (item) =>
+      !places.includes(item.place) ||
       !TimeData.some((time) => time === item.startTime),
   );
   const isTableLoading = isLoading || isPurposeLoading;
@@ -45,38 +48,58 @@ const ReservationDashboardPage = () => {
 
   return (
     <Page>
-      <Header>
-        <div>
-          <Eyebrow>운영</Eyebrow>
-          <Title>시설 예약 현황</Title>
-          <Description>
-            사용 중 <strong>{data ? `${data.inUseCount}곳` : '-'}</strong> · 사용 가능{" "}
-            <strong>{data ? `${data.availableCount}곳` : '-'}</strong>
-          </Description>
-        </div>
-        <RefreshButton type="button" onClick={handleRefresh}>
-          <FiRefreshCw aria-hidden="true" />
-          새로고침
-        </RefreshButton>
-      </Header>
+      {!readOnly && (
+        <Header>
+          <div>
+            <Eyebrow>운영</Eyebrow>
+            <Title>시설 예약 현황</Title>
+            <Description>
+              사용 중 <strong>{data ? `${data.inUseCount}곳` : "-"}</strong> ·
+              사용 가능{" "}
+              <strong>{data ? `${data.availableCount}곳` : "-"}</strong>
+            </Description>
+          </div>
+          <RefreshButton type="button" onClick={handleRefresh}>
+            <FiRefreshCw aria-hidden="true" />
+            새로고침
+          </RefreshButton>
+        </Header>
+      )}
 
       {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
-      {isTableError && <p role="alert">예약 목록을 불러오지 못했어요. 새로고침을 눌러 다시 시도해 주세요.</p>}
-      {hasUnmappedReservations && <p role="alert">일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.</p>}
-      {data && purposes && places.length === 0 && (
-        <p role="status">예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을 설정해 주세요.</p>
+      {isTableError && (
+        <p role="alert">
+          예약 목록을 불러오지 못했어요.
+          {!readOnly && " 새로고침을 눌러 다시 시도해 주세요."}
+        </p>
       )}
-      {data && places.length > 0 && <TableViewport>
-        <ReservationTable
-          places={places}
-          reservations={reservations}
-          activeTimeIndex={activeTimeIndex}
-        />
-      </TableViewport>}
-      <HelpText>
-        빈 칸을 누르면 예약을 추가하고, 예약된 칸을 누르면 취소할 수 있어요.
-        예약은 1인 1시간만 가능해요.
-      </HelpText>
+      {hasUnmappedReservations && (
+        <p role="alert">
+          일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.
+        </p>
+      )}
+      {data && purposes && places.length === 0 && (
+        <p role="status">
+          예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을
+          설정해 주세요.
+        </p>
+      )}
+      {data && places.length > 0 && (
+        <TableViewport>
+          <ReservationTable
+            places={places}
+            reservations={reservations}
+            activeTimeIndex={activeTimeIndex}
+            readOnly={readOnly}
+          />
+        </TableViewport>
+      )}
+      {!readOnly && (
+        <HelpText>
+          빈 칸을 누르면 예약을 추가하고, 예약된 칸을 누르면 취소할 수 있어요.
+          예약은 1인 1시간만 가능해요.
+        </HelpText>
+      )}
     </Page>
   );
 };

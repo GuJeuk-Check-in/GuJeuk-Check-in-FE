@@ -29,6 +29,7 @@ interface ReservationTableProps {
   places: ReservationPlace[];
   reservations: Reservation[];
   activeTimeIndex: number;
+  readOnly?: boolean;
 }
 
 type ToastVariant = "positive" | "caution";
@@ -42,6 +43,7 @@ export const ReservationTable = ({
   places,
   reservations,
   activeTimeIndex,
+  readOnly = false,
 }: ReservationTableProps) => {
   const [selectedReservationId, setSelectedReservationId] = useState<
     Reservation["id"] | null
@@ -219,14 +221,21 @@ export const ReservationTable = ({
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
-                  onClick={(event) =>
-                    handleReservationClick(reservation, event, true)
+                  readOnly={readOnly}
+                  onClick={
+                    readOnly
+                      ? undefined
+                      : (event) =>
+                          handleReservationClick(reservation, event, true)
                   }
-                  onMouseEnter={(event) =>
-                    handleReservationClick(reservation, event, false)
+                  onMouseEnter={
+                    readOnly
+                      ? undefined
+                      : (event) =>
+                          handleReservationClick(reservation, event, false)
                   }
                 />
-              ) : (
+              ) : !readOnly ? (
                 <ReservationEmptyCell
                   key={`${time}-${place}`}
                   place={place}
@@ -241,7 +250,7 @@ export const ReservationTable = ({
                     });
                   }}
                 />
-              );
+              ) : null;
             })}
           </Fragment>
         ))}
@@ -299,7 +308,10 @@ export const ReservationTable = ({
 
 const TableGrid = styled.div<{ $placeCount: number }>`
   display: grid;
-  grid-template-columns: 5rem repeat(${({ $placeCount }) => $placeCount}, minmax(7rem, 1fr));
+  grid-template-columns: 5rem repeat(
+      ${({ $placeCount }) => $placeCount},
+      minmax(7rem, 1fr)
+    );
   grid-template-rows: 4.5rem repeat(${TimeData.length}, 5rem);
   min-width: ${({ $placeCount }) => 5 + $placeCount * 7}rem;
   overflow: hidden;
@@ -315,7 +327,7 @@ const HeaderCell = styled.div<{ $column: number; $row: number }>`
   align-items: center;
   justify-content: center;
   color: ${ColorData.colors.labelNeutral};
-  font-size: ${ColorData.typography.caption.fontSize};
+  font-size: 1.25rem;
   white-space: nowrap;
 `;
 
@@ -327,7 +339,7 @@ const TimeCell = styled.div<{ $row: number; $active: boolean }>`
   padding-left: ${ColorData.spacing[12]};
   color: ${({ $active }) =>
     $active ? ColorData.colors.primary : ColorData.colors.labelAlternative};
-  font-size: ${ColorData.typography.caption.fontSize};
+  font-size: 1.25rem;
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
 `;
 
