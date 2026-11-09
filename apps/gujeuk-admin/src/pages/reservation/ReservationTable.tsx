@@ -65,6 +65,7 @@ export const ReservationTable = ({
   const { mutate: createReservation, isPending: isCreating } =
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const createEditVersionRef = useRef(0);
   const detailCloseTimerRef = useRef<number | null>(null);
   const detailHasFocusRef = useRef(false);
   const detailPointerInsideRef = useRef(false);
@@ -117,6 +118,7 @@ export const ReservationTable = ({
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget || isCreating) return;
     setCreateError(null);
+    const editVersion = createEditVersionRef.current;
 
     createReservation(
       {
@@ -133,6 +135,8 @@ export const ReservationTable = ({
           showToast(`${values.userName}님의 예약이 추가됐어요.`);
         },
         onError: (error) => {
+          // 요청 뒤에 입력을 고쳤다면 이전 입력의 오류이므로 띄우지 않음
+          if (createEditVersionRef.current !== editVersion) return;
           setCreateError(getCreateReservationErrorMessage(error));
         },
       },
@@ -351,7 +355,10 @@ export const ReservationTable = ({
             if (!isCreating) setCreateTarget(null);
           }}
           onSubmit={handleCreate}
-          onEdit={() => setCreateError(null)}
+          onEdit={() => {
+            createEditVersionRef.current += 1;
+            setCreateError(null);
+          }}
           isPending={isCreating}
           errorMessage={createError}
         />
