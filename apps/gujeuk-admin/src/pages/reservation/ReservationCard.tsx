@@ -8,9 +8,10 @@ interface ReservationCardProps {
   time: string;
   column: number;
   row: number;
+  readOnly?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
-  onMouseLeave?: () => void;
+  onMouseLeave?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export const ReservationCard = ({
@@ -19,26 +20,29 @@ export const ReservationCard = ({
   time,
   column,
   row,
+  readOnly = false,
   onClick,
   onMouseEnter,
   onMouseLeave,
 }: ReservationCardProps) => {
   return (
     <Card
+      as={readOnly ? 'div' : 'button'}
       $column={column}
       $row={row}
       aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      type="button"
+      type={readOnly ? undefined : 'button'}
+      $readOnly={readOnly}
     >
       {userName}
     </Card>
   );
 };
 
-const Card = styled.button<{ $column: number; $row: number }>`
+const Card = styled.button<{ $column: number; $row: number; $readOnly: boolean }>`
   grid-column: ${({ $column }) => $column};
   grid-row: ${({ $row }) => $row};
   z-index: 2;
@@ -55,14 +59,13 @@ const Card = styled.button<{ $column: number; $row: number }>`
   font-family: inherit;
   font-size: 1.25rem;
   text-align: center;
-  cursor: pointer;
+  cursor: ${({ $readOnly }) => ($readOnly ? 'default' : 'pointer')};
   transition:
     background-color ${ColorData.interaction.transitionFast},
     box-shadow ${ColorData.interaction.transitionFast};
 
   &:hover {
-    background-color: ${ColorData.colors.primaryLight};
-    border-color: ${ColorData.colors.primary};
-    box-shadow: ${ColorData.shadow.focus};
+    background-color: ${({ $readOnly }) => $readOnly ? ColorData.colors.fillNormal : ColorData.colors.primary8};
+    box-shadow: ${({ $readOnly }) => $readOnly ? 'none' : ColorData.shadow.focus};
   }
 `;
