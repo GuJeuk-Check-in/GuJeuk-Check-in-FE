@@ -52,15 +52,17 @@ const ReservationDashboardPage = ({
 
   return (
     <Page $readOnly={readOnly}>
-      <Header>
-        <Title>시설 예약 현황</Title>
-        {!readOnly && (
+      {readOnly ? (
+        <HiddenTitle>시설 예약 현황</HiddenTitle>
+      ) : (
+        <Header>
+          <Title>시설 예약 현황</Title>
           <RefreshButton type="button" onClick={handleRefresh}>
             <FiRefreshCw aria-hidden="true" />
             새로고침
           </RefreshButton>
-        )}
-      </Header>
+        </Header>
+      )}
 
       {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
       {isTableError && (
@@ -69,7 +71,7 @@ const ReservationDashboardPage = ({
           {!readOnly && " 새로고침을 눌러 다시 시도해 주세요."}
         </p>
       )}
-      {hasUnmappedReservations && (
+      {!readOnly && hasUnmappedReservations && (
         <p role="alert">
           일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.
         </p>
@@ -82,7 +84,7 @@ const ReservationDashboardPage = ({
         </p>
       )}
       {data && places.length > 0 && (
-        <TableViewport>
+        <TableViewport $readOnly={readOnly}>
           <ReservationTable
             places={places}
             reservations={reservations}
@@ -101,11 +103,21 @@ export default ReservationDashboardPage;
 
 const Page = styled.div<{ $readOnly: boolean }>`
   width: 100%;
-  min-height: ${({ $readOnly }) => ($readOnly ? "100vh" : "auto")};
   margin: 0 auto;
   background-color: ${({ $readOnly }) =>
-    $readOnly ? ReservationColors.blue : "transparent"};
-  color: ${ColorData.colors.background};
+    $readOnly ? ColorData.colors.background : "transparent"};
+  color: ${({ $readOnly }) =>
+    $readOnly ? ReservationColors.gray40 : ColorData.colors.background};
+
+  ${({ $readOnly }) =>
+    $readOnly &&
+    `
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    box-sizing: border-box;
+    overflow: hidden;
+  `}
 `;
 
 const Header = styled.header`
@@ -124,6 +136,18 @@ const Title = styled.h1`
   font-weight: 700;
   line-height: 2.25rem;
   letter-spacing: -0.056rem;
+`;
+
+const HiddenTitle = styled.h1`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `;
 
 const RefreshButton = styled.button`
@@ -154,12 +178,22 @@ const RefreshButton = styled.button`
   }
 `;
 
-const TableViewport = styled.div`
+const TableViewport = styled.div<{ $readOnly: boolean }>`
   width: calc(100% - ${ColorData.spacing[32]});
   margin: 0 auto;
   overflow-x: auto;
   border-radius: 1.125rem;
   box-shadow: 0 0.09375rem 0.1875rem rgba(0, 0, 0, 0.08);
+
+  ${({ $readOnly }) =>
+    $readOnly &&
+    `
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    border-radius: 0;
+    box-shadow: none;
+  `}
 `;
 
 const ToastSlot = styled.div`

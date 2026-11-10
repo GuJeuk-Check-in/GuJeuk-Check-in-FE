@@ -385,18 +385,12 @@ const InputFrame = styled.div`
   border: 1px solid ${ReservationColors.gray30};
   border-radius: 0.75rem;
   background-color: ${ColorData.colors.background};
-  transition: box-shadow ${ColorData.interaction.transitionFast};
 
   svg {
     flex: 0 0 auto;
     width: 1.25rem;
     height: 1.25rem;
     color: ${ReservationColors.gray40};
-  }
-
-  &:focus-within {
-    border-color: ${ReservationColors.blue};
-    box-shadow: 0 0 0 1px ${ReservationColors.blue};
   }
 `;
 

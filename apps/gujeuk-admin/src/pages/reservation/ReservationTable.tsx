@@ -205,7 +205,7 @@ export const ReservationTable = ({
 
   return (
     <>
-      <TableGrid $placeCount={places.length}>
+      <TableGrid $placeCount={places.length} $fill={readOnly}>
         <HeaderCell $column={1} $row={1}>
           시간
         </HeaderCell>
@@ -331,18 +331,22 @@ export const ReservationTable = ({
   );
 };
 
-const TableGrid = styled.div<{ $placeCount: number }>`
+const TableGrid = styled.div<{ $placeCount: number; $fill: boolean }>`
   display: grid;
   grid-template-columns: 6.75rem repeat(
       ${({ $placeCount }) => $placeCount},
       minmax(9.25rem, 1fr)
     );
-  grid-template-rows: 4.875rem repeat(${TimeData.length}, 4.5rem);
+  grid-template-rows: ${({ $fill }) =>
+    $fill
+      ? `minmax(3rem, 4.875rem) repeat(${TimeData.length}, minmax(2.5rem, 1fr))`
+      : `4.875rem repeat(${TimeData.length}, 4.5rem)`};
   min-width: ${({ $placeCount }) => 6.75 + $placeCount * 9.25}rem;
   overflow: hidden;
   position: relative;
   border-radius: 1.125rem;
   background-color: ${ColorData.colors.background};
+  ${({ $fill }) => $fill && "height: 100%; border-radius: 0;"}
 `;
 
 const HeaderCell = styled.div<{ $column: number; $row: number }>`

@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import { AddTileContainer as Container } from '@center/ui/card';
+import styled from '@emotion/styled';
+import { AddTileContainer } from '@center/ui/card';
 import { MdAdd } from 'react-icons/md';
-import { PurposeFormModal, type PurposeFormValues } from '@entities/purpose';
+import {
+  PurposeColors,
+  PurposeFormModal,
+  type PurposeFormValues,
+} from '@entities/purpose';
 import { useCreatePurpose } from '../model/useCreatePurpose';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { useModal } from '@shared/hooks/useModal';
@@ -66,7 +71,7 @@ export const PurposeAddBox = () => {
         }}
         aria-label="방문 목적 추가"
       >
-        <MdAdd size={48} color={isCreating ? '#ccc' : '#3D72B3'} />
+        <MdAdd aria-hidden="true" />
       </Container>
 
       {isFormOpen && (
@@ -84,3 +89,31 @@ export const PurposeAddBox = () => {
     </>
   );
 };
+
+const Container = styled(AddTileContainer)`
+  margin: 0;
+  border: 0;
+  background-color: #ffffff;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+  color: ${({ $isDisabled }) => ($isDisabled ? '#cccccc' : PurposeColors.blue)};
+  outline: 0 solid ${PurposeColors.skyblue};
+  outline-offset: -1px;
+  transition: outline-width 0.15s ease;
+
+  svg {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: #ffffff;
+    outline-width: ${({ $isDisabled }) => ($isDisabled ? '0' : '1px')};
+  }
+
+  &:focus-visible {
+    outline-color: ${PurposeColors.blue};
+    outline-offset: -2px;
+    outline-width: ${({ $isDisabled }) => ($isDisabled ? '0' : '2px')};
+  }
+`;
