@@ -1,12 +1,8 @@
-import {
-  TileContainer,
-  TileDeleteIcon,
-  TileLabel,
-  stopTileDrag,
-} from '@center/ui/card';
+import { useRef, type KeyboardEvent, type MouseEvent } from 'react';
+import { TileContainer, TileDeleteIcon, TileLabel } from '@center/ui/card';
 import styled from '@emotion/styled';
 import { LuCalendarCheck } from 'react-icons/lu';
-import { MdClose, MdEdit } from 'react-icons/md';
+import { MdClose } from 'react-icons/md';
 import type { Purpose } from '../model/types';
 import { PurposeColors } from './purposeColors';
 
@@ -25,8 +21,46 @@ export const PurposeCard = ({
   onEdit,
   isDeleting,
 }: PurposeProps) => {
+  const pressStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const openEdit = () => {
+    if (!isDeleting) onEdit(purpose);
+  };
+
+  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+    const start = pressStartRef.current;
+    pressStartRef.current = null;
+    if (
+      start &&
+      Math.hypot(event.clientX - start.x, event.clientY - start.y) >= DRAG_DISTANCE
+    ) {
+      return;
+    }
+    openEdit();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget) return;
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    event.stopPropagation();
+    openEdit();
+  };
+
   return (
-    <Card isDisabled={isDeleting} $isReservable={purpose.reservationStatus}>
+    <Card
+      isDisabled={isDeleting}
+      $isReservable={purpose.reservationStatus}
+      role="button"
+      tabIndex={isDeleting ? -1 : 0}
+      aria-label={`${purpose.purpose} 수정`}
+      aria-disabled={isDeleting}
+      onMouseDown={(event) => {
+        pressStartRef.current = { x: event.clientX, y: event.clientY };
+      }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
       {purpose.reservationStatus && (
         <ReservationBadge>
           <LuCalendarCheck aria-hidden="true" />
@@ -35,7 +69,10 @@ export const PurposeCard = ({
       )}
       <DeleteButton
         type="button"
-        onClick={() => onDelete(purpose.id)}
+        onClick={(event) => {
+          event.stopPropagation();
+          onDelete(purpose.id);
+        }}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         isDeleting={isDeleting}
@@ -47,23 +84,12 @@ export const PurposeCard = ({
 
       <Label>
         {index}. {purpose.purpose}
-        <EditButton
-          type="button"
-          className="purpose-edit-button"
-          onClick={() => {
-            if (!isDeleting) onEdit(purpose);
-          }}
-          onPointerDown={stopTileDrag}
-          onMouseDown={stopTileDrag}
-          disabled={isDeleting}
-          aria-label={`${purpose.purpose} 수정`}
-        >
-          <MdEdit aria-hidden="true" />
-        </EditButton>
       </Label>
     </Card>
   );
 };
+
+const DRAG_DISTANCE = 8;
 
 const Card = styled(TileContainer)<{ $isReservable: boolean }>`
   box-sizing: border-box;
@@ -72,16 +98,12 @@ const Card = styled(TileContainer)<{ $isReservable: boolean }>`
   color: ${PurposeColors.gray40};
   outline: 0 solid ${PurposeColors.skyblue};
   outline-offset: ${({ $isReservable }) => ($isReservable ? '-2px' : '-1px')};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   transition: outline-width 0.15s ease;
 
   &:hover,
-  &:focus-within {
+  &:focus-visible {
     outline-width: ${({ $isReservable }) => ($isReservable ? '2px' : '1px')};
-  }
-
-  &:hover .purpose-edit-button,
-  &:focus-within .purpose-edit-button {
-    opacity: 1;
   }
 `;
 
@@ -125,43 +147,10 @@ const DeleteButton = styled(TileDeleteIcon)`
 `;
 
 const Label = styled(TileLabel)`
-  gap: 0.6875rem;
   padding: 0.625rem;
   color: ${PurposeColors.gray40};
   font-size: 2rem;
   font-weight: 600;
   line-height: 2.25rem;
   letter-spacing: -0.05rem;
-`;
-
-const EditButton = styled.button`
-  position: relative;
-  z-index: 10;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: ${PurposeColors.gray10};
-  opacity: 0;
-  cursor: pointer;
-  transition: opacity 0.15s ease, color 0.15s ease;
-
-  svg {
-    width: 1.375rem;
-    height: 1.375rem;
-  }
-
-  &:hover:not(:disabled) {
-    color: ${PurposeColors.blue};
-  }
-
-  &:focus-visible {
-    opacity: 1;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
 `;
