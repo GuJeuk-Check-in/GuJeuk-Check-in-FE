@@ -10,6 +10,7 @@ export const TimeData = [
   "15:30",
   "16:30",
   "17:30",
+  "18:30",
 ] as const;
 
 export type ReservationTime = (typeof TimeData)[number];

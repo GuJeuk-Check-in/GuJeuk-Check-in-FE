@@ -340,7 +340,7 @@ const TableGrid = styled.div<{ $placeCount: number; $fill: boolean }>`
   grid-template-rows: ${({ $fill }) =>
     $fill
       ? `minmax(3rem, 4.875rem) repeat(${TimeData.length}, minmax(2.5rem, 1fr))`
-      : `4.875rem repeat(${TimeData.length}, 4.5rem)`};
+      : `4.875rem repeat(${TimeData.length}, 3.5rem)`};
   min-width: ${({ $placeCount }) => 6.75 + $placeCount * 9.25}rem;
   overflow: hidden;
   position: relative;
