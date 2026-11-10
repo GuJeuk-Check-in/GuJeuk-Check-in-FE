@@ -52,7 +52,9 @@ const ReservationDashboardPage = ({
 
   return (
     <Page $readOnly={readOnly}>
-      {!readOnly && (
+      {readOnly ? (
+        <HiddenTitle>시설 예약 현황</HiddenTitle>
+      ) : (
         <Header>
           <Title>시설 예약 현황</Title>
           <RefreshButton type="button" onClick={handleRefresh}>
@@ -134,6 +136,18 @@ const Title = styled.h1`
   font-weight: 700;
   line-height: 2.25rem;
   letter-spacing: -0.056rem;
+`;
+
+const HiddenTitle = styled.h1`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `;
 
 const RefreshButton = styled.button`

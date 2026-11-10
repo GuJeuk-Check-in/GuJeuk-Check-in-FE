@@ -27,10 +27,11 @@ export const PurposeCard = ({
     if (!isDeleting) onEdit(purpose);
   };
 
-  const handleClick = (event: MouseEvent<HTMLDivElement>) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     const start = pressStartRef.current;
     pressStartRef.current = null;
     if (
+      event.detail > 0 &&
       start &&
       Math.hypot(event.clientX - start.x, event.clientY - start.y) >= DRAG_DISTANCE
     ) {
@@ -39,40 +40,31 @@ export const PurposeCard = ({
     openEdit();
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.target !== event.currentTarget) return;
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    event.stopPropagation();
-    openEdit();
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') event.stopPropagation();
   };
 
   return (
-    <Card
-      isDisabled={isDeleting}
-      $isReservable={purpose.reservationStatus}
-      role="button"
-      tabIndex={isDeleting ? -1 : 0}
-      aria-label={`${purpose.purpose} 수정`}
-      aria-disabled={isDeleting}
-      onMouseDown={(event) => {
-        pressStartRef.current = { x: event.clientX, y: event.clientY };
-      }}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-    >
+    <Card isDisabled={isDeleting} $isReservable={purpose.reservationStatus}>
+      <EditButton
+        type="button"
+        aria-label={`${purpose.purpose}${purpose.reservationStatus ? ', 예약 가능' : ''} 수정`}
+        disabled={isDeleting}
+        onMouseDown={(event) => {
+          pressStartRef.current = { x: event.clientX, y: event.clientY };
+        }}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+      />
       {purpose.reservationStatus && (
-        <ReservationBadge>
-          <LuCalendarCheck aria-hidden="true" />
+        <ReservationBadge aria-hidden="true">
+          <LuCalendarCheck />
           예약 가능
         </ReservationBadge>
       )}
       <DeleteButton
         type="button"
-        onClick={(event) => {
-          event.stopPropagation();
-          onDelete(purpose.id);
-        }}
+        onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         isDeleting={isDeleting}
@@ -82,7 +74,7 @@ export const PurposeCard = ({
         {isDeleting ? '...' : <MdClose aria-hidden="true" />}
       </DeleteButton>
 
-      <Label>
+      <Label aria-hidden="true">
         {index}. {purpose.purpose}
       </Label>
     </Card>
@@ -101,8 +93,7 @@ const Card = styled(TileContainer)<{ $isReservable: boolean }>`
   cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
   transition: outline-width 0.15s ease;
 
-  &:hover,
-  &:focus-visible {
+  &:hover {
     outline-width: ${({ $isReservable }) => ($isReservable ? '2px' : '1px')};
   }
 
@@ -110,6 +101,23 @@ const Card = styled(TileContainer)<{ $isReservable: boolean }>`
     outline-color: ${PurposeColors.blue};
     outline-offset: -2px;
     outline-width: 2px;
+  }
+`;
+
+const EditButton = styled.button`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
   }
 `;
 
