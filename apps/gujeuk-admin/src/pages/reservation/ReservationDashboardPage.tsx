@@ -82,7 +82,7 @@ const ReservationDashboardPage = ({
         </p>
       )}
       {data && places.length > 0 && (
-        <TableViewport>
+        <TableViewport $readOnly={readOnly}>
           <ReservationTable
             places={places}
             reservations={reservations}
@@ -101,11 +101,21 @@ export default ReservationDashboardPage;
 
 const Page = styled.div<{ $readOnly: boolean }>`
   width: 100%;
-  min-height: ${({ $readOnly }) => ($readOnly ? "100vh" : "auto")};
   margin: 0 auto;
   background-color: ${({ $readOnly }) =>
     $readOnly ? ReservationColors.blue : "transparent"};
   color: ${ColorData.colors.background};
+
+  ${({ $readOnly }) =>
+    $readOnly &&
+    `
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    box-sizing: border-box;
+    padding: 2.5rem 1rem 2rem;
+    overflow: hidden;
+  `}
 `;
 
 const Header = styled.header`
@@ -154,10 +164,11 @@ const RefreshButton = styled.button`
   }
 `;
 
-const TableViewport = styled.div`
+const TableViewport = styled.div<{ $readOnly: boolean }>`
   width: calc(100% - ${ColorData.spacing[32]});
   margin: 0 auto;
   overflow-x: auto;
+  ${({ $readOnly }) => $readOnly && "flex: 1 1 auto; min-height: 0;"}
   border-radius: 1.125rem;
   box-shadow: 0 0.09375rem 0.1875rem rgba(0, 0, 0, 0.08);
 `;
