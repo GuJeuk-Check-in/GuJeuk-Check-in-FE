@@ -11,6 +11,7 @@ import {
   PurposeAddBox,
 } from '@features/purpose/index';
 
+import styled from '@emotion/styled';
 import { Modal } from '@shared/ui/modal/Modal';
 import { SortableBoardShell } from '@widgets/sortable-board';
 
@@ -35,14 +36,14 @@ export const PurposeBoard = () => {
     useDeletePurposeHandler();
 
   return (
-    <SortableBoardShell
+    <Board
       isLoading={isListLoading}
       isError={isError}
       error={error}
       items={items}
       sensors={sensors}
       onDragEnd={handleDragEnd}
-      trailingSlot={<PurposeAddBox />}
+      leadingSlot={<PurposeAddBox />}
       afterGridSlot={
         <>
           {editingPurpose && (
@@ -74,6 +75,12 @@ export const PurposeBoard = () => {
           />
         </SortablePurposeItem>
       ))}
-    </SortableBoardShell>
+    </Board>
   );
 };
+
+const Board = styled(SortableBoardShell)`
+  max-width: 80.3125rem;
+  grid-auto-rows: 10rem;
+  overflow: visible;
+`;

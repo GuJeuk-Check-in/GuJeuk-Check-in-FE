@@ -1,12 +1,10 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import styled from '@emotion/styled';
 import { ColorData } from '@center/tokens';
+import { LuCalendarCheck } from 'react-icons/lu';
+import { MdClose } from 'react-icons/md';
 import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
-import {
-  CloseIcon,
-  ReservationActiveIcon,
-  ReservationDefaultIcon,
-} from '@shared/assets';
+import { PurposeColors } from './purposeColors';
 
 export interface PurposeFormValues {
   purpose: string;
@@ -17,11 +15,16 @@ type PurposeFormMode = 'create' | 'update';
 
 const FORM_TEXT: Record<
   PurposeFormMode,
-  { title: string; subtitle: string; submitLabel: string; pendingLabel: string }
+  {
+    title: string;
+    subtitle: string | null;
+    submitLabel: string;
+    pendingLabel: string;
+  }
 > = {
   create: {
     title: '방문 목적 추가',
-    subtitle: '새 방문 목적을 만들고 예약 가능 여부를 정해요.',
+    subtitle: null,
     submitLabel: '추가하기',
     pendingLabel: '추가 중...',
   },
@@ -97,14 +100,16 @@ export const PurposeFormModal = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        aria-describedby={subtitleId}
+        aria-describedby={text.subtitle ? subtitleId : undefined}
         tabIndex={-1}
       >
         <Form onSubmit={handleSubmit}>
           <Header>
             <TitleGroup>
               <Title id={titleId}>{text.title}</Title>
-              <Subtitle id={subtitleId}>{text.subtitle}</Subtitle>
+              {text.subtitle && (
+                <Subtitle id={subtitleId}>{text.subtitle}</Subtitle>
+              )}
             </TitleGroup>
             <CloseButton
               type="button"
@@ -112,7 +117,7 @@ export const PurposeFormModal = ({
               disabled={isSubmitting}
               aria-label="닫기"
             >
-              <img src={CloseIcon} alt="" width={20} height={20} />
+              <MdClose aria-hidden="true" />
             </CloseButton>
           </Header>
 
@@ -132,25 +137,11 @@ export const PurposeFormModal = ({
             />
           </Field>
 
-          <ReservationSetting $isActive={reservationStatus}>
-            <SettingText>
-              <SettingTitle id={switchLabelId}>
-                <img
-                  src={
-                    reservationStatus
-                      ? ReservationActiveIcon
-                      : ReservationDefaultIcon
-                  }
-                  alt=""
-                  width={18}
-                  height={18}
-                />
-                예약 가능 시설
-              </SettingTitle>
-              <SettingDescription>
-                켜면 키오스크에서 시간대별 예약을 받을 수 있어요
-              </SettingDescription>
-            </SettingText>
+          <ReservationSetting>
+            <SettingTitle id={switchLabelId}>
+              <LuCalendarCheck aria-hidden="true" />
+              예약 가능 시설
+            </SettingTitle>
             <Switch
               type="button"
               role="switch"
@@ -203,7 +194,7 @@ const Dialog = styled.div`
   padding: ${ColorData.spacing[32]} ${ColorData.spacing[32]} 1.75rem;
   border-radius: 1.25rem;
   background-color: ${ColorData.colors.background};
-  filter: drop-shadow(0 1rem 1.25rem rgba(0, 0, 0, 0.2));
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
   font-family: ${ColorData.typography.fontFamily};
   text-align: left;
   outline: none;
@@ -230,14 +221,16 @@ const TitleGroup = styled.div`
 
 const Title = styled.h2`
   margin: 0;
-  color: ${ColorData.colors.labelNormal};
+  color: ${PurposeColors.gray40};
+  font-family: inherit;
   font-size: 1.5rem;
   font-weight: 700;
 `;
 
 const Subtitle = styled.p`
   margin: 0;
-  color: #70737c;
+  color: ${PurposeColors.gray10};
+  font-family: inherit;
   font-size: 0.9375rem;
 `;
 
@@ -250,9 +243,19 @@ const CloseButton = styled.button`
   height: 2.5rem;
   padding: 0;
   border: none;
-  border-radius: ${ColorData.radius.pill};
-  background-color: ${ColorData.colors.fillNormal};
+  border-radius: 999px;
+  background-color: ${ColorData.colors.background};
+  color: ${PurposeColors.gray30};
   cursor: pointer;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${ColorData.colors.fillNormal};
+  }
 
   &:disabled {
     cursor: not-allowed;
@@ -268,58 +271,47 @@ const Field = styled.div`
 const Label = styled.label`
   display: flex;
   gap: 0.125rem;
-  color: #37383c;
+  color: ${PurposeColors.gray40};
+  font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;
 `;
 
 const Required = styled.span`
-  color: ${ColorData.colors.negative};
+  color: ${PurposeColors.error};
 `;
 
 const Input = styled.input`
   height: 3.25rem;
-  padding: 0 ${ColorData.spacing[16]};
+  padding: 0 1rem;
   box-sizing: border-box;
-  border: 1px solid rgba(112, 115, 124, 0.22);
-  border-radius: ${ColorData.spacing[12]};
+  border: 1px solid ${PurposeColors.gray30};
+  border-radius: 0.75rem;
   background-color: ${ColorData.colors.background};
-  color: ${ColorData.colors.labelNormal};
+  color: ${PurposeColors.gray40};
   font-family: inherit;
   font-size: 1rem;
   outline: none;
 
   &::placeholder {
-    color: #a2a5ad;
+    color: ${PurposeColors.gray10};
   }
 
   &:focus {
-    border: 1.5px solid ${ColorData.colors.primary};
-    padding: 0 calc(${ColorData.spacing[16]} - 0.5px);
+    border: 1.5px solid ${PurposeColors.skyblue};
+    padding: 0 calc(1rem - 0.5px);
   }
 `;
 
-const ReservationSetting = styled.div<{ $isActive: boolean }>`
+const ReservationSetting = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${ColorData.spacing[16]};
+  gap: 1rem;
   padding: 1.125rem;
-  border: 1px solid
-    ${({ $isActive }) =>
-      $isActive ? 'rgba(0, 102, 255, 0.35)' : 'rgba(112, 115, 124, 0.12)'};
+  border: 1px solid ${PurposeColors.gray30};
   border-radius: 0.875rem;
-  background-color: ${({ $isActive }) =>
-    $isActive ? 'rgba(0, 102, 255, 0.05)' : 'rgba(112, 115, 124, 0.05)'};
-  transition:
-    background-color ${ColorData.interaction.transitionNormal},
-    border-color ${ColorData.interaction.transitionNormal};
-`;
-
-const SettingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${ColorData.spacing[4]};
+  background-color: ${ColorData.colors.background};
 `;
 
 const SettingTitle = styled.p`
@@ -327,15 +319,17 @@ const SettingTitle = styled.p`
   align-items: center;
   gap: 0.375rem;
   margin: 0;
-  color: ${ColorData.colors.labelNormal};
+  color: ${PurposeColors.gray40};
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 700;
-`;
 
-const SettingDescription = styled.p`
-  margin: 0;
-  color: #70737c;
-  font-size: 0.8125rem;
+  svg {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: ${PurposeColors.gray30};
+  }
 `;
 
 const Switch = styled.button<{ $isOn: boolean }>`
@@ -345,9 +339,9 @@ const Switch = styled.button<{ $isOn: boolean }>`
   height: 1.875rem;
   padding: 0;
   border: none;
-  border-radius: ${ColorData.radius.pill};
+  border-radius: 999px;
   background-color: ${({ $isOn }) =>
-    $isOn ? ColorData.colors.primary : 'rgba(112, 115, 124, 0.22)'};
+    $isOn ? PurposeColors.blue : PurposeColors.gray10};
   cursor: pointer;
   transition: background-color ${ColorData.interaction.transitionNormal};
 
@@ -365,8 +359,8 @@ const Switch = styled.button<{ $isOn: boolean }>`
   }
 
   &:focus-visible {
-    outline: none;
-    box-shadow: ${ColorData.shadow.focus};
+    outline: 2px solid ${PurposeColors.skyblue};
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -382,32 +376,26 @@ const Actions = styled.div`
 
 const ActionButton = styled.button<{ $variant: 'primary' | 'secondary' }>`
   height: 3.25rem;
-  border: none;
-  border-radius: ${ColorData.spacing[12]};
+  border: 1px solid
+    ${({ $variant }) =>
+      $variant === 'primary' ? PurposeColors.blue : PurposeColors.gray30};
+  border-radius: 0.75rem;
   background-color: ${({ $variant }) =>
-    $variant === 'primary'
-      ? ColorData.colors.primary
-      : ColorData.colors.fillNormal};
+    $variant === 'primary' ? PurposeColors.blue : ColorData.colors.background};
   color: ${({ $variant }) =>
-    $variant === 'primary'
-      ? ColorData.colors.background
-      : ColorData.colors.labelNeutral};
+    $variant === 'primary' ? ColorData.colors.background : PurposeColors.gray40};
   font-family: inherit;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color ${ColorData.interaction.transitionFast};
+  transition: filter ${ColorData.interaction.transitionFast};
 
   &:hover:not(:disabled) {
-    background-color: ${({ $variant }) =>
-      $variant === 'primary'
-        ? ColorData.colors.primaryStrong
-        : 'rgba(112, 115, 124, 0.16)'};
+    filter: brightness(0.94);
   }
 
   &:disabled {
-    background-color: ${ColorData.colors.interactionDisabled};
-    color: ${ColorData.colors.labelDisabled};
+    opacity: 0.6;
     cursor: not-allowed;
   }
 `;

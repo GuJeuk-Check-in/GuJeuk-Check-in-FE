@@ -5,3 +5,4 @@ export * from './model/usePurposeList';
 export * from './ui/PurposeCard';
 export * from './ui/PurposeFormModal';
 export * from './ui/SortablePurposeItem';
+export * from './ui/purposeColors';
