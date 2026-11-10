@@ -341,12 +341,12 @@ const TableGrid = styled.div<{ $placeCount: number; $fill: boolean }>`
     $fill
       ? `minmax(3rem, 4.875rem) repeat(${TimeData.length}, minmax(2.5rem, 1fr))`
       : `4.875rem repeat(${TimeData.length}, 4.5rem)`};
-  ${({ $fill }) => $fill && "height: 100%;"}
   min-width: ${({ $placeCount }) => 6.75 + $placeCount * 9.25}rem;
   overflow: hidden;
   position: relative;
   border-radius: 1.125rem;
   background-color: ${ColorData.colors.background};
+  ${({ $fill }) => $fill && "height: 100%; border-radius: 0;"}
 `;
 
 const HeaderCell = styled.div<{ $column: number; $row: number }>`
