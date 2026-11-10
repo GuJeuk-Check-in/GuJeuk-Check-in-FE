@@ -105,6 +105,12 @@ const Card = styled(TileContainer)<{ $isReservable: boolean }>`
   &:focus-visible {
     outline-width: ${({ $isReservable }) => ($isReservable ? '2px' : '1px')};
   }
+
+  &:focus-visible {
+    outline-color: ${PurposeColors.blue};
+    outline-offset: -2px;
+    outline-width: 2px;
+  }
 `;
 
 const ReservationBadge = styled.span`
