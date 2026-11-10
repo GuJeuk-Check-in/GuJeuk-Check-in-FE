@@ -122,7 +122,7 @@ export const StyledCalendar = styled(Calendar)<{ $legacy: boolean }>`
   ${({ $legacy }) => $legacy && `
     .react-calendar__tile { padding: 10px 6.6667px; }
     .react-calendar__tile--active { background: #2762aa; width: 2.5rem !important; height: 2.5rem !important; }
-    .react-calendar__tile--now { background: #ffff76; }
+    .react-calendar__tile--now:not(.react-calendar__tile--active):not(.react-calendar__tile--hasActive) { background: none; }
     .react-calendar__tile:enabled:hover, .react-calendar__tile:enabled:focus,
     .react-calendar__navigation button:enabled:hover, .react-calendar__navigation button:enabled:focus { background: #e6e6e6; }
     .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus { background: #1087ff; }

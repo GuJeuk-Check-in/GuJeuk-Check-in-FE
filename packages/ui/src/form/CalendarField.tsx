@@ -55,7 +55,7 @@ export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy
       {open && (
         <CalendarWrapper $legacy={legacy} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
           <StyledCalendar
-            $legacy={legacy} value={value ?? (legacy ? new Date() : null)} onChange={handleDateSelect}
+            $legacy={legacy} value={value} onChange={handleDateSelect}
             calendarType="gregory" locale="ko-KR" nextLabel="›" prevLabel="‹"
             navigationAriaLabel="달력 탐색" prevAriaLabel="이전 기간" nextAriaLabel="다음 기간"
             prev2AriaLabel="이전 연도" next2AriaLabel="다음 연도"
