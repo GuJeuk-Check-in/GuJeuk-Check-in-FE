@@ -1,4 +1,3 @@
-// 같은 응답 코드라도 원인이 다르므로 서버 ErrorCode 문구로 먼저 구분함
 const SERVER_MESSAGES: Record<string, string> = {
   "해당 유저가 존재 하지 않습니다.":
     "입력한 이름과 전화번호로 등록된 회원을 찾지 못했어요. 회원 정보를 확인해 주세요.",
@@ -17,11 +16,9 @@ const STATUS_MESSAGES: Record<number, string> = {
 
 const DEFAULT_MESSAGE = "예약을 추가하지 못했어요. 다시 시도해 주세요.";
 
-// 공용 응답 가로채기(setupAuthInterceptors)가 서버 오류를 `status`가 붙은 Error로 바꿔 넘김
 const hasHttpStatus = (error: Error): error is Error & { status: number } =>
   "status" in error && typeof error.status === "number";
 
-// 서버가 문구를 안 보내면 axios 기본 문구가 들어오므로 걸러냄
 const getServerMessage = (error: Error) =>
   /^Request failed with status code/.test(error.message) ||
   error.message === "알 수 없는 오류"

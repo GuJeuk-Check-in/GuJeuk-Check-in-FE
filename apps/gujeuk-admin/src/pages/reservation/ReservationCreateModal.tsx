@@ -1,16 +1,27 @@
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent, type ReactNode } from "react";
 import styled from "@emotion/styled";
-import { ColorData } from "@center/tokens";
-import { Modal } from "@shared/ui/modal";
-import { Calendar, HomeImage } from "@shared/assets";
 import {
+  FiCalendar,
+  FiHome,
+  FiMinus,
+  FiPhone,
+  FiPlus,
+  FiUser,
+  FiX,
+} from "react-icons/fi";
+import { ColorData } from "@center/tokens";
+import {
+  formatTimeRange,
   getNextTime,
   type ReservationPeople,
   type ReservationPlace,
   type ReservationTime,
 } from "./ReservationData";
+import { ReservationDialog } from "./ReservationDialog";
+import { ReservationColors } from "./reservationColors";
 
 const PHONE_PATTERN = /^010-\d{4}-\d{4}$/;
+const MAX_COMPANION_COUNT = 99;
 
 const formatPhoneNumber = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 11);
@@ -46,18 +57,25 @@ export const ReservationCreateModal = ({
   isPending,
   errorMessage,
 }: ReservationCreateModalProps) => {
+  const titleId = useId();
+  const nameId = useId();
+  const phoneId = useId();
   const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
-  const [male, setMale] = useState("0");
-  const [female, setFemale] = useState("0");
-  const validCount = (value: string) =>
-    /^\d+$/.test(value) && Number.isSafeInteger(Number(value));
+  const [male, setMale] = useState(0);
+  const [female, setFemale] = useState(0);
   const canSubmit =
-    !isPending &&
-    Boolean(userName.trim()) &&
-    PHONE_PATTERN.test(phone.trim()) &&
-    validCount(male) &&
-    validCount(female);
+    !isPending && Boolean(userName.trim()) && PHONE_PATTERN.test(phone.trim());
+
+  const changeCount = (
+    setCount: (updater: (count: number) => number) => void,
+    delta: number,
+  ) => {
+    setCount((count) =>
+      Math.min(MAX_COMPANION_COUNT, Math.max(0, count + delta)),
+    );
+    onEdit();
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -65,91 +83,98 @@ export const ReservationCreateModal = ({
     onSubmit({
       userName: userName.trim(),
       phone: phone.trim(),
-      people: { male: Number(male), female: Number(female) },
+      people: { male, female },
     });
   };
 
   return (
-    <Modal
-      isOpen
+    <ReservationDialog
+      labelledBy={titleId}
+      closable={!isPending}
       onClose={onClose}
-      size="large"
-      showCloseButton
-      config={{
-        title: "예약 추가",
-        subtitle: "예약자 정보를 입력하면 바로 예약돼요.",
-      }}
     >
-      <TargetInfo>
-        <InfoRow>
-          <img src={HomeImage} alt="" />
-          <strong>시설</strong>
-          <b>{place}</b>
-        </InfoRow>
-        <InfoRow>
-          <img src={Calendar} alt="" />
-          <strong>시간</strong>
-          <b>
-            오늘 · {getTodayLabel()} {time} - {getNextTime(time)}
-          </b>
-        </InfoRow>
-      </TargetInfo>
-
       <Form onSubmit={handleSubmit} onChange={onEdit}>
-        <Field>
-          <Label htmlFor="reservation-user-name">이름</Label>
-          <Input
-            id="reservation-user-name"
-            value={userName}
-            onChange={(event) => setUserName(event.target.value)}
-            placeholder="예약자 이름"
-            required
-          />
-        </Field>
-        <Field>
-          <Label htmlFor="reservation-phone">전화번호</Label>
-          <Input
-            id="reservation-phone"
-            value={phone}
-            onChange={(event) =>
-              setPhone(formatPhoneNumber(event.target.value))
-            }
-            placeholder="010-0000-0000"
-            inputMode="tel"
-            maxLength={13}
-            required
-          />
-        </Field>
-        <CompanionRow>
+        <Header>
+          <Title id={titleId}>예약 추가</Title>
+          <CloseButton
+            type="button"
+            onClick={onClose}
+            disabled={isPending}
+            aria-label="예약 추가 닫기"
+          >
+            <FiX aria-hidden="true" />
+          </CloseButton>
+        </Header>
+
+        <TargetInfo>
+          <InfoRow>
+            <FiHome aria-hidden="true" />
+            <InfoLabel>시설</InfoLabel>
+            <InfoValue>{place}</InfoValue>
+          </InfoRow>
+          <InfoRow>
+            <FiCalendar aria-hidden="true" />
+            <InfoLabel>시간</InfoLabel>
+            <InfoValue>
+              오늘 · {getTodayLabel()} {formatTimeRange(time, getNextTime(time))}
+            </InfoValue>
+          </InfoRow>
+        </TargetInfo>
+
+        <Fields>
           <Field>
-            <Label htmlFor="reservation-male">남자 동반 인원</Label>
-            <Input
-              id="reservation-male"
-              type="number"
-              min="0"
-              step="1"
-              value={male}
-              onChange={(event) => setMale(event.target.value)}
-              disabled={isPending}
-              required
-            />
+            <Label htmlFor={nameId}>이름</Label>
+            <InputBox icon={<FiUser aria-hidden="true" />}>
+              <Input
+                id={nameId}
+                value={userName}
+                onChange={(event) => setUserName(event.target.value)}
+                placeholder="예약자 이름"
+                disabled={isPending}
+                required
+              />
+            </InputBox>
           </Field>
           <Field>
-            <Label htmlFor="reservation-female">여자 동반 인원</Label>
-            <Input
-              id="reservation-female"
-              type="number"
-              min="0"
-              step="1"
-              value={female}
-              onChange={(event) => setFemale(event.target.value)}
-              required
-            />
+            <Label htmlFor={phoneId}>전화번호</Label>
+            <InputBox icon={<FiPhone aria-hidden="true" />}>
+              <Input
+                id={phoneId}
+                value={phone}
+                onChange={(event) =>
+                  setPhone(formatPhoneNumber(event.target.value))
+                }
+                placeholder="010-0000-0000"
+                inputMode="tel"
+                maxLength={13}
+                disabled={isPending}
+                required
+              />
+            </InputBox>
           </Field>
-        </CompanionRow>
-        <Notice>ⓘ 동반 인원에는 예약자 본인을 제외해 주세요.</Notice>
-        <Notice>ⓘ 예약은 1인 1시간만 가능해요.</Notice>
+          <Field as="fieldset">
+            <Legend>동행인 수</Legend>
+            <CounterRow>
+              <Counter
+                label="남자"
+                value={male}
+                disabled={isPending}
+                onDecrease={() => changeCount(setMale, -1)}
+                onIncrease={() => changeCount(setMale, 1)}
+              />
+              <Counter
+                label="여자"
+                value={female}
+                disabled={isPending}
+                onDecrease={() => changeCount(setFemale, -1)}
+                onIncrease={() => changeCount(setFemale, 1)}
+              />
+            </CounterRow>
+          </Field>
+        </Fields>
+
         {errorMessage && <ErrorMessage role="alert">{errorMessage}</ErrorMessage>}
+
         <ActionRow>
           <ActionButton
             type="button"
@@ -159,18 +184,68 @@ export const ReservationCreateModal = ({
           >
             취소
           </ActionButton>
-          <ActionButton
-            type="submit"
-            $variant="primary"
-            disabled={!canSubmit}
-          >
+          <ActionButton type="submit" $variant="primary" disabled={!canSubmit}>
             {isPending ? "예약 중..." : "예약하기"}
           </ActionButton>
         </ActionRow>
       </Form>
-    </Modal>
+    </ReservationDialog>
   );
 };
+
+const InputBox = ({
+  icon,
+  children,
+}: {
+  icon: ReactNode;
+  children: ReactNode;
+}) => (
+  <InputFrame>
+    {icon}
+    {children}
+  </InputFrame>
+);
+
+interface CounterProps {
+  label: string;
+  value: number;
+  disabled: boolean;
+  onDecrease: () => void;
+  onIncrease: () => void;
+}
+
+const Counter = ({
+  label,
+  value,
+  disabled,
+  onDecrease,
+  onIncrease,
+}: CounterProps) => (
+  <CounterField>
+    <CounterLabel>{label}</CounterLabel>
+    <CounterBox>
+      <CounterButton
+        type="button"
+        onClick={onDecrease}
+        disabled={disabled || value <= 0}
+        aria-label={`${label} 동행인 줄이기`}
+      >
+        <FiMinus aria-hidden="true" />
+      </CounterButton>
+      <CounterValue aria-live="polite" aria-label={`${label} 동행인 ${value}명`}>
+        {value}
+      </CounterValue>
+      <CounterButton
+        type="button"
+        onClick={onIncrease}
+        disabled={disabled || value >= MAX_COMPANION_COUNT}
+        aria-label={`${label} 동행인 늘리기`}
+      >
+        <FiPlus aria-hidden="true" />
+      </CounterButton>
+    </CounterBox>
+  </CounterField>
+);
 
 const getTodayLabel = () =>
   new Intl.DateTimeFormat("ko-KR", {
@@ -179,77 +254,237 @@ const getTodayLabel = () =>
     weekday: "short",
   }).format(new Date());
 
-const TargetInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${ColorData.spacing[8]};
-  margin: ${ColorData.spacing[16]} 0;
-  padding: ${ColorData.spacing[12]};
-  border-radius: ${ColorData.radius.medium};
-  background-color: ${ColorData.colors.fillNormal};
-  color: ${ColorData.colors.labelNeutral};
-  font-size: ${ColorData.typography.caption.fontSize};
-  text-align: left;
-`;
-
-const InfoRow = styled.div`
-  display: grid;
-  grid-template-columns: 1rem 2.25rem 1fr;
-  align-items: center;
-  gap: ${ColorData.spacing[8]};
-  color: ${ColorData.colors.labelAlternative};
-
-  b {
-    color: ${ColorData.colors.labelNormal};
-    font-weight: 600;
-  }
-
-  img {
-    width: 1rem;
-    height: 1rem;
-    flex-shrink: 0;
-  }
-`;
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: ${ColorData.spacing[16]};
-  text-align: left;
+  gap: 1.5rem;
+`;
+
+const Header = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+`;
+
+const Title = styled.h2`
+  margin: 0;
+  color: ${ReservationColors.gray40};
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.4;
+`;
+
+const CloseButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: ${ReservationColors.gray40};
+  cursor: pointer;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${ColorData.colors.fillNormal};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+const TargetInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1rem 1.125rem;
+  border-radius: 0.75rem;
+`;
+
+const InfoRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  svg {
+    flex: 0 0 auto;
+    width: 1.125rem;
+    height: 1.125rem;
+    color: ${ReservationColors.gray40};
+  }
+`;
+
+const InfoLabel = styled.span`
+  flex: 0 0 2.25rem;
+  color: ${ReservationColors.gray10};
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.125rem;
+  letter-spacing: -0.022rem;
+`;
+
+const InfoValue = styled.span`
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: ${ReservationColors.gray40};
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.375rem;
+  letter-spacing: -0.025rem;
+`;
+
+const Fields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 const Field = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${ColorData.spacing[8]};
-`;
-
-const CompanionRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${ColorData.spacing[16]};
+  gap: 0.5rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
 `;
 
 const Label = styled.label`
-  color: ${ColorData.colors.labelNeutral};
-  font-size: ${ColorData.typography.label.fontSize};
-  font-weight: 600;
+  color: ${ReservationColors.gray40};
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
 `;
 
-const ActionRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${ColorData.spacing[8]};
-  margin-top: ${ColorData.spacing[8]};
+const Legend = styled.legend`
+  margin-bottom: 0.5rem;
+  padding: 0;
+  color: ${ReservationColors.gray40};
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
 `;
 
-const Notice = styled.p`
+const InputFrame = styled.div`
   display: flex;
   align-items: center;
-  gap: ${ColorData.spacing[4]};
-  margin: -${ColorData.spacing[8]} 0 0;
-  color: ${ColorData.colors.labelAlternative};
-  font-size: ${ColorData.typography.caption.fontSize};
+  gap: 0.625rem;
+  height: 3.25rem;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  border: 1px solid ${ReservationColors.gray30};
+  border-radius: 0.75rem;
+  background-color: ${ColorData.colors.background};
+  transition: box-shadow ${ColorData.interaction.transitionFast};
+
+  svg {
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: ${ReservationColors.gray40};
+  }
+
+  &:focus-within {
+    border-color: ${ReservationColors.blue};
+    box-shadow: 0 0 0 1px ${ReservationColors.blue};
+  }
+`;
+
+const Input = styled.input`
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: ${ReservationColors.gray40};
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.025rem;
+  outline: none;
+
+  &::placeholder {
+    color: ${ReservationColors.gray10};
+  }
+`;
+
+const CounterRow = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+`;
+
+const CounterField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+`;
+
+const CounterLabel = styled.span`
+  color: ${ReservationColors.gray40};
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  letter-spacing: -0.019rem;
+`;
+
+const CounterBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.25rem;
+  padding: 0 0.625rem;
+  box-sizing: border-box;
+  border: 1px solid ${ReservationColors.gray30};
+  border-radius: 0.75rem;
+  background-color: ${ColorData.colors.background};
+`;
+
+const CounterButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: ${ReservationColors.gray40};
+  cursor: pointer;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${ColorData.colors.fillNormal};
+  }
+
+  &:disabled {
+    color: ${ColorData.colors.labelDisabled};
+    cursor: not-allowed;
+  }
+`;
+
+const CounterValue = styled.span`
+  color: ${ReservationColors.gray40};
+  font-size: 1rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 `;
 
 const ErrorMessage = styled.p`
@@ -262,77 +497,40 @@ const ErrorMessage = styled.p`
   line-height: 1.5;
 `;
 
-const Input = styled.input`
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 0 ${ColorData.spacing[12]};
-  box-sizing: border-box;
-  border: 1px solid ${ColorData.colors.lineNormal};
-  border-radius: ${ColorData.radius.medium};
-  background-color: ${ColorData.colors.background};
-  color: ${ColorData.colors.labelNormal};
-  font-family: ${ColorData.typography.fontFamily};
-  font-size: ${ColorData.typography.body.fontSize};
-  outline: none;
-  transition:
-    border-color ${ColorData.interaction.transitionFast},
-    box-shadow ${ColorData.interaction.transitionFast};
-
-  &::placeholder {
-    color: ${ColorData.colors.labelAssistive};
-  }
-
-  &:focus {
-    border-color: ${ColorData.colors.primary};
-    box-shadow: ${ColorData.shadow.focus};
-  }
+const ActionRow = styled.div`
+  display: flex;
+  gap: 0.5rem;
 `;
 
 const ActionButton = styled.button<{ $variant: "primary" | "secondary" }>`
-  min-height: 2.75rem;
-  padding: 0 ${ColorData.spacing[16]};
-  border: 1px solid transparent;
-  border-radius: ${ColorData.radius.large};
+  flex: 1 1 0;
+  min-width: 0;
+  height: 3.25rem;
+  padding: 0 1.25rem;
+  border: 1px solid
+    ${({ $variant }) =>
+      $variant === "primary" ? ReservationColors.blue : ReservationColors.gray30};
+  border-radius: 0.75rem;
   background-color: ${({ $variant }) =>
-    $variant === "primary"
-      ? ColorData.colors.primary
-      : ColorData.colors.background};
+    $variant === "primary" ? ReservationColors.blue : ColorData.colors.background};
   color: ${({ $variant }) =>
-    $variant === "primary"
-      ? ColorData.colors.background
-      : ColorData.colors.labelNormal};
-  font-family: ${ColorData.typography.fontFamily};
-  font-size: ${ColorData.typography.body.fontSize};
-  font-weight: 600;
+    $variant === "primary" ? ColorData.colors.background : ReservationColors.gray40};
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition:
-    background-color ${ColorData.interaction.transitionFast},
-    border-color ${ColorData.interaction.transitionFast},
-    box-shadow ${ColorData.interaction.transitionFast};
 
-  ${({ $variant }) =>
-    $variant === "primary"
-      ? `
-        &:hover:not(:disabled) {
-          background-color: ${ColorData.colors.primaryStrong};
-        }
-      `
-      : `
-        border-color: ${ColorData.colors.lineNormal};
-
-        &:hover:not(:disabled) {
-          background-color: ${ColorData.colors.fillNormal};
-        }
-      `}
-
-  &:active:not(:disabled) {
-    transform: translateY(1px);
+  &:hover:not(:disabled) {
+    filter: brightness(0.94);
   }
 
   &:disabled {
-    background-color: ${ColorData.colors.interactionDisabled};
-    border-color: transparent;
-    color: ${ColorData.colors.labelDisabled};
     cursor: not-allowed;
+    ${({ $variant }) =>
+      $variant === "primary" &&
+      `
+      border-color: ${ReservationColors.gray10};
+      background-color: ${ReservationColors.gray10};
+    `}
   }
 `;
