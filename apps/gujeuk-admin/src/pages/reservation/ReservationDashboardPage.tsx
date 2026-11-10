@@ -52,15 +52,15 @@ const ReservationDashboardPage = ({
 
   return (
     <Page $readOnly={readOnly}>
-      <Header>
-        <Title>시설 예약 현황</Title>
-        {!readOnly && (
+      {!readOnly && (
+        <Header>
+          <Title>시설 예약 현황</Title>
           <RefreshButton type="button" onClick={handleRefresh}>
             <FiRefreshCw aria-hidden="true" />
             새로고침
           </RefreshButton>
-        )}
-      </Header>
+        </Header>
+      )}
 
       {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
       {isTableError && (
@@ -69,7 +69,7 @@ const ReservationDashboardPage = ({
           {!readOnly && " 새로고침을 눌러 다시 시도해 주세요."}
         </p>
       )}
-      {hasUnmappedReservations && (
+      {!readOnly && hasUnmappedReservations && (
         <p role="alert">
           일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.
         </p>
@@ -113,7 +113,7 @@ const Page = styled.div<{ $readOnly: boolean }>`
     flex-direction: column;
     height: 100dvh;
     box-sizing: border-box;
-    padding: 2.5rem 1rem 2rem;
+    padding: 2rem 1rem;
     overflow: hidden;
   `}
 `;
