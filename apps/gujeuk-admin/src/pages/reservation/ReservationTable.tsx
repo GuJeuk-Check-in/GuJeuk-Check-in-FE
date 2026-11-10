@@ -1,14 +1,8 @@
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type FocusEvent,
-  type MouseEvent,
-} from "react";
+import { Fragment, useEffect, useRef, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 import { ColorData } from "@center/tokens";
-import { SucceedIcon } from "@shared/assets";
 import { ReservationCard } from "./ReservationCard";
 import {
   ReservationCreateModal,
@@ -18,6 +12,9 @@ import { ReservationDeleteModal } from "./ReservationDeleteModal";
 import { ReservationDetailModal } from "./ReservationDetailModal";
 import {
   TimeData,
+  formatDisplayTime,
+  formatTimeRange,
+  getNextTime,
   type Reservation,
   type ReservationPlace,
   type ReservationTime,
@@ -26,6 +23,7 @@ import { ReservationEmptyCell } from "./ReservationEmptyCell";
 import { useDeleteReservation } from "@features/reservation/delete-reservation";
 import { useCreateReservation } from "@features/reservation/create-reservation";
 import { getCreateReservationErrorMessage } from "./reservationErrorMessage";
+import { ReservationColors } from "./reservationColors";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -37,6 +35,7 @@ interface ReservationTableProps {
   reservations: Reservation[];
   activeTimeIndex: number;
   readOnly?: boolean;
+  toastContainer?: HTMLElement | null;
 }
 
 type ToastVariant = "positive" | "caution";
@@ -51,12 +50,12 @@ export const ReservationTable = ({
   reservations,
   activeTimeIndex,
   readOnly = false,
+  toastContainer = null,
 }: ReservationTableProps) => {
   const [selectedReservationId, setSelectedReservationId] = useState<
     Reservation["id"] | null
   >(null);
   const [detailPosition, setDetailPosition] = useState({ top: 0, left: 0 });
-  const [detailAutoFocus, setDetailAutoFocus] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<
     Reservation["id"] | null
   >(null);
@@ -68,9 +67,6 @@ export const ReservationTable = ({
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
   const createEditVersionRef = useRef(0);
-  const detailCloseTimerRef = useRef<number | null>(null);
-  const detailHasFocusRef = useRef(false);
-  const detailPointerInsideRef = useRef(false);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -99,9 +95,6 @@ export const ReservationTable = ({
       if (toastTimerRef.current !== null) {
         window.clearTimeout(toastTimerRef.current);
       }
-      if (detailCloseTimerRef.current !== null) {
-        window.clearTimeout(detailCloseTimerRef.current);
-      }
     };
   }, []);
 
@@ -121,6 +114,7 @@ export const ReservationTable = ({
     if (!createTarget || isCreating) return;
     setCreateError(null);
     const editVersion = createEditVersionRef.current;
+    const { place, time } = createTarget;
 
     createReservation(
       {
@@ -128,16 +122,17 @@ export const ReservationTable = ({
         phone: values.phone,
         maleCount: values.people.male,
         femaleCount: values.people.female,
-        purpose: createTarget.place,
-        startTime: createTarget.time,
+        purpose: place,
+        startTime: time,
       },
       {
         onSuccess: () => {
           setCreateTarget(null);
-          showToast(`${values.userName}님의 예약이 추가됐어요.`);
+          showToast(
+            `${values.userName}님의 예약이 추가됐어요 · ${place} ${formatTimeRange(time, getNextTime(time))}`,
+          );
         },
         onError: (error) => {
-          // 요청 뒤에 입력을 고쳤다면 이전 입력의 오류이므로 띄우지 않음
           if (createEditVersionRef.current !== editVersion) return;
           setCreateError(getCreateReservationErrorMessage(error));
         },
@@ -147,12 +142,15 @@ export const ReservationTable = ({
 
   const handleDelete = () => {
     if (!deleteTarget || isPending) return;
+    const { userName, place, startTime } = deleteTarget;
 
     deleteReservation(deleteTarget.id, {
       onSuccess: () => {
         setDeleteTargetId(null);
         setSelectedReservationId(null);
-        showToast("예약을 삭제했어요");
+        showToast(
+          `${userName}님의 ${place} · ${formatDisplayTime(startTime)} 예약을 삭제했어요`,
+        );
       },
       onError: (error) => {
         showToast(
@@ -164,75 +162,29 @@ export const ReservationTable = ({
     });
   };
 
-  const cancelDetailClose = () => {
-    if (detailCloseTimerRef.current !== null) {
-      window.clearTimeout(detailCloseTimerRef.current);
-      detailCloseTimerRef.current = null;
-    }
-  };
-
-  const scheduleDetailClose = () => {
-    cancelDetailClose();
-    detailCloseTimerRef.current = window.setTimeout(() => {
-      detailCloseTimerRef.current = null;
-      if (detailHasFocusRef.current) return;
-      setSelectedReservationId(null);
-      detailPointerInsideRef.current = false;
-    }, 200);
-  };
-
-  const handleDetailPointerEnter = () => {
-    detailPointerInsideRef.current = true;
-    cancelDetailClose();
-  };
-
-  const handleDetailPointerLeave = () => {
-    detailPointerInsideRef.current = false;
-    scheduleDetailClose();
-  };
-
-  const handleDetailBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (
-      event.relatedTarget instanceof Node &&
-      event.currentTarget.contains(event.relatedTarget)
-    ) {
-      return;
-    }
-
-    detailHasFocusRef.current = false;
-    if (detailPointerInsideRef.current) {
-      cancelDetailClose();
-      return;
-    }
-
-    cancelDetailClose();
-    setSelectedReservationId(null);
-  };
-
   const closeDetail = () => {
-    cancelDetailClose();
-    detailHasFocusRef.current = false;
-    detailPointerInsideRef.current = false;
     setSelectedReservationId(null);
   };
 
   const handleReservationClick = (
     reservation: Reservation,
     event: MouseEvent<HTMLButtonElement>,
-    autoFocus: boolean,
   ) => {
     if (createTarget || deleteTarget) return;
-    cancelDetailClose();
+    if (selectedReservationId === reservation.id) {
+      closeDetail();
+      return;
+    }
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
     const popoverWidth = Math.min(
-      18.5 * rootFontSize,
+      22.5 * rootFontSize,
       window.innerWidth - viewportPadding * 2,
     );
-    const popoverHeight = 282;
+    const popoverHeight = 19.5 * rootFontSize;
     const gap = 8;
     const maxLeft = window.innerWidth - popoverWidth - viewportPadding;
     const preferredLeft =
@@ -248,7 +200,6 @@ export const ReservationTable = ({
     );
 
     setDetailPosition({ top, left });
-    setDetailAutoFocus(autoFocus);
     setSelectedReservationId(reservation.id);
   };
 
@@ -271,7 +222,7 @@ export const ReservationTable = ({
               $row={timeIndex + 2}
               $active={timeIndex === activeTimeIndex}
             >
-              {time}
+              {formatDisplayTime(time)}
             </TimeCell>
 
             {places.map((place, placeIndex) => {
@@ -288,19 +239,15 @@ export const ReservationTable = ({
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   readOnly={readOnly}
+                  selected={
+                    selectedReservationId === reservation.id ||
+                    deleteTargetId === reservation.id
+                  }
                   onClick={
                     readOnly
                       ? undefined
-                      : (event) =>
-                          handleReservationClick(reservation, event, true)
+                      : (event) => handleReservationClick(reservation, event)
                   }
-                  onMouseEnter={
-                    readOnly
-                      ? undefined
-                      : (event) =>
-                          handleReservationClick(reservation, event, false)
-                  }
-                  onMouseLeave={readOnly ? undefined : scheduleDetailClose}
                 />
               ) : !readOnly ? (
                 <ReservationEmptyCell
@@ -309,6 +256,9 @@ export const ReservationTable = ({
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
+                  selected={
+                    createTarget?.place === place && createTarget.time === time
+                  }
                   onAddClick={(selectedPlace, selectedTime) => {
                     setSelectedReservationId(null);
                     setCreateError(null);
@@ -328,13 +278,6 @@ export const ReservationTable = ({
         <ReservationDetailModal
           reservation={selectedReservation}
           position={detailPosition}
-          autoFocus={detailAutoFocus}
-          onMouseEnter={handleDetailPointerEnter}
-          onMouseLeave={handleDetailPointerLeave}
-          onFocus={() => {
-            detailHasFocusRef.current = true;
-          }}
-          onBlur={handleDetailBlur}
           onClose={closeDetail}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);
@@ -371,31 +314,34 @@ export const ReservationTable = ({
         />
       )}
 
-      {toast && (
-        <ToastPosition>
+      {toast &&
+        toastContainer &&
+        createPortal(
           <Toast role="status" aria-live="polite" $variant={toast.variant}>
-            {toast.variant === "positive" && (
-              <ToastIcon src={SucceedIcon} alt="" />
+            {toast.variant === "positive" ? (
+              <FaCircleCheck aria-hidden="true" />
+            ) : (
+              <FaCircleExclamation aria-hidden="true" />
             )}
             {toast.message}
-          </Toast>
-        </ToastPosition>
-      )}
+          </Toast>,
+          toastContainer,
+        )}
     </>
   );
 };
 
 const TableGrid = styled.div<{ $placeCount: number }>`
   display: grid;
-  grid-template-columns: 5rem repeat(
+  grid-template-columns: 6.75rem repeat(
       ${({ $placeCount }) => $placeCount},
-      minmax(7rem, 1fr)
+      minmax(9.25rem, 1fr)
     );
-  grid-template-rows: 4.5rem repeat(${TimeData.length}, 5rem);
-  min-width: ${({ $placeCount }) => 5 + $placeCount * 7}rem;
+  grid-template-rows: 4.875rem repeat(${TimeData.length}, 4.5rem);
+  min-width: ${({ $placeCount }) => 6.75 + $placeCount * 9.25}rem;
   overflow: hidden;
   position: relative;
-  border-radius: ${ColorData.radius.modal};
+  border-radius: 1.125rem;
   background-color: ${ColorData.colors.background};
 `;
 
@@ -405,8 +351,11 @@ const HeaderCell = styled.div<{ $column: number; $row: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${ColorData.colors.labelNeutral};
-  font-size: 1.25rem;
+  padding: 0 0.5rem;
+  color: ${({ $column }) =>
+    $column === 1 ? ReservationColors.gray20 : ReservationColors.gray40};
+  font-size: ${({ $column }) => ($column === 1 ? "1.125rem" : "1.21875rem")};
+  font-weight: 600;
   white-space: nowrap;
 `;
 
@@ -415,41 +364,33 @@ const TimeCell = styled.div<{ $row: number; $active: boolean }>`
   grid-row: ${({ $row }) => $row};
   display: flex;
   align-items: center;
-  padding-left: ${ColorData.spacing[12]};
+  justify-content: center;
   color: ${({ $active }) =>
-    $active ? ColorData.colors.primary : ColorData.colors.labelAlternative};
-  font-size: 1.25rem;
-  font-weight: ${({ $active }) => ($active ? 700 : 400)};
-`;
-
-const ToastPosition = styled.div`
-  position: fixed;
-  right: ${ColorData.spacing[24]};
-  bottom: ${ColorData.spacing[24]};
-  z-index: 10001;
+    $active ? ReservationColors.blue : ReservationColors.gray20};
+  font-size: 1.21875rem;
+  font-weight: ${({ $active }) => ($active ? 700 : 500)};
 `;
 
 const Toast = styled.div<{ $variant: ToastVariant }>`
   display: inline-flex;
   align-items: center;
-  gap: ${ColorData.spacing[8]};
-  min-height: 2.75rem;
-  padding: 0 ${ColorData.spacing[16]};
-  border-radius: ${ColorData.radius.large};
-  border-left: 0.25rem solid
-    ${({ $variant }) =>
-      $variant === "caution" ? ColorData.colors.caution : "transparent"};
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1rem 1.25rem;
+  border-radius: 0.875rem;
   background-color: ${ColorData.colors.background};
-  color: ${ColorData.colors.labelNormal};
-  box-shadow: ${ColorData.shadow.popover};
-  font-family: ${ColorData.typography.fontFamily};
-  font-size: ${ColorData.typography.caption.fontSize};
-`;
+  color: ${ReservationColors.gray40};
+  filter: drop-shadow(0 0.5rem 0.75rem rgba(0, 0, 0, 0.2));
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.375rem;
+  letter-spacing: -0.025rem;
 
-const ToastIcon = styled.img`
-  display: block;
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-  object-fit: contain;
+  svg {
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: ${({ $variant }) =>
+      $variant === "caution" ? ReservationColors.error : ReservationColors.success};
+  }
 `;

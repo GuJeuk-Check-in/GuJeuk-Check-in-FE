@@ -53,10 +53,13 @@ export const formatPeople = ({ male, female }: ReservationPeople) => {
     female > 0 ? `여 ${female}` : null,
   ].filter(Boolean);
 
-  return companions.length > 0
-    ? `본인 + ${companions.join(" · ")}`
-    : "본인";
+  return companions.length > 0 ? companions.join(" · ") : "없음";
 };
+
+export const formatDisplayTime = (time: string) => time.replace(/^0/, "");
+
+export const formatTimeRange = (startTime: string, endTime: string) =>
+  `${formatDisplayTime(startTime)} – ${formatDisplayTime(endTime)}`;
 
 export const getNextTime = (time: string) => {
   const nextMinutes = (toMinutes(time) + 60) % (24 * 60);
