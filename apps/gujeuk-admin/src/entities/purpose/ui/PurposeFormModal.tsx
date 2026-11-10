@@ -296,11 +296,6 @@ const Input = styled.input`
   &::placeholder {
     color: ${PurposeColors.gray10};
   }
-
-  &:focus {
-    border: 1.5px solid ${PurposeColors.skyblue};
-    padding: 0 calc(1rem - 0.5px);
-  }
 `;
 
 const ReservationSetting = styled.div`
