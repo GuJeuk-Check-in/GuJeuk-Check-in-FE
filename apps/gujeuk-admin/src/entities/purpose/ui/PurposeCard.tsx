@@ -96,12 +96,6 @@ const Card = styled(TileContainer)<{ $isReservable: boolean }>`
   &:hover {
     outline-width: ${({ $isReservable }) => ($isReservable ? '2px' : '1px')};
   }
-
-  &:focus-visible {
-    outline-color: ${PurposeColors.blue};
-    outline-offset: -2px;
-    outline-width: 2px;
-  }
 `;
 
 const EditButton = styled.button`
@@ -115,6 +109,11 @@ const EditButton = styled.button`
   border-radius: inherit;
   background: none;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${PurposeColors.blue};
+    outline-offset: -2px;
+  }
 
   &:disabled {
     cursor: not-allowed;
