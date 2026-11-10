@@ -144,6 +144,12 @@ const DeleteButton = styled(TileDeleteIcon)`
     height: 1.5rem;
     pointer-events: none;
   }
+
+  &:focus-visible {
+    outline: 2px solid ${PurposeColors.skyblue};
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
 `;
 
 const Label = styled(TileLabel)`

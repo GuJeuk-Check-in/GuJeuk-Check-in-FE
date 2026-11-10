@@ -110,4 +110,10 @@ const Container = styled(AddTileContainer)`
     background-color: #ffffff;
     outline-width: ${({ $isDisabled }) => ($isDisabled ? '0' : '1px')};
   }
+
+  &:focus-visible {
+    outline-color: ${PurposeColors.blue};
+    outline-offset: -2px;
+    outline-width: ${({ $isDisabled }) => ($isDisabled ? '0' : '2px')};
+  }
 `;
