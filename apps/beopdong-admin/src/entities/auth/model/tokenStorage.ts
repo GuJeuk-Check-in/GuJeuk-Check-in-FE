@@ -10,11 +10,20 @@ const safely = <T>(action: () => T, fallback: T): T => {
 };
 
 export const tokenStorage = {
-  save: (accessToken: string, refreshToken: string) =>
-    safely(() => {
+  save: (accessToken: string, refreshToken: string): boolean => {
+    const saved = safely(() => {
       localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
       localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-    }, undefined),
+      return true;
+    }, false);
+    if (!saved) {
+      safely(() => {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+      }, undefined);
+    }
+    return saved;
+  },
   getAccessToken: () => safely(() => localStorage.getItem(ACCESS_TOKEN_KEY), null),
   getRefreshToken: () => safely(() => localStorage.getItem(REFRESH_TOKEN_KEY), null),
   clear: () =>
