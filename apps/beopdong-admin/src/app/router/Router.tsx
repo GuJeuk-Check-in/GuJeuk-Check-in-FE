@@ -27,8 +27,8 @@ export const Router = () => {
     >
       <Routes>
         <Route path="/organ/login" element={<OrganLogin />} />
+        <Route path="/organ/change" element={<OrganChange />} />
         <Route element={<RequireAuth />}>
-          <Route path="/organ/change" element={<OrganChange />} />
           <Route element={<AppLayout />}>
             <Route path="/log" element={<UserVisitList />} />
             <Route path="/log/create" element={<UserDetail />} />
