@@ -5,6 +5,7 @@ import { formatDateKoreanPadded } from '@center/ui/form';
 import { UserVisitCard, getVisitDisplayName, type UserVisitSummary } from '@entities/log';
 import styled from '@emotion/styled';
 import { useConfirmDelete } from '@shared/lib/useConfirmDelete';
+import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { PageTitle } from '@shared/ui';
 
@@ -19,8 +20,20 @@ const DELETE_MESSAGES = {
   pendingSubtitle: '현재 기록은 삭제되지 않았습니다.',
 };
 
+const formatVisitSubtitle = (visit: UserVisitSummary) =>
+  [getVisitDisplayName(visit), formatDateKoreanPadded(visit.visitDate), visit.purposes.join(', ')].join(' · ');
+
 export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps) => {
   const { modal, confirmModal, handleDelete } = useConfirmDelete<UserVisitSummary>(DELETE_MESSAGES);
+  const { confirmModal: checkOutModal, openConfirm: openCheckOutConfirm } = useConfirmModal();
+
+  const handleCheckOut = (visit: UserVisitSummary) => {
+    openCheckOutConfirm({
+      title: '이 사용자를 퇴실하시겠습니까?',
+      subtitle: formatVisitSubtitle(visit),
+      onConfirm: () => openApiPendingNotice(modal, '퇴실', '현재 퇴실 처리되지 않았습니다.'),
+    });
+  };
 
   return (
     <Container>
@@ -32,7 +45,7 @@ export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps)
               <UserVisitCard
                 visit={visit}
                 onDelete={() => handleDelete(visit)}
-                onCheckOut={() => openApiPendingNotice(modal, '퇴실', '현재 퇴실 처리되지 않았습니다.')}
+                onCheckOut={() => handleCheckOut(visit)}
               />
             </li>
           ))}
@@ -44,6 +57,7 @@ export const UserVisitListFeature = ({ visits = [] }: UserVisitListFeatureProps)
       )}
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
       <ConfirmModal isOpen={confirmModal.isOpen} config={confirmModal.config} onClose={confirmModal.closeModal} />
+      <ConfirmModal isOpen={checkOutModal.isOpen} config={checkOutModal.config} onClose={checkOutModal.closeModal} />
     </Container>
   );
 };
