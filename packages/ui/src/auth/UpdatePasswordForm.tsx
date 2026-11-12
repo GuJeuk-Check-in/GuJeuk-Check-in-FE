@@ -6,6 +6,7 @@ import { AuthInput } from './AuthInput';
 import { Modal } from '../modal';
 import type { UseModalReturn } from '../modal';
 import { validatePassword } from './validation';
+import { passwordFailure } from './validation';
 import type { PasswordErrors, PasswordValues, MutationCallbacks } from './validation';
 import styled from '@emotion/styled';
 import { FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -64,7 +65,7 @@ export const UpdatePasswordForm = ({ onUpdatePassword: updatePassword, isPending
 
         onError: (message) => {
           if (failureDisplay === 'inline') {
-            setFormErrors({ confirmPW: message });
+            setFormErrors(passwordFailure(message));
             return;
           }
           openModal({
