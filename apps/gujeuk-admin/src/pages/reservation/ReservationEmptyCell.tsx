@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
+import { FiPlus } from "react-icons/fi";
 import { ColorData } from "@center/tokens";
-import { PlusButton } from "@shared/assets";
 import type { ReservationPlace, ReservationTime } from './ReservationData';
+import { ReservationColors } from "./reservationColors";
 
 interface ReservationEmptyCellProps {
   place: ReservationPlace;
   time: ReservationTime;
   column: number;
   row: number;
+  selected?: boolean;
   onAddClick: (place: ReservationPlace, time: ReservationTime) => void;
 }
 
@@ -16,6 +18,7 @@ export const ReservationEmptyCell = ({
   time,
   column,
   row,
+  selected = false,
   onAddClick,
 }: ReservationEmptyCellProps) => (
   <Cell $column={column} $row={row}>
@@ -24,8 +27,9 @@ export const ReservationEmptyCell = ({
       className="reservation-add-button"
       onClick={() => onAddClick(place, time)}
       aria-label={`${place} ${time} 예약 추가`}
+      $selected={selected}
     >
-      <img src={PlusButton} alt="" />
+      <FiPlus aria-hidden="true" />
       <span>예약 추가</span>
     </AddButton>
   </Cell>
@@ -46,31 +50,36 @@ const Cell = styled.div<{ $column: number; $row: number }>`
   }
 `;
 
-const AddButton = styled.button`
+const AddButton = styled.button<{ $selected: boolean }>`
   position: absolute;
-  inset: 0.25rem;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: ${ColorData.spacing[4]};
+  gap: 0.25rem;
   padding: ${ColorData.spacing[4]};
   box-sizing: border-box;
-  opacity: 0;
-  border: 1px dashed ${ColorData.colors.primary};
-  background-color: ${ColorData.colors.primary8};
-  color: ${ColorData.colors.primary};
-  font-size: ${ColorData.typography.caption.fontSize};
-
+  opacity: ${({ $selected }) => ($selected ? 1 : 0)};
+  border: 0.09375rem dashed ${ReservationColors.skyblue};
+  background-color: transparent;
+  color: ${ReservationColors.blue};
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.025rem;
+  line-height: 1.5rem;
   cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+
+  svg {
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+    color: ${ReservationColors.skyblue};
+  }
 
   &:focus-visible {
     opacity: 1;
-  }
-
-  &:hover {
-    background-color: ${ColorData.colors.primaryLight};
+    outline: none;
   }
 `;

@@ -7,5 +7,5 @@ export { RightLayout } from './RightLayout';
 export { MainLayout } from './AuthLayout';
 export { LoginForm } from './LoginForm';
 export { UpdatePasswordForm } from './UpdatePasswordForm';
-export { validateLogin, validatePassword, loginFailure } from './validation';
+export { validateLogin, validatePassword, loginFailure, passwordFailure, CURRENT_PASSWORD_MISMATCH_MESSAGE } from './validation';
 export type { LoginValues, PasswordValues, MutationCallbacks } from './validation';

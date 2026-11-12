@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import type { Purpose, PurposeFormValues } from '@entities/purpose';
 import { useModal } from '@shared/hooks';
 import { useUpdatePurpose } from '../model/useUpdatePurpose';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -6,25 +8,24 @@ import { AxiosError } from 'axios';
 export const useUpdatePurposeHandler = () => {
   const { openModal, closeModal, isOpen, config } = useModal();
   const mutation = useUpdatePurpose();
+  const [editingPurpose, setEditingPurpose] = useState<Purpose | null>(null);
 
-  const handleUpdate = (id: number, newPurpose: string) => {
-    openModal({
-      title: '예약 필요 여부',
-      subtitle: '이 시설을 이용할 때 예약이 필요한가요?',
-      buttons: [
-        { label: '취소', variant: 'secondary', onClick: closeModal },
-        { label: '예약 불필요', variant: 'secondary', onClick: () => executeUpdate(id, newPurpose, false) },
-        { label: '예약 필요', variant: 'primary', onClick: () => executeUpdate(id, newPurpose, true) },
-      ],
-    });
+  const startEdit = (purpose: Purpose) => {
+    setEditingPurpose(purpose);
   };
 
-  const executeUpdate = (id: number, newPurpose: string, reservationStatus: boolean) => {
-    closeModal();
+  const cancelEdit = () => {
+    setEditingPurpose(null);
+  };
+
+  const handleUpdate = (values: PurposeFormValues) => {
+    if (!editingPurpose) return;
+
     mutation.mutate(
-      { id, purpose: newPurpose, reservationStatus },
+      { id: editingPurpose.id, ...values },
       {
         onSuccess: () => {
+          setEditingPurpose(null);
           openModal({
             icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
             title: '수정 완료',
@@ -63,6 +64,9 @@ export const useUpdatePurposeHandler = () => {
   };
 
   return {
+    editingPurpose,
+    startEdit,
+    cancelEdit,
     handleUpdate,
     isLoading: mutation.isPending,
     isOpen,

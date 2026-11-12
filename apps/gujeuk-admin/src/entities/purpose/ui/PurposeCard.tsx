@@ -1,44 +1,16 @@
-import {
-  TileContainer as Container,
-  TileDeleteIcon as DeleteIcon,
-  TileLabel as Label,
-  TileEditInput as EditInput,
-  TileStyledEditIcon as StyledEditIcon,
-  stopTileDrag,
-  useInlineEdit,
-} from "@center/ui/card";
-import styled from "@emotion/styled";
-import type { PurposeResponse } from "../model/types";
-import { IoClose } from "react-icons/io5";
-
-const ReservationStatusButton = styled.button<{ $isReservable: boolean }>`
-  position: absolute;
-  top: 0.625rem;
-  left: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.2rem 0.4rem;
-  border: none;
-  border-radius: 0.25rem;
-  background: ${({ $isReservable }) => ($isReservable ? "#e6f0ff" : "#f1f1f1")};
-  color: ${({ $isReservable }) => ($isReservable ? "#2866ad" : "#777")};
-  font-size: 0.625rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
+import { useRef, type KeyboardEvent, type MouseEvent } from 'react';
+import { TileContainer, TileDeleteIcon, TileLabel } from '@center/ui/card';
+import styled from '@emotion/styled';
+import { LuCalendarCheck } from 'react-icons/lu';
+import { MdClose } from 'react-icons/md';
+import type { Purpose } from '../model/types';
+import { PurposeColors } from './purposeColors';
 
 interface PurposeProps {
-  purpose: PurposeResponse;
+  purpose: Purpose;
   index: number;
   onDelete: (id: number) => void;
-  onEditReservation: (id: number) => void;
-  onUpdate: (params: { id: number; newPurpose: string }) => void;
+  onEdit: (purpose: Purpose) => void;
   isDeleting: boolean;
 }
 
@@ -46,62 +18,158 @@ export const PurposeCard = ({
   index,
   purpose,
   onDelete,
-  onEditReservation,
-  onUpdate,
+  onEdit,
   isDeleting,
 }: PurposeProps) => {
-  const edit = useInlineEdit({
-    value: purpose.purpose,
-    onSubmit: (newPurpose) => onUpdate({ id: purpose.id, newPurpose }),
-    disabled: isDeleting,
-  });
+  const pressStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const openEdit = () => {
+    if (!isDeleting) onEdit(purpose);
+  };
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const start = pressStartRef.current;
+    pressStartRef.current = null;
+    if (
+      event.detail > 0 &&
+      start &&
+      Math.hypot(event.clientX - start.x, event.clientY - start.y) >= DRAG_DISTANCE
+    ) {
+      return;
+    }
+    openEdit();
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') event.stopPropagation();
+  };
 
   return (
-    <Container isDisabled={isDeleting}>
-      {!edit.isEditing && (
-        <ReservationStatusButton
-          type="button"
-          aria-label={`예약 필요 여부 수정: 현재 ${purpose.reservationStatus ? "예약 가능" : "예약 불가"}`}
-          title="예약 필요 여부 수정"
-          $isReservable={purpose.reservationStatus}
-          onClick={() => onEditReservation(purpose.id)}
-          onPointerDown={stopTileDrag}
-          onMouseDown={stopTileDrag}
-          onKeyDown={stopTileDrag}
-          disabled={isDeleting}
-        >
-          {purpose.reservationStatus ? "예약 가능" : "예약 불가"}
-        </ReservationStatusButton>
+    <Card isDisabled={isDeleting} $isReservable={purpose.reservationStatus}>
+      <EditButton
+        type="button"
+        aria-label={`${purpose.purpose}${purpose.reservationStatus ? ', 예약 가능' : ''} 수정`}
+        disabled={isDeleting}
+        onMouseDown={(event) => {
+          pressStartRef.current = { x: event.clientX, y: event.clientY };
+        }}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
+      />
+      {purpose.reservationStatus && (
+        <ReservationBadge aria-hidden="true">
+          <LuCalendarCheck />
+          예약 가능
+        </ReservationBadge>
       )}
-      <DeleteIcon
+      <DeleteButton
         type="button"
         onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         isDeleting={isDeleting}
         disabled={isDeleting}
+        aria-label={`${purpose.purpose} 삭제`}
       >
-        {isDeleting ? (
-          "..."
-        ) : (
-          <IoClose size="1.25rem" style={{ pointerEvents: "none" }} />
-        )}
-      </DeleteIcon>
+        {isDeleting ? '...' : <MdClose aria-hidden="true" />}
+      </DeleteButton>
 
-      {edit.isEditing ? (
-        <EditInput type="text" {...edit.inputProps} />
-      ) : (
-        <Label>
-          {index}. {purpose.purpose}
-          <StyledEditIcon
-            size={18}
-            onClick={edit.start}
-            onPointerDown={stopTileDrag}
-            onMouseDown={stopTileDrag}
-            isDeleting={isDeleting}
-          />
-        </Label>
-      )}
-    </Container>
+      <Label aria-hidden="true">
+        {index}. {purpose.purpose}
+      </Label>
+    </Card>
   );
 };
+
+const DRAG_DISTANCE = 8;
+
+const Card = styled(TileContainer)<{ $isReservable: boolean }>`
+  box-sizing: border-box;
+  border-radius: 1.25rem;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+  color: ${PurposeColors.gray40};
+  outline: 0 solid ${PurposeColors.skyblue};
+  outline-offset: ${({ $isReservable }) => ($isReservable ? '-2px' : '-1px')};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
+  transition: outline-width 0.15s ease;
+
+  &:hover {
+    outline-width: ${({ $isReservable }) => ($isReservable ? '2px' : '1px')};
+  }
+`;
+
+const EditButton = styled.button`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${PurposeColors.blue};
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+const ReservationBadge = styled.span`
+  position: absolute;
+  top: 1.125rem;
+  left: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.625rem 0.25rem 0.5rem;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: ${PurposeColors.blue};
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: ${PurposeColors.skyblue};
+  }
+`;
+
+const DeleteButton = styled(TileDeleteIcon)`
+  top: 1.1875rem;
+  right: 2.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  color: ${({ isDeleting }) => (isDeleting ? '#aaaaaa' : PurposeColors.error)};
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    pointer-events: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${PurposeColors.skyblue};
+    outline-offset: 2px;
+    border-radius: 50%;
+  }
+`;
+
+const Label = styled(TileLabel)`
+  padding: 0.625rem;
+  color: ${PurposeColors.gray40};
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2.25rem;
+  letter-spacing: -0.05rem;
+`;

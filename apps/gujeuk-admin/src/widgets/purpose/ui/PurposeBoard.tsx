@@ -1,6 +1,7 @@
 import {
   usePurposeList,
   PurposeCard,
+  PurposeFormModal,
   SortablePurposeItem,
 } from '@entities/purpose/index';
 import {
@@ -10,6 +11,7 @@ import {
   PurposeAddBox,
 } from '@features/purpose/index';
 
+import styled from '@emotion/styled';
 import { Modal } from '@shared/ui/modal/Modal';
 import { SortableBoardShell } from '@widgets/sortable-board';
 
@@ -22,6 +24,9 @@ export const PurposeBoard = () => {
   } = usePurposeList();
   const { items, sensors, handleDragEnd, modal: reorderModal } = useReorderPurpose(purposes);
   const {
+    editingPurpose,
+    startEdit,
+    cancelEdit,
     handleUpdate,
     isLoading: isUpdating,
     isOpen: isUpdateOpen,
@@ -31,16 +36,26 @@ export const PurposeBoard = () => {
     useDeletePurposeHandler();
 
   return (
-    <SortableBoardShell
+    <Board
       isLoading={isListLoading}
       isError={isError}
       error={error}
       items={items}
       sensors={sensors}
       onDragEnd={handleDragEnd}
-      trailingSlot={<PurposeAddBox />}
+      leadingSlot={<PurposeAddBox />}
       afterGridSlot={
         <>
+          {editingPurpose && (
+            <PurposeFormModal
+              key={editingPurpose.id}
+              mode="update"
+              initialValues={editingPurpose}
+              isSubmitting={isUpdating}
+              onClose={cancelEdit}
+              onSubmit={handleUpdate}
+            />
+          )}
           {isOpen && config && <Modal isOpen={isOpen} config={config} />}
           {isUpdateOpen && updateConfig && (
             <Modal isOpen={isUpdateOpen} config={updateConfig} />
@@ -55,18 +70,17 @@ export const PurposeBoard = () => {
             index={index + 1}
             purpose={purpose}
             onDelete={handleDelete}
-            onEditReservation={(id) => handleUpdate(id, purpose.purpose)}
-            onUpdate={({
-              id,
-              newPurpose,
-            }: {
-              id: number;
-              newPurpose: string;
-            }) => handleUpdate(id, newPurpose)}
+            onEdit={startEdit}
             isDeleting={deletingId === purpose.id || isUpdating}
           />
         </SortablePurposeItem>
       ))}
-    </SortableBoardShell>
+    </Board>
   );
 };
+
+const Board = styled(SortableBoardShell)`
+  max-width: 80.3125rem;
+  grid-auto-rows: 10rem;
+  overflow: visible;
+`;

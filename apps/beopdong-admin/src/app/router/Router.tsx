@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AppLayout } from '@app/layout';
+import { RequireAuth } from './RequireAuth';
 
 const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
 const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
@@ -30,18 +31,20 @@ export const Router = () => {
       <Routes>
         <Route path="/organ/login" element={<OrganLogin />} />
         <Route path="/organ/change" element={<OrganChange />} />
-        <Route element={<AppLayout />}>
-          <Route path="/log" element={<UserVisitList />} />
-          <Route path="/log/create" element={<Navigate to="/log/create/adult" replace />} />
-          <Route path="/log/create/minor" element={<UserDetail title="미성년자 방명록 추가" variant="minor" />} />
-          <Route path="/log/create/adult" element={<UserDetail title="성인 방명록 추가" variant="adult" />} />
-          <Route path="/log/:logId" element={<UserDetailView />} />
-          <Route path="/usage/current" element={<CurrentUsage />} />
-          <Route path="/usage/history" element={<UsageHistory />} />
-          <Route path="/usage/history/:historyId" element={<UsageHistoryDetail />} />
-          <Route path="/organ/user/all" element={<UserInformation />} />
-          <Route path="/organ/user/:userId" element={<UserDetailPage />} />
-          <Route path="/purpose/all" element={<PurposeCustom />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<AppLayout />}>
+            <Route path="/log" element={<UserVisitList />} />
+            <Route path="/log/create" element={<Navigate to="/log/create/adult" replace />} />
+            <Route path="/log/create/minor" element={<UserDetail title="미성년자 방명록 추가" variant="minor" />} />
+            <Route path="/log/create/adult" element={<UserDetail title="성인 방명록 추가" variant="adult" />} />
+            <Route path="/log/:logId" element={<UserDetailView />} />
+            <Route path="/usage/current" element={<CurrentUsage />} />
+            <Route path="/usage/history" element={<UsageHistory />} />
+            <Route path="/usage/history/:historyId" element={<UsageHistoryDetail />} />
+            <Route path="/organ/user/all" element={<UserInformation />} />
+            <Route path="/organ/user/:userId" element={<UserDetailPage />} />
+            <Route path="/purpose/all" element={<PurposeCustom />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to="/organ/login" replace />} />
       </Routes>

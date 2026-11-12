@@ -1,7 +1,8 @@
 import { Fragment, useEffect, useRef, useState, type MouseEvent } from "react";
+import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
+import { FaCircleCheck, FaCircleExclamation } from "react-icons/fa6";
 import { ColorData } from "@center/tokens";
-import { SucceedIcon } from "@shared/assets";
 import { ReservationCard } from "./ReservationCard";
 import {
   ReservationCreateModal,
@@ -10,8 +11,10 @@ import {
 import { ReservationDeleteModal } from "./ReservationDeleteModal";
 import { ReservationDetailModal } from "./ReservationDetailModal";
 import {
-  PlaceData,
   TimeData,
+  formatDisplayTime,
+  formatTimeRange,
+  getNextTime,
   type Reservation,
   type ReservationPlace,
   type ReservationTime,
@@ -19,7 +22,8 @@ import {
 import { ReservationEmptyCell } from "./ReservationEmptyCell";
 import { useDeleteReservation } from "@features/reservation/delete-reservation";
 import { useCreateReservation } from "@features/reservation/create-reservation";
-import { isAxiosError } from "axios";
+import { getCreateReservationErrorMessage } from "./reservationErrorMessage";
+import { ReservationColors } from "./reservationColors";
 
 interface CreateTarget {
   place: ReservationPlace;
@@ -27,8 +31,11 @@ interface CreateTarget {
 }
 
 interface ReservationTableProps {
+  places: ReservationPlace[];
   reservations: Reservation[];
   activeTimeIndex: number;
+  readOnly?: boolean;
+  toastContainer?: HTMLElement | null;
 }
 
 type ToastVariant = "positive" | "caution";
@@ -39,8 +46,11 @@ interface ToastState {
 }
 
 export const ReservationTable = ({
+  places,
   reservations,
   activeTimeIndex,
+  readOnly = false,
+  toastContainer = null,
 }: ReservationTableProps) => {
   const [selectedReservationId, setSelectedReservationId] = useState<
     Reservation["id"] | null
@@ -50,11 +60,13 @@ export const ReservationTable = ({
     Reservation["id"] | null
   >(null);
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [toast, setToast] = useState<ToastState | null>(null);
   const { mutate: deleteReservation, isPending } = useDeleteReservation();
   const { mutate: createReservation, isPending: isCreating } =
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
+  const createEditVersionRef = useRef(0);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -100,30 +112,29 @@ export const ReservationTable = ({
 
   const handleCreate = (values: ReservationCreateValues) => {
     if (!createTarget || isCreating) return;
+    setCreateError(null);
+    const editVersion = createEditVersionRef.current;
+    const { place, time } = createTarget;
 
-    const [hour, minute] = createTarget.time.split(":");
     createReservation(
       {
         name: values.userName,
         phone: values.phone,
         maleCount: values.people.male,
         femaleCount: values.people.female,
-        purpose: createTarget.place,
-        startTime: `${hour.padStart(2, "0")}:${minute}:00`,
+        purpose: place,
+        startTime: time,
       },
       {
         onSuccess: () => {
           setCreateTarget(null);
-          showToast(`${values.userName}님의 예약이 추가됐어요.`);
+          showToast(
+            `${values.userName}님의 예약이 추가됐어요 · ${place} ${formatTimeRange(time, getNextTime(time))}`,
+          );
         },
         onError: (error) => {
-          const message = isAxiosError<{ message?: string }>(error)
-            ? error.response?.data?.message
-            : undefined;
-          showToast(
-            message || "예약을 추가하지 못했어요. 다시 시도해 주세요.",
-            "caution",
-          );
+          if (createEditVersionRef.current !== editVersion) return;
+          setCreateError(getCreateReservationErrorMessage(error));
         },
       },
     );
@@ -131,12 +142,15 @@ export const ReservationTable = ({
 
   const handleDelete = () => {
     if (!deleteTarget || isPending) return;
+    const { userName, place, startTime } = deleteTarget;
 
     deleteReservation(deleteTarget.id, {
       onSuccess: () => {
         setDeleteTargetId(null);
         setSelectedReservationId(null);
-        showToast("예약을 삭제했어요");
+        showToast(
+          `${userName}님의 ${place} · ${formatDisplayTime(startTime)} 예약을 삭제했어요`,
+        );
       },
       onError: (error) => {
         showToast(
@@ -148,20 +162,29 @@ export const ReservationTable = ({
     });
   };
 
+  const closeDetail = () => {
+    setSelectedReservationId(null);
+  };
+
   const handleReservationClick = (
     reservation: Reservation,
     event: MouseEvent<HTMLButtonElement>,
   ) => {
+    if (createTarget || deleteTarget) return;
+    if (selectedReservationId === reservation.id) {
+      closeDetail();
+      return;
+    }
     const rect = event.currentTarget.getBoundingClientRect();
     const viewportPadding = 16;
     const rootFontSize = parseFloat(
       getComputedStyle(document.documentElement).fontSize,
     );
     const popoverWidth = Math.min(
-      18.5 * rootFontSize,
+      22.5 * rootFontSize,
       window.innerWidth - viewportPadding * 2,
     );
-    const popoverHeight = 282;
+    const popoverHeight = 19.5 * rootFontSize;
     const gap = 8;
     const maxLeft = window.innerWidth - popoverWidth - viewportPadding;
     const preferredLeft =
@@ -182,12 +205,12 @@ export const ReservationTable = ({
 
   return (
     <>
-      <TableGrid>
+      <TableGrid $placeCount={places.length} $fill={readOnly}>
         <HeaderCell $column={1} $row={1}>
           시간
         </HeaderCell>
 
-        {PlaceData.map((place, index) => (
+        {places.map((place, index) => (
           <HeaderCell key={place} $column={index + 2} $row={1}>
             {place}
           </HeaderCell>
@@ -199,10 +222,10 @@ export const ReservationTable = ({
               $row={timeIndex + 2}
               $active={timeIndex === activeTimeIndex}
             >
-              {time}
+              {formatDisplayTime(time)}
             </TimeCell>
 
-            {PlaceData.map((place, placeIndex) => {
+            {places.map((place, placeIndex) => {
               const reservation = reservations.find(
                 (item) => item.place === place && item.startTime === time,
               );
@@ -215,26 +238,37 @@ export const ReservationTable = ({
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
-                  onClick={(event) =>
-                    handleReservationClick(reservation, event)
+                  readOnly={readOnly}
+                  selected={
+                    selectedReservationId === reservation.id ||
+                    deleteTargetId === reservation.id
+                  }
+                  onClick={
+                    readOnly
+                      ? undefined
+                      : (event) => handleReservationClick(reservation, event)
                   }
                 />
-              ) : (
+              ) : !readOnly ? (
                 <ReservationEmptyCell
                   key={`${time}-${place}`}
                   place={place}
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
+                  selected={
+                    createTarget?.place === place && createTarget.time === time
+                  }
                   onAddClick={(selectedPlace, selectedTime) => {
                     setSelectedReservationId(null);
+                    setCreateError(null);
                     setCreateTarget({
                       place: selectedPlace,
                       time: selectedTime,
                     });
                   }}
                 />
-              );
+              ) : null;
             })}
           </Fragment>
         ))}
@@ -244,10 +278,10 @@ export const ReservationTable = ({
         <ReservationDetailModal
           reservation={selectedReservation}
           position={detailPosition}
-          onClose={() => setSelectedReservationId(null)}
+          onClose={closeDetail}
           onDelete={() => {
             setDeleteTargetId(selectedReservation.id);
-            setSelectedReservationId(null);
+            closeDetail();
           }}
         />
       )}
@@ -271,33 +305,48 @@ export const ReservationTable = ({
             if (!isCreating) setCreateTarget(null);
           }}
           onSubmit={handleCreate}
+          onEdit={() => {
+            createEditVersionRef.current += 1;
+            setCreateError(null);
+          }}
           isPending={isCreating}
+          errorMessage={createError}
         />
       )}
 
-      {toast && (
-        <ToastPosition>
+      {toast &&
+        toastContainer &&
+        createPortal(
           <Toast role="status" aria-live="polite" $variant={toast.variant}>
-            {toast.variant === "positive" && (
-              <ToastIcon src={SucceedIcon} alt="" />
+            {toast.variant === "positive" ? (
+              <FaCircleCheck aria-hidden="true" />
+            ) : (
+              <FaCircleExclamation aria-hidden="true" />
             )}
             {toast.message}
-          </Toast>
-        </ToastPosition>
-      )}
+          </Toast>,
+          toastContainer,
+        )}
     </>
   );
 };
 
-const TableGrid = styled.div`
+const TableGrid = styled.div<{ $placeCount: number; $fill: boolean }>`
   display: grid;
-  grid-template-columns: 5rem repeat(9, minmax(7rem, 1fr));
-  grid-template-rows: 4.5rem repeat(${TimeData.length}, 5rem);
-  min-width: 68rem;
+  grid-template-columns: 6.75rem repeat(
+      ${({ $placeCount }) => $placeCount},
+      minmax(9.25rem, 1fr)
+    );
+  grid-template-rows: ${({ $fill }) =>
+    $fill
+      ? `minmax(3rem, 4.875rem) repeat(${TimeData.length}, minmax(2.5rem, 1fr))`
+      : `4.875rem repeat(${TimeData.length}, 3.5rem)`};
+  min-width: ${({ $placeCount }) => 6.75 + $placeCount * 9.25}rem;
   overflow: hidden;
   position: relative;
-  border-radius: ${ColorData.radius.modal};
+  border-radius: 1.125rem;
   background-color: ${ColorData.colors.background};
+  ${({ $fill }) => $fill && "height: 100%; border-radius: 0;"}
 `;
 
 const HeaderCell = styled.div<{ $column: number; $row: number }>`
@@ -306,8 +355,11 @@ const HeaderCell = styled.div<{ $column: number; $row: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${ColorData.colors.labelNeutral};
-  font-size: ${ColorData.typography.caption.fontSize};
+  padding: 0 0.5rem;
+  color: ${({ $column }) =>
+    $column === 1 ? ReservationColors.gray20 : ReservationColors.gray40};
+  font-size: ${({ $column }) => ($column === 1 ? "1.125rem" : "1.21875rem")};
+  font-weight: 600;
   white-space: nowrap;
 `;
 
@@ -316,41 +368,33 @@ const TimeCell = styled.div<{ $row: number; $active: boolean }>`
   grid-row: ${({ $row }) => $row};
   display: flex;
   align-items: center;
-  padding-left: ${ColorData.spacing[12]};
+  justify-content: center;
   color: ${({ $active }) =>
-    $active ? ColorData.colors.primary : ColorData.colors.labelAlternative};
-  font-size: ${ColorData.typography.caption.fontSize};
-  font-weight: ${({ $active }) => ($active ? 700 : 400)};
-`;
-
-const ToastPosition = styled.div`
-  position: fixed;
-  right: ${ColorData.spacing[24]};
-  bottom: ${ColorData.spacing[24]};
-  z-index: 10001;
+    $active ? ReservationColors.blue : ReservationColors.gray20};
+  font-size: 1.21875rem;
+  font-weight: ${({ $active }) => ($active ? 700 : 500)};
 `;
 
 const Toast = styled.div<{ $variant: ToastVariant }>`
   display: inline-flex;
   align-items: center;
-  gap: ${ColorData.spacing[8]};
-  min-height: 2.75rem;
-  padding: 0 ${ColorData.spacing[16]};
-  border-radius: ${ColorData.radius.large};
-  border-left: 0.25rem solid
-    ${({ $variant }) =>
-      $variant === "caution" ? ColorData.colors.caution : "transparent"};
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1rem 1.25rem;
+  border-radius: 0.875rem;
   background-color: ${ColorData.colors.background};
-  color: ${ColorData.colors.labelNormal};
-  box-shadow: ${ColorData.shadow.popover};
-  font-family: ${ColorData.typography.fontFamily};
-  font-size: ${ColorData.typography.caption.fontSize};
-`;
+  color: ${ReservationColors.gray40};
+  filter: drop-shadow(0 0.5rem 0.75rem rgba(0, 0, 0, 0.2));
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.375rem;
+  letter-spacing: -0.025rem;
 
-const ToastIcon = styled.img`
-  display: block;
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-  object-fit: contain;
+  svg {
+    flex: 0 0 auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: ${({ $variant }) =>
+      $variant === "caution" ? ReservationColors.error : ReservationColors.success};
+  }
 `;

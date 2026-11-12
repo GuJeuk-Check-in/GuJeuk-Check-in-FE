@@ -62,7 +62,7 @@ export const CalendarField = ({ value, onChange, label = '방문 날짜', legacy
       {open && (
         <CalendarWrapper $legacy={legacy} $wide={wide} $span={span} id={`${id}-calendar`} role="group" aria-labelledby={`${id}-label`}>
           <StyledCalendar
-            $legacy={legacy} $wide={wide} value={value ?? (legacy ? new Date() : null)} onChange={handleDateSelect}
+            $legacy={legacy} $wide={wide} value={value} onChange={handleDateSelect}
             calendarType="gregory" locale="ko-KR"
             nextLabel={wide ? <IoIosArrowForward aria-hidden="true" /> : '›'}
             prevLabel={wide ? <IoIosArrowBack aria-hidden="true" /> : '‹'}
