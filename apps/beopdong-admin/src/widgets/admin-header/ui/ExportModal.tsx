@@ -60,14 +60,14 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
 const Content = styled(Dialog)`
   box-sizing: border-box;
   width: 90%;
-  max-width: 36rem;
+  max-width: 32rem;
   max-height: calc(100dvh - 2rem);
   overflow-y: auto;
-  padding: 2.5rem 2rem;
+  padding: 2.25rem 2rem 2rem;
   text-align: center;
   background-color: ${({ theme }) => adminTokens(theme).colors.white};
   border: 0.0625rem solid #d1d5db;
-  border-radius: 1.875rem;
+  border-radius: 1rem;
   box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
 
   @media (max-width: 32rem) {
@@ -77,21 +77,21 @@ const Content = styled(Dialog)`
 `;
 
 const PlusIcon = styled.svg`
-  width: 3rem;
-  height: 3rem;
+  width: 2rem;
+  height: 2rem;
   color: ${({ theme }) => adminTokens(theme).colors.primary};
 `;
 
 const Title = styled.h2`
-  margin: 1rem 0 0.5rem;
-  font-size: 1.75rem;
+  margin: 0.75rem 0 0.375rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: ${({ theme }) => adminTokens(theme).colors.primary};
 `;
 
 const Subtitle = styled.p`
-  margin: 0 0 2rem;
-  font-size: 1rem;
+  margin: 0 0 1.75rem;
+  font-size: 0.8rem;
   color: #6b7280;
 `;
 
@@ -99,22 +99,21 @@ const Periods = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2.5rem;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
 `;
 
 const PeriodButton = styled.button<{ $selected: boolean }>`
   box-sizing: border-box;
-  min-width: 6.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.125rem;
+  min-width: 5rem;
+  padding: 0.7rem 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   background-color: ${({ theme }) => adminTokens(theme).colors.white};
   color: ${({ $selected, theme }) => ($selected ? adminTokens(theme).colors.primaryDark : adminTokens(theme).colors.primary)};
-  border: ${({ $selected, theme }) => $selected
-    ? `0.25rem solid ${adminTokens(theme).colors.primary}`
-    : '0.0625rem solid rgba(0, 0, 0, 0.1)'};
+  border: 0.1875rem solid ${({ $selected, theme }) => ($selected ? adminTokens(theme).colors.primary : 'transparent')};
+  box-shadow: ${({ $selected }) => ($selected ? 'none' : 'inset 0 0 0 0.0625rem rgba(0, 0, 0, 0.1)')};
   border-radius: 62.4375rem;
 `;
 
@@ -126,9 +125,9 @@ const Actions = styled.div`
 `;
 
 const ActionButton = styled.button`
-  min-width: 11rem;
-  padding: 0.75rem 2rem;
-  font-size: 1.375rem;
+  min-width: 10rem;
+  padding: 0.65rem 2rem;
+  font-size: 1.15rem;
   font-weight: 600;
   border: none;
   border-radius: 62.4375rem;
@@ -141,7 +140,7 @@ const CancelButton = styled(ActionButton)`
 `;
 
 const ConfirmButton = styled(ActionButton)`
-  min-width: 14rem;
+  min-width: 10rem;
   background-color: ${({ theme }) => adminTokens(theme).colors.primary};
   color: ${({ theme }) => adminTokens(theme).colors.white};
 `;
