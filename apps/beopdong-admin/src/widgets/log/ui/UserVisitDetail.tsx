@@ -21,6 +21,12 @@ interface UserVisitDetailProps {
   readonly purposeOptions?: readonly string[];
 }
 
+const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult' | 'minor') => {
+  if (!visit) return '—';
+  if (variant === 'adult') return visit.name?.trim() || '-';
+  return getVisitDisplayName(visit);
+};
+
 export const UserVisitDetail = ({
   visit,
   purposeOptions = [],
@@ -62,8 +68,12 @@ export const UserVisitDetail = ({
       ) : (
         <Fields>
           <InputRow>
-            <DetailInput label="이름" value={visit ? getVisitDisplayName(visit) : '—'} icon={<IoMdPerson />} />
-            <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<CalendarIcon />} />
+            <DetailInput label="이름" value={getDetailName(visit, variant)} icon={<IoMdPerson />} />
+            <DetailInput
+              label="연령"
+              value={visit ? (variant === 'adult' ? '성인' : `${visit.age}세`) : '—'}
+              icon={<CalendarIcon />}
+            />
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
           {variant === 'minor' && (
