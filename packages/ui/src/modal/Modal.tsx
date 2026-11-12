@@ -232,7 +232,7 @@ const IconWrapper = styled.div`
     width: 3rem;
     height: 3rem;
 
-    color: ${({ theme }) => adminTokens(theme).colors.warning};
+    color: ${({ theme }) => adminTokens(theme).colors.error};
 
     [data-theme='info'] & {
       color: ${({ theme }) => adminTokens(theme).colors.primary};

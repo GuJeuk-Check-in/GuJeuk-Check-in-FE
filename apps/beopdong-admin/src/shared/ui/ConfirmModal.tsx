@@ -11,7 +11,7 @@ export const ConfirmModal = styled(Modal)`
     box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.12);
   }
 
-  svg {
+  && svg {
     width: 2.25rem;
     height: 2.25rem;
     color: ${({ theme }) => adminTokens(theme).colors.error};
