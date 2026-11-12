@@ -16,9 +16,10 @@ export const setUnauthorizedHandler = (handler: (() => void) | null) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRequest = error.config?.url === '/organ' && error.config?.method === 'post';
+    const isPublicAuthRequest =
+      error.config?.url === '/organ' && ['post', 'patch'].includes(error.config?.method);
 
-    if (error.response?.status === 401 && !isLoginRequest) {
+    if (error.response?.status === 401 && !isPublicAuthRequest) {
       unauthorizedHandler?.();
     }
 
