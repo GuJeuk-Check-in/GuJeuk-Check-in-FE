@@ -21,6 +21,7 @@ export const UserListWithSearch = ({ users }: UserListWithSearchProps) => {
         totalCount={users.length}
         searchName={searchName}
         resultCount={resultCount}
+        showResultFooter
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
         emptyText={searchName
