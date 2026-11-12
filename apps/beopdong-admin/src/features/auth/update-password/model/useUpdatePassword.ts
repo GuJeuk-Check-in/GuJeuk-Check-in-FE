@@ -1,10 +1,6 @@
 import { useCallback, useState } from 'react';
 import { getApiErrorMessage, updatePassword, type UpdatePasswordRequest } from '@entities/auth';
-
-interface UpdatePasswordCallbacks {
-  readonly onSuccess: () => void;
-  readonly onError: (message: string) => void;
-}
+import type { MutationCallbacks } from '@center/ui/auth';
 
 const FALLBACK_MESSAGE = '비밀번호 변경 중 오류가 발생했습니다.';
 
@@ -12,7 +8,7 @@ export const useUpdatePassword = () => {
   const [isPending, setIsPending] = useState(false);
 
   const submit = useCallback(
-    async (values: UpdatePasswordRequest, { onSuccess, onError }: UpdatePasswordCallbacks) => {
+    async (values: UpdatePasswordRequest, { onSuccess, onError }: MutationCallbacks) => {
       setIsPending(true);
       try {
         await updatePassword(values);
