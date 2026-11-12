@@ -9,7 +9,7 @@ import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@en
 import { formatDateKoreanPadded } from '@center/ui/form';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
-import { ActionButton, ActionButtons, BackLink } from '@shared/ui';
+import { ActionButton, CancelButton, EditButton, ActionButtons, BackLink } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
@@ -62,6 +62,7 @@ export const UserVisitDetail = ({
           purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
         >
           <ActionButtons>
+            <CancelButton content="취소" onClick={() => setIsEditing(false)} />
             <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty} />
           </ActionButtons>
         </VisitFormFields>
@@ -88,7 +89,7 @@ export const UserVisitDetail = ({
           <DetailInput label="비고사항" value={visit?.note || '—'} icon={<MdDescription />} />
           {visit && (
             <ActionButtons>
-              <ActionButton content="수정" onClick={handleEdit} />
+              <EditButton content="수정" onClick={handleEdit} />
             </ActionButtons>
           )}
         </Fields>

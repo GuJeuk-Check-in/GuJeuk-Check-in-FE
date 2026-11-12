@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Modal, useModal } from '@center/ui/modal';
-import { ActionButton, BackLink, DetailPanel } from '@shared/ui';
+import { ActionButton, CancelButton, EditButton, BackLink, DetailPanel } from '@shared/ui';
 import { UserDetailFields, validateUserDetail } from '@entities/user';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
@@ -18,6 +18,11 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const modal = useModal();
   const { isDirty, guard } = useUnsavedChanges({ value: draft, initial: user, enabled: isEditing });
+
+  const handleCancel = () => {
+    setDraft(user);
+    setIsEditing(false);
+  };
 
   const handleSave = () => {
     const error = draft && validateUserDetail(draft);
@@ -40,9 +45,12 @@ export const UserDetailView = ({ user }: UserDetailViewProps) => {
         {user && draft && (
           <Actions>
             {isEditing ? (
-              <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
+              <>
+                <CancelButton content="취소" onClick={handleCancel} />
+                <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
+              </>
             ) : (
-              <ActionButton content="수정" onClick={() => setIsEditing(true)} />
+              <EditButton content="수정" onClick={() => setIsEditing(true)} />
             )}
           </Actions>
         )}
@@ -66,4 +74,5 @@ const Content = styled.div`
 const Actions = styled.div`
   display: flex;
   justify-content: center;
+  gap: 3rem;
 `;

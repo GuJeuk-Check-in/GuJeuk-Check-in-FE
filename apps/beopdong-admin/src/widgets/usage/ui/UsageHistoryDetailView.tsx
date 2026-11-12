@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { Modal, useModal } from '@center/ui/modal';
-import { ActionButton, BackLink, DetailPanel } from '@shared/ui';
+import { ActionButton, CancelButton, EditButton, BackLink, DetailPanel } from '@shared/ui';
 import { applyUsageHistoryPatch, UsageHistoryDetailFields, validateUsageHistoryDetail } from '@entities/usage';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
@@ -22,6 +22,12 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
   const { isDirty, guard } = useUnsavedChanges({ value: draft, initial: detail, enabled: isEditing });
 
   const handleEdit = () => setIsEditing(true);
+
+  const handleCancel = () => {
+    setDraft(detail);
+    setOpenField(null);
+    setIsEditing(false);
+  };
 
   const handleSave = () => {
     const error = draft && validateUsageHistoryDetail(draft);
@@ -46,9 +52,12 @@ export const UsageHistoryDetailView = ({ detail }: UsageHistoryDetailViewProps) 
           />
           <Actions>
             {isEditing ? (
-              <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
+              <>
+                <CancelButton content="취소" onClick={handleCancel} />
+                <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
+              </>
             ) : (
-              <ActionButton content="수정" onClick={handleEdit} />
+              <EditButton content="수정" onClick={handleEdit} />
             )}
           </Actions>
         </Content>
@@ -76,7 +85,7 @@ const Content = styled.div`
 const Actions = styled.div`
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 3rem;
 `;
 
 const StatusText = styled.p`

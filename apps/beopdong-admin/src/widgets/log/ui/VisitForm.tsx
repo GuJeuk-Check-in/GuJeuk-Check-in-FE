@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Modal } from '@center/ui/modal';
-import { ActionButton, ActionButtons } from '@shared/ui';
+import { ActionButton, ActionButtons, CancelButton } from '@shared/ui';
 import { createVisitFormData, type VisitFormVariant } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
@@ -13,6 +14,7 @@ interface VisitFormProps {
 }
 
 export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(() => createVisitFormData());
   const modal = useVisitSubmission(formData, '등록', variant);
   const { guard } = useUnsavedChanges({ value: formData, initial: createVisitFormData() });
@@ -26,6 +28,7 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
         variant={variant}
       >
         <ActionButtons>
+          <CancelButton content="취소" onClick={() => navigate('/log')} />
           <ActionButton content="추가" onClick={modal.handleSubmit} />
         </ActionButtons>
       </VisitFormFields>
