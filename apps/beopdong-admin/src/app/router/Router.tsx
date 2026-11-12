@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { AppLayout } from '@app/layout';
+import { RequireAuth } from './RequireAuth';
 
 const OrganLogin = lazy(() => import('@pages/auth/OrganLogin'));
 const OrganChange = lazy(() => import('@pages/auth/OrganChange'));
@@ -27,18 +28,20 @@ export const Router = () => {
       <Routes>
         <Route path="/organ/login" element={<OrganLogin />} />
         <Route path="/organ/change" element={<OrganChange />} />
-        <Route element={<AppLayout />}>
-          <Route path="/log" element={<UserVisitList />} />
-          <Route path="/log/create" element={<UserDetail />} />
-          <Route path="/log/:logId" element={<UserDetailView />} />
-          <Route path="/usage/current" element={<AdminHome title="현재 이용대장 현황" />} />
-          <Route path="/usage/history" element={<AdminHome title="종료된 이용대장 기록" />} />
-          <Route path="/organ/user/all" element={<UserInformation />} />
-          <Route
-            path="/organ/user/:userId"
-            element={<AdminHome title="회원 상세" />}
-          />
-          <Route path="/purpose/all" element={<PurposeCustom />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<AppLayout />}>
+            <Route path="/log" element={<UserVisitList />} />
+            <Route path="/log/create" element={<UserDetail />} />
+            <Route path="/log/:logId" element={<UserDetailView />} />
+            <Route path="/usage/current" element={<AdminHome title="현재 이용대장 현황" />} />
+            <Route path="/usage/history" element={<AdminHome title="종료된 이용대장 기록" />} />
+            <Route path="/organ/user/all" element={<UserInformation />} />
+            <Route
+              path="/organ/user/:userId"
+              element={<AdminHome title="회원 상세" />}
+            />
+            <Route path="/purpose/all" element={<PurposeCustom />} />
+          </Route>
         </Route>
         <Route path="*" element={<Navigate to="/organ/login" replace />} />
       </Routes>

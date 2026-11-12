@@ -35,6 +35,11 @@ export const validatePassword = ({ oldPassword, newPassword, confirmNewPassword 
   return errors;
 };
 
+export const CURRENT_PASSWORD_MISMATCH_MESSAGE = '기존 비밀번호가 일치하지 않습니다.';
+
+export const passwordFailure = (message: string): PasswordErrors =>
+  message.includes('기존') ? { currentPW: message } : { confirmPW: message };
+
 export interface MutationCallbacks {
   readonly onSuccess: () => void;
   readonly onError: (message: string) => void;
