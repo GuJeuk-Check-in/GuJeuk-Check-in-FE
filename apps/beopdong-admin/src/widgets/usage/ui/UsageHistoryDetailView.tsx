@@ -69,7 +69,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
-  width: min(100%, 720px);
+  width: 100%;
   margin: 0 auto;
 `;
 
