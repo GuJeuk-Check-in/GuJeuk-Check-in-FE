@@ -13,21 +13,24 @@ interface UserListLayoutProps {
   emptyText: string;
   children: ReactNode;
   afterList?: ReactNode;
+  showResultFooter?: boolean;
 }
 
 export const UserListLayout = ({
   totalCount, totalCountText = '총', searchName, resultCount,
-  onSearchChange, onClearSearch, filter, emptyText, children, afterList,
+  onSearchChange, onClearSearch, filter, emptyText, children, afterList, showResultFooter = false,
 }: UserListLayoutProps) => {
   return (
     <ContentWrapper>
       <FilterWrapper>
-        <InfoSection>
-          <TotalCountText role="status" aria-live="polite">
-            {totalCountText} {totalCount} 명
-            {searchName && ` (검색 결과: ${resultCount}명)`}
-          </TotalCountText>
-        </InfoSection>
+        {!showResultFooter && (
+          <InfoSection>
+            <TotalCountText role="status" aria-live="polite">
+              {totalCountText} {totalCount} 명
+              {searchName && ` (검색 결과: ${resultCount}명)`}
+            </TotalCountText>
+          </InfoSection>
+        )}
         <ControlSection $hasFilter={Boolean(filter)}>
           <SearchBar
             value={searchName}
@@ -42,6 +45,11 @@ export const UserListLayout = ({
         {resultCount > 0 ? children : <EmptyText>{emptyText}</EmptyText>}
         {afterList}
       </UserListContainer>
+      {showResultFooter && searchName && (
+        <ResultFooter role="status" aria-live="polite">
+          검색 결과 {resultCount}명
+        </ResultFooter>
+      )}
     </ContentWrapper>
   );
 };
@@ -128,4 +136,14 @@ const EmptyText = styled.p`
   color: #eee;
   padding: 50px 0;
   font-size: 1.1rem;
+`;
+
+const ResultFooter = styled.p`
+  position: sticky;
+  bottom: 2rem;
+  margin: auto 0 0;
+  text-align: center;
+  color: #1f1f1f;
+  font-size: 1.5rem;
+  font-weight: 700;
 `;

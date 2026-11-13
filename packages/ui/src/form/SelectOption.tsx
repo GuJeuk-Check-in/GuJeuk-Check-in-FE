@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
+import { fieldFocusStyle } from './fieldFocusStyle';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import {
   DropdownContainer, DropdownLabel, DropdownHeader,
@@ -14,6 +15,7 @@ type SelectOptionProps = {
   placeholder?: string;
   disabled?: boolean;
   legacy?: boolean;
+  variant?: 'default' | 'outline';
 } & ({
   multiple?: false;
   value: string;
@@ -25,7 +27,8 @@ type SelectOptionProps = {
 });
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false } = props;
+  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false, variant = 'default' } = props;
+  const outline = variant === 'outline';
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
@@ -75,10 +78,10 @@ export const SelectOption = (props: SelectOptionProps) => {
         </DropdownArrowIcon>
       </Trigger>
       {open && !disabled && (
-        <Options $legacy={legacy} id={`${id}-options`} role="group" aria-labelledby={label ? `${id}-label` : `${id}-value`}>
+        <Options $legacy={legacy} $outline={outline} id={`${id}-options`} role="group" aria-labelledby={label ? `${id}-label` : `${id}-value`}>
           {options.map((option) => (
-            <Option $legacy={legacy} key={option} type="button" aria-pressed={selected.includes(option)} onClick={() => handleSelect(option)}>
-              <SelectionMark aria-hidden="true" $selected={selected.includes(option)} />
+            <Option $legacy={legacy} $outline={outline} key={option} type="button" aria-pressed={selected.includes(option)} onClick={() => handleSelect(option)}>
+              <SelectionMark aria-hidden="true" $outline={outline} $selected={selected.includes(option)} />
               {option}
             </Option>
           ))}
@@ -108,10 +111,7 @@ const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolea
     padding: 0.5rem 0.9375rem;
   `}
 
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primary};
-    outline-offset: 2px;
-  }
+  ${({ theme }) => fieldFocusStyle(theme)}
 `;
 
 const Icon = styled.span`
@@ -126,10 +126,20 @@ const Value = styled(DropdownValue)`
   overflow-wrap: anywhere;
 `;
 
-const Options = styled(DropdownList)<{ $legacy: boolean }>`
+const Options = styled(DropdownList)<{ $legacy: boolean; $outline: boolean }>`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
+  ${({ $outline }) => $outline && `
+    position: static;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem 1.25rem;
+    padding-top: 0.5rem;
+
+    @media (max-width: 56rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  `}
   top: 100%;
   margin-top: 0.5rem;
   max-height: none;
@@ -148,7 +158,7 @@ const Options = styled(DropdownList)<{ $legacy: boolean }>`
   }
 `;
 
-const Option = styled.button<{ $legacy: boolean }>`
+const Option = styled.button<{ $legacy: boolean; $outline: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -181,18 +191,32 @@ const Option = styled.button<{ $legacy: boolean }>`
     outline-offset: -2px;
   }
 
+  ${({ $outline, theme }) => $outline && `
+    min-height: 3.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 1.125rem;
+
+    &, &:hover, &:focus-visible {
+      background: ${adminTokens(theme).colors.white};
+    }
+
+    &[aria-pressed='true'] {
+      border-color: ${adminTokens(theme).colors.primary};
+    }
+  `}
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
 `;
 
-const SelectionMark = styled.span<{ $selected: boolean }>`
+const SelectionMark = styled.span<{ $selected: boolean; $outline: boolean }>`
   box-sizing: content-box;
   width: 1.125rem;
   height: 1.125rem;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 0.125rem solid ${({ theme }) => adminTokens(theme).colors.primary};
+  border: 0.125rem solid ${({ theme, $outline, $selected }) => $outline && !$selected ? adminTokens(theme).colors.black : adminTokens(theme).colors.primary};
   background: ${({ $selected, theme }) => $selected ? adminTokens(theme).colors.primary : 'transparent'};
   box-shadow: ${({ $selected, theme }) => $selected ? `inset 0 0 0 0.1875rem ${adminTokens(theme).colors.white}` : 'none'};
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
