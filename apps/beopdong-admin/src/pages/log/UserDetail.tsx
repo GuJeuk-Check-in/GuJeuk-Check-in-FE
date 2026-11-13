@@ -1,12 +1,15 @@
+import { getVisitPurposeOptions } from '@entities/purpose';
 import { VisitForm, VisitPageLayout } from '@widgets/log';
-import { previewVisits } from './model/previewVisits';
 
-const UserDetail = () => {
-  const purposeOptions = [...new Set(previewVisits.flatMap((record) => record.purposes))];
+interface UserDetailProps {
+  readonly title: string;
+  readonly variant: 'minor' | 'adult';
+}
 
+const UserDetail = ({ title, variant }: UserDetailProps) => {
   return (
-    <VisitPageLayout title="방명록 추가">
-      <VisitForm purposeOptions={purposeOptions} />
+    <VisitPageLayout title={title}>
+      <VisitForm key={variant} purposeOptions={getVisitPurposeOptions(variant)} variant={variant} />
     </VisitPageLayout>
   );
 };
