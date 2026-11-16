@@ -1,4 +1,5 @@
 import { UserInformationCard as SharedUserInformationCard } from '@center/ui/card';
+import { formatPhone } from '@center/ui/form';
 import { useNavigate } from 'react-router-dom';
 
 interface UserInformationCardProps {
@@ -29,7 +30,7 @@ export const UserInformationCard = ({
       subtitle={location}
       gender={GENDER_MAP[gender] || gender}
       birthday={birthday}
-      phoneNumber={phonNumber}
+      phoneNumber={formatPhone(phonNumber)}
       count={count}
       onEdit={() => navigate(`/organ/user/${id}`)}
     />

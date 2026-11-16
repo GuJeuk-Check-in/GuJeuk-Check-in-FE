@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Modal } from '@center/ui/modal';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { SortableBoardShell, SortableTile } from '@center/ui/sortable-board';
 import { usePurposeManagement } from '@features/purpose/manage-purpose';
 import { PurposeCard, type Purpose } from '@entities/purpose';
@@ -10,7 +11,7 @@ interface PurposeBoardProps {
 }
 
 export const PurposeBoard = ({ initialPurposes }: PurposeBoardProps) => {
-  const { items, sensors, handleDragEnd, announcement, modal, handleCreate, handleUpdate, handleDelete } =
+  const { items, sensors, handleDragEnd, announcement, modal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(initialPurposes);
 
   return (
@@ -31,7 +32,7 @@ export const PurposeBoard = ({ initialPurposes }: PurposeBoardProps) => {
             key={purpose.id}
             id={purpose.id}
             label={`${purpose.purpose} 순서 변경`}
-            disabled={modal.isOpen}
+            disabled={modal.isOpen || confirmModal.isOpen}
           >
             <PurposeCard
               purpose={purpose}
@@ -43,6 +44,7 @@ export const PurposeBoard = ({ initialPurposes }: PurposeBoardProps) => {
       </Board>
       <HiddenStatus role="status" aria-live="polite">{announcement}</HiddenStatus>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <ConfirmModal isOpen={confirmModal.isOpen} config={confirmModal.config} onClose={confirmModal.closeModal} />
     </>
   );
 };

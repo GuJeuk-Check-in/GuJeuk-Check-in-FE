@@ -1,21 +1,31 @@
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { DetailInput } from '@center/ui/form';
 import { adminTokens } from '@center/tokens';
 import { IoMdPerson } from 'react-icons/io';
-import { IoCall, IoLocationSharp } from 'react-icons/io5';
-import { MdOutlineAccessTime, MdOutlineCalendarMonth } from 'react-icons/md';
-import type { UserVisitDetailRecord } from '@entities/log';
+import { IoLocationSharp } from 'react-icons/io5';
+import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
+import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
+import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
+import { formatDateKoreanPadded } from '@center/ui/form';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
+import { ActionButton, CancelButton, EditButton, ActionButtons, BackLink } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
-import { VisitFormActions, VisitFormButton, VisitFormFields } from './VisitFormFields';
+import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
+import { ConfirmModal } from '@shared/ui/ConfirmModal';
+import { VisitFormFields } from './VisitFormFields';
 
 interface UserVisitDetailProps {
   readonly visit?: UserVisitDetailRecord;
   readonly purposeOptions?: readonly string[];
 }
+
+const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult' | 'minor') => {
+  if (!visit) return '—';
+  if (variant === 'adult') return visit.name?.trim() || '-';
+  return getVisitDisplayName(visit);
+};
 
 export const UserVisitDetail = ({
   visit,
@@ -23,11 +33,13 @@ export const UserVisitDetail = ({
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => createVisitFormData(visit));
-  const modal = useVisitSubmission(formData, '수정');
-
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
+  const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
+  const modal = useVisitSubmission(formData, '수정', variant);
+  const { isDirty, guard } = useUnsavedChanges({
+    value: formData,
+    initial: createVisitFormData(visit),
+    enabled: isEditing,
+  });
 
   const handleEdit = () => {
     setFormData(createVisitFormData(visit));
@@ -36,7 +48,7 @@ export const UserVisitDetail = ({
 
   return (
     <DetailWrapper>
-      <BackLink to="/log">‹ 방명록 목록으로</BackLink>
+      <BackLink to="/log" label="방명록 목록으로" />
       {!visit && (
         <StatusText role="status">
           방명록 API 연결 전입니다. 연결 후 상세 정보가 표시됩니다.
@@ -46,28 +58,39 @@ export const UserVisitDetail = ({
         <VisitFormFields
           value={formData}
           onChange={setFormData}
+          variant={variant}
           purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
         >
-          <VisitFormActions>
-            <VisitFormButton content="저장" onClick={modal.handleSubmit} />
-            <VisitFormButton content="취소" onClick={handleCancel} />
-          </VisitFormActions>
+          <ActionButtons>
+            <CancelButton content="취소" onClick={() => setIsEditing(false)} />
+            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty} />
+          </ActionButtons>
         </VisitFormFields>
       ) : (
         <Fields>
           <InputRow>
-            <DetailInput label="이름" value={visit?.name ?? '—'} icon={<IoMdPerson />} />
-            <DetailInput label="연령" value={visit ? `${visit.age}세` : '—'} icon={<MdOutlineCalendarMonth />} />
+            <DetailInput label="이름" value={getDetailName(visit, variant)} icon={<IoMdPerson />} />
+            <DetailInput
+              label="연령"
+              value={visit ? (variant === 'adult' ? '성인' : `${visit.age}세`) : '—'}
+              icon={<CalendarIcon />}
+            />
           </InputRow>
           <DetailInput label="성별" value={visit?.gender ?? '—'} icon={<IoMdPerson />} />
-          <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<IoCall />} />
+          {variant === 'minor' && (
+            <DetailInput label="연락처" value={visit?.phone ?? '—'} icon={<PhoneIcon />} />
+          )}
+          <DetailInput label="방문 시각" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
           <DetailInput label="이용대장" value={visit?.purposes.join(' / ') || '—'} icon={<IoLocationSharp />} />
-          <DetailInput label="방문 날짜" value={visit?.visitDate ?? '—'} icon={<MdOutlineCalendarMonth />} />
-          <DetailInput label="방문 시간" value={visit?.visitTime ?? '—'} icon={<MdOutlineAccessTime />} />
+          <DetailInput label="방문날짜" value={visit?.visitDate ? formatDateKoreanPadded(visit.visitDate) : '—'} icon={<CalendarIcon />} />
+          {variant === 'adult' && (
+            <DetailInput label="방문목적" value={visit?.visitPurpose || '—'} icon={<IoLocationSharp />} />
+          )}
+          <DetailInput label="비고사항" value={visit?.note || '—'} icon={<MdDescription />} />
           {visit && (
-            <VisitFormActions>
-              <VisitFormButton content="수정" onClick={handleEdit} />
-            </VisitFormActions>
+            <ActionButtons>
+              <EditButton content="수정" onClick={handleEdit} />
+            </ActionButtons>
           )}
         </Fields>
       )}
@@ -76,6 +99,7 @@ export const UserVisitDetail = ({
         config={modal.config}
         onClose={modal.closeModal}
       />
+      <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </DetailWrapper>
   );
 };
@@ -85,21 +109,6 @@ const DetailWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   min-width: 0;
-`;
-
-const BackLink = styled(Link)`
-  align-self: flex-start;
-  color: ${({ theme }) => adminTokens(theme).colors.secondaryText};
-  font-size: 1.25rem;
-  line-height: 1.6;
-  text-underline-offset: 0.2em;
-  text-decoration: none;
-
-  &:focus-visible {
-    outline: 0.125rem solid
-      ${({ theme }) => adminTokens(theme).colors.primaryDark};
-    outline-offset: 0.25rem;
-  }
 `;
 
 const StatusText = styled.p`

@@ -11,7 +11,10 @@ const UserDetail = lazy(() => import('@pages/log/UserDetail'));
 const UserDetailView = lazy(() => import('@pages/log/UserDetailView'));
 const PurposeCustom = lazy(() => import('@pages/purpose/PurposeCustom'));
 const UserInformation = lazy(() => import('@pages/user/UserInformation'));
-const AdminHome = lazy(() => import('@pages/AdminHome'));
+const UserDetailPage = lazy(() => import('@pages/user/UserDetailPage'));
+const CurrentUsage = lazy(() => import('@pages/usage/CurrentUsage'));
+const UsageHistory = lazy(() => import('@pages/usage/UsageHistory'));
+const UsageHistoryDetail = lazy(() => import('@pages/usage/UsageHistoryDetail'));
 
 export const Router = () => {
   return (
@@ -31,15 +34,15 @@ export const Router = () => {
         <Route element={<RequireAuth />}>
           <Route element={<AppLayout />}>
             <Route path="/log" element={<UserVisitList />} />
-            <Route path="/log/create" element={<UserDetail />} />
+            <Route path="/log/create" element={<Navigate to="/log/create/adult" replace />} />
+            <Route path="/log/create/minor" element={<UserDetail title="미성년자 방명록 추가" variant="minor" />} />
+            <Route path="/log/create/adult" element={<UserDetail title="성인 방명록 추가" variant="adult" />} />
             <Route path="/log/:logId" element={<UserDetailView />} />
-            <Route path="/usage/current" element={<AdminHome title="현재 이용대장 현황" />} />
-            <Route path="/usage/history" element={<AdminHome title="종료된 이용대장 기록" />} />
+            <Route path="/usage/current" element={<CurrentUsage />} />
+            <Route path="/usage/history" element={<UsageHistory />} />
+            <Route path="/usage/history/:historyId" element={<UsageHistoryDetail />} />
             <Route path="/organ/user/all" element={<UserInformation />} />
-            <Route
-              path="/organ/user/:userId"
-              element={<AdminHome title="회원 상세" />}
-            />
+            <Route path="/organ/user/:userId" element={<UserDetailPage />} />
             <Route path="/purpose/all" element={<PurposeCustom />} />
           </Route>
         </Route>
