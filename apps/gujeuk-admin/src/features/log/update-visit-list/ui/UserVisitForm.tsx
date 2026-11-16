@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { formatPhone, isValidPhone, toPhoneDigits } from '@center/ui/form';
 import { FaRegCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { VisitDetailInput } from '@shared/ui/input/VisitDetailInput';
 import { PasswordButton } from '@shared/ui/Button/index';
@@ -16,6 +17,11 @@ import {
   VisitPrivacyAgreementField,
 } from '@entities/log';
 import { UseModalReturn } from '@shared/hooks/useModal';
+
+const PHONE_ERROR = '연락처 형식을 확인해 주세요.';
+
+const getPhoneError = (value: string) =>
+  value.trim() === '' || isValidPhone(value) ? '' : PHONE_ERROR;
 
 interface UserVisitFormProps {
   visit: UserVisitDetailResponse;
@@ -34,7 +40,7 @@ export const UserVisitForm = ({
     id: visit.id || 0,
     name: visit.name || '',
     age: visit.age || 'ADULT',
-    phone: visit.phone || '',
+    phone: formatPhone(visit.phone || ''),
     maleCount: visit.maleCount || 0,
     femaleCount: visit.femaleCount || 0,
     purpose: visit.purpose || '',
@@ -70,24 +76,34 @@ export const UserVisitForm = ({
     setFormData((prev) => ({ ...prev, age }));
   };
 
+  const phoneError = getPhoneError(formData.phone);
+
+  const openInputCheckModal = (subtitle: string) =>
+    modal.openModal({
+      icon: <FaExclamationTriangle size={48} color="#D88282" />,
+      title: '입력 확인',
+      subtitle,
+      theme: 'warning',
+      buttons: [{ label: '확인', onClick: modal.closeModal }],
+    });
+
   const handleSave = () => {
     if (
       !formData.name ||
-      !formData.phone ||
+      !toPhoneDigits(formData.phone) ||
       !formData.purpose.trim() ||
       !formData.visitDate
     ) {
-      modal.openModal({
-        icon: <FaExclamationTriangle size={48} color="#D88282" />,
-        title: '입력 확인',
-        subtitle: '필수 필드를 모두 입력해주세요.',
-        theme: 'warning',
-        buttons: [{ label: '확인', onClick: modal.closeModal }],
-      });
+      openInputCheckModal('필수 필드를 모두 입력해주세요.');
       return;
     }
 
-    updateMutation.mutate(formData, {
+    if (phoneError) {
+      openInputCheckModal(phoneError);
+      return;
+    }
+
+    updateMutation.mutate({ ...formData, phone: toPhoneDigits(formData.phone) }, {
       onSuccess: () => {
         modal.openModal({
           icon: <FaRegCheckCircle size={48} color="#0F50A0" />,
@@ -142,6 +158,7 @@ export const UserVisitForm = ({
         value={formData.phone}
         onChange={handleChange}
         isEditable={true}
+        errorMessage={phoneError}
       />
       <ToggleSelect
         label="방문 목적"

@@ -2,15 +2,22 @@ import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
 import { Sidebar, SidebarBrandImage } from '@center/ui/layout';
 import { ExportButton, MenuLink as HeaderLink } from '@center/ui/button';
+import { useState } from 'react';
+import { Modal, useModal } from '@center/ui/modal';
+import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { BeopdongLogo, ExportIcon } from '@shared/assets';
 import { ADMIN_NAVIGATION } from '@shared/config/adminNavigation';
+import { ExportModal } from './ExportModal';
 
 export const AdminHeader = () => {
   const { pathname } = useLocation();
+  const [exportTitle, setExportTitle] = useState<string | null>(null);
+  const notice = useModal();
   const isMenuPath = ADMIN_NAVIGATION.some(({ path }) => Boolean(matchPath(path, pathname)));
 
   return (
+    <>
     <SidebarLayout
       brand={
         <BrandLink to="/log" aria-label="법동청소년문화센터 방명록 조회">
@@ -38,7 +45,7 @@ export const AdminHeader = () => {
               <SidebarExportButton
                 key={label}
                 label={label}
-                disabled
+                onClick={() => setExportTitle(label)}
                 icon={<img src={ExportIcon} width={32} height={32} alt="" />}
               />
             ))}
@@ -46,6 +53,18 @@ export const AdminHeader = () => {
         </>
       }
     />
+      {exportTitle && (
+        <ExportModal
+          title={exportTitle}
+          onClose={() => setExportTitle(null)}
+          onConfirm={(period) => {
+            setExportTitle(null);
+            openApiPendingNotice(notice, `${exportTitle}(${period})`, '엑셀 파일은 아직 내려받을 수 없습니다.');
+          }}
+        />
+      )}
+      <Modal isOpen={notice.isOpen} config={notice.config} onClose={notice.closeModal} />
+    </>
   );
 };
 

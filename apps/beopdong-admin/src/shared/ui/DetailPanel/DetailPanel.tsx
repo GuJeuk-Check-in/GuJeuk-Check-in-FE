@@ -6,7 +6,7 @@ export const DetailPanel = styled.div`
   box-sizing: border-box;
   width: min(calc(88% + 15px), 70rem);
   margin-inline: auto;
-  padding: 2.5rem 8% 3rem;
+  padding: 5rem 8% 3rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -15,15 +15,15 @@ export const DetailPanel = styled.div`
   box-shadow: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.25);
 
   &:has([data-back-link]) {
-    padding-top: 6.5rem;
+    padding-top: 8rem;
   }
 
   @media (max-width: 64rem) {
     width: 100%;
-    padding: 2.5rem 2rem;
+    padding: 4rem 2rem;
 
     &:has([data-back-link]) {
-      padding-top: 6.5rem;
+      padding-top: 8rem;
     }
   }
 

@@ -1,5 +1,7 @@
 import type { UserVisitDetailRecord } from '@entities/log';
 
+export type VisitFormVariant = 'minor' | 'adult';
+
 export interface VisitFormData {
   name: string;
   age: string;
@@ -8,6 +10,8 @@ export interface VisitFormData {
   visitTime: string;
   purposes: string[];
   visitDate: string;
+  visitPurpose: string;
+  note: string | null;
 }
 
 export const createVisitFormData = (visit?: UserVisitDetailRecord): VisitFormData => ({
@@ -17,9 +21,7 @@ export const createVisitFormData = (visit?: UserVisitDetailRecord): VisitFormDat
   phone: visit?.phone ?? '',
   visitTime: visit?.visitTime ?? '',
   purposes: [...(visit?.purposes ?? [])],
-  visitDate:
-    visit?.visitDate
-      .match(/\d+/g)
-      ?.map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
-      .join('-') ?? '',
+  visitDate: visit?.visitDate ?? '',
+  visitPurpose: visit?.visitPurpose ?? '',
+  note: visit?.note ?? null,
 });

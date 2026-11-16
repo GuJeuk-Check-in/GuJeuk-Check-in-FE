@@ -13,7 +13,7 @@ export const BackLink = ({ to, label }: BackLinkProps) => (
 
 const StyledLink = styled(Link)`
   position: absolute;
-  top: 2.5rem;
+  top: 3.5rem;
   left: 2.5rem;
   color: ${({ theme }) => adminTokens(theme).colors.secondaryText};
   font-size: 1.25rem;
