@@ -59,7 +59,15 @@ const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
 export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFieldsProps) => {
   const isEditable = isEditing && !!user;
   const edit = onChange;
-  const [isOtherRoute, setIsOtherRoute] = useState(() => !!user && isCustomRoute(user.route));
+  const isCustomUserRoute = !!user && isCustomRoute(user.route);
+  const [isOtherRoute, setIsOtherRoute] = useState(isCustomUserRoute);
+  const [wasEditing, setWasEditing] = useState(isEditing);
+
+  // 편집 세션이 바뀌면(시작/취소/저장) 경로 선택 상태를 현재 user.route 기준으로 다시 맞춘다.
+  if (wasEditing !== isEditing) {
+    setWasEditing(isEditing);
+    setIsOtherRoute(isCustomUserRoute);
+  }
 
   const handleRouteSelect = (option: string) => {
     const isOther = option === ROUTE_OTHER;
