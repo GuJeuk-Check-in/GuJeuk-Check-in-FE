@@ -17,7 +17,8 @@ export const ExportModal = ({ title, onConfirm, onClose }: ExportModalProps) => 
   const subtitleId = useId();
 
   const handlePeriodKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+    const steps: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    const step = steps[event.key];
     if (!step) return;
     event.preventDefault();
     const current = PERIOD_OPTIONS.indexOf(period as (typeof PERIOD_OPTIONS)[number]);
