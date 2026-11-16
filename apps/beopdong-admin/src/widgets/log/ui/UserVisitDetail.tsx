@@ -6,6 +6,7 @@ import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
 import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
+import { useUpdateVisitList } from '@features/log/update-visit-list';
 import { formatDateKoreanPadded } from '@center/ui/form';
 import { useState } from 'react';
 import { Modal } from '@center/ui/modal';
@@ -19,6 +20,7 @@ import { VisitFormFields } from './VisitFormFields';
 interface UserVisitDetailProps {
   readonly visit?: UserVisitDetailRecord;
   readonly purposeOptions?: readonly string[];
+  readonly statusMessage?: string | null;
 }
 
 const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult' | 'minor') => {
@@ -30,11 +32,17 @@ const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult
 export const UserVisitDetail = ({
   visit,
   purposeOptions = [],
+  statusMessage,
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => createVisitFormData(visit));
   const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
-  const modal = useVisitSubmission(formData, '수정', variant);
+  const { mutateAsync: updateVisit } = useUpdateVisitList();
+  const modal = useVisitSubmission(formData, '수정', variant, async (value) => {
+    if (!visit) return;
+    await updateVisit({ id: visit.id, ...value });
+    setIsEditing(false);
+  });
   const { isDirty, guard } = useUnsavedChanges({
     value: formData,
     initial: createVisitFormData(visit),
@@ -49,11 +57,7 @@ export const UserVisitDetail = ({
   return (
     <DetailWrapper>
       <BackLink to="/log" label="방명록 목록으로" />
-      {!visit && (
-        <StatusText role="status">
-          방명록 API 연결 전입니다. 연결 후 상세 정보가 표시됩니다.
-        </StatusText>
-      )}
+      {statusMessage && <StatusText role="status">{statusMessage}</StatusText>}
       {isEditing ? (
         <VisitFormFields
           value={formData}
@@ -63,7 +67,7 @@ export const UserVisitDetail = ({
         >
           <ActionButtons>
             <CancelButton content="취소" onClick={() => setIsEditing(false)} />
-            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty} />
+            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty || modal.isSubmitting} />
           </ActionButtons>
         </VisitFormFields>
       ) : (
