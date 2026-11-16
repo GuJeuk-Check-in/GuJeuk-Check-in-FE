@@ -5,10 +5,14 @@ import type { VisitFormData, VisitFormVariant } from './visitForm';
 
 export const ADULT_AGE_ERROR = '성인 등록은 만 20세 이상만 가능합니다.';
 
-// 성인 등록은 이름·연락처를 받지 않으므로, 상세 화면에서 미성년으로 분류될 연령은 막는다.
+export const MINOR_AGE_ERROR = '미성년 등록은 만 20세 미만만 가능합니다.';
+
+// 상세 화면의 성인 분류 기준(isAdultAge)과 등록 경로가 어긋나지 않도록 양방향으로 막는다.
 export const getAgeVariantError = (age: string, variant: VisitFormVariant): string => {
-  if (variant !== 'adult' || !/^\d+(?:\s*세)?$/.test(age.trim())) return '';
-  return isAdultAge(Number.parseInt(age, 10)) ? '' : ADULT_AGE_ERROR;
+  if (!/^\d+(?:\s*세)?$/.test(age.trim())) return '';
+  const isAdult = isAdultAge(Number.parseInt(age, 10));
+  if (variant === 'adult') return isAdult ? '' : ADULT_AGE_ERROR;
+  return isAdult ? MINOR_AGE_ERROR : '';
 };
 
 export const validateVisitForm = (
