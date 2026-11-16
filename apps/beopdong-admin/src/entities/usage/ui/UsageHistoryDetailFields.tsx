@@ -31,8 +31,17 @@ export const UsageHistoryDetailFields = ({
   openField,
   onOpenFieldChange,
 }: UsageHistoryDetailFieldsProps) => {
-  const [countText, setCountText] = useState(() => (detail.kind === 'group' && detail.count ? String(detail.count) : ''));
-  const countError = getHeadcountError(countText);
+  const savedCountText = detail.kind === 'group' && detail.count ? String(detail.count) : '';
+  const [countText, setCountText] = useState(savedCountText);
+  const [wasEditing, setWasEditing] = useState(isEditing);
+
+  // 편집 세션이 바뀌면(시작/취소/저장) 입력 중이던 텍스트를 부모의 값으로 초기화한다.
+  if (wasEditing !== isEditing) {
+    setWasEditing(isEditing);
+    setCountText(savedCountText);
+  }
+
+  const countError = isEditing ? getHeadcountError(countText) : '';
 
   const renderTimeField = (field: UsageTimeField, label: string) => (
     <TimePickerField
@@ -74,7 +83,7 @@ export const UsageHistoryDetailFields = ({
       {detail.kind === 'group' && (
         <DetailInput
           label="인원"
-          value={countText}
+          value={isEditing ? countText : savedCountText}
           placeholder="인원을 입력해주세요"
           icon={<IoMdPerson />}
           inputMode="numeric"
