@@ -8,6 +8,7 @@ import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { formatAge } from '@shared/lib/formatAge';
 import { getPhoneError } from '@shared/lib/phoneError';
+import { getAgeVariantError } from '../model/validateVisitForm';
 import type { VisitFormData, VisitFormVariant } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
@@ -35,18 +36,21 @@ export const VisitFormFields = ({
         isEditable
         onChange={(event) => onChange({ ...value, name: event.target.value })}
       />
-      <DetailInput
-        label="연령"
-        value={value.age}
-        placeholder="연령을 입력해주세요 ex) 16세"
-        icon={<CalendarIcon />}
-        inputMode="numeric"
-        isEditable
-        onChange={(event) => onChange({ ...value, age: event.target.value })}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') onChange({ ...value, age: formatAge(value.age) });
-        }}
-      />
+      <AgeField>
+        <DetailInput
+          label="연령"
+          value={value.age}
+          placeholder="연령을 입력해주세요 ex) 16세"
+          icon={<CalendarIcon />}
+          inputMode="numeric"
+          isEditable
+          errorMessage={getAgeVariantError(value.age, variant)}
+          onChange={(event) => onChange({ ...value, age: event.target.value })}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') onChange({ ...value, age: formatAge(value.age) });
+          }}
+        />
+      </AgeField>
     </InputRow>
     <SelectOption
       label="성별"
@@ -132,6 +136,20 @@ const InputRow = styled.div`
 
   @media (max-width: 40rem) {
     grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+// 안내 메시지가 레이아웃 간격을 밀어내지 않도록 행 아래 여백에 겹쳐서 표시한다.
+const AgeField = styled.div`
+  position: relative;
+  min-width: 0;
+
+  [role='alert'] {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    line-height: 1.1;
   }
 `;
 
