@@ -1,10 +1,13 @@
 import { StrictMode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { tokenStorage } from '@entities/auth';
-import { setUnauthorizedHandler } from '@shared/api';
+import { setAccessTokenProvider, setUnauthorizedHandler } from '@shared/api';
 import App from './App';
 import './styles/global.css';
+
+setAccessTokenProvider(tokenStorage.getAccessToken);
 
 setUnauthorizedHandler(() => {
   tokenStorage.clear();
@@ -13,6 +16,7 @@ setUnauthorizedHandler(() => {
   }
 });
 
+const queryClient = new QueryClient();
 const root = document.getElementById('root');
 
 if (!root) {
@@ -23,6 +27,8 @@ const router = createBrowserRouter([{ path: '*', element: <App /> }]);
 
 createRoot(root).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>
 );
