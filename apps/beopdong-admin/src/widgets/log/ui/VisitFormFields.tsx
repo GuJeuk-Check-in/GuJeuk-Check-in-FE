@@ -73,6 +73,7 @@ export const VisitFormFields = ({
         onKeyDown={(event) => {
           if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });
         }}
+        onBlur={() => onChange({ ...value, phone: formatPhone(value.phone) })}
       />
     )}
     <TimePickerField
