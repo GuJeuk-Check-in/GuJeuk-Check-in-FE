@@ -15,7 +15,7 @@ export const useUpdateVisitList = () => {
     mutationFn: ({ id, ...form }) => updateVisit(id, toVisitRequest(form)),
     onSuccess: async (_, { id }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['visitDetail', String(id)] }),
+        queryClient.invalidateQueries({ queryKey: ['visitDetail', id] }),
         queryClient.invalidateQueries({ queryKey: ['visitList'] }),
       ]);
     },

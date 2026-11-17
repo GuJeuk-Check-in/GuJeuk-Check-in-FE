@@ -27,6 +27,9 @@ export const useDeleteVisitMutation = () => {
 
   return useMutation<void, AxiosError<ServerError>, UserVisitSummary>({
     mutationFn: (visit) => deleteVisit(visit.id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['visitList'] }),
+    onSuccess: (_, visit) => {
+      queryClient.removeQueries({ queryKey: ['visitDetail', visit.id] });
+      return queryClient.invalidateQueries({ queryKey: ['visitList'] });
+    },
   });
 };

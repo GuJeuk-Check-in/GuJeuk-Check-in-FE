@@ -7,7 +7,7 @@ export const useFetchVisitDetail = (logId: string | undefined) => {
   const id = Number(logId);
 
   return useQuery({
-    queryKey: ['visitDetail', logId],
+    queryKey: ['visitDetail', id],
     queryFn: async () => toVisitDetail(id, await getVisit(id)),
     enabled: Boolean(logId) && Number.isInteger(id),
     staleTime: 1000 * 60 * 5,
