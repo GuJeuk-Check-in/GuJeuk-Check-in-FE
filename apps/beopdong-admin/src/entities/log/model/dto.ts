@@ -25,20 +25,11 @@ export interface VisitDetailResponse {
   visitTime: string;
 }
 
-export interface UpdateVisitRequest {
+export interface VisitRequest {
   name: string;
-  purpose: number[];
   age: number;
   phone: string;
   gender: VisitGenderDto;
-  visitDate: string;
-  visitTime: string;
-}
-
-export interface CreateVisitRequest {
-  name: string;
-  age: number;
-  phone: string;
   visitDate: string;
   purpose: number[];
   visitTime: string;

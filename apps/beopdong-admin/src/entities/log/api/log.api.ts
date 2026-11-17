@@ -1,5 +1,5 @@
 import { axiosInstance } from '@shared/api';
-import type { CreateVisitRequest, CreateVisitResponse, UpdateVisitRequest, VisitDetailResponse, VisitListResponse } from '../model/dto';
+import type { CreateVisitResponse, VisitDetailResponse, VisitListResponse, VisitRequest } from '../model/dto';
 
 export const VISIT_PAGE_SIZE = 30;
 
@@ -17,11 +17,11 @@ export const deleteVisit = async (logId: number) => {
   await axiosInstance.delete(`/log/${logId}`);
 };
 
-export const updateVisit = async (logId: number, payload: UpdateVisitRequest) => {
+export const updateVisit = async (logId: number, payload: VisitRequest) => {
   await axiosInstance.patch(`/log/${logId}`, payload);
 };
 
-export const createVisit = async (payload: CreateVisitRequest) => {
+export const createVisit = async (payload: VisitRequest) => {
   const response = await axiosInstance.post<CreateVisitResponse>('/log', payload);
   return response.data;
 };

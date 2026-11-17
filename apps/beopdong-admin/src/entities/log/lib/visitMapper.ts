@@ -1,6 +1,6 @@
 import { toPhoneDigits } from '@center/ui/form';
 import { MANAGED_PURPOSES } from '@entities/purpose';
-import type { CreateVisitRequest, UpdateVisitRequest, VisitDetailResponse, VisitGenderDto, VisitListItemDto } from '../model/dto';
+import type { VisitDetailResponse, VisitGenderDto, VisitListItemDto, VisitRequest } from '../model/dto';
 import type { UserVisitDetailRecord, UserVisitSummary } from '../model/types';
 
 // 이용목적 조회 API 연결 시 서버 id 기준 매핑으로 교체 (현재는 MANAGED_PURPOSES 순서를 id-1 로 가정)
@@ -49,17 +49,14 @@ interface VisitFormValues {
   purposes: readonly string[];
 }
 
-export const toUpdateVisitRequest = (form: VisitFormValues): UpdateVisitRequest => ({
+const toGenderDto = (label: string): VisitGenderDto => (label === '남자' ? 'MAN' : 'WOMAN');
+
+export const toVisitRequest = (form: VisitFormValues): VisitRequest => ({
   name: form.name.trim(),
-  purpose: toPurposeIds(form.purposes),
   age: Number.parseInt(form.age, 10),
   phone: toPhoneDigits(form.phone),
-  gender: form.gender === '남자' ? 'MAN' : 'WOMAN',
+  gender: toGenderDto(form.gender),
   visitDate: form.visitDate,
+  purpose: toPurposeIds(form.purposes),
   visitTime: form.visitTime,
 });
-
-export const toCreateVisitRequest = (form: VisitFormValues): CreateVisitRequest => {
-  const { gender: _gender, ...rest } = toUpdateVisitRequest(form);
-  return rest;
-};
