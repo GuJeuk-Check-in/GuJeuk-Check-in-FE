@@ -29,6 +29,10 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
     },
     () => navigate('/log'),
   );
+  const handleModalClose = () => {
+    modal.closeModal();
+    if (isSubmitted) navigate('/log');
+  };
   const { guard } = useUnsavedChanges({ value: formData, initial: createVisitFormData(), enabled: !isSubmitted });
 
   return (
@@ -41,13 +45,13 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
       >
         <ActionButtons>
           <CancelButton content="취소" onClick={() => navigate('/log')} />
-          <ActionButton content="추가" onClick={modal.handleSubmit} disable={modal.isSubmitting} />
+          <ActionButton content="추가" onClick={modal.handleSubmit} disable={modal.isSubmitting || isSubmitted} />
         </ActionButtons>
       </VisitFormFields>
       <Modal
         isOpen={modal.isOpen}
         config={modal.config}
-        onClose={modal.closeModal}
+        onClose={handleModalClose}
       />
       <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </>
