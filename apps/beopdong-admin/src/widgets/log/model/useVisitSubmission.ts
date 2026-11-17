@@ -35,19 +35,7 @@ export const useVisitSubmission = (
     setIsSubmitting(true);
     try {
       await onSubmit(value);
-      modal.openModal({
-        title: `${action}되었습니다.`,
-        subtitle: '',
-        buttons: [
-          {
-            label: '확인',
-            onClick: () => {
-              modal.closeModal();
-              onDone?.();
-            },
-          },
-        ],
-      });
+      onDone?.();
     } catch (submitError) {
       modal.openModal({
         title: `${action}에 실패했습니다.`,

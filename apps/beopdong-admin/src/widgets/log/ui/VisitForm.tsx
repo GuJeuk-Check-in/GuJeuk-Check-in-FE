@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, CancelButton } from '@shared/ui';
 import { useCreateVisitList } from '@features/log/create-visit-list';
-import { createVisitFormData, type VisitFormVariant } from '../model/visitForm';
+import { createVisitFormData, type VisitFormData, type VisitFormVariant } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
@@ -17,9 +17,8 @@ interface VisitFormProps {
 export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(() => createVisitFormData());
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const latestFormRef = useRef(formData);
-  latestFormRef.current = formData;
+  const [createdValue, setCreatedValue] = useState<VisitFormData | null>(null);
+  const isCreated = createdValue !== null;
   const { mutateAsync: createVisit } = useCreateVisitList();
   const modal = useVisitSubmission(
     formData,
@@ -27,15 +26,14 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
     variant,
     async (value) => {
       await createVisit({ ...value, variant });
-      if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsSubmitted(true);
+      setCreatedValue(value);
     },
-    () => navigate('/log'),
   );
-  const handleModalClose = () => {
-    modal.closeModal();
-    if (isSubmitted) navigate('/log');
-  };
-  const { guard } = useUnsavedChanges({ value: formData, initial: createVisitFormData(), enabled: !isSubmitted });
+  const { guard } = useUnsavedChanges({ value: formData, initial: createdValue ?? createVisitFormData() });
+
+  useEffect(() => {
+    if (isCreated) navigate('/log');
+  }, [isCreated, navigate]);
 
   return (
     <>
@@ -47,13 +45,13 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
       >
         <ActionButtons>
           <CancelButton content="취소" onClick={() => navigate('/log')} />
-          <ActionButton content="추가" onClick={modal.handleSubmit} disable={modal.isSubmitting || isSubmitted} />
+          <ActionButton content="추가" onClick={modal.handleSubmit} disable={modal.isSubmitting || isCreated} />
         </ActionButtons>
       </VisitFormFields>
       <Modal
         isOpen={modal.isOpen}
         config={modal.config}
-        onClose={handleModalClose}
+        onClose={modal.closeModal}
       />
       <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </>
