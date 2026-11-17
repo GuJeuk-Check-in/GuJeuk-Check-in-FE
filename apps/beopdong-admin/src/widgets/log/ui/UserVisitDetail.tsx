@@ -42,7 +42,7 @@ export const UserVisitDetail = ({
   const { mutateAsync: updateVisit } = useUpdateVisitList();
   const modal = useVisitSubmission(formData, '수정', variant, async (value) => {
     if (!visit) return;
-    await updateVisit({ id: visit.id, ...value });
+    await updateVisit({ id: visit.id, variant, ...value });
     if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsEditing(false);
   });
   const { isDirty, guard } = useUnsavedChanges({

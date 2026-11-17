@@ -26,7 +26,7 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
     '등록',
     variant,
     async (value) => {
-      await createVisit(value);
+      await createVisit({ ...value, variant });
       if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsSubmitted(true);
     },
     () => navigate('/log'),

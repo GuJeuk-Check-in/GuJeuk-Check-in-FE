@@ -1,7 +1,7 @@
 import { toPhoneDigits } from '@center/ui/form';
 import { MANAGED_PURPOSES } from '@entities/purpose';
 import type { VisitDetailResponse, VisitGenderDto, VisitListItemDto, VisitRequest } from '../model/dto';
-import type { UserVisitDetailRecord, UserVisitSummary } from '../model/types';
+import type { UserVisitDetailRecord, UserVisitSummary, VisitVariant } from '../model/types';
 
 // 이용목적 조회 API 연결 시 서버 id 기준 매핑으로 교체 (현재는 MANAGED_PURPOSES 순서를 id-1 로 가정)
 const UNKNOWN_PURPOSE_PREFIX = '이용대장 ';
@@ -37,9 +37,11 @@ export const toVisitDetail = (id: number, dto: VisitDetailResponse): UserVisitDe
   visitTime: dto.visitTime,
   visitDate: dto.visitDate,
   purposes: dto.purpose.map(purposeNameById),
+  visitPurpose: dto.visitPurpose ?? null,
+  note: dto.note ?? null,
 });
 
-interface VisitFormValues {
+export interface VisitFormValues {
   name: string;
   age: string;
   gender: string;
@@ -47,16 +49,23 @@ interface VisitFormValues {
   visitTime: string;
   visitDate: string;
   purposes: readonly string[];
+  visitPurpose: string;
+  note: string | null;
 }
 
 const toGenderDto = (label: string): VisitGenderDto => (label === '남자' ? 'MAN' : 'WOMAN');
 
-export const toVisitRequest = (form: VisitFormValues): VisitRequest => ({
-  name: form.name.trim(),
-  age: Number.parseInt(form.age, 10),
-  phone: toPhoneDigits(form.phone),
-  gender: toGenderDto(form.gender),
-  visitDate: form.visitDate,
-  purpose: toPurposeIds(form.purposes),
-  visitTime: form.visitTime,
-});
+export const toVisitRequest = (form: VisitFormValues, variant: VisitVariant): VisitRequest => {
+  const base = {
+    name: form.name.trim(),
+    age: Number.parseInt(form.age, 10),
+    gender: toGenderDto(form.gender),
+    visitDate: form.visitDate,
+    purpose: toPurposeIds(form.purposes),
+    visitTime: form.visitTime,
+    note: form.note?.trim() || null,
+  };
+  return variant === 'adult'
+    ? { ...base, visitPurpose: form.visitPurpose.trim() }
+    : { ...base, phone: toPhoneDigits(form.phone) };
+};

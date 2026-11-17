@@ -23,17 +23,29 @@ export interface VisitDetailResponse {
   phone: string;
   visitDate: string;
   visitTime: string;
+  visitPurpose?: string | null;
+  note?: string | null;
 }
 
-export interface VisitRequest {
+interface VisitRequestBase {
   name: string;
   age: number;
-  phone: string;
   gender: VisitGenderDto;
   visitDate: string;
   purpose: number[];
   visitTime: string;
+  note: string | null;
 }
+
+export interface AdultVisitRequest extends VisitRequestBase {
+  visitPurpose: string;
+}
+
+export interface MinorVisitRequest extends VisitRequestBase {
+  phone: string;
+}
+
+export type VisitRequest = AdultVisitRequest | MinorVisitRequest;
 
 export interface CreateVisitResponse {
   id: number;
