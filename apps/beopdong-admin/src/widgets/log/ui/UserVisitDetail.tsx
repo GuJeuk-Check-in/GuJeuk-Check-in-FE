@@ -8,7 +8,7 @@ import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
 import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
 import { useUpdateVisitList } from '@features/log/update-visit-list';
 import { formatDateKoreanPadded } from '@center/ui/form';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, CancelButton, EditButton, ActionButtons, BackLink } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
@@ -36,12 +36,14 @@ export const UserVisitDetail = ({
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => createVisitFormData(visit));
+  const latestFormRef = useRef(formData);
+  latestFormRef.current = formData;
   const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
   const { mutateAsync: updateVisit } = useUpdateVisitList();
   const modal = useVisitSubmission(formData, '수정', variant, async (value) => {
     if (!visit) return;
     await updateVisit({ id: visit.id, ...value });
-    setIsEditing(false);
+    if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsEditing(false);
   });
   const { isDirty, guard } = useUnsavedChanges({
     value: formData,
