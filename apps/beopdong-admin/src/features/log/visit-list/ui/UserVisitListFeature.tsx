@@ -13,6 +13,7 @@ import { PageTitle } from '@shared/ui';
 interface UserVisitListFeatureProps {
   visits?: readonly UserVisitSummary[];
   isLoading?: boolean;
+  isFetching?: boolean;
   isLast?: boolean;
   isError?: boolean;
   failedAt?: number;
@@ -37,6 +38,7 @@ const formatVisitSubtitle = (visit: UserVisitSummary) =>
 export const UserVisitListFeature = ({
   visits = [],
   isLoading = false,
+  isFetching = false,
   isLast = true,
   isError = false,
   failedAt = 0,
@@ -95,7 +97,9 @@ export const UserVisitListFeature = ({
         </>
       )}
       {!isLoading && !isError && !isLast && onLoadMore && (
-        <MoreButton type="button" onClick={onLoadMore}>더 보기</MoreButton>
+        <MoreButton type="button" disabled={isFetching} onClick={onLoadMore}>
+          더 보기
+        </MoreButton>
       )}
       <ConfirmModal isOpen={failureModal.isOpen} config={failureModal.config} onClose={failureModal.closeModal} />
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
@@ -145,4 +149,9 @@ const MoreButton = styled.button`
   color: ${({ theme }) => adminTokens(theme).colors.white};
   font-size: 1.125rem;
   cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
