@@ -29,6 +29,7 @@ const DELETE_MESSAGES = {
 };
 
 const EMPTY_MESSAGE = '방문 기록이 없습니다.';
+const ERROR_MESSAGE = '방명록을 불러오지 못했어요.';
 
 const formatVisitSubtitle = (visit: UserVisitSummary) =>
   [getVisitDisplayName(visit), formatDateKoreanPadded(visit.visitDate), visit.purposes.join(', ')].join(' · ');
@@ -87,6 +88,12 @@ export const UserVisitListFeature = ({
         !isLoading && !isError && <EmptyState role="status">{EMPTY_MESSAGE}</EmptyState>
       )}
       {isLoading && <EmptyState role="status">불러오는 중입니다.</EmptyState>}
+      {!isLoading && isError && (
+        <>
+          <EmptyState role="alert">{ERROR_MESSAGE}</EmptyState>
+          {onRetry && <MoreButton type="button" onClick={onRetry}>다시 시도</MoreButton>}
+        </>
+      )}
       {!isLoading && !isError && !isLast && onLoadMore && (
         <MoreButton type="button" onClick={onLoadMore}>더 보기</MoreButton>
       )}
