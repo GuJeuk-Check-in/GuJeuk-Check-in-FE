@@ -6,7 +6,7 @@ import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
 
-export const usePurposeManagement = (initialPurposes: readonly Purpose[]) => {
+export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const [announcement, setAnnouncement] = useState('');
   const modal = useModal();
   const { confirmModal, openConfirm } = useConfirmModal();

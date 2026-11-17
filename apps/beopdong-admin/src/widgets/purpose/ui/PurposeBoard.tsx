@@ -3,24 +3,21 @@ import { Modal } from '@center/ui/modal';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { SortableBoardShell, SortableTile } from '@center/ui/sortable-board';
 import { usePurposeManagement } from '@features/purpose/manage-purpose';
-import { PurposeCard, type Purpose } from '@entities/purpose';
+import { PurposeCard, usePurposeList } from '@entities/purpose';
 import { PurposeAddBox } from '@features/purpose/create-purpose';
 
-interface PurposeBoardProps {
-  readonly initialPurposes: readonly Purpose[];
-}
-
-export const PurposeBoard = ({ initialPurposes }: PurposeBoardProps) => {
+export const PurposeBoard = () => {
+  const { data: purposes, isLoading, isError, error } = usePurposeList();
   const { items, sensors, handleDragEnd, announcement, modal, confirmModal, handleCreate, handleUpdate, handleDelete } =
-    usePurposeManagement(initialPurposes);
+    usePurposeManagement(purposes);
 
   return (
     <>
       <HiddenTitle id="admin-page-title" tabIndex={-1}>이용대장 관리</HiddenTitle>
       <Board
-        isLoading={false}
-        isError={false}
-        error={null}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
         items={items.map((item) => item.id)}
         sensors={sensors}
         onDragEnd={handleDragEnd}

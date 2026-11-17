@@ -463,6 +463,7 @@ __metadata:
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.1"
     "@eslint/js": "npm:^9.36.0"
+    "@tanstack/react-query": "npm:^5.90.5"
     "@types/react": "npm:^19.2.14"
     "@types/react-dom": "npm:^19.2.3"
     "@vitejs/plugin-react-swc": "npm:^4.1.0"
