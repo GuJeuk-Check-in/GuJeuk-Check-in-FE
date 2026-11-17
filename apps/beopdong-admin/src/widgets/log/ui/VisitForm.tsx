@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, CancelButton } from '@shared/ui';
@@ -18,6 +18,8 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
   const navigate = useNavigate();
   const [formData, setFormData] = useState(() => createVisitFormData());
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const latestFormRef = useRef(formData);
+  latestFormRef.current = formData;
   const { mutateAsync: createVisit } = useCreateVisitList();
   const modal = useVisitSubmission(
     formData,
@@ -25,7 +27,7 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
     variant,
     async (value) => {
       await createVisit(value);
-      setIsSubmitted(true);
+      if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsSubmitted(true);
     },
     () => navigate('/log'),
   );
