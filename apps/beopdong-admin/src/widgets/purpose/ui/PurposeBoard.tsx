@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Modal } from '@center/ui/modal';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
+import { FailureModal } from '@shared/ui/FailureModal';
 import { SortableBoardShell, SortableTile } from '@center/ui/sortable-board';
 import { usePurposeManagement } from '@features/purpose/manage-purpose';
 import { PurposeCard, usePurposeList } from '@entities/purpose';
-import { PurposeAddBox } from '@features/purpose/create-purpose';
+import { PurposeAddBox, PurposeAddModal } from '@features/purpose/create-purpose';
 
 export const PurposeBoard = () => {
   const { data: purposes, isLoading, isError, error } = usePurposeList();
-  const { items, sensors, handleDragEnd, announcement, modal, confirmModal, handleCreate, handleUpdate, handleDelete } =
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const { items, sensors, handleDragEnd, announcement, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(purposes);
 
   return (
@@ -22,14 +25,14 @@ export const PurposeBoard = () => {
         sensors={sensors}
         onDragEnd={handleDragEnd}
         touchAction="pan-y"
-        leadingSlot={<PurposeAddBox onSubmit={handleCreate} />}
+        leadingSlot={<PurposeAddBox onClick={() => setIsAddOpen(true)} />}
       >
         {items.map((purpose) => (
           <SortableTile
             key={purpose.id}
             id={purpose.id}
             label={`${purpose.purpose} 순서 변경`}
-            disabled={modal.isOpen || confirmModal.isOpen}
+            disabled={modal.isOpen || failureModal.isOpen || confirmModal.isOpen}
           >
             <PurposeCard
               purpose={purpose}
@@ -39,8 +42,18 @@ export const PurposeBoard = () => {
           </SortableTile>
         ))}
       </Board>
+      {isAddOpen && (
+        <PurposeAddModal
+          onClose={() => setIsAddOpen(false)}
+          onSubmit={(label) => {
+            setIsAddOpen(false);
+            handleCreate(label);
+          }}
+        />
+      )}
       <HiddenStatus role="status" aria-live="polite">{announcement}</HiddenStatus>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
+      <FailureModal isOpen={failureModal.isOpen} config={failureModal.config} onClose={failureModal.closeModal} />
       <ConfirmModal isOpen={confirmModal.isOpen} config={confirmModal.config} onClose={confirmModal.closeModal} />
     </>
   );

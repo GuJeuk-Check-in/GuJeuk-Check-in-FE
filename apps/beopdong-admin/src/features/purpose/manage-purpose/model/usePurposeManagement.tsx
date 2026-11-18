@@ -1,14 +1,18 @@
 import { useState } from 'react';
+import { MdErrorOutline } from 'react-icons/md';
 import { useModal } from '@center/ui/modal';
 import { useSortableItems } from '@center/ui/sortable-board';
 import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
+import { useCreatePurpose } from '@features/purpose/create-purpose';
 
 export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const [announcement, setAnnouncement] = useState('');
   const modal = useModal();
+  const failureModal = useModal();
+  const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { confirmModal, openConfirm } = useConfirmModal();
   const sortable = useSortableItems({
     initialItems: initialPurposes,
@@ -22,11 +26,26 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   };
 
   const handleCreate = (label: string) => {
-    if (!label.trim()) {
+    const purposeName = label.trim();
+    if (!purposeName) {
       openInputCheckNotice(modal, '이용대장 이름을 입력해주세요.');
       return;
     }
-    showApiNotice('추가');
+    if (isCreating) return;
+
+    createMutate(
+      { purposeName },
+      {
+        onError: () => {
+          failureModal.openModal({
+            icon: <MdErrorOutline />,
+            title: '이용대장 추가에 실패했습니다',
+            subtitle: '이용대장으로 돌아가 다시 추가해주세요',
+            buttons: [{ label: '이용대장으로', variant: 'primary', onClick: failureModal.closeModal }],
+          });
+        },
+      },
+    );
   };
 
   const handleUpdate = (purpose: Purpose) => {
@@ -42,5 +61,5 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     });
   };
 
-  return { ...sortable, announcement, modal, confirmModal, handleCreate, handleUpdate, handleDelete };
+  return { ...sortable, announcement, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete };
 };

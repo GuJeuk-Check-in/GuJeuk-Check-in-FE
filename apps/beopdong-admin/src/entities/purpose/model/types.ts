@@ -6,3 +6,7 @@ export interface PurposeListItem {
 export interface PurposeListResponse {
   purposes: PurposeListItem[];
 }
+
+export interface CreatePurposeRequest {
+  purposeName: string;
+}

@@ -9,6 +9,10 @@ import { Link, matchPath, useLocation } from 'react-router-dom';
 import { BeopdongLogo, ExportIcon } from '@shared/assets';
 import { ADMIN_NAVIGATION } from '@shared/config/adminNavigation';
 import { ExportModal } from './ExportModal';
+import { MemberExportModal } from './MemberExportModal';
+
+const GUESTBOOK_EXPORT_LABEL = '방명록 엑셀 추출';
+const MEMBER_EXPORT_LABEL = '회원 정보 엑셀 추출';
 
 export const AdminHeader = () => {
   const { pathname } = useLocation();
@@ -41,7 +45,7 @@ export const AdminHeader = () => {
             })}
           </MenuList>
           <ExportActions aria-label="엑셀 내보내기">
-            {['방명록 엑셀 추출', '회원 정보 엑셀 추출'].map((label) => (
+            {[GUESTBOOK_EXPORT_LABEL, MEMBER_EXPORT_LABEL].map((label) => (
               <SidebarExportButton
                 key={label}
                 label={label}
@@ -53,13 +57,22 @@ export const AdminHeader = () => {
         </>
       }
     />
-      {exportTitle && (
+      {exportTitle === GUESTBOOK_EXPORT_LABEL && (
         <ExportModal
           title={exportTitle}
           onClose={() => setExportTitle(null)}
           onConfirm={(period) => {
             setExportTitle(null);
             openApiPendingNotice(notice, `${exportTitle}(${period})`, '엑셀 파일은 아직 내려받을 수 없습니다.');
+          }}
+        />
+      )}
+      {exportTitle === MEMBER_EXPORT_LABEL && (
+        <MemberExportModal
+          onClose={() => setExportTitle(null)}
+          onConfirm={() => {
+            setExportTitle(null);
+            openApiPendingNotice(notice, MEMBER_EXPORT_LABEL, '엑셀 파일은 아직 내려받을 수 없습니다.');
           }}
         />
       )}
