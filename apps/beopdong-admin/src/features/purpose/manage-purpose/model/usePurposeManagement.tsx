@@ -1,28 +1,21 @@
-import { useState } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { useModal } from '@center/ui/modal';
-import { useSortableItems } from '@center/ui/sortable-board';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
 import { useCreatePurpose } from '@features/purpose/create-purpose';
 import { useUpdatePurpose } from '@features/purpose/update-purpose';
 import { useDeletePurpose } from '@features/purpose/delete-purpose';
+import { useReorderPurpose } from '@features/purpose/movement-purpose';
 
 export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
-  const [announcement, setAnnouncement] = useState('');
   const modal = useModal();
   const failureModal = useModal();
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePurpose();
   const { mutate: deleteMutate, isPending: isDeleting } = useDeletePurpose();
   const { confirmModal, openConfirm } = useConfirmModal();
-  const sortable = useSortableItems({
-    initialItems: initialPurposes,
-    onReorder: ({ movedItem }) => {
-      setAnnouncement(`${movedItem.purpose} 순서를 화면에서만 변경했습니다. 새로고침하면 초기화됩니다.`);
-    },
-  });
+  const sortable = useReorderPurpose(initialPurposes, failureModal);
 
   const handleCreate = (label: string) => {
     const purposeName = label.trim();
@@ -86,5 +79,5 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     });
   };
 
-  return { ...sortable, announcement, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete };
+  return { ...sortable, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete };
 };

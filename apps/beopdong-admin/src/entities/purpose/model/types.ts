@@ -14,3 +14,7 @@ export interface CreatePurposeRequest {
 export interface UpdatePurposeRequest {
   purposeName: string;
 }
+
+export interface UpdatePurposeMovementRequest {
+  purposeId: number[];
+}

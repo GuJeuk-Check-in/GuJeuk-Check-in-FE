@@ -2,6 +2,7 @@ import { axiosInstance } from '@shared/api';
 import type {
   CreatePurposeRequest,
   PurposeListResponse,
+  UpdatePurposeMovementRequest,
   UpdatePurposeRequest,
 } from '../model/types';
 
@@ -20,4 +21,8 @@ export const updatePurpose = async (purposeId: number, payload: UpdatePurposeReq
 
 export const deletePurpose = async (purposeId: number) => {
   await axiosInstance.delete(`/purpose/${purposeId}`);
+};
+
+export const updatePurposeMovement = async (payload: UpdatePurposeMovementRequest) => {
+  await axiosInstance.patch('/purpose/move', payload);
 };
