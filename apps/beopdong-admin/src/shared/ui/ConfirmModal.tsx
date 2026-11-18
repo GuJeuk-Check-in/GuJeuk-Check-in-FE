@@ -50,6 +50,15 @@ export const ConfirmModal = styled(Modal)`
     background-color: #e4e4e4;
   }
 
+  button:not(:first-of-type) {
+    cursor: pointer;
+    transition: filter 0.15s ease;
+  }
+
+  button:not(:first-of-type):hover {
+    filter: brightness(0.9);
+  }
+
   div:has(> button) {
     gap: 1rem;
     flex-wrap: nowrap;

@@ -17,3 +17,7 @@ export const createPurpose = async (payload: CreatePurposeRequest) => {
 export const updatePurpose = async (purposeId: number, payload: UpdatePurposeRequest) => {
   await axiosInstance.patch(`/purpose/${purposeId}`, payload);
 };
+
+export const deletePurpose = async (purposeId: number) => {
+  await axiosInstance.delete(`/purpose/${purposeId}`);
+};

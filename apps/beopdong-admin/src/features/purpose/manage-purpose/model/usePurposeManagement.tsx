@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { MdErrorOutline } from 'react-icons/md';
 import { useModal } from '@center/ui/modal';
 import { useSortableItems } from '@center/ui/sortable-board';
-import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
 import { useCreatePurpose } from '@features/purpose/create-purpose';
 import { useUpdatePurpose } from '@features/purpose/update-purpose';
+import { useDeletePurpose } from '@features/purpose/delete-purpose';
 
 export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const [announcement, setAnnouncement] = useState('');
@@ -15,6 +15,7 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const failureModal = useModal();
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePurpose();
+  const { mutate: deleteMutate, isPending: isDeleting } = useDeletePurpose();
   const { confirmModal, openConfirm } = useConfirmModal();
   const sortable = useSortableItems({
     initialItems: initialPurposes,
@@ -22,10 +23,6 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
       setAnnouncement(`${movedItem.purpose} 순서를 화면에서만 변경했습니다. 새로고침하면 초기화됩니다.`);
     },
   });
-
-  const showApiNotice = (action: string) => {
-    openApiPendingNotice(modal, action, '변경 내용은 아직 저장되지 않았습니다.');
-  };
 
   const handleCreate = (label: string) => {
     const purposeName = label.trim();
@@ -72,7 +69,20 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     openConfirm({
       title: '이 이용대장을 삭제하시겠습니까?',
       subtitle: purpose.purpose,
-      onConfirm: () => showApiNotice('삭제'),
+      onConfirm: () => {
+        if (isDeleting) return;
+
+        deleteMutate(purpose.id, {
+          onError: () => {
+            failureModal.openModal({
+              icon: <MdErrorOutline />,
+              title: '이용대장 삭제에 실패했습니다',
+              subtitle: '이용대장으로 돌아가 다시 삭제해주세요',
+              buttons: [{ label: '이용대장으로', variant: 'primary', onClick: failureModal.closeModal }],
+            });
+          },
+        });
+      },
     });
   };
 
