@@ -10,3 +10,7 @@ export interface PurposeListResponse {
 export interface CreatePurposeRequest {
   purposeName: string;
 }
+
+export interface UpdatePurposeRequest {
+  purposeName: string;
+}

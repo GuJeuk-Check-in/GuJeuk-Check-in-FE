@@ -7,12 +7,14 @@ import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
 import type { Purpose } from '@entities/purpose';
 import { useCreatePurpose } from '@features/purpose/create-purpose';
+import { useUpdatePurpose } from '@features/purpose/update-purpose';
 
 export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const [announcement, setAnnouncement] = useState('');
   const modal = useModal();
   const failureModal = useModal();
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
+  const { mutate: updateMutate, isPending: isUpdating } = useUpdatePurpose();
   const { confirmModal, openConfirm } = useConfirmModal();
   const sortable = useSortableItems({
     initialItems: initialPurposes,
@@ -48,8 +50,21 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     );
   };
 
-  const handleUpdate = (purpose: Purpose) => {
-    if (!purpose.isLocked) showApiNotice('수정');
+  const handleUpdate = (purpose: Purpose, label: string) => {
+    if (purpose.isLocked || isUpdating) return;
+
+    updateMutate(
+      { purposeId: purpose.id, purposeName: label },
+      {
+        onError: () => {
+          modal.openModal({
+            title: '수정 실패',
+            subtitle: '이용대장을 수정하지 못했습니다.',
+            buttons: [{ label: '확인', onClick: modal.closeModal }],
+          });
+        },
+      },
+    );
   };
 
   const handleDelete = (purpose: Purpose) => {
