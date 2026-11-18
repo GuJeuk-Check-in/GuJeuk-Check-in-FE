@@ -3,3 +3,5 @@ export { BASE_PURPOSES, MANAGED_PURPOSES, getVisitPurposeOptions } from './model
 export * from './api/purpose.api';
 export * from './model/types';
 export * from './model/usePurposeList';
+export * from './model/purposeOptions';
+export * from './model/usePurposeOptions';
