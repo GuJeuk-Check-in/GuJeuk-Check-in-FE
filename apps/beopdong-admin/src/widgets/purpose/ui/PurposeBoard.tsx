@@ -9,7 +9,7 @@ import { PurposeCard, usePurposeList } from '@entities/purpose';
 import { PurposeAddBox, PurposeAddModal } from '@features/purpose/create-purpose';
 
 export const PurposeBoard = () => {
-  const { data: purposes, isLoading, isError, error, refetch } = usePurposeList();
+  const { data: purposes, isLoading, isLoadingError, isRefetchError, refetch, error } = usePurposeList();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { items, sensors, handleDragEnd, announcement, isReordering, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(purposes);
@@ -17,9 +17,15 @@ export const PurposeBoard = () => {
   return (
     <>
       <HiddenTitle id="admin-page-title" tabIndex={-1}>이용대장 관리</HiddenTitle>
+      {isRefetchError && (
+        <StaleNotice role="alert">
+          목록을 새로 불러오지 못해 최신 상태가 아닐 수 있습니다.
+          <RetryButton type="button" onClick={() => void refetch()}>다시 조회</RetryButton>
+        </StaleNotice>
+      )}
       <Board
         isLoading={isLoading}
-        isError={isError}
+        isError={isLoadingError}
         error={error}
         onRetry={() => void refetch()}
         items={items.map((item) => item.id)}
@@ -71,6 +77,24 @@ const Board = styled(SortableBoardShell)`
   @media (max-width: 40rem) {
     grid-template-columns: minmax(0, 1fr);
   }
+`;
+
+const StaleNotice = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #d32f2f;
+`;
+
+const RetryButton = styled.button`
+  padding: 0.25rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 `;
 
 const HiddenTitle = styled.h1`
