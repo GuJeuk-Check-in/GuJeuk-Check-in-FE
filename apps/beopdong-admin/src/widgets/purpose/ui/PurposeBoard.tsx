@@ -11,7 +11,7 @@ import { PurposeAddBox, PurposeAddModal } from '@features/purpose/create-purpose
 export const PurposeBoard = () => {
   const { data: purposes, isLoading, isError, error } = usePurposeList();
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const { items, sensors, handleDragEnd, announcement, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
+  const { items, sensors, handleDragEnd, announcement, isReordering, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(purposes);
 
   return (
@@ -32,7 +32,7 @@ export const PurposeBoard = () => {
             key={purpose.id}
             id={purpose.id}
             label={`${purpose.purpose} 순서 변경`}
-            disabled={modal.isOpen || failureModal.isOpen || confirmModal.isOpen}
+            disabled={isReordering || modal.isOpen || failureModal.isOpen || confirmModal.isOpen}
           >
             <PurposeCard
               purpose={purpose}
