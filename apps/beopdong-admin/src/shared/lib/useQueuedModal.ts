@@ -12,7 +12,7 @@ export const useQueuedModal = (modal: UseModalReturn, blockers: readonly boolean
     const next = pending.current;
     pending.current = null;
     modal.openModal(next);
-  }, [isBlocked]);
+  }, [isBlocked, modal]);
 
   return {
     ...modal,
