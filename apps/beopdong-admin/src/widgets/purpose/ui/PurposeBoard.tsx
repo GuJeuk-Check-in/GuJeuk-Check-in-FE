@@ -11,7 +11,7 @@ import { PurposeAddBox, PurposeAddModal } from '@features/purpose/create-purpose
 export const PurposeBoard = () => {
   const { data: purposes, isLoading, isError, error } = usePurposeList();
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const { items, sensors, handleDragEnd, announcement, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
+  const { items, sensors, handleDragEnd, announcement, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(purposes);
 
   return (
@@ -38,6 +38,7 @@ export const PurposeBoard = () => {
               purpose={purpose}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
+              isDeleting={isDeleting}
             />
           </SortableTile>
         ))}

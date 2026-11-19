@@ -59,13 +59,11 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   };
 
   const handleDelete = (purpose: Purpose) => {
-    if (purpose.isLocked) return;
+    if (purpose.isLocked || isDeleting) return;
     openConfirm({
       title: '이 이용대장을 삭제하시겠습니까?',
       subtitle: purpose.purpose,
       onConfirm: () => {
-        if (isDeleting) return;
-
         deleteMutate(purpose.id, {
           onError: () => {
             failureModal.openModal({
@@ -80,5 +78,5 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     });
   };
 
-  return { ...sortable, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete };
+  return { ...sortable, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete };
 };

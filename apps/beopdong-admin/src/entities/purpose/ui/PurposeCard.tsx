@@ -14,9 +14,10 @@ interface PurposeCardProps {
   readonly purpose: Purpose;
   readonly onUpdate: (purpose: Purpose, newLabel: string) => boolean;
   readonly onDelete: (purpose: Purpose) => void;
+  readonly isDeleting?: boolean;
 }
 
-export const PurposeCard = ({ purpose, onUpdate, onDelete }: PurposeCardProps) => {
+export const PurposeCard = ({ purpose, onUpdate, onDelete, isDeleting = false }: PurposeCardProps) => {
   const edit = useInlineEdit({
     value: purpose.purpose,
     onSubmit: (label) => onUpdate(purpose, label),
@@ -28,7 +29,8 @@ export const PurposeCard = ({ purpose, onUpdate, onDelete }: PurposeCardProps) =
       {!purpose.isLocked && !edit.isEditing && (
         <DeleteButton
           type="button"
-          isDeleting={false}
+          isDeleting={isDeleting}
+          disabled={isDeleting}
           aria-label={`${purpose.purpose} 삭제`}
           onPointerDown={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
