@@ -19,13 +19,13 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const failureModal = useQueuedModal(baseFailureModal, [confirmModal.isOpen, modal.isOpen]);
   const sortable = useReorderPurpose(initialPurposes, failureModal);
 
-  const handleCreate = (label: string) => {
+  const handleCreate = (label: string): boolean => {
     const purposeName = label.trim();
     if (!purposeName) {
       openInputCheckNotice(modal, '이용대장 이름을 입력해주세요.');
-      return;
+      return false;
     }
-    if (isCreating) return;
+    if (isCreating) return false;
 
     createMutate(
       { purposeName },
@@ -40,6 +40,7 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
         },
       },
     );
+    return true;
   };
 
   const handleUpdate = (purpose: Purpose, label: string): boolean => {

@@ -54,8 +54,7 @@ export const PurposeBoard = () => {
         <PurposeAddModal
           onClose={() => setIsAddOpen(false)}
           onSubmit={(label) => {
-            setIsAddOpen(false);
-            handleCreate(label);
+            if (handleCreate(label)) setIsAddOpen(false);
           }}
         />
       )}
