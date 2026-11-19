@@ -2,6 +2,7 @@ import { MdErrorOutline } from 'react-icons/md';
 import { useModal } from '@center/ui/modal';
 import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
 import { useConfirmModal } from '@shared/lib/useConfirmModal';
+import { useQueuedModal } from '@shared/lib/useQueuedModal';
 import type { Purpose } from '@entities/purpose';
 import { useCreatePurpose } from '@features/purpose/create-purpose';
 import { useUpdatePurpose } from '@features/purpose/update-purpose';
@@ -10,11 +11,12 @@ import { useReorderPurpose } from '@features/purpose/movement-purpose';
 
 export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
   const modal = useModal();
-  const failureModal = useModal();
+  const baseFailureModal = useModal();
   const { mutate: createMutate, isPending: isCreating } = useCreatePurpose();
   const { mutate: updateMutate, isPending: isUpdating } = useUpdatePurpose();
   const { mutate: deleteMutate, isPending: isDeleting } = useDeletePurpose();
   const { confirmModal, openConfirm } = useConfirmModal();
+  const failureModal = useQueuedModal(baseFailureModal, [confirmModal.isOpen, modal.isOpen]);
   const sortable = useReorderPurpose(initialPurposes, failureModal);
 
   const handleCreate = (label: string) => {
