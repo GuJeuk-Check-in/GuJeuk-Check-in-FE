@@ -51,6 +51,7 @@ export type SortableBoardShellProps = {
   readonly touchAction?: 'none' | 'pan-y';
   readonly afterGridSlot?: ReactNode;
   readonly layout?: SortableBoardLayout;
+  readonly onRetry?: () => void;
 };
 
 export const SortableBoardShell = ({
@@ -67,6 +68,7 @@ export const SortableBoardShell = ({
   touchAction,
   afterGridSlot,
   layout = 'default',
+  onRetry,
 }: SortableBoardShellProps) => {
   if (isLoading) {
     return (
@@ -81,8 +83,13 @@ export const SortableBoardShell = ({
 
   if (isError) {
     return (
-      <ErrorText>
+      <ErrorText role="alert">
         데이터 로드 실패: {error instanceof Error ? error.message : '오류 발생'}
+        {onRetry && (
+          <div>
+            <RetryButton type="button" onClick={onRetry}>다시 시도</RetryButton>
+          </div>
+        )}
       </ErrorText>
     );
   }
@@ -157,6 +164,16 @@ const ErrorText = styled.div`
   text-align: center;
   color: red;
   margin-top: 2rem;
+`;
+
+const RetryButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
 `;
 
 const LoadingOverlay = styled.div`

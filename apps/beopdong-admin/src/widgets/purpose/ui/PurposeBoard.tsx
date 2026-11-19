@@ -9,7 +9,7 @@ import { PurposeCard, usePurposeList } from '@entities/purpose';
 import { PurposeAddBox, PurposeAddModal } from '@features/purpose/create-purpose';
 
 export const PurposeBoard = () => {
-  const { data: purposes, isLoading, isError, error } = usePurposeList();
+  const { data: purposes, isLoading, isError, error, refetch } = usePurposeList();
   const [isAddOpen, setIsAddOpen] = useState(false);
   const { items, sensors, handleDragEnd, announcement, isReordering, isDeleting, modal, failureModal, confirmModal, handleCreate, handleUpdate, handleDelete } =
     usePurposeManagement(purposes);
@@ -21,6 +21,7 @@ export const PurposeBoard = () => {
         isLoading={isLoading}
         isError={isError}
         error={error}
+        onRetry={() => void refetch()}
         items={items.map((item) => item.id)}
         sensors={sensors}
         onDragEnd={handleDragEnd}
