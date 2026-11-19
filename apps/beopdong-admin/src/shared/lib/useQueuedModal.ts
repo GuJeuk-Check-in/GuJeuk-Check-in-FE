@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ModalConfig, UseModalReturn } from '@center/ui/modal';
 
 export const useQueuedModal = (modal: UseModalReturn, blockers: readonly boolean[]): UseModalReturn => {
@@ -6,6 +6,7 @@ export const useQueuedModal = (modal: UseModalReturn, blockers: readonly boolean
   const blockedRef = useRef(false);
   const queue = useRef<ModalConfig[]>([]);
   const opening = useRef(false);
+  const [, setRevision] = useState(0);
 
   useLayoutEffect(() => {
     blockedRef.current = isBlocked;
@@ -22,6 +23,11 @@ export const useQueuedModal = (modal: UseModalReturn, blockers: readonly boolean
 
   return {
     ...modal,
+    closeModal: () => {
+      opening.current = false;
+      modal.closeModal();
+      setRevision((revision) => revision + 1);
+    },
     openModal: (config) => {
       if (blockedRef.current || opening.current) {
         queue.current.push(config);
