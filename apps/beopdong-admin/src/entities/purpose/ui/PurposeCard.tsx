@@ -12,7 +12,7 @@ export interface Purpose {
 
 interface PurposeCardProps {
   readonly purpose: Purpose;
-  readonly onUpdate: (purpose: Purpose, newLabel: string) => void;
+  readonly onUpdate: (purpose: Purpose, newLabel: string) => boolean;
   readonly onDelete: (purpose: Purpose) => void;
 }
 

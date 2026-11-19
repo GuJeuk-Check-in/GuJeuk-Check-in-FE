@@ -40,8 +40,8 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
     );
   };
 
-  const handleUpdate = (purpose: Purpose, label: string) => {
-    if (purpose.isLocked || isUpdating) return;
+  const handleUpdate = (purpose: Purpose, label: string): boolean => {
+    if (purpose.isLocked || isUpdating) return false;
 
     updateMutate(
       { purposeId: purpose.id, purposeName: label },
@@ -55,6 +55,7 @@ export const usePurposeManagement = (initialPurposes?: readonly Purpose[]) => {
         },
       },
     );
+    return true;
   };
 
   const handleDelete = (purpose: Purpose) => {

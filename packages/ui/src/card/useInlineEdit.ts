@@ -2,7 +2,7 @@ import { useRef, useState, type ChangeEvent, type KeyboardEvent, type SyntheticE
 
 interface InlineEditOptions {
   readonly value: string;
-  readonly onSubmit: (value: string) => void;
+  readonly onSubmit: (value: string) => boolean | void;
   readonly disabled?: boolean;
 }
 
@@ -28,10 +28,10 @@ export const useInlineEdit = ({ value, onSubmit, disabled = false }: InlineEditO
 
   const submit = () => {
     if (disabled || finished.current) return;
+    const trimmed = draft.trim();
+    if (trimmed && trimmed !== value && onSubmit(trimmed) === false) return;
     finished.current = true;
     setIsEditing(false);
-    const trimmed = draft.trim();
-    if (trimmed && trimmed !== value) onSubmit(trimmed);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
