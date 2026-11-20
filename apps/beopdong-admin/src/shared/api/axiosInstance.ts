@@ -21,7 +21,8 @@ export const setAccessTokenProvider = (provider: (() => string | null) | null) =
 
 axiosInstance.interceptors.request.use((config) => {
   const token = accessTokenProvider?.();
-  if (token) config.headers.set('Authorization', `Bearer ${token}`);
+  const isLoginRequest = config.url === '/organ' && config.method === 'post';
+  if (token && !isLoginRequest) config.headers.set('Authorization', `Bearer ${token}`);
   return config;
 });
 
