@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, CancelButton } from '@shared/ui';
-import { createVisitFormData, type VisitFormVariant } from '../model/visitForm';
+import { useCreateVisitList } from '@features/log/create-visit-list';
+import { createVisitFormData, type VisitFormData, type VisitFormVariant } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
@@ -16,8 +17,23 @@ interface VisitFormProps {
 export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(() => createVisitFormData());
-  const modal = useVisitSubmission(formData, '등록', variant);
-  const { guard } = useUnsavedChanges({ value: formData, initial: createVisitFormData() });
+  const [createdValue, setCreatedValue] = useState<VisitFormData | null>(null);
+  const isCreated = createdValue !== null;
+  const { mutateAsync: createVisit } = useCreateVisitList();
+  const modal = useVisitSubmission(
+    formData,
+    '등록',
+    variant,
+    async (value) => {
+      await createVisit({ ...value, variant });
+      setCreatedValue(value);
+    },
+  );
+  const { guard } = useUnsavedChanges({ value: formData, initial: createdValue ?? createVisitFormData() });
+
+  useEffect(() => {
+    if (isCreated) navigate('/log');
+  }, [isCreated, navigate]);
 
   return (
     <>
@@ -26,10 +42,11 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
         onChange={setFormData}
         purposeOptions={purposeOptions}
         variant={variant}
+        disabled={modal.isSubmitting}
       >
         <ActionButtons>
           <CancelButton content="취소" onClick={() => navigate('/log')} />
-          <ActionButton content="추가" onClick={modal.handleSubmit} />
+          <ActionButton content="추가" onClick={modal.handleSubmit} disable={modal.isSubmitting || isCreated} />
         </ActionButtons>
       </VisitFormFields>
       <Modal

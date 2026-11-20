@@ -41,13 +41,18 @@ export const ConfirmModal = styled(Modal)`
     font-weight: 600;
   }
 
-  button:first-of-type {
+  button:first-of-type:not(:only-of-type) {
     background-color: #eeeeee;
     color: ${grayPalette[40]};
   }
 
-  button:first-of-type:hover {
+  button:first-of-type:not(:only-of-type):hover {
     background-color: #e4e4e4;
+  }
+
+  button:only-of-type {
+    flex: 0 1 11rem;
+    color: #ffffff;
   }
 
   button:not(:first-of-type) {
@@ -62,5 +67,6 @@ export const ConfirmModal = styled(Modal)`
   div:has(> button) {
     gap: 1rem;
     flex-wrap: nowrap;
+    justify-content: center;
   }
 `;

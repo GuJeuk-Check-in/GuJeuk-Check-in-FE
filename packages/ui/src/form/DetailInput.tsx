@@ -19,6 +19,7 @@ export interface DetailInputProps {
     | null;
   type?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
@@ -39,6 +40,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   onChange,
   type = 'text',
   onKeyDown,
+  onBlur,
   inputMode,
   options = [],
   placeholder = '',
@@ -119,6 +121,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
           value={value}
           onChange={(e) => onChange?.(e)}
           onKeyDown={onKeyDown}
+          onBlur={onBlur}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}

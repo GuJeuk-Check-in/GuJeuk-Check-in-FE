@@ -1,20 +1,13 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { tokenStorage } from '@entities/auth';
-import { axiosInstance, setUnauthorizedHandler } from '@shared/api';
+import { setAccessTokenProvider, setUnauthorizedHandler } from '@shared/api';
 import App from './App';
 import './styles/global.css';
 
-axiosInstance.interceptors.request.use((config) => {
-  const accessToken = tokenStorage.getAccessToken();
-  const isLoginRequest = config.url === '/organ' && config.method === 'post';
-  if (accessToken && !isLoginRequest) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
+setAccessTokenProvider(tokenStorage.getAccessToken);
 
 setUnauthorizedHandler(() => {
   tokenStorage.clear();

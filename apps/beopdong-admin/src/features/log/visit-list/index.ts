@@ -1,1 +1,2 @@
-export { UserVisitListFeature } from './ui/UserVisitListFeature';
+export * from './model/userVisitList';
+export * from './ui/UserVisitListFeature';

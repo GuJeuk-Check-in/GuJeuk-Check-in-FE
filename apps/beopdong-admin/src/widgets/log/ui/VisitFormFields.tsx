@@ -16,6 +16,7 @@ interface VisitFormFieldsProps {
   readonly onChange: (value: VisitFormData) => void;
   readonly purposeOptions: readonly string[];
   readonly variant?: VisitFormVariant;
+  readonly disabled?: boolean;
   readonly children?: ReactNode;
 }
 
@@ -24,9 +25,11 @@ export const VisitFormFields = ({
   onChange,
   purposeOptions,
   variant = 'minor',
+  disabled = false,
   children,
 }: VisitFormFieldsProps) => (
   <Fields>
+    <Controls inert={disabled}>
     <InputRow>
       <DetailInput
         label="이름"
@@ -73,6 +76,7 @@ export const VisitFormFields = ({
         onKeyDown={(event) => {
           if (event.key === 'Enter') onChange({ ...value, phone: formatPhone(value.phone) });
         }}
+        onBlur={() => onChange({ ...value, phone: formatPhone(value.phone) })}
       />
     )}
     <TimePickerField
@@ -117,6 +121,7 @@ export const VisitFormFields = ({
         onChange={(event) => onChange({ ...value, note: event.target.value || null })}
       />
     </NoteField>
+    </Controls>
     {children}
   </Fields>
 );
@@ -127,6 +132,14 @@ const Fields = styled.div`
   gap: 1.25rem;
   width: 100%;
   min-width: 0;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  opacity: ${({ inert }) => (inert ? 0.6 : 1)};
 `;
 
 const InputRow = styled.div`
