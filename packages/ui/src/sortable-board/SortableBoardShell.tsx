@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import type { ComponentProps, ReactNode } from 'react';
+import { LoadErrorView } from '../feedback';
 import type { DndContextProps, Modifier, Modifiers } from '@dnd-kit/core';
 
 type SortableItems = ComponentProps<typeof SortableContext>['items'];
@@ -51,6 +52,7 @@ export type SortableBoardShellProps = {
   readonly touchAction?: 'none' | 'pan-y';
   readonly afterGridSlot?: ReactNode;
   readonly layout?: SortableBoardLayout;
+  readonly onRetry?: () => void;
 };
 
 export const SortableBoardShell = ({
@@ -67,6 +69,7 @@ export const SortableBoardShell = ({
   touchAction,
   afterGridSlot,
   layout = 'default',
+  onRetry,
 }: SortableBoardShellProps) => {
   if (isLoading) {
     return (
@@ -78,6 +81,8 @@ export const SortableBoardShell = ({
       </LoadingOverlay>
     );
   }
+
+  if (isError && onRetry) return <LoadErrorView onRetry={onRetry} />;
 
   if (isError) {
     return (

@@ -16,12 +16,13 @@ setUnauthorizedHandler(() => {
   }
 });
 
-const queryClient = new QueryClient();
 const root = document.getElementById('root');
 
 if (!root) {
   throw new Error('Root element not found');
 }
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([{ path: '*', element: <App /> }]);
 

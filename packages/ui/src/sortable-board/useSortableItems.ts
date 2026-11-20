@@ -18,6 +18,9 @@ interface SortableItemsOptions<T> {
   readonly onReorder: (change: ReorderChange<T>) => void;
 }
 
+const hasSameOrder = (a: readonly SortableItem[], b: readonly SortableItem[]) =>
+  a.length === b.length && a.every((item, index) => item.id === b[index].id);
+
 export const reconcileSortableItems = <T extends SortableItem>(
   current: T[], previous: readonly T[], incoming: readonly T[],
 ): T[] => {
@@ -38,7 +41,7 @@ export const useSortableItems = <T extends SortableItem>({ initialItems, onReord
     if (!initialItems || initialItems === previousSource.current) return;
     const previous = previousSource.current ?? [];
     previousSource.current = initialItems;
-    revision.current += 1;
+    if (!hasSameOrder(previous, initialItems)) revision.current += 1;
     setItems((current) => reconcileSortableItems(current, previous, initialItems));
   }, [initialItems]);
 
@@ -62,7 +65,9 @@ export const useSortableItems = <T extends SortableItem>({ initialItems, onReord
       rollback: () => {
         if (revision.current !== currentRevision) return;
         revision.current += 1;
-        setItems(items);
+        const serverOrder = new Map((previousSource.current ?? items).map((item, index) => [item.id, index]));
+        const rank = (item: T) => serverOrder.get(item.id) ?? serverOrder.size;
+        setItems((current) => [...current].sort((a, b) => rank(a) - rank(b)));
       },
     });
   };
