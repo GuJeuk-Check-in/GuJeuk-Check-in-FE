@@ -42,6 +42,7 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
         onChange={setFormData}
         purposeOptions={purposeOptions}
         variant={variant}
+        disabled={modal.isSubmitting}
       >
         <ActionButtons>
           <CancelButton content="취소" onClick={() => navigate('/log')} />
