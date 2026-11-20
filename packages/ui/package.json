@@ -12,7 +12,8 @@
     "./search": "./src/search/index.ts",
     "./card": "./src/card/index.ts",
     "./layout": "./src/layout/index.ts",
-    "./sortable-board": "./src/sortable-board/index.ts"
+    "./sortable-board": "./src/sortable-board/index.ts",
+    "./feedback": "./src/feedback/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

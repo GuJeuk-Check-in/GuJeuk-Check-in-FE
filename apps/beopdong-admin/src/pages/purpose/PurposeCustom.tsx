@@ -1,6 +1,5 @@
 import { PurposeBoard } from '@widgets/purpose';
-import { previewPurposes } from './model/previewPurposes';
 
-const PurposeCustom = () => <PurposeBoard initialPurposes={previewPurposes} />;
+const PurposeCustom = () => <PurposeBoard />;
 
 export default PurposeCustom;
