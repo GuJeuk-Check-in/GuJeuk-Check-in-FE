@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import {
   DetailInput,
@@ -13,18 +12,18 @@ import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import {
   formatGender,
+  formatRoute,
   GENDER_OPTIONS,
-  isCustomRoute,
   parseGender,
+  parseRoute,
   ROUTE_OPTIONS,
-  ROUTE_OTHER,
 } from '../lib/formatUserDetail';
 import type { UserDetail } from '../model/types';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { getPhoneError } from '@shared/lib/phoneError';
 
 interface UserDetailFieldsProps {
-  readonly user?: UserDetail;
+  readonly user: UserDetail;
   readonly isEditing: boolean;
   readonly onChange: (patch: Partial<UserDetail>) => void;
 }
@@ -36,13 +35,13 @@ const DATE_ICON = <CalendarIcon />;
 
 interface DateFieldProps {
   readonly label: string;
-  readonly value?: string;
+  readonly value: string;
   readonly isEditing: boolean;
   readonly onChange: (date: string) => void;
 }
 
 const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
-  isEditing && value !== undefined ? (
+  isEditing ? (
     <VisitDatePicker
       label={label}
       value={value}
@@ -57,23 +56,10 @@ const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
   );
 
 export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFieldsProps) => {
-  const isEditable = isEditing && !!user;
-  const edit = onChange;
-  const isCustomUserRoute = !!user && isCustomRoute(user.route);
-  const [isOtherRoute, setIsOtherRoute] = useState(isCustomUserRoute);
-  const [wasEditing, setWasEditing] = useState(isEditing);
-
-  // 편집 세션이 바뀌면(시작/취소/저장) 경로 선택 상태를 현재 user.route 기준으로 다시 맞춘다.
-  if (wasEditing !== isEditing) {
-    setWasEditing(isEditing);
-    setIsOtherRoute(isCustomUserRoute);
-  }
-
-  const handleRouteSelect = (option: string) => {
-    const isOther = option === ROUTE_OTHER;
-    if (isOther && isOtherRoute) return;
-    setIsOtherRoute(isOther);
-    edit({ route: isOther ? '' : option });
+  const handleRouteSelect = (label: string) => {
+    const route = parseRoute(label);
+    if (!route || route === user.route) return;
+    onChange({ route, routeDetail: route === 'OTHER' ? '' : null });
   };
 
   return (
@@ -81,94 +67,93 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
       <Row>
         <DetailInput
           label="이름"
-          value={user?.name ?? EMPTY}
+          value={user.name}
           icon={<IoMdPerson />}
-          isEditable={isEditable}
-          onChange={(event) => edit({ name: event.target.value })}
+          isEditable={isEditing}
+          onChange={(event) => onChange({ name: event.target.value })}
         />
         <DetailInput
-          label="학교"
-          value={user?.school ?? EMPTY}
-          icon={<FaSchool />}
-          isEditable={isEditable}
-          onChange={(event) => edit({ school: event.target.value })}
+          label="연락처"
+          value={user.phone}
+          icon={<PhoneIcon />}
+          type="tel"
+          isEditable={isEditing}
+          errorMessage={getPhoneError(user.phone)}
+          onChange={(event) => onChange({ phone: event.target.value })}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') onChange({ phone: formatPhone(user.phone) });
+          }}
         />
+      </Row>
+      <Row>
+        <DetailInput
+          label="학교"
+          value={user.school}
+          icon={<FaSchool />}
+          isEditable={isEditing}
+          onChange={(event) => onChange({ school: event.target.value })}
+        />
+        <DetailInput label="학년" value={`${user.grade}학년`} icon={<FaSchool />} />
       </Row>
       <Row>
         <DateField
           label="생년월일"
-          value={user?.birthYMD}
-          isEditing={isEditable}
-          onChange={(birthYMD) => edit({ birthYMD })}
+          value={user.birthYMD}
+          isEditing={isEditing}
+          onChange={(birthYMD) => onChange({ birthYMD })}
         />
-        {isEditable ? (
+        {isEditing ? (
           <SelectOption
             label="성별"
             value={formatGender(user.gender)}
             options={GENDER_OPTIONS}
             icon={<IoMdPerson />}
-            onChange={(label) => edit({ gender: parseGender(label) })}
+            onChange={(label) => onChange({ gender: parseGender(label) })}
           />
         ) : (
           <DetailInput
             label="성별"
-            value={user ? formatGender(user.gender) : EMPTY}
+            value={formatGender(user.gender)}
             icon={<IoMdPerson />}
           />
         )}
       </Row>
-      <Row>
-        <DateField
-          label="신청일"
-          value={user?.applyDate}
-          isEditing={isEditable}
-          onChange={(applyDate) => edit({ applyDate })}
-        />
-        <DetailInput
-          label="연락처"
-          value={user?.phone ?? EMPTY}
-          icon={<PhoneIcon />}
-          type="tel"
-          isEditable={isEditable}
-          errorMessage={getPhoneError(user?.phone ?? '')}
-          onChange={(event) => edit({ phone: event.target.value })}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && user) edit({ phone: formatPhone(user.phone) });
-          }}
-        />
-      </Row>
+      <DateField
+        label="신청일"
+        value={user.applyDate}
+        isEditing={isEditing}
+        onChange={(applyDate) => onChange({ applyDate })}
+      />
       <DetailInput
         label="주소"
-        value={user?.address ?? EMPTY}
+        value={user.address}
         icon={<IoLocationSharp />}
-        isEditable={isEditable}
-        onChange={(event) => edit({ address: event.target.value })}
+        isEditable={isEditing}
+        onChange={(event) => onChange({ address: event.target.value })}
       />
-      {isEditable ? (
-        <>
-          <SelectOption
-            label="알게된 경로"
-            value={isOtherRoute ? ROUTE_OTHER : user.route}
-            options={ROUTE_OPTIONS}
-            icon={<IoLocationSharp />}
-            onChange={handleRouteSelect}
-          />
-          {isOtherRoute && (
-            <DetailInput
-              label="기타 (어떻게 알게 됐어?)"
-              value={user.route}
-              placeholder="알게된 경로를 직접 입력해주세요"
-              icon={<IoLocationSharp />}
-              isEditable
-              onChange={(event) => edit({ route: event.target.value })}
-            />
-          )}
-        </>
+      {isEditing ? (
+        <SelectOption
+          label="알게된 경로"
+          value={formatRoute(user.route)}
+          options={ROUTE_OPTIONS}
+          icon={<IoLocationSharp />}
+          onChange={handleRouteSelect}
+        />
       ) : (
         <DetailInput
           label="알게된 경로"
-          value={user?.route ?? EMPTY}
+          value={formatRoute(user.route)}
           icon={<IoLocationSharp />}
+        />
+      )}
+      {user.route === 'OTHER' && (
+        <DetailInput
+          label="기타 경로"
+          value={user.routeDetail ?? (isEditing ? '' : EMPTY)}
+          placeholder="알게된 경로를 직접 입력해주세요"
+          icon={<IoLocationSharp />}
+          isEditable={isEditing}
+          onChange={(event) => onChange({ routeDetail: event.target.value })}
         />
       )}
     </Fields>
