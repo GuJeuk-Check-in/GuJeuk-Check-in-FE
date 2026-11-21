@@ -5,7 +5,14 @@ export interface User {
   grade: number;
   birthYMD: string;
   phone: string;
-  visitCount?: number | null;
+  visitCount: number;
+}
+
+export interface UserListResponse {
+  content: User[];
+  first: boolean;
+  last: boolean;
+  number: number;
 }
 
 export type Gender = 'MAN' | 'WOMAN';

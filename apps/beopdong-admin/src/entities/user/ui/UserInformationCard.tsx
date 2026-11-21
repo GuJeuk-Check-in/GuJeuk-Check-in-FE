@@ -1,16 +1,12 @@
 import { UserInformationCard as SharedUserInformationCard } from '@center/ui/card';
-import { useNavigate } from 'react-router-dom';
 import { formatDateKoreanPadded } from '@center/ui/form';
 import type { User } from '../model/types';
 
 interface UserInformationCardProps {
   user: User;
-  onDelete?: () => void;
 }
 
-export const UserInformationCard = ({ user, onDelete }: UserInformationCardProps) => {
-  const navigate = useNavigate();
-
+export const UserInformationCard = ({ user }: UserInformationCardProps) => {
   return (
     <SharedUserInformationCard
       name={user.name}
@@ -18,9 +14,6 @@ export const UserInformationCard = ({ user, onDelete }: UserInformationCardProps
       birthday={formatDateKoreanPadded(user.birthYMD)}
       phoneNumber={user.phone}
       count={user.visitCount}
-      href={`/organ/user/${user.id}`}
-      onEdit={() => navigate(`/organ/user/${user.id}`)}
-      onDelete={onDelete}
     />
   );
 };

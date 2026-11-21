@@ -26,7 +26,7 @@ export interface UserInformationCardProps {
   birthday: string;
   phoneNumber: string;
   count?: number | null;
-  onEdit: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
   href?: string;
 }
@@ -35,13 +35,13 @@ export const UserInformationCard = ({
   name, subtitle, gender, birthday, phoneNumber, count, onEdit, onDelete, href,
 }: UserInformationCardProps) => {
   return (
-    <CardContainer $hasDelete={!!onDelete}>
+    <CardContainer $hasDelete={!!onDelete} $readOnly={!href && !onEdit && !onDelete}>
       {href && (
         <CardLink
           href={href}
           aria-label={`${name} 회원 상세 보기`}
           onClick={(event) => {
-            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+            if (!onEdit || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             onEdit();
           }}
@@ -53,7 +53,7 @@ export const UserInformationCard = ({
       </LeftSection>
       <RightSection>
         <RightWrapper>
-          {!href && (
+          {!href && onEdit && (
             <EditButton
               type="button"
               aria-label={`${name} 회원 수정`}
@@ -91,12 +91,13 @@ export const UserInformationCard = ({
   );
 };
 
-const CardContainer = styled(Container)<{ $hasDelete: boolean }>`
+const CardContainer = styled(Container)<{ $hasDelete: boolean; $readOnly: boolean }>`
   position: relative;
   ${({ $hasDelete }) => $hasDelete && `
     min-height: 8.4375rem;
     padding-right: 5.5rem;
   `}
+  ${({ $readOnly }) => $readOnly && 'cursor: default;'}
 
   @media (max-width: 64rem) {
     min-height: auto;

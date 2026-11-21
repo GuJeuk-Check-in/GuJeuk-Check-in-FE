@@ -6,6 +6,7 @@ interface UserListLayoutProps {
   totalCount: number;
   totalCountText?: string;
   searchName: string;
+  searchPlaceholder?: string;
   resultCount: number;
   onSearchChange: (value: string) => void;
   onClearSearch: () => void;
@@ -17,7 +18,7 @@ interface UserListLayoutProps {
 }
 
 export const UserListLayout = ({
-  totalCount, totalCountText = '총', searchName, resultCount,
+  totalCount, totalCountText = '총', searchName, searchPlaceholder = '회원 검색', resultCount,
   onSearchChange, onClearSearch, filter, emptyText, children, afterList, showResultFooter = false,
 }: UserListLayoutProps) => {
   return (
@@ -36,7 +37,7 @@ export const UserListLayout = ({
             value={searchName}
             onChange={onSearchChange}
             onClear={onClearSearch}
-            placeholder="회원 검색"
+            placeholder={searchPlaceholder}
           />
           {filter}
         </ControlSection>
