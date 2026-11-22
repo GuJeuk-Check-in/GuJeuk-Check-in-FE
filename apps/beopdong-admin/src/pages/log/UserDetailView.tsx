@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { UserVisitDetail, VisitPageLayout } from '@widgets/log';
 import { isAdultAge, useFetchVisitDetail } from '@entities/log';
-import { getVisitPurposeOptions } from '@entities/purpose';
+import { getVisitPurposeOptions, usePurposeOptions } from '@entities/purpose';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { useLoadFailureModal } from '@shared/lib/useLoadFailureModal';
 
@@ -27,14 +27,19 @@ const UserDetailView = () => {
       },
     },
   });
+  const { options } = usePurposeOptions();
   const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
+  const purposeOptions = getVisitPurposeOptions(
+    variant,
+    options.map(({ name }) => name)
+  );
 
   return (
     <VisitPageLayout title="방명록 상세">
       <UserVisitDetail
         key={visit?.id}
         visit={visit}
-        purposeOptions={getVisitPurposeOptions(variant)}
+        purposeOptions={purposeOptions}
         statusMessage={isLoading ? '불러오는 중입니다.' : null}
       />
       <ConfirmModal isOpen={failureModal.isOpen} config={failureModal.config} onClose={failureModal.closeModal} />

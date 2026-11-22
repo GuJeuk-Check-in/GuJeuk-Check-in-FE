@@ -1,26 +1,45 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useInfiniteQuery, useMutation, useQueryClient, type InfiniteData } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { deleteVisit, getVisits, toVisitSummary, type UserVisitSummary } from '@entities/log';
+import { usePurposeOptions } from '@entities/purpose';
 
 interface ServerError {
   message?: string;
 }
 
-export const useInfiniteUserVisitList = () =>
-  useInfiniteQuery({
-    queryKey: ['visitList'],
-    queryFn: async ({ pageParam }) => {
-      const response = await getVisits(pageParam);
-      return {
-        visits: response.content.map(toVisitSummary),
+interface VisitListPage {
+  visits: UserVisitSummary[];
+  page: number;
+  last: boolean;
+}
+
+export const useInfiniteUserVisitList = () => {
+  const { options, isLoading: isPurposeLoading } = usePurposeOptions();
+  const select = useCallback(
+    (data: InfiniteData<Awaited<ReturnType<typeof getVisits>>, number>): InfiniteData<VisitListPage, number> => ({
+      pageParams: data.pageParams,
+      pages: data.pages.map((response) => ({
+        visits: response.content.map((dto) => toVisitSummary(dto, options)),
         page: response.pageable.pageNumber,
         last: response.last,
-      };
-    },
+      })),
+    }),
+    [options]
+  );
+
+  const query = useInfiniteQuery({
+    queryKey: ['visitList'],
+    queryFn: ({ pageParam }) => getVisits(pageParam),
+    select,
+    enabled: !isPurposeLoading,
     initialPageParam: 0,
     staleTime: 5 * 60 * 1000,
-    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.page + 1),
+    getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.pageable.pageNumber + 1),
   });
+
+  return { ...query, isLoading: query.isLoading || isPurposeLoading };
+};
 
 export const useDeleteVisitMutation = () => {
   const queryClient = useQueryClient();

@@ -15,17 +15,25 @@ export interface VisitListResponse {
   last: boolean;
 }
 
-export interface VisitDetailResponse {
+interface VisitDetailBase {
   purpose: number[];
   name: string | null;
   gender: VisitGenderDto;
   age: number;
-  phone: string;
   visitDate: string;
   visitTime: string;
-  visitPurpose?: string | null;
-  note?: string | null;
+  note: string | null;
 }
+
+export interface AdultVisitDetailResponse extends VisitDetailBase {
+  visitPurpose: string | null;
+}
+
+export interface MinorVisitDetailResponse extends VisitDetailBase {
+  phone: string;
+}
+
+export type VisitDetailResponse = AdultVisitDetailResponse | MinorVisitDetailResponse;
 
 interface VisitRequestBase {
   name: string;

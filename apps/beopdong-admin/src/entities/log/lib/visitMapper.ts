@@ -1,43 +1,56 @@
 import { toPhoneDigits } from '@center/ui/form';
-import { MANAGED_PURPOSES } from '@entities/purpose';
-import type { VisitDetailResponse, VisitGenderDto, VisitListItemDto, VisitRequest } from '../model/dto';
+import { findPurposeId, findPurposeName, type PurposeOption } from '@entities/purpose';
+import { isAdultAge } from './isAdultAge';
+import type {
+  AdultVisitDetailResponse,
+  VisitDetailResponse,
+  VisitGenderDto,
+  VisitListItemDto,
+  VisitRequest,
+} from '../model/dto';
 import type { UserVisitDetailRecord, UserVisitSummary, VisitVariant } from '../model/types';
 
-// 이용목적 조회 API 연결 시 서버 id 기준 매핑으로 교체 (현재는 MANAGED_PURPOSES 순서를 id-1 로 가정)
 const UNKNOWN_PURPOSE_PREFIX = '이용대장 ';
-const purposeNameById = (id: number) => MANAGED_PURPOSES[id - 1] ?? `${UNKNOWN_PURPOSE_PREFIX}${id}`;
-const purposeIdByName = (name: string) => {
-  const index = MANAGED_PURPOSES.indexOf(name);
-  if (index !== -1) return index + 1;
+const purposeNameById = (options: readonly PurposeOption[], id: number) =>
+  findPurposeName(options, id) ?? `${UNKNOWN_PURPOSE_PREFIX}${id}`;
+const purposeIdByName = (options: readonly PurposeOption[], name: string) => {
+  const id = findPurposeId(options, name);
+  if (id !== null) return id;
   const unknown = name.startsWith(UNKNOWN_PURPOSE_PREFIX) ? Number(name.slice(UNKNOWN_PURPOSE_PREFIX.length)) : NaN;
   return Number.isInteger(unknown) ? unknown : null;
 };
 
-const toPurposeIds = (names: readonly string[]) => {
-  const ids = names.map(purposeIdByName);
+const toPurposeIds = (options: readonly PurposeOption[], names: readonly string[]) => {
+  const ids = names.map((name) => purposeIdByName(options, name));
   if (ids.some((id) => id === null)) throw new Error('이용대장 정보를 확인할 수 없습니다. 다시 선택해주세요.');
   return ids as number[];
 };
 
 const GENDER_LABEL: Record<VisitGenderDto, string> = { MAN: '남자', WOMAN: '여자' };
 
-export const toVisitSummary = (dto: VisitListItemDto): UserVisitSummary => ({
+export const toVisitSummary = (dto: VisitListItemDto, options: readonly PurposeOption[]): UserVisitSummary => ({
   id: dto.id,
   name: dto.name,
-  purposes: dto.purpose.map(purposeNameById),
+  purposes: dto.purpose.map((id) => purposeNameById(options, id)),
   visitDate: dto.visitDate,
 });
 
-export const toVisitDetail = (id: number, dto: VisitDetailResponse): UserVisitDetailRecord => ({
+const isAdultDetail = (dto: VisitDetailResponse): dto is AdultVisitDetailResponse => isAdultAge(dto.age);
+
+export const toVisitDetail = (
+  id: number,
+  dto: VisitDetailResponse,
+  options: readonly PurposeOption[]
+): UserVisitDetailRecord => ({
   id,
   name: dto.name,
   age: dto.age,
   gender: GENDER_LABEL[dto.gender] ?? dto.gender,
-  phone: dto.phone,
+  phone: isAdultDetail(dto) ? '' : dto.phone,
   visitTime: dto.visitTime,
   visitDate: dto.visitDate,
-  purposes: dto.purpose.map(purposeNameById),
-  visitPurpose: dto.visitPurpose ?? null,
+  purposes: dto.purpose.map((purposeId) => purposeNameById(options, purposeId)),
+  visitPurpose: isAdultDetail(dto) ? (dto.visitPurpose ?? null) : null,
   note: dto.note ?? null,
 });
 
@@ -55,13 +68,17 @@ export interface VisitFormValues {
 
 const toGenderDto = (label: string): VisitGenderDto => (label === '남자' ? 'MAN' : 'WOMAN');
 
-export const toVisitRequest = (form: VisitFormValues, variant: VisitVariant): VisitRequest => {
+export const toVisitRequest = (
+  form: VisitFormValues,
+  variant: VisitVariant,
+  options: readonly PurposeOption[]
+): VisitRequest => {
   const base = {
     name: form.name.trim(),
     age: Number.parseInt(form.age, 10),
     gender: toGenderDto(form.gender),
     visitDate: form.visitDate,
-    purpose: toPurposeIds(form.purposes),
+    purpose: toPurposeIds(options, form.purposes),
     visitTime: form.visitTime,
     note: form.note?.trim() || null,
   };

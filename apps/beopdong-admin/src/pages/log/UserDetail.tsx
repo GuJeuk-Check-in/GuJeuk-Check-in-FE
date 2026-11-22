@@ -1,4 +1,5 @@
-import { getVisitPurposeOptions } from '@entities/purpose';
+import { useMemo } from 'react';
+import { getVisitPurposeOptions, usePurposeOptions } from '@entities/purpose';
 import { VisitForm, VisitPageLayout } from '@widgets/log';
 
 interface UserDetailProps {
@@ -7,9 +8,19 @@ interface UserDetailProps {
 }
 
 const UserDetail = ({ title, variant }: UserDetailProps) => {
+  const { options } = usePurposeOptions();
+  const purposeOptions = useMemo(
+    () =>
+      getVisitPurposeOptions(
+        variant,
+        options.map(({ name }) => name)
+      ),
+    [variant, options]
+  );
+
   return (
     <VisitPageLayout title={title}>
-      <VisitForm key={variant} purposeOptions={getVisitPurposeOptions(variant)} variant={variant} />
+      <VisitForm key={variant} purposeOptions={purposeOptions} variant={variant} />
     </VisitPageLayout>
   );
 };
