@@ -1,4 +1,4 @@
-import { toPhoneDigits } from '@center/ui/form';
+import { formatPhone, toPhoneDigits } from '@center/ui/form';
 import { findPurposeId, findPurposeName, type PurposeOption } from '@entities/purpose';
 import { isAdultAge } from './isAdultAge';
 import type {
@@ -46,7 +46,7 @@ export const toVisitDetail = (
   name: dto.name,
   age: dto.age,
   gender: GENDER_LABEL[dto.gender] ?? dto.gender,
-  phone: isAdultDetail(dto) ? '' : dto.phone,
+  phone: isAdultDetail(dto) ? '' : formatPhone(dto.phone),
   visitTime: dto.visitTime,
   visitDate: dto.visitDate,
   purposes: dto.purpose.map((purposeId) => purposeNameById(options, purposeId)),
