@@ -65,6 +65,7 @@ export const UserVisitDetail = ({
           onChange={setFormData}
           variant={variant}
           purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
+          disabled={modal.isSubmitting}
         >
           <ActionButtons>
             <CancelButton content="취소" onClick={() => setIsEditing(false)} />
