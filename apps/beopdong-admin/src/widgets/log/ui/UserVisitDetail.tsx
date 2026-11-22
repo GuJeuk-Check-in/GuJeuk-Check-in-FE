@@ -5,7 +5,7 @@ import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
-import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
+import { isAdultAge, type UserVisitDetailRecord } from '@entities/log';
 import { useUpdateVisitList } from '@features/log/update-visit-list';
 import { formatDateKoreanPadded } from '@center/ui/form';
 import { useRef, useState } from 'react';
@@ -23,10 +23,9 @@ interface UserVisitDetailProps {
   readonly statusMessage?: string | null;
 }
 
-const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult' | 'minor') => {
+const getDetailName = (visit: UserVisitDetailRecord | undefined) => {
   if (!visit) return '—';
-  if (variant === 'adult') return visit.name?.trim() || '-';
-  return getVisitDisplayName(visit);
+  return visit.name?.trim() || '-';
 };
 
 export const UserVisitDetail = ({
@@ -75,7 +74,7 @@ export const UserVisitDetail = ({
       ) : (
         <Fields>
           <InputRow>
-            <DetailInput label="이름" value={getDetailName(visit, variant)} icon={<IoMdPerson />} />
+            <DetailInput label="이름" value={getDetailName(visit)} icon={<IoMdPerson />} />
             <DetailInput
               label="연령"
               value={visit ? (variant === 'adult' ? '성인' : `${visit.age}세`) : '—'}

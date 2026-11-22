@@ -36,7 +36,7 @@ export interface MinorVisitDetailResponse extends VisitDetailBase {
 export type VisitDetailResponse = AdultVisitDetailResponse | MinorVisitDetailResponse;
 
 interface VisitRequestBase {
-  name: string;
+  name: string | null;
   age: number;
   gender: VisitGenderDto;
   visitDate: string;

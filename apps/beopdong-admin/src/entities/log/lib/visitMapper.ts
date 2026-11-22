@@ -74,7 +74,7 @@ export const toVisitRequest = (
   options: readonly PurposeOption[]
 ): VisitRequest => {
   const base = {
-    name: form.name.trim(),
+    name: form.name.trim() || null,
     age: Number.parseInt(form.age, 10),
     gender: toGenderDto(form.gender),
     visitDate: form.visitDate,
