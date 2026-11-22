@@ -26,3 +26,12 @@ export const fieldFocusStyle = (
     }`
     : '';
 };
+
+export const invalidFieldStyle = (theme: FieldFocusTheme): string => `
+  &&,
+  &&:focus,
+  &&:focus-within,
+  &&[aria-expanded='true'] {
+    border-color: ${adminTokens(theme).colors.error};
+  }
+`;

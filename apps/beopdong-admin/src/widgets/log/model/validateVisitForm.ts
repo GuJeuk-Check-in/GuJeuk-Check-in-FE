@@ -15,6 +15,21 @@ export const getAgeVariantError = (age: string, variant: VisitFormVariant): stri
   return isAdult ? MINOR_AGE_ERROR : '';
 };
 
+export type VisitFormField = 'name' | 'age' | 'gender' | 'phone' | 'visitTime' | 'purposes' | 'visitDate';
+
+export const getEmptyFields = (value: VisitFormData, variant: VisitFormVariant = 'minor'): ReadonlySet<VisitFormField> => {
+  const isAdult = variant === 'adult';
+  const empty = new Set<VisitFormField>();
+  if (!isAdult && !value.name.trim()) empty.add('name');
+  if (!value.age.trim()) empty.add('age');
+  if (!value.gender) empty.add('gender');
+  if (!isAdult && !toPhoneDigits(value.phone)) empty.add('phone');
+  if (!value.visitTime.trim()) empty.add('visitTime');
+  if (value.purposes.length === 0) empty.add('purposes');
+  if (!value.visitDate) empty.add('visitDate');
+  return empty;
+};
+
 export const validateVisitForm = (
   value: VisitFormData,
   variant: VisitFormVariant = 'minor',

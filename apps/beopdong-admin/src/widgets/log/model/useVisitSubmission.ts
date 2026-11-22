@@ -19,10 +19,12 @@ export const useVisitSubmission = (
   const modal = useModal();
   const submittingRef = useRef(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showInvalid, setShowInvalid] = useState(false);
 
   const handleSubmit = async () => {
     const error = validateVisitForm(value, variant);
     if (error) {
+      setShowInvalid(true);
       openInputCheckNotice(modal, error);
       return;
     }
@@ -51,5 +53,5 @@ export const useVisitSubmission = (
     }
   };
 
-  return { ...modal, handleSubmit, isSubmitting };
+  return { ...modal, handleSubmit, isSubmitting, showInvalid };
 };

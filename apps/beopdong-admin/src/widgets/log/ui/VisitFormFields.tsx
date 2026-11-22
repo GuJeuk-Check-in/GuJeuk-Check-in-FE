@@ -8,7 +8,7 @@ import { adminTokens } from '@center/tokens';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { formatAge } from '@shared/lib/formatAge';
 import { getPhoneError } from '@shared/lib/phoneError';
-import { getAgeVariantError } from '../model/validateVisitForm';
+import { getAgeVariantError, getEmptyFields } from '../model/validateVisitForm';
 import type { VisitFormData, VisitFormVariant } from '../model/visitForm';
 
 interface VisitFormFieldsProps {
@@ -17,6 +17,7 @@ interface VisitFormFieldsProps {
   readonly purposeOptions: readonly string[];
   readonly variant?: VisitFormVariant;
   readonly disabled?: boolean;
+  readonly showInvalid?: boolean;
   readonly children?: ReactNode;
 }
 
@@ -26,13 +27,17 @@ export const VisitFormFields = ({
   purposeOptions,
   variant = 'minor',
   disabled = false,
+  showInvalid = false,
   children,
-}: VisitFormFieldsProps) => (
+}: VisitFormFieldsProps) => {
+  const empty = showInvalid ? getEmptyFields(value, variant) : new Set<string>();
+  return (
   <Fields>
     <Controls inert={disabled}>
     <InputRow>
       <DetailInput
         label="이름"
+        invalid={empty.has('name')}
         value={value.name}
         placeholder="이름을 입력하세요"
         icon={<IoMdPerson />}
@@ -42,6 +47,7 @@ export const VisitFormFields = ({
       <AgeField>
         <DetailInput
           label="연령"
+          invalid={empty.has('age')}
           value={value.age}
           placeholder="연령을 입력해주세요 ex) 16세"
           icon={<CalendarIcon />}
@@ -57,6 +63,7 @@ export const VisitFormFields = ({
     </InputRow>
     <SelectOption
       label="성별"
+      invalid={empty.has('gender')}
       value={value.gender}
       placeholder="성별을 선택해주세요"
       options={['여자', '남자']}
@@ -66,6 +73,7 @@ export const VisitFormFields = ({
     {variant === 'minor' && (
       <DetailInput
         label="연락처"
+        invalid={empty.has('phone')}
         value={value.phone}
         placeholder="연락처를 입력해주세요 ex) 010-1234-5678"
         icon={<PhoneIcon />}
@@ -81,11 +89,13 @@ export const VisitFormFields = ({
     )}
     <TimePickerField
       label="방문 시각"
+      invalid={empty.has('visitTime')}
       value={value.visitTime}
       onChange={(visitTime) => onChange({ ...value, visitTime })}
     />
     <SelectOption
       label="이용대장"
+      invalid={empty.has('purposes')}
       variant="outline"
       multiple
       value={value.purposes}
@@ -96,6 +106,7 @@ export const VisitFormFields = ({
     />
     <VisitDatePicker
       label="방문날짜"
+      invalid={empty.has('visitDate')}
       icon={<CalendarIcon />}
       variant="wide"
       value={value.visitDate}
@@ -124,7 +135,8 @@ export const VisitFormFields = ({
     </Controls>
     {children}
   </Fields>
-);
+  );
+};
 
 const Fields = styled.div`
   display: flex;
