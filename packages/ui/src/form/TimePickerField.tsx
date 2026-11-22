@@ -487,9 +487,28 @@ const ConfirmButton = styled.button`
   font: inherit;
   font-size: 20px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => adminTokens(theme).colors.primaryLight};
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
   }
 `;
