@@ -8,7 +8,8 @@ import type { VisitDetailResponse } from './dto';
 
 export const useFetchVisitDetail = (logId: string | undefined) => {
   const id = Number(logId);
-  const { options, isLoading: isPurposeLoading } = usePurposeOptions();
+  const { options, isLoading: isPurposeLoading, isError: isPurposeError, errorUpdatedAt: purposeErrorUpdatedAt, refetch: refetchPurposes } =
+    usePurposeOptions();
   const select = useCallback((dto: VisitDetailResponse) => toVisitDetail(id, dto, options), [id, options]);
 
   const query = useQuery({
@@ -20,5 +21,16 @@ export const useFetchVisitDetail = (logId: string | undefined) => {
     retry: (failureCount, error) => !(isAxiosError(error) && error.response?.status === 404) && failureCount < 3,
   });
 
-  return { ...query, isLoading: query.isLoading || isPurposeLoading };
+  const refetch = async () => {
+    if (isPurposeError) await refetchPurposes();
+    return query.refetch();
+  };
+
+  return {
+    ...query,
+    refetch,
+    isError: query.isError || isPurposeError,
+    errorUpdatedAt: Math.max(query.errorUpdatedAt, purposeErrorUpdatedAt),
+    isLoading: query.isLoading || isPurposeLoading,
+  };
 };

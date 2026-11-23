@@ -15,7 +15,8 @@ interface VisitListPage {
 }
 
 export const useInfiniteUserVisitList = () => {
-  const { options, isLoading: isPurposeLoading } = usePurposeOptions();
+  const { options, isLoading: isPurposeLoading, isError: isPurposeError, errorUpdatedAt: purposeErrorUpdatedAt, refetch: refetchPurposes } =
+    usePurposeOptions();
   const select = useCallback(
     (data: InfiniteData<Awaited<ReturnType<typeof getVisits>>, number>): InfiniteData<VisitListPage, number> => ({
       pageParams: data.pageParams,
@@ -38,7 +39,18 @@ export const useInfiniteUserVisitList = () => {
     getNextPageParam: (lastPage) => (lastPage.last ? undefined : lastPage.pageable.pageNumber + 1),
   });
 
-  return { ...query, isLoading: query.isLoading || isPurposeLoading };
+  const refetch = async () => {
+    if (isPurposeError) await refetchPurposes();
+    return query.refetch();
+  };
+
+  return {
+    ...query,
+    refetch,
+    isError: query.isError || isPurposeError,
+    errorUpdatedAt: Math.max(query.errorUpdatedAt, purposeErrorUpdatedAt),
+    isLoading: query.isLoading || isPurposeLoading,
+  };
 };
 
 export const useDeleteVisitMutation = () => {
