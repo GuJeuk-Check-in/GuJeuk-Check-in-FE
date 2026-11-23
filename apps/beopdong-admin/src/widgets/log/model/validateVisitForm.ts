@@ -34,16 +34,11 @@ export const validateVisitForm = (
   value: VisitFormData,
   variant: VisitFormVariant = 'minor',
 ): string | null => {
-  const isAdult = variant === 'adult';
-  if (
-    (!isAdult && !value.name.trim()) || !value.age.trim() || !value.gender ||
-    (!isAdult && !toPhoneDigits(value.phone)) || !value.visitTime.trim() ||
-    value.purposes.length === 0 || !value.visitDate
-  ) {
+  if (getEmptyFields(value, variant).size > 0) {
     return '모든 필수 필드를 입력해주세요.';
   }
 
-  if (!isAdult) {
+  if (variant !== 'adult') {
     const phoneError = getPhoneError(value.phone);
     if (phoneError) return phoneError;
   }
