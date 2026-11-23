@@ -46,7 +46,7 @@ export const UserVisitListFeature = ({
   onRetry,
   onDelete,
 }: UserVisitListFeatureProps) => {
-  const { modal, confirmModal, handleDelete } = useConfirmDelete<UserVisitSummary>(DELETE_MESSAGES, {
+  const { modal, confirmModal, isDeleting, handleDelete } = useConfirmDelete<UserVisitSummary>(DELETE_MESSAGES, {
     onDelete,
     alreadyDeleted: {
       title: '이미 삭제된 방명록입니다',
@@ -81,6 +81,7 @@ export const UserVisitListFeature = ({
             <li key={visit.id}>
               <UserVisitCard
                 visit={visit}
+                isDeleting={isDeleting}
                 onDelete={() => handleDelete(visit)}
                 onCheckOut={() => handleCheckOut(visit)}
               />

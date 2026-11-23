@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react';
 import { useModal } from '@center/ui/modal';
 import { isAxiosError } from 'axios';
 import { LuCircleAlert } from 'react-icons/lu';
@@ -27,12 +28,16 @@ export const useConfirmDelete = <T extends DeleteTarget = DeleteTarget>(
 ) => {
   const modal = useModal();
   const { confirmModal, openConfirm } = useConfirmModal();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const inFlight = useRef(false);
 
   const runDelete = async (target: T) => {
     if (!onDelete) {
       openApiPendingNotice(modal, '삭제', pendingSubtitle);
       return;
     }
+    inFlight.current = true;
+    setIsDeleting(true);
     try {
       await onDelete(target);
     } catch (error) {
@@ -45,10 +50,14 @@ export const useConfirmDelete = <T extends DeleteTarget = DeleteTarget>(
         subtitle: (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) || failureMessage,
         buttons: [{ label: '확인', onClick: modal.closeModal }],
       });
+    } finally {
+      inFlight.current = false;
+      setIsDeleting(false);
     }
   };
 
   const handleDelete = (target: T) => {
+    if (inFlight.current) return;
     openConfirm({
       title: typeof title === 'function' ? title(target.name ?? '') : title,
       subtitle: typeof subtitle === 'function' ? subtitle(target) : subtitle,
@@ -56,5 +65,5 @@ export const useConfirmDelete = <T extends DeleteTarget = DeleteTarget>(
     });
   };
 
-  return { modal, confirmModal, handleDelete };
+  return { modal, confirmModal, isDeleting, handleDelete };
 };
