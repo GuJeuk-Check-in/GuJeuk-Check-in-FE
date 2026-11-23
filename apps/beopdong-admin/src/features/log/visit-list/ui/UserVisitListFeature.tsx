@@ -55,13 +55,14 @@ export const UserVisitListFeature = ({
       onConfirm: () => onRetry?.(),
     },
   });
+  const { confirmModal: checkOutModal, openConfirm: openCheckOutConfirm } = useConfirmModal();
   const failureModal = useLoadFailureModal({
     title: '방명록을 불러오지 못했어요',
     isError,
     failedAt,
     onRetry: () => onRetry?.(),
+    blockers: [confirmModal.isOpen, checkOutModal.isOpen, modal.isOpen],
   });
-  const { confirmModal: checkOutModal, openConfirm: openCheckOutConfirm } = useConfirmModal();
 
   const handleCheckOut = (visit: UserVisitSummary) => {
     openCheckOutConfirm({

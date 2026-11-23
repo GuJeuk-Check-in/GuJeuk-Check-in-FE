@@ -17,17 +17,22 @@ interface LoadFailureModalOptions {
   readonly failedAt: number;
   readonly onRetry: () => void;
   readonly notFound?: NotFoundNotice;
+  readonly blockers?: readonly boolean[];
 }
 
 const SUBTITLE = '연결을 확인한 뒤 다시 시도해주세요.';
 
-export const useLoadFailureModal = ({ title, isError, error, failedAt, onRetry, notFound }: LoadFailureModalOptions) => {
+export const useLoadFailureModal = ({ title, isError, error, failedAt, onRetry, notFound, blockers = [] }: LoadFailureModalOptions) => {
   const { confirmModal, openConfirm } = useConfirmModal();
   const latest = useRef({ title, error, onRetry, notFound, openConfirm });
   latest.current = { title, error, onRetry, notFound, openConfirm };
 
-  useEffect(() => {
-    if (!isError) return;
+  const isBlocked = blockers.some(Boolean);
+  const blockedRef = useRef(isBlocked);
+  const pending = useRef(false);
+  blockedRef.current = isBlocked;
+
+  const show = () => {
     const current = latest.current;
     if (current.notFound && isNotFoundError(current.error)) {
       current.openConfirm({ icon: <LuCircleAlert />, showCancel: false, ...current.notFound });
@@ -40,7 +45,25 @@ export const useLoadFailureModal = ({ title, isError, error, failedAt, onRetry, 
       showCancel: false,
       onConfirm: current.onRetry,
     });
+  };
+
+  useEffect(() => {
+    if (!isError) {
+      pending.current = false;
+      return;
+    }
+    if (blockedRef.current) {
+      pending.current = true;
+      return;
+    }
+    show();
   }, [isError, failedAt]);
+
+  useEffect(() => {
+    if (isBlocked || !pending.current) return;
+    pending.current = false;
+    show();
+  }, [isBlocked]);
 
   return confirmModal;
 };
