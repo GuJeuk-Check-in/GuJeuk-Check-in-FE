@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens } from '@center/tokens';
-import { fieldFocusStyle } from './fieldFocusStyle';
+import { fieldFocusStyle, invalidFieldStyle } from './fieldFocusStyle';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import {
   DropdownContainer, DropdownLabel, DropdownHeader,
@@ -14,6 +14,7 @@ type SelectOptionProps = {
   icon?: ReactNode;
   placeholder?: string;
   disabled?: boolean;
+  invalid?: boolean;
   legacy?: boolean;
   variant?: 'default' | 'outline';
 } & ({
@@ -27,7 +28,7 @@ type SelectOptionProps = {
 });
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, legacy = false, variant = 'default' } = props;
+  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, invalid = false, legacy = false, variant = 'default' } = props;
   const outline = variant === 'outline';
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -65,7 +66,8 @@ export const SelectOption = (props: SelectOptionProps) => {
     >
       {label && <DropdownLabel id={`${id}-label`} htmlFor={id}>{label}</DropdownLabel>}
       <Trigger
-        $legacy={legacy} disabled={disabled}
+        $legacy={legacy} $invalid={invalid} disabled={disabled}
+        aria-invalid={invalid || undefined}
         type="button" id={id} ref={trigger}
         aria-labelledby={label ? `${id}-label ${id}-value` : `${id}-value`}
         aria-expanded={open} aria-controls={open ? `${id}-options` : undefined}
@@ -95,7 +97,7 @@ const Container = styled(DropdownContainer)`
   width: 100%;
 `;
 
-const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean }>`
+const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolean; $invalid: boolean }>`
   gap: 0.75rem;
   min-height: calc(${({ theme }) => adminTokens(theme).components.fieldHeight} + 0.125rem);
   height: auto;
@@ -112,6 +114,7 @@ const Trigger = styled(DropdownHeader.withComponent('button'))<{ $legacy: boolea
   `}
 
   ${({ theme }) => fieldFocusStyle(theme)}
+  ${({ $invalid, theme }) => $invalid && invalidFieldStyle(theme)}
 `;
 
 const Icon = styled.span`

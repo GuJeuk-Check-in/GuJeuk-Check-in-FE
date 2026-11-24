@@ -19,6 +19,7 @@ export interface DetailInputProps {
     | null;
   type?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   options?: DetailInputOption[];
   placeholder?: string;
@@ -28,6 +29,7 @@ export interface DetailInputProps {
   multiple?: boolean;
   hideNumberSpinner?: boolean;
   errorMessage?: string;
+  invalid?: boolean;
 }
 
 export const DetailInput: React.FC<DetailInputProps> = ({
@@ -39,6 +41,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   onChange,
   type = 'text',
   onKeyDown,
+  onBlur,
   inputMode,
   options = [],
   placeholder = '',
@@ -48,7 +51,9 @@ export const DetailInput: React.FC<DetailInputProps> = ({
   multiple = false,
   hideNumberSpinner = false,
   errorMessage,
+  invalid = false,
 }) => {
+  const isInvalid = invalid || !!errorMessage;
   const inputId = React.useId();
   const labelId = `${inputId}-label`;
   const errorId = `${inputId}-error`;
@@ -78,8 +83,8 @@ export const DetailInput: React.FC<DetailInputProps> = ({
           name={name}
           value={value}
           multiple={multiple}
-          $invalid={!!errorMessage}
-          aria-invalid={errorMessage ? true : undefined}
+          $invalid={isInvalid}
+          aria-invalid={isInvalid ? true : undefined}
           aria-describedby={errorMessage ? errorId : undefined}
           onChange={(e) => onChange?.(e)}
         >
@@ -93,25 +98,25 @@ export const DetailInput: React.FC<DetailInputProps> = ({
     }
     if (type === 'checkbox') {
       return (
-        <EditableCheckboxWrapper isEditable={true} $invalid={!!errorMessage}>
+        <EditableCheckboxWrapper isEditable={true} $invalid={isInvalid}>
           <EditableCheckbox
             type="checkbox"
             name={name}
             checked={!!value}
             onChange={(e) => onChange?.(e)}
             id={inputId}
-            aria-invalid={errorMessage ? true : undefined}
+            aria-invalid={isInvalid ? true : undefined}
             aria-describedby={errorMessage ? errorId : undefined}
           />
         </EditableCheckboxWrapper>
       );
     }
     return (
-      <InputContainer isEditable={true} $hasIcon={!!icon} $invalid={!!errorMessage}>
+      <InputContainer isEditable={true} $hasIcon={!!icon} $invalid={isInvalid}>
         {icon && <FieldIcon aria-hidden="true">{icon}</FieldIcon>}
         <Input
           id={inputId}
-          aria-invalid={errorMessage ? true : undefined}
+          aria-invalid={isInvalid ? true : undefined}
           aria-describedby={errorMessage ? errorId : undefined}
           type={type}
           inputMode={inputMode}
@@ -119,6 +124,7 @@ export const DetailInput: React.FC<DetailInputProps> = ({
           value={value}
           onChange={(e) => onChange?.(e)}
           onKeyDown={onKeyDown}
+          onBlur={onBlur}
           readOnly={false}
           placeholder={placeholder}
           min={type === 'number' ? 0 : undefined}

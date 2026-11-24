@@ -20,11 +20,12 @@ import { getVisitDisplayName } from '../lib/getVisitDisplayName';
 
 interface UserVisitCardProps {
   visit: UserVisitSummary;
+  isDeleting?: boolean;
   onDelete: () => void;
   onCheckOut?: () => void;
 }
 
-export const UserVisitCard = ({ visit, onDelete, onCheckOut }: UserVisitCardProps) => {
+export const UserVisitCard = ({ visit, isDeleting = false, onDelete, onCheckOut }: UserVisitCardProps) => {
   return (
     <Container>
       <CardLink
@@ -48,6 +49,8 @@ export const UserVisitCard = ({ visit, onDelete, onCheckOut }: UserVisitCardProp
         )}
         <CloseButton
           type="button"
+          disabled={isDeleting}
+          aria-busy={isDeleting}
           onClick={onDelete}
           aria-label={`${getVisitDisplayName(visit)} 방문 기록 삭제`}
         >
@@ -127,5 +130,9 @@ const CloseButton = styled(RecordCloseButton)`
   &:focus-visible {
     outline: 0.125rem solid currentColor;
     outline-offset: 0.125rem;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;

@@ -1,6 +1,3 @@
-import { isAdultAge } from './isAdultAge';
+const ADULT_FALLBACK_NAME = '성인';
 
-export const getVisitDisplayName = (visit: { readonly name: string | null; readonly age?: number }) => {
-  if (visit.name?.trim()) return visit.name;
-  return visit.age !== undefined && isAdultAge(visit.age) ? '성인' : '';
-};
+export const getVisitDisplayName = (visit: { readonly name: string | null }) => visit.name?.trim() || ADULT_FALLBACK_NAME;

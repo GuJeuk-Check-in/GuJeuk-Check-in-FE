@@ -9,22 +9,24 @@ interface ConfirmOptions {
   readonly title: string;
   readonly subtitle: string;
   readonly onConfirm: () => void;
+  readonly showCancel?: boolean;
+  readonly confirmLabel?: string;
 }
 
 export const useConfirmModal = () => {
   const confirmModal = useModal();
   const { colors } = adminTokens(useTheme());
 
-  const openConfirm = ({ icon = <LuTrash2 />, title, subtitle, onConfirm }: ConfirmOptions) => {
+  const openConfirm = ({ icon = <LuTrash2 />, title, subtitle, onConfirm, showCancel = true, confirmLabel = '예' }: ConfirmOptions) => {
     confirmModal.openModal({
       icon,
       title,
       subtitle,
       theme: 'warning',
       buttons: [
-        { label: '아니요', variant: 'secondary', onClick: confirmModal.closeModal },
+        ...(showCancel ? [{ label: '아니요', variant: 'secondary' as const, onClick: confirmModal.closeModal }] : []),
         {
-          label: '예',
+          label: confirmLabel,
           variant: 'primary',
           bgColor: colors.error,
           onClick: () => {

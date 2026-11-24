@@ -1,3 +1,5 @@
+export type VisitVariant = 'adult' | 'minor';
+
 export interface UserVisitSummary {
   id: number;
   name: string | null;

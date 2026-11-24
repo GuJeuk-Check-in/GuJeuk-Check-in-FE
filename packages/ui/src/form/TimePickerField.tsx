@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import { adminTokens } from '@center/tokens';
-import { fieldFocusStyle } from './fieldFocusStyle';
+import { fieldFocusStyle, invalidFieldStyle } from './fieldFocusStyle';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
@@ -15,6 +15,7 @@ interface TimePickerFieldProps {
   readonly onOpenChange?: (open: boolean) => void;
   readonly panelTitle?: string;
   readonly disabled?: boolean;
+  readonly invalid?: boolean;
 }
 
 type Period = '오전' | '오후';
@@ -39,6 +40,7 @@ export const TimePickerField = ({
   onOpenChange,
   panelTitle = '방문시간',
   disabled = false,
+  invalid = false,
 }: TimePickerFieldProps) => {
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
@@ -107,6 +109,8 @@ export const TimePickerField = ({
         ref={trigger}
         aria-labelledby={`${id}-label ${id}-value`}
         disabled={disabled}
+        $invalid={invalid}
+        aria-invalid={invalid || undefined}
         aria-expanded={open}
         aria-controls={open ? `${id}-panel` : undefined}
         onClick={() => setOpen(!open)}
@@ -331,7 +335,7 @@ const roll = (direction: 1 | -1) => keyframes`
   }
 `;
 
-const Trigger = styled.button`
+const Trigger = styled.button<{ $invalid: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
@@ -352,6 +356,7 @@ const Trigger = styled.button`
   }
 
   ${({ theme }) => fieldFocusStyle(theme)}
+  ${({ $invalid, theme }) => $invalid && invalidFieldStyle(theme)}
 `;
 
 const Value = styled.span`
@@ -487,9 +492,28 @@ const ConfirmButton = styled.button`
   font: inherit;
   font-size: 20px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => adminTokens(theme).colors.primaryLight};
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => adminTokens(theme).colors.primaryDark};
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
   }
 `;

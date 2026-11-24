@@ -5,9 +5,10 @@ import { IoMdPerson } from 'react-icons/io';
 import { IoLocationSharp } from 'react-icons/io5';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
 import { MdDescription, MdOutlineAccessTime } from 'react-icons/md';
-import { getVisitDisplayName, isAdultAge, type UserVisitDetailRecord } from '@entities/log';
+import { isAdultAge, type UserVisitDetailRecord } from '@entities/log';
+import { useUpdateVisitList } from '@features/log/update-visit-list';
 import { formatDateKoreanPadded } from '@center/ui/form';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, CancelButton, EditButton, ActionButtons, BackLink } from '@shared/ui';
 import { createVisitFormData } from '../model/visitForm';
@@ -19,22 +20,30 @@ import { VisitFormFields } from './VisitFormFields';
 interface UserVisitDetailProps {
   readonly visit?: UserVisitDetailRecord;
   readonly purposeOptions?: readonly string[];
+  readonly statusMessage?: string | null;
 }
 
-const getDetailName = (visit: UserVisitDetailRecord | undefined, variant: 'adult' | 'minor') => {
+const getDetailName = (visit: UserVisitDetailRecord | undefined) => {
   if (!visit) return '—';
-  if (variant === 'adult') return visit.name?.trim() || '-';
-  return getVisitDisplayName(visit);
+  return visit.name?.trim() || '-';
 };
 
 export const UserVisitDetail = ({
   visit,
   purposeOptions = [],
+  statusMessage,
 }: UserVisitDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(() => createVisitFormData(visit));
+  const latestFormRef = useRef(formData);
+  latestFormRef.current = formData;
   const variant = visit && isAdultAge(visit.age) ? 'adult' : 'minor';
-  const modal = useVisitSubmission(formData, '수정', variant);
+  const { mutateAsync: updateVisit } = useUpdateVisitList();
+  const modal = useVisitSubmission(formData, '수정', variant, async (value) => {
+    if (!visit) return;
+    await updateVisit({ id: visit.id, variant, ...value });
+    if (JSON.stringify(latestFormRef.current) === JSON.stringify(value)) setIsEditing(false);
+  });
   const { isDirty, guard } = useUnsavedChanges({
     value: formData,
     initial: createVisitFormData(visit),
@@ -49,27 +58,25 @@ export const UserVisitDetail = ({
   return (
     <DetailWrapper>
       <BackLink to="/log" label="방명록 목록으로" />
-      {!visit && (
-        <StatusText role="status">
-          방명록 API 연결 전입니다. 연결 후 상세 정보가 표시됩니다.
-        </StatusText>
-      )}
+      {statusMessage && <StatusText role="status">{statusMessage}</StatusText>}
       {isEditing ? (
         <VisitFormFields
           value={formData}
           onChange={setFormData}
           variant={variant}
           purposeOptions={[...new Set([...purposeOptions, ...(visit?.purposes ?? [])])]}
+          disabled={modal.isSubmitting}
+          showInvalid={modal.showInvalid}
         >
           <ActionButtons>
             <CancelButton content="취소" onClick={() => setIsEditing(false)} />
-            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty} />
+            <ActionButton content="저장" onClick={modal.handleSubmit} disable={!isDirty || modal.isSubmitting} />
           </ActionButtons>
         </VisitFormFields>
       ) : (
         <Fields>
           <InputRow>
-            <DetailInput label="이름" value={getDetailName(visit, variant)} icon={<IoMdPerson />} />
+            <DetailInput label="이름" value={getDetailName(visit)} icon={<IoMdPerson />} />
             <DetailInput
               label="연령"
               value={visit ? (variant === 'adult' ? '성인' : `${visit.age}세`) : '—'}
