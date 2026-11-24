@@ -1,6 +1,7 @@
-export type { User, UserDetail, Gender } from './model/types';
-export { useUserDetail } from './model/useUserDetail';
-export { useUserList } from './model/useUserList';
+export type { User, UserDetail, UpdateUserRequest, Gender } from './model/types';
+export { updateUser } from './api/user.api';
+export { useUserDetail, userDetailQueryKey } from './model/useUserDetail';
+export { useUserList, userListQueryKey } from './model/useUserList';
 export { UserInformationCard } from './ui/UserInformationCard';
 export { UserDetailFields } from './ui/UserDetailFields';
-export { validateUserDetail } from './lib/validateUserDetail';
+export { prepareUserUpdate } from './lib/prepareUserUpdate';

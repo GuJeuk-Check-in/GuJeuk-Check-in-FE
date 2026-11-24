@@ -5,7 +5,6 @@ import {
   VisitDatePicker,
   formatDateKoreanPadded,
   formatDateToISOString,
-  formatPhone,
 } from '@center/ui/form';
 import { FaSchool } from 'react-icons/fa';
 import { IoMdPerson } from 'react-icons/io';
@@ -13,22 +12,26 @@ import { IoLocationSharp } from 'react-icons/io5';
 import {
   formatGender,
   formatRoute,
+  formatSchoolType,
   GENDER_OPTIONS,
+  MAX_GRADE_BY_SCHOOL_TYPE,
   parseGender,
   parseRoute,
+  parseSchoolType,
   ROUTE_OPTIONS,
+  SCHOOL_TYPE_OPTIONS,
 } from '../lib/formatUserDetail';
-import type { UserDetail } from '../model/types';
+import type { UpdateUserRequest } from '../model/types';
 import { CalendarIcon, PhoneIcon } from '@shared/ui/icons';
-import { getPhoneError } from '@shared/lib/phoneError';
 
 interface UserDetailFieldsProps {
-  readonly user: UserDetail;
+  readonly user: UpdateUserRequest;
   readonly isEditing: boolean;
-  readonly onChange: (patch: Partial<UserDetail>) => void;
+  readonly onChange: (patch: Partial<UpdateUserRequest>) => void;
 }
 
 const EMPTY = '—';
+const GRADE_OPTIONS = ['1학년', '2학년', '3학년', '4학년', '5학년', '6학년'];
 
 const formatPickedDate = (date: Date) => formatDateKoreanPadded(formatDateToISOString(date));
 const DATE_ICON = <CalendarIcon />;
@@ -56,6 +59,10 @@ const DateField = ({ label, value, isEditing, onChange }: DateFieldProps) =>
   );
 
 export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFieldsProps) => {
+  const gradeOptions = user.schoolType
+    ? GRADE_OPTIONS.slice(0, MAX_GRADE_BY_SCHOOL_TYPE[user.schoolType])
+    : GRADE_OPTIONS;
+
   const handleRouteSelect = (label: string) => {
     const route = parseRoute(label);
     if (!route || route === user.route) return;
@@ -78,11 +85,7 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           icon={<PhoneIcon />}
           type="tel"
           isEditable={isEditing}
-          errorMessage={getPhoneError(user.phone)}
           onChange={(event) => onChange({ phone: event.target.value })}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') onChange({ phone: formatPhone(user.phone) });
-          }}
         />
       </Row>
       <Row>
@@ -93,8 +96,29 @@ export const UserDetailFields = ({ user, isEditing, onChange }: UserDetailFields
           isEditable={isEditing}
           onChange={(event) => onChange({ school: event.target.value })}
         />
-        <DetailInput label="학년" value={`${user.grade}학년`} icon={<FaSchool />} />
+        {isEditing ? (
+          <SelectOption
+            label="학교 유형"
+            value={formatSchoolType(user.schoolType)}
+            options={SCHOOL_TYPE_OPTIONS}
+            icon={<FaSchool />}
+            onChange={(label) => onChange({ schoolType: parseSchoolType(label) })}
+          />
+        ) : (
+          <DetailInput label="학년" value={`${user.grade}학년`} icon={<FaSchool />} />
+        )}
       </Row>
+      {isEditing && (
+        <Row>
+          <SelectOption
+            label="학년"
+            value={GRADE_OPTIONS[user.grade - 1] ?? ''}
+            options={gradeOptions}
+            icon={<FaSchool />}
+            onChange={(label) => onChange({ grade: gradeOptions.indexOf(label) + 1 })}
+          />
+        </Row>
+      )}
       <Row>
         <DateField
           label="생년월일"

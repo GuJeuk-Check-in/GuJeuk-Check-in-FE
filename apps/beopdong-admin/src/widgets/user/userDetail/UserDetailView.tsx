@@ -2,48 +2,64 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Modal, useModal } from '@center/ui/modal';
 import { ActionButton, CancelButton, EditButton } from '@shared/ui';
-import { UserDetailFields, validateUserDetail } from '@entities/user';
+import { getApiErrorMessage } from '@entities/auth';
+import { UserDetailFields, type UpdateUserRequest, type UserDetail } from '@entities/user';
+import { useUpdateUser } from '@features/user/update-user';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
-import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
-import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
-import type { UserDetail } from '@entities/user';
 
 interface UserDetailViewProps {
+  readonly userId: string;
   readonly user: UserDetail;
 }
 
-export const UserDetailView = ({ user }: UserDetailViewProps) => {
-  const [draft, setDraft] = useState<UserDetail | null>(null);
+export const UserDetailView = ({ userId, user }: UserDetailViewProps) => {
+  const [draft, setDraft] = useState<UpdateUserRequest | null>(null);
+  const initialDraft: UpdateUserRequest = { ...user, schoolType: null };
+  const { mutate: saveUser, isPending: isSaving } = useUpdateUser(userId);
   const modal = useModal();
-  const { isDirty, guard } = useUnsavedChanges({ value: draft ?? user, initial: user, enabled: draft !== null });
+  const { isDirty, guard } = useUnsavedChanges({
+    value: draft ?? initialDraft,
+    initial: initialDraft,
+    enabled: draft !== null,
+  });
 
   const handleSave = () => {
-    if (!draft) return;
-    const error = validateUserDetail(draft);
-    if (error) {
-      openInputCheckNotice(modal, error);
-      return;
-    }
-    openApiPendingNotice(modal, '수정');
+    if (!draft || isSaving) return;
+    saveUser(draft, {
+      onSuccess: () => setDraft(null),
+      onError: (error) => {
+        modal.openModal({
+          title: '수정 실패',
+          subtitle: getApiErrorMessage(error, '회원 정보를 수정하지 못했습니다.'),
+          buttons: [{ label: '확인', onClick: modal.closeModal }],
+        });
+      },
+    });
   };
 
   return (
     <>
       <Content>
-        <UserDetailFields
-          user={draft ?? user}
-          isEditing={draft !== null}
-          onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
-        />
+        <FormFields disabled={isSaving}>
+          <UserDetailFields
+            user={draft ?? initialDraft}
+            isEditing={draft !== null}
+            onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
+          />
+        </FormFields>
         <Actions>
           {draft ? (
             <>
-              <CancelButton content="취소" onClick={() => setDraft(null)} />
-              <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
+              <CancelButton content="취소" onClick={() => setDraft(null)} disable={isSaving} />
+              <ActionButton
+                content={isSaving ? '저장 중' : '저장'}
+                onClick={handleSave}
+                disable={!isDirty || isSaving}
+              />
             </>
           ) : (
-            <EditButton content="수정" onClick={() => setDraft(user)} />
+            <EditButton content="수정" onClick={() => setDraft(initialDraft)} />
           )}
         </Actions>
       </Content>
@@ -59,8 +75,24 @@ const Content = styled.div`
   gap: 32px;
 `;
 
+const FormFields = styled.fieldset`
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+`;
+
 const Actions = styled.div`
   display: flex;
   justify-content: center;
   gap: 3rem;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+
+    > button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
 `;

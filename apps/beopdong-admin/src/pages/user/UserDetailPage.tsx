@@ -13,7 +13,7 @@ const UserDetailContent = ({ userId }: { userId: string }) => {
   if (isAxiosError(error) && error.response?.status === 404) {
     return <Status role="alert">회원을 찾을 수 없습니다.</Status>;
   }
-  if (data) return <UserDetailView user={data} />;
+  if (data) return <UserDetailView userId={userId} user={data} />;
 
   return <LoadErrorView title="회원 정보를 불러오지 못했습니다." onRetry={() => void refetch()} />;
 };

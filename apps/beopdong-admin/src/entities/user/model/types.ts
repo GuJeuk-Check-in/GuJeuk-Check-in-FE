@@ -17,6 +17,7 @@ export interface UserListResponse {
 
 export type Gender = 'MAN' | 'WOMAN';
 export type UserRoute = 'FRIEND' | 'PARENT' | 'OTHER';
+export type SchoolType = 'ELEMENTARY' | 'MIDDLE' | 'HIGH';
 
 export interface UserDetail {
   name: string;
@@ -29,4 +30,8 @@ export interface UserDetail {
   phone: string;
   birthYMD: string;
   applyDate: string;
+}
+
+export interface UpdateUserRequest extends UserDetail {
+  schoolType: SchoolType | null;
 }
