@@ -15,6 +15,11 @@ export interface UserListResponse {
   number: number;
 }
 
+export interface UserSearchResponse {
+  totalCount: number;
+  content: User[];
+}
+
 export type Gender = 'MAN' | 'WOMAN';
 export type UserRoute = 'FRIEND' | 'PARENT' | 'OTHER';
 export type SchoolType = 'ELEMENTARY' | 'MIDDLE' | 'HIGH';

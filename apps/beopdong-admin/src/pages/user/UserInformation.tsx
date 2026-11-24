@@ -1,23 +1,44 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { adminTokens, ColorData } from '@center/tokens';
 import { LoadErrorView } from '@center/ui/feedback';
 import { useUserList } from '@entities/user';
+import { useSearchUser } from '@features/user/user-search';
 import { UserListWithSearch } from '@widgets/user';
 import { PageTitle } from '@shared/ui';
 
 const UserInformation = () => {
   const [page, setPage] = useState(0);
-  const { data, isPending, isError, refetch } = useUserList(page);
+  const userList = useUserList(page);
+  const { searchName, setSearchName, isSearching, query: userSearch } = useSearchUser();
+  const { data } = userList;
   const pageNumber = data?.number ?? page;
   const hasPreviousPage = data ? !data.first : page > 0;
   const hasNextPage = data?.last === false;
+
+  const activeQuery = isSearching ? userSearch : userList;
+  const users = activeQuery.data?.content ?? [];
+  let listStatus: ReactNode = null;
+  if (activeQuery.isPending) {
+    listStatus = (
+      <Loading role="status">
+        {isSearching ? '회원을 검색하는 중입니다.' : '회원 목록을 불러오는 중입니다.'}
+      </Loading>
+    );
+  } else if (activeQuery.isError) {
+    listStatus = (
+      <LoadErrorView
+        title={isSearching ? '회원 검색에 실패했습니다.' : '회원 목록을 불러오지 못했습니다.'}
+        onRetry={() => void activeQuery.refetch()}
+      />
+    );
+  }
 
   return (
     <Container>
       <Header>
         <PageTitle>회원 목록 조회</PageTitle>
-        {(page > 0 || hasNextPage) && (
+        {!isSearching && (page > 0 || hasNextPage) && (
           <Pagination aria-label="회원 목록 페이지">
             <PageButton type="button" disabled={!hasPreviousPage} onClick={() => setPage(pageNumber - 1)}>
               이전 페이지
@@ -29,11 +50,13 @@ const UserInformation = () => {
           </Pagination>
         )}
       </Header>
-      {isPending && <Loading role="status">회원 목록을 불러오는 중입니다.</Loading>}
-      {isError && (
-        <LoadErrorView title="회원 목록을 불러오지 못했습니다." onRetry={() => void refetch()} />
-      )}
-      {!isError && data && <UserListWithSearch key={pageNumber} users={data.content} />}
+      <UserListWithSearch
+        searchName={searchName}
+        onSearchChange={setSearchName}
+        users={users}
+        resultCount={isSearching ? userSearch.data?.totalCount ?? 0 : users.length}
+        listStatus={listStatus}
+      />
     </Container>
   );
 };
