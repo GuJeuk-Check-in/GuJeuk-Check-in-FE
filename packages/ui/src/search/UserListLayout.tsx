@@ -12,6 +12,7 @@ interface UserListLayoutProps {
   onClearSearch: () => void;
   filter?: ReactNode;
   emptyText: string;
+  listStatus?: ReactNode;
   children: ReactNode;
   afterList?: ReactNode;
   showResultFooter?: boolean;
@@ -19,7 +20,7 @@ interface UserListLayoutProps {
 
 export const UserListLayout = ({
   totalCount, totalCountText = '총', searchName, searchPlaceholder = '회원 검색', resultCount,
-  onSearchChange, onClearSearch, filter, emptyText, children, afterList, showResultFooter = false,
+  onSearchChange, onClearSearch, filter, emptyText, listStatus, children, afterList, showResultFooter = false,
 }: UserListLayoutProps) => {
   return (
     <ContentWrapper>
@@ -43,10 +44,10 @@ export const UserListLayout = ({
         </ControlSection>
       </FilterWrapper>
       <UserListContainer aria-label="회원 목록">
-        {resultCount > 0 ? children : <EmptyText>{emptyText}</EmptyText>}
+        {listStatus ?? (resultCount > 0 ? children : <EmptyText>{emptyText}</EmptyText>)}
         {afterList}
       </UserListContainer>
-      {showResultFooter && searchName && (
+      {showResultFooter && !listStatus && searchName.trim() && (
         <ResultFooter role="status" aria-live="polite">
           검색 결과 {resultCount}명
         </ResultFooter>
