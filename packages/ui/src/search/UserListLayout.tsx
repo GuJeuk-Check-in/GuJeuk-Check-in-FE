@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { SearchBar } from './SearchBar';
 
 interface UserListLayoutProps {
-  totalCount: number;
+  totalCount?: number;
   totalCountText?: string;
   searchName: string;
   searchPlaceholder?: string;
@@ -25,11 +25,11 @@ export const UserListLayout = ({
   return (
     <ContentWrapper>
       <FilterWrapper>
-        {!showResultFooter && (
+        {totalCount !== undefined && (
           <InfoSection>
             <TotalCountText role="status" aria-live="polite">
               {totalCountText} {totalCount} 명
-              {searchName && ` (검색 결과: ${resultCount}명)`}
+              {!showResultFooter && searchName && ` (검색 결과: ${resultCount}명)`}
             </TotalCountText>
           </InfoSection>
         )}
@@ -127,7 +127,7 @@ const ControlSection = styled.div<{ $hasFilter: boolean }>`
 `;
 
 const TotalCountText = styled.p`
-  color: #ffffff;
+  color: var(--user-list-count-color, #ffffff);
   font-size: 24px;
   margin: 0;
 `;

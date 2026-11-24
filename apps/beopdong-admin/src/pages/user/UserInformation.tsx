@@ -11,15 +11,15 @@ const UserInformation = () => {
   const [page, setPage] = useState(0);
   const userList = useUserList(page);
   const { searchName, setSearchName, isSearching, query: userSearch } = useSearchUser();
-  const { data } = userList;
-  const pageNumber = data?.number ?? page;
-  const hasPreviousPage = data ? !data.first : page > 0;
-  const hasNextPage = data?.last === false;
+  const slice = userList.isPlaceholderData ? undefined : userList.data?.slice;
+  const pageNumber = slice?.number ?? page;
+  const hasPreviousPage = slice ? !slice.first : page > 0;
+  const hasNextPage = slice?.last === false;
 
   const activeQuery = isSearching ? userSearch : userList;
-  const users = activeQuery.data?.content ?? [];
+  const users = (isSearching ? userSearch.data?.content : slice?.content) ?? [];
   let listStatus: ReactNode = null;
-  if (activeQuery.isPending) {
+  if (activeQuery.isPending || (!isSearching && userList.isPlaceholderData)) {
     listStatus = (
       <Loading role="status">
         {isSearching ? '회원을 검색하는 중입니다.' : '회원 목록을 불러오는 중입니다.'}
@@ -54,6 +54,7 @@ const UserInformation = () => {
         searchName={searchName}
         onSearchChange={setSearchName}
         users={users}
+        totalCount={userList.data?.totalCount}
         resultCount={isSearching ? userSearch.data?.totalCount ?? 0 : users.length}
         listStatus={listStatus}
       />
@@ -64,6 +65,7 @@ const UserInformation = () => {
 export default UserInformation;
 
 const Container = styled.section`
+  --user-list-count-color: ${({ theme }) => adminTokens(theme).colors.black};
   width: 100%;
   min-width: 0;
 `;

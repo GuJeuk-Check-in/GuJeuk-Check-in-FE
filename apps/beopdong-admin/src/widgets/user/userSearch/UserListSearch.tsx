@@ -6,18 +6,19 @@ interface UserListWithSearchProps {
   users: readonly User[];
   searchName: string;
   onSearchChange: (name: string) => void;
+  totalCount?: number;
   resultCount: number;
   listStatus?: ReactNode;
 }
 
 export const UserListWithSearch = ({
-  users, searchName, onSearchChange, resultCount, listStatus,
+  users, searchName, onSearchChange, totalCount, resultCount, listStatus,
 }: UserListWithSearchProps) => {
   const name = searchName.trim();
 
   return (
     <UserListLayout
-      totalCount={users.length}
+      totalCount={totalCount}
       searchName={searchName}
       searchPlaceholder="이름으로 회원 검색"
       resultCount={resultCount}

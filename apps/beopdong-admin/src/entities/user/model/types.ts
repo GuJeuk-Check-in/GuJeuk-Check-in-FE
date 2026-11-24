@@ -9,10 +9,13 @@ export interface User {
 }
 
 export interface UserListResponse {
-  content: User[];
-  first: boolean;
-  last: boolean;
-  number: number;
+  totalCount: number;
+  slice: {
+    content: User[];
+    first: boolean;
+    last: boolean;
+    number: number;
+  };
 }
 
 export interface UserSearchResponse {
