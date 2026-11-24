@@ -3,31 +3,33 @@ import styled from '@emotion/styled';
 import { SearchBar } from './SearchBar';
 
 interface UserListLayoutProps {
-  totalCount: number;
+  totalCount?: number;
   totalCountText?: string;
   searchName: string;
+  searchPlaceholder?: string;
   resultCount: number;
   onSearchChange: (value: string) => void;
   onClearSearch: () => void;
   filter?: ReactNode;
   emptyText: string;
+  listStatus?: ReactNode;
   children: ReactNode;
   afterList?: ReactNode;
   showResultFooter?: boolean;
 }
 
 export const UserListLayout = ({
-  totalCount, totalCountText = '총', searchName, resultCount,
-  onSearchChange, onClearSearch, filter, emptyText, children, afterList, showResultFooter = false,
+  totalCount, totalCountText = '총', searchName, searchPlaceholder = '회원 검색', resultCount,
+  onSearchChange, onClearSearch, filter, emptyText, listStatus, children, afterList, showResultFooter = false,
 }: UserListLayoutProps) => {
   return (
     <ContentWrapper>
       <FilterWrapper>
-        {!showResultFooter && (
+        {totalCount !== undefined && (
           <InfoSection>
             <TotalCountText role="status" aria-live="polite">
               {totalCountText} {totalCount} 명
-              {searchName && ` (검색 결과: ${resultCount}명)`}
+              {!showResultFooter && searchName && ` (검색 결과: ${resultCount}명)`}
             </TotalCountText>
           </InfoSection>
         )}
@@ -36,16 +38,16 @@ export const UserListLayout = ({
             value={searchName}
             onChange={onSearchChange}
             onClear={onClearSearch}
-            placeholder="회원 검색"
+            placeholder={searchPlaceholder}
           />
           {filter}
         </ControlSection>
       </FilterWrapper>
       <UserListContainer aria-label="회원 목록">
-        {resultCount > 0 ? children : <EmptyText>{emptyText}</EmptyText>}
+        {listStatus ?? (resultCount > 0 ? children : <EmptyText>{emptyText}</EmptyText>)}
         {afterList}
       </UserListContainer>
-      {showResultFooter && searchName && (
+      {showResultFooter && !listStatus && searchName.trim() && (
         <ResultFooter role="status" aria-live="polite">
           검색 결과 {resultCount}명
         </ResultFooter>
@@ -125,7 +127,7 @@ const ControlSection = styled.div<{ $hasFilter: boolean }>`
 `;
 
 const TotalCountText = styled.p`
-  color: #ffffff;
+  color: var(--user-list-count-color, #ffffff);
   font-size: 24px;
   margin: 0;
 `;

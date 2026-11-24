@@ -1,69 +1,75 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Modal, useModal } from '@center/ui/modal';
-import { ActionButton, CancelButton, EditButton, BackLink, DetailPanel } from '@shared/ui';
-import { UserDetailFields, validateUserDetail } from '@entities/user';
+import { ActionButton, CancelButton, EditButton } from '@shared/ui';
+import { getApiErrorMessage } from '@entities/auth';
+import { MAX_GRADE_BY_SCHOOL_TYPE, UserDetailFields, type UpdateUserRequest, type UserDetail } from '@entities/user';
+import { useUpdateUser } from '@features/user/update-user';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
-import { openApiPendingNotice } from '@shared/lib/openApiPendingNotice';
-import { openInputCheckNotice } from '@shared/lib/openInputCheckNotice';
-import type { UserDetail } from '@entities/user';
 
 interface UserDetailViewProps {
-  readonly user?: UserDetail;
+  readonly userId: string;
+  readonly user: UserDetail;
 }
 
-export const UserDetailView = ({ user }: UserDetailViewProps) => {
-  const [draft, setDraft] = useState(user);
-  const [isEditing, setIsEditing] = useState(false);
+export const UserDetailView = ({ userId, user }: UserDetailViewProps) => {
+  const [draft, setDraft] = useState<UpdateUserRequest | null>(null);
+  const initialDraft: UpdateUserRequest = { ...user, schoolType: null };
+  const { mutate: saveUser, isPending: isSaving } = useUpdateUser(userId);
   const modal = useModal();
-  const { isDirty, guard } = useUnsavedChanges({ value: draft, initial: user, enabled: isEditing });
-
-  const handleCancel = () => {
-    setDraft(user);
-    setIsEditing(false);
-  };
+  const { isDirty, guard } = useUnsavedChanges({
+    value: draft ?? initialDraft,
+    initial: initialDraft,
+    enabled: draft !== null,
+  });
+  const needsGradeChange = !!draft?.schoolType && draft.grade > MAX_GRADE_BY_SCHOOL_TYPE[draft.schoolType];
 
   const handleSave = () => {
-    const error = draft && validateUserDetail(draft);
-    if (error) {
-      openInputCheckNotice(modal, error);
-      return;
-    }
-    openApiPendingNotice(modal, '수정');
+    if (!draft || isSaving || needsGradeChange) return;
+    saveUser(draft, {
+      onSuccess: () => setDraft(null),
+      onError: (error) => {
+        modal.openModal({
+          title: '수정 실패',
+          subtitle: getApiErrorMessage(error, '회원 정보를 수정하지 못했습니다.'),
+          buttons: [{ label: '확인', onClick: modal.closeModal }],
+        });
+      },
+    });
   };
 
   return (
-    <Card>
-      <BackLink to="/organ/user/all" label="회원 목록으로" />
+    <>
       <Content>
-        <UserDetailFields
-          user={draft}
-          isEditing={isEditing}
-          onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
-        />
-        {user && draft && (
-          <Actions>
-            {isEditing ? (
-              <>
-                <CancelButton content="취소" onClick={handleCancel} />
-                <ActionButton content="저장" onClick={handleSave} disable={!isDirty} />
-              </>
-            ) : (
-              <EditButton content="수정" onClick={() => setIsEditing(true)} />
-            )}
-          </Actions>
-        )}
+        <FormFields disabled={isSaving}>
+          <UserDetailFields
+            user={draft ?? initialDraft}
+            isEditing={draft !== null}
+            onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
+          />
+        </FormFields>
+        {needsGradeChange && <GradeNotice role="status">학교 유형에 맞는 학년을 다시 선택해주세요.</GradeNotice>}
+        <Actions>
+          {draft ? (
+            <>
+              <CancelButton content="취소" onClick={() => setDraft(null)} disable={isSaving} />
+              <ActionButton
+                content={isSaving ? '저장 중' : '저장'}
+                onClick={handleSave}
+                disable={!isDirty || isSaving || needsGradeChange}
+              />
+            </>
+          ) : (
+            <EditButton content="수정" onClick={() => setDraft(initialDraft)} />
+          )}
+        </Actions>
       </Content>
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
       <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
-    </Card>
+    </>
   );
 };
-
-const Card = styled(DetailPanel)`
-  gap: 20px;
-`;
 
 const Content = styled.div`
   display: flex;
@@ -71,8 +77,29 @@ const Content = styled.div`
   gap: 32px;
 `;
 
+const FormFields = styled.fieldset`
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+`;
+
+const GradeNotice = styled.p`
+  margin: 0;
+  text-align: center;
+`;
+
 const Actions = styled.div`
   display: flex;
   justify-content: center;
   gap: 3rem;
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+
+    > button {
+      flex: 1;
+      min-width: 0;
+    }
+  }
 `;
