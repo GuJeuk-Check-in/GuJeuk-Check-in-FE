@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
-import { FiPlus } from "react-icons/fi";
-import { ColorData } from "@center/tokens";
+import styled from '@emotion/styled';
+import { FiPlus } from 'react-icons/fi';
+import { ColorData } from '@center/tokens';
 import type { ReservationPlace, ReservationTime } from './ReservationData';
-import { ReservationColors } from "./reservationColors";
+import { ReservationColors } from './reservationColors';
 
 interface ReservationEmptyCellProps {
   place: ReservationPlace;
@@ -23,14 +23,14 @@ export const ReservationEmptyCell = ({
 }: ReservationEmptyCellProps) => (
   <Cell $column={column} $row={row}>
     <AddButton
-      type="button"
-      className="reservation-add-button"
+      type='button'
+      className='reservation-add-button'
       onClick={() => onAddClick(place, time)}
       aria-label={`${place} ${time} 예약 추가`}
       $selected={selected}
     >
-      <FiPlus aria-hidden="true" />
-      <span>예약 추가</span>
+      <FiPlus aria-hidden='true' />
+      <span>예약하기</span>
     </AddButton>
   </Cell>
 );
@@ -39,7 +39,6 @@ const Cell = styled.div<{ $column: number; $row: number }>`
   grid-column: ${({ $column }) => $column};
   grid-row: ${({ $row }) => $row};
   position: relative;
-  min-height: 3.5rem;
 
   &:hover {
     z-index: 3;
@@ -60,8 +59,8 @@ const AddButton = styled.button<{ $selected: boolean }>`
   padding: ${ColorData.spacing[4]};
   box-sizing: border-box;
   opacity: ${({ $selected }) => ($selected ? 1 : 0)};
-  border: 0.09375rem dashed ${ReservationColors.skyblue};
-  background-color: transparent;
+  border: 0;
+  background-color: ${ReservationColors.boardAvailable};
   color: ${ReservationColors.blue};
   font-family: inherit;
   font-size: 1rem;
@@ -80,6 +79,7 @@ const AddButton = styled.button<{ $selected: boolean }>`
 
   &:focus-visible {
     opacity: 1;
-    outline: none;
+    outline: 2px solid ${ReservationColors.blue};
+    outline-offset: -2px;
   }
 `;

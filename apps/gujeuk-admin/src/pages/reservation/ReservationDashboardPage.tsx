@@ -1,27 +1,32 @@
-import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { FiRefreshCw } from "react-icons/fi";
-import { ColorData } from "@center/tokens";
-import { usePurposeList } from "@entities/purpose";
-import { useReservationList } from "@entities/reservation";
-import { ReservationTable } from "./ReservationTable";
-import { TimeData, getActiveTimeIndex, toReservation } from "./ReservationData";
-import { ReservationColors } from "./reservationColors";
+import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
+import { ColorData } from '@center/tokens';
+import titlePlaque from '@shared/assets/reservation-title-plaque.png';
+import titleStrap from '@shared/assets/reservation-title-strap.png';
+import { usePurposeList } from '@entities/purpose';
+import { useReservationList } from '@entities/reservation';
+import { ReservationTable } from './ReservationTable';
+import { TimeData, getActiveTimeIndex, toReservation } from './ReservationData';
+import { ReservationColors } from './reservationColors';
+
+const RESERVATION_POLL_INTERVAL_MS = 5_000;
+const ADMIN_PURPOSE_POLL_INTERVAL_MS = 30_000;
 
 const ReservationDashboardPage = ({
   readOnly = false,
 }: {
   readOnly?: boolean;
 }) => {
-  const { data, isLoading, isError, refetch } = useReservationList(
-    readOnly ? 5_000 : undefined,
+  const { data, isLoading, isError } = useReservationList(
+    RESERVATION_POLL_INTERVAL_MS,
   );
   const {
     data: purposes,
     isLoading: isPurposeLoading,
     isError: isPurposeError,
-    refetch: refetchPurposes,
-  } = usePurposeList(readOnly ? 5_000 : undefined);
+  } = usePurposeList(
+    readOnly ? RESERVATION_POLL_INTERVAL_MS : ADMIN_PURPOSE_POLL_INTERVAL_MS,
+  );
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [toastContainer, setToastContainer] = useState<HTMLDivElement | null>(
     null,
@@ -45,42 +50,33 @@ const ReservationDashboardPage = ({
   const isTableLoading = isLoading || isPurposeLoading;
   const isTableError = isError || isPurposeError;
 
-  const handleRefresh = () => {
-    void refetch();
-    void refetchPurposes();
-  };
-
   return (
     <Page $readOnly={readOnly}>
       {readOnly ? (
         <HiddenTitle>시설 예약 현황</HiddenTitle>
       ) : (
-        <Header>
-          <Title>시설 예약 현황</Title>
-          <RefreshButton type="button" onClick={handleRefresh}>
-            <FiRefreshCw aria-hidden="true" />
-            새로고침
-          </RefreshButton>
-        </Header>
+        <BoardHeader>
+          <HiddenTitle>오늘의 예약 · 방문 목적별 예약 현황</HiddenTitle>
+          <BoardPlaque src={titlePlaque} alt='' width={1446} height={120} />
+        </BoardHeader>
       )}
 
-      {isTableLoading && <p role="status">예약 목록을 불러오는 중이에요.</p>}
+      {isTableLoading && <p role='status'>예약 목록을 불러오는 중이에요.</p>}
       {isTableError && (
-        <p role="alert">
-          예약 목록을 불러오지 못했어요.
-          {!readOnly && " 새로고침을 눌러 다시 시도해 주세요."}
+        <p role='alert'>
+          예약 목록을 불러오지 못했어요. 잠시 후 자동으로 다시 조회해요.
         </p>
       )}
       {!readOnly && hasUnmappedReservations && (
-        <p role="alert">
+        <p role='alert'>
           일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.
         </p>
       )}
       {data && purposes && places.length === 0 && (
-        <p role="status">
+        <p role='status'>
           {readOnly
-            ? "예약 가능한 시설이 없어요. 관리자에게 문의해 주세요."
-            : "예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을 설정해 주세요."}
+            ? '예약 가능한 시설이 없어요. 관리자에게 문의해 주세요.'
+            : '예약 가능한 시설이 없어요. 방문 목적 커스텀에서 예약 가능 시설을 설정해 주세요.'}
         </p>
       )}
       {data && places.length > 0 && (
@@ -104,38 +100,53 @@ export default ReservationDashboardPage;
 const Page = styled.div<{ $readOnly: boolean }>`
   width: 100%;
   margin: 0 auto;
-  background-color: ${({ $readOnly }) =>
-    $readOnly ? ColorData.colors.background : "transparent"};
   color: ${({ $readOnly }) =>
     $readOnly ? ReservationColors.gray40 : ColorData.colors.background};
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
 
   ${({ $readOnly }) =>
-    $readOnly &&
-    `
-    display: flex;
-    flex-direction: column;
+    $readOnly
+      ? `
     height: 100dvh;
-    box-sizing: border-box;
     overflow: hidden;
+  `
+      : `
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: clamp(0.5rem, 1.6dvh, 1.25rem);
   `}
 `;
 
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${ColorData.spacing[16]};
-  width: calc(100% - ${ColorData.spacing[32]});
-  margin: 0 auto 1.875rem;
+const BoardHeader = styled.header`
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2.766%;
+
+  &::before,
+  &::after {
+    position: absolute;
+    top: -33.333%;
+    width: 1.66%;
+    aspect-ratio: 24 / 78;
+    background: url('${titleStrap}') center / contain no-repeat;
+    content: '';
+  }
+
+  &::before {
+    left: 9.682%;
+  }
+
+  &::after {
+    right: 9.682%;
+  }
 `;
 
-const Title = styled.h1`
-  margin: 0;
-  color: ${ColorData.colors.background};
-  font-size: 2.4375rem;
-  font-weight: 700;
-  line-height: 2.25rem;
-  letter-spacing: -0.056rem;
+const BoardPlaque = styled.img`
+  display: block;
+  width: 100%;
+  height: auto;
 `;
 
 const HiddenTitle = styled.h1`
@@ -150,56 +161,26 @@ const HiddenTitle = styled.h1`
   border: 0;
 `;
 
-const RefreshButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  min-width: 8.75rem;
-  height: 3rem;
-  padding: 0 1.25rem;
-  border: 0;
-  border-radius: 0.75rem;
-  background-color: ${ColorData.colors.background};
-  color: ${ReservationColors.gray40};
-  font: inherit;
-  font-size: 1.21875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color ${ColorData.interaction.transitionFast};
-
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  &:hover {
-    background-color: ${ColorData.colors.primaryLight};
-  }
-`;
-
 const TableViewport = styled.div<{ $readOnly: boolean }>`
-  width: calc(100% - ${ColorData.spacing[32]});
-  margin: 0 auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
   overflow-x: auto;
-  border-radius: 1.125rem;
-  box-shadow: 0 0.09375rem 0.1875rem rgba(0, 0, 0, 0.08);
 
   ${({ $readOnly }) =>
-    $readOnly &&
+    !$readOnly &&
     `
-    flex: 1 1 auto;
-    width: 100%;
-    min-height: 0;
-    border-radius: 0;
-    box-shadow: none;
+    padding: clamp(0.5rem, 1.15vw, 1rem);
+    border-radius: 1.75rem;
+    background: ${ReservationColors.boardFrame};
   `}
 `;
 
 const ToastSlot = styled.div`
   display: flex;
-  justify-content: flex-end;
-  width: calc(100% - ${ColorData.spacing[32]});
-  min-height: 3.5rem;
-  margin: 1rem auto 0;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.25rem;
 `;
