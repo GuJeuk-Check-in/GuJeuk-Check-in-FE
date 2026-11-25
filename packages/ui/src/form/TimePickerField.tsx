@@ -186,7 +186,8 @@ interface SpinnerProps {
   readonly onEnter?: () => void;
 }
 
-const WHEEL_STEP_DISTANCE = 40;
+const WHEEL_STEP_DISTANCE = 50;
+const WHEEL_STEP_INTERVAL_MS = 70;
 
 const Spinner = ({
   label,
@@ -219,13 +220,17 @@ const Spinner = ({
     const element = column.current;
     if (!element) return undefined;
     let distance = 0;
+    let lastStepAt = 0;
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault();
       distance += event.deltaY;
-      if (Math.abs(distance) >= WHEEL_STEP_DISTANCE) {
+      if (Math.abs(distance) < WHEEL_STEP_DISTANCE) return;
+      const now = event.timeStamp;
+      if (now - lastStepAt >= WHEEL_STEP_INTERVAL_MS) {
         stepForWheel.current(distance > 0 ? 1 : -1);
-        distance = 0;
+        lastStepAt = now;
       }
+      distance = 0;
     };
     element.addEventListener('wheel', handleWheel, { passive: false });
     return () => element.removeEventListener('wheel', handleWheel);
@@ -326,11 +331,14 @@ const Spinner = ({
 
 const roll = (direction: 1 | -1) => keyframes`
   from {
-    opacity: 0.2;
-    transform: translateY(${direction * 14}px);
+    opacity: 0.6;
+    transform: translateY(${direction * ROW_HEIGHT}px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(${direction * -6}px);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 `;
@@ -418,7 +426,7 @@ const ColumnLabel = styled.span`
 
 const Roll = styled.span<{ $direction: 1 | -1 }>`
   display: inline-block;
-  animation: ${({ $direction }) => roll($direction)} 0.18s ease-out;
+  animation: ${({ $direction }) => roll($direction)} 0.35s ease-out;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
