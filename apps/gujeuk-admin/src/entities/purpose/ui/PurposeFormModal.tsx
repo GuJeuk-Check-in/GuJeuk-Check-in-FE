@@ -198,6 +198,7 @@ export const PurposeFormModal = ({
                       }
                       if (event.key === 'Escape') {
                         event.preventDefault();
+                        event.stopPropagation(); //이벤트 버블링 방어를 위해 추가.
                         setEditing(null);
                       }
                     }}
