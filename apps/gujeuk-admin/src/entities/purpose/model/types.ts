@@ -3,6 +3,16 @@ export interface CreatePurposeRequest {
   reservationStatus: boolean;
 }
 
+export interface SubPurpose {
+  id: number;
+  name: string;
+  reservable: boolean;
+}
+
+export interface PurposeFormValues extends CreatePurposeRequest {
+  subPurposes: SubPurpose[];
+}
+
 export interface UpdatePurposeRequest {
   id: number;
   purpose: string;
@@ -27,5 +37,7 @@ export interface Purpose {
 
 export interface PurposeStore {
   purposes: Purpose[];
+  subPurposesByPurposeId: Partial<Record<number, SubPurpose[]>>;
   updatePurpose: (id: number, newPurpose: string) => void;
+  setSubPurposes: (id: number, items: SubPurpose[]) => void;
 }
