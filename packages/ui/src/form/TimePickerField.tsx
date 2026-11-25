@@ -220,20 +220,27 @@ const Spinner = ({
     const element = column.current;
     if (!element) return undefined;
     let distance = 0;
-    let lastStepAt = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const release = () => {
+      timer = undefined;
+      step();
+    };
+    const step = () => {
+      if (Math.abs(distance) < WHEEL_STEP_DISTANCE) return;
+      stepForWheel.current(distance > 0 ? 1 : -1);
+      distance = 0;
+      timer = setTimeout(release, WHEEL_STEP_INTERVAL_MS);
+    };
     const handleWheel = (event: WheelEvent) => {
       event.preventDefault();
       distance += event.deltaY;
-      if (Math.abs(distance) < WHEEL_STEP_DISTANCE) return;
-      const now = event.timeStamp;
-      if (now - lastStepAt >= WHEEL_STEP_INTERVAL_MS) {
-        stepForWheel.current(distance > 0 ? 1 : -1);
-        lastStepAt = now;
-      }
-      distance = 0;
+      if (timer === undefined) step();
     };
     element.addEventListener('wheel', handleWheel, { passive: false });
-    return () => element.removeEventListener('wheel', handleWheel);
+    return () => {
+      element.removeEventListener('wheel', handleWheel);
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleKeyDown = (event: KeyboardEvent) => {
