@@ -35,8 +35,6 @@ export const Router = () => {
           <Route element={<AppLayout />}>
             <Route path="/log" element={<UserVisitList />} />
             <Route path="/log/create" element={<UserDetail />} />
-            <Route path="/log/create/minor" element={<Navigate to="/log/create" replace />} />
-            <Route path="/log/create/adult" element={<Navigate to="/log/create" replace />} />
             <Route path="/log/:logId" element={<UserDetailView />} />
             <Route path="/usage/current" element={<CurrentUsage />} />
             <Route path="/usage/history" element={<UsageHistory />} />
