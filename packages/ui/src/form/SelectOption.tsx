@@ -17,6 +17,7 @@ type SelectOptionProps = {
   invalid?: boolean;
   legacy?: boolean;
   variant?: 'default' | 'outline';
+  inlineOptions?: boolean;
 } & ({
   multiple?: false;
   value: string;
@@ -28,9 +29,10 @@ type SelectOptionProps = {
 });
 
 export const SelectOption = (props: SelectOptionProps) => {
-  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, invalid = false, legacy = false, variant = 'default' } = props;
+  const { label, options, icon, placeholder = `${label} 선택`, disabled = false, invalid = false, legacy = false, variant = 'default', inlineOptions = false } = props;
   const outline = variant === 'outline';
   const id = useId();
+  const container = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const selected = props.multiple ? props.value : [props.value];
@@ -38,6 +40,22 @@ export const SelectOption = (props: SelectOptionProps) => {
   useEffect(() => {
     if (disabled) setOpen(false);
   }, [disabled]);
+
+  useEffect(() => {
+    if (!open || !inlineOptions) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!container.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnOutsideFocus = () => {
+      if (!container.current?.contains(document.activeElement)) setOpen(false);
+    };
+    document.addEventListener('click', closeOnOutsideClick);
+    document.addEventListener('keyup', closeOnOutsideFocus);
+    return () => {
+      document.removeEventListener('click', closeOnOutsideClick);
+      document.removeEventListener('keyup', closeOnOutsideFocus);
+    };
+  }, [open, inlineOptions]);
 
   const handleSelect = (option: string) => {
     if (disabled) return;
@@ -54,8 +72,9 @@ export const SelectOption = (props: SelectOptionProps) => {
 
   return (
     <Container
+      ref={container}
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        if (!inlineOptions && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
@@ -80,7 +99,7 @@ export const SelectOption = (props: SelectOptionProps) => {
         </DropdownArrowIcon>
       </Trigger>
       {open && !disabled && (
-        <Options $legacy={legacy} $outline={outline} id={`${id}-options`} role="group" aria-labelledby={label ? `${id}-label` : `${id}-value`}>
+        <Options $legacy={legacy} $outline={outline} $inline={inlineOptions} id={`${id}-options`} role="group" aria-labelledby={label ? `${id}-label` : `${id}-value`}>
           {options.map((option) => (
             <Option $legacy={legacy} $outline={outline} key={option} type="button" aria-pressed={selected.includes(option)} onClick={() => handleSelect(option)}>
               <SelectionMark aria-hidden="true" $outline={outline} $selected={selected.includes(option)} />
@@ -129,7 +148,7 @@ const Value = styled(DropdownValue)`
   overflow-wrap: anywhere;
 `;
 
-const Options = styled(DropdownList)<{ $legacy: boolean; $outline: boolean }>`
+const Options = styled(DropdownList)<{ $legacy: boolean; $outline: boolean; $inline: boolean }>`
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.5rem;
@@ -155,6 +174,10 @@ const Options = styled(DropdownList)<{ $legacy: boolean; $outline: boolean }>`
     top: calc(3.5rem + 2.5rem);
     margin: 0;
     animation-fill-mode: none;
+  `}
+  ${({ $inline }) => $inline && `
+    position: static;
+    margin-top: 0;
   `}
   @media (prefers-reduced-motion: reduce) {
     animation: none;

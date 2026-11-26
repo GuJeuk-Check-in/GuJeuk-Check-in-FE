@@ -169,6 +169,7 @@ export const UserDetailFields = ({ user, visitCount, isEditing, onChange, onScho
             options={ROUTE_OPTIONS}
             icon={<IoLocationSharp />}
             onChange={handleRouteSelect}
+            inlineOptions
           />
         ) : (
           <DetailInput
