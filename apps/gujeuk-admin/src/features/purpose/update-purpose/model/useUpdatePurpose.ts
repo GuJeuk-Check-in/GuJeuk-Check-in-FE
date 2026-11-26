@@ -1,11 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import {
+  createSubPurpose,
+  deleteSubPurpose,
+  isSubIncludeStatus,
+  toReservationStatus,
   updatePurpose,
   usePurposeStore,
   type PurposeFormValues,
+  type ReservationStatus,
 } from '@entities/purpose';
 import { reservationListKey } from '@entities/reservation';
+
+type UpdatePurposeVariables = PurposeFormValues & {
+  id: number;
+  originalPurpose: string;
+  originalReservationStatus: ReservationStatus;
+};
 
 export const useUpdatePurpose = () => {
   const queryClient = useQueryClient();
@@ -15,12 +26,45 @@ export const useUpdatePurpose = () => {
   return useMutation<
     void,
     AxiosError<{ message?: string }>,
-    PurposeFormValues & { id: number }
+    UpdatePurposeVariables
   >({
-    mutationFn: (variables) => {
-      return updatePurpose(variables.id, {
-        purpose: variables.purpose,
-        reservationStatus: variables.reservationStatus,
+    mutationFn: async ({
+      id,
+      purpose,
+      reservationStatus,
+      subPurposes,
+      removedSubPurposeIds,
+      originalPurpose,
+      originalReservationStatus,
+    }) => {
+      for (const removedId of removedSubPurposeIds) {
+        await deleteSubPurpose(removedId);
+      }
+
+      const addedSubPurposes = subPurposes.filter(
+        (item) => item.serverId === undefined
+      );
+
+      for (const subPurpose of addedSubPurposes) {
+        await createSubPurpose({
+          purpose: originalPurpose,
+          reservationStatus: 'SUB_INCLUDE',
+          subPurpose: subPurpose.name,
+          subPurposeReservation: subPurpose.reservable,
+        });
+      }
+
+      const hasSubPurpose =
+        subPurposes.length > 0 ||
+        (isSubIncludeStatus(originalReservationStatus) &&
+          !removedSubPurposeIds.length);
+
+      await updatePurpose(id, {
+        purpose,
+        reservationStatus: toReservationStatus(
+          hasSubPurpose,
+          reservationStatus
+        ),
       });
     },
     onSuccess: (_, variables) => {

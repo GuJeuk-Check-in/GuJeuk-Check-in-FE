@@ -1,28 +1,41 @@
+export type ReservationStatus = 'RESERVATION' | 'NONE' | 'SUB_INCLUDE';
+
 export interface CreatePurposeRequest {
   purpose: string;
-  reservationStatus: boolean;
+  reservationStatus: ReservationStatus;
 }
 
 export interface SubPurpose {
   id: number;
+  serverId?: number;
   name: string;
   reservable: boolean;
 }
 
-export interface PurposeFormValues extends CreatePurposeRequest {
+export interface PurposeFormValues {
+  purpose: string;
+  reservationStatus: boolean;
   subPurposes: SubPurpose[];
+  removedSubPurposeIds: number[];
 }
 
 export interface UpdatePurposeRequest {
   id: number;
   purpose: string;
-  reservationStatus: boolean;
+  reservationStatus: ReservationStatus;
+}
+
+export interface CreateSubPurposeRequest {
+  purpose: string;
+  reservationStatus: ReservationStatus;
+  subPurpose: string;
+  subPurposeReservation: boolean;
 }
 
 export interface PurposeResponse {
   id: number;
   purpose: string;
-  reservationStatus: boolean;
+  reservationStatus: ReservationStatus;
 }
 
 export type UpdatePurposeMovementRequest = {
@@ -32,7 +45,7 @@ export type UpdatePurposeMovementRequest = {
 export interface Purpose {
   id: number;
   purpose: string;
-  reservationStatus: boolean;
+  reservationStatus: ReservationStatus;
 }
 
 export interface PurposeStore {

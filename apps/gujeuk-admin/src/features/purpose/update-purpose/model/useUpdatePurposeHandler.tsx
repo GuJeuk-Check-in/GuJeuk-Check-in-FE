@@ -22,7 +22,12 @@ export const useUpdatePurposeHandler = () => {
     if (!editingPurpose) return;
 
     mutation.mutate(
-      { id: editingPurpose.id, ...values },
+      {
+        id: editingPurpose.id,
+        originalPurpose: editingPurpose.purpose,
+        originalReservationStatus: editingPurpose.reservationStatus,
+        ...values,
+      },
       {
         onSuccess: () => {
           setEditingPurpose(null);

@@ -5,6 +5,10 @@ import { LuCalendarCheck } from 'react-icons/lu';
 import { MdClose } from 'react-icons/md';
 import subItemIcon from '@shared/assets/purpose-sub-item.png';
 import { usePurposeStore } from '../model/purposeStore';
+import {
+  isReservableStatus,
+  isSubIncludeStatus,
+} from '../model/reservationStatus';
 import type { Purpose } from '../model/types';
 import { PurposeColors } from './purposeColors';
 
@@ -24,12 +28,15 @@ export const PurposeCard = ({
   isDeleting,
 }: PurposeProps) => {
   const pressStartRef = useRef<{ x: number; y: number } | null>(null);
-  const hasSubPurposes = usePurposeStore((state) =>
+  const hasLocalSubPurposes = usePurposeStore((state) =>
     Boolean(state.subPurposesByPurposeId[purpose.id]?.length),
   );
+  const hasSubPurposes =
+    hasLocalSubPurposes || isSubIncludeStatus(purpose.reservationStatus);
+  const isReservable = isReservableStatus(purpose.reservationStatus);
   const editLabel = [
     purpose.purpose,
-    purpose.reservationStatus && '예약 가능',
+    isReservable && '예약 가능',
     hasSubPurposes && '세부 항목 있음',
   ].filter(Boolean).join(', ');
 
@@ -55,7 +62,7 @@ export const PurposeCard = ({
   };
 
   return (
-    <Card isDisabled={isDeleting} $isReservable={purpose.reservationStatus}>
+    <Card isDisabled={isDeleting} $isReservable={isReservable}>
       <EditButton
         type='button'
         aria-label={`${editLabel} 수정`}
@@ -66,9 +73,9 @@ export const PurposeCard = ({
         onClick={handleClick}
         onKeyDown={handleKeyDown}
       />
-      {(purpose.reservationStatus || hasSubPurposes) && (
+      {(isReservable || hasSubPurposes) && (
         <BadgeList aria-hidden='true'>
-          {purpose.reservationStatus && (
+          {isReservable && (
             <Badge>
               <LuCalendarCheck />
               예약 가능

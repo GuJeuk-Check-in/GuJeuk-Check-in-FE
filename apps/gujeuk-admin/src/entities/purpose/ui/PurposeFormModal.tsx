@@ -5,11 +5,11 @@ import { LuCalendarCheck } from 'react-icons/lu';
 import { MdAdd, MdClose, MdOutlineEdit } from 'react-icons/md';
 import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 import { usePurposeStore } from '../model/purposeStore';
-import type {
-  CreatePurposeRequest,
-  PurposeFormValues,
-  SubPurpose,
-} from '../model/types';
+import {
+  isReservableStatus,
+  isSubIncludeStatus,
+} from '../model/reservationStatus';
+import type { Purpose, PurposeFormValues, SubPurpose } from '../model/types';
 import { PurposeColors } from './purposeColors';
 
 type PurposeFormMode = 'create' | 'update';
@@ -29,16 +29,11 @@ const FORM_TEXT = {
   },
 } as const;
 
-const EMPTY_VALUES: CreatePurposeRequest = {
-  purpose: '',
-  reservationStatus: false,
-};
-
 const EMPTY_SUB_PURPOSE: SubPurposeDraft = { name: '', reservable: false };
 
 interface PurposeFormModalProps {
   mode: PurposeFormMode;
-  initialValues?: CreatePurposeRequest & { id?: number };
+  initialValues?: Purpose;
   isSubmitting: boolean;
   onClose: () => void;
   onSubmit: (values: PurposeFormValues) => void;
@@ -46,22 +41,25 @@ interface PurposeFormModalProps {
 
 export const PurposeFormModal = ({
   mode,
-  initialValues = EMPTY_VALUES,
+  initialValues,
   isSubmitting,
   onClose,
   onSubmit,
 }: PurposeFormModalProps) => {
-  const [purpose, setPurpose] = useState(initialValues.purpose);
+  const [purpose, setPurpose] = useState(initialValues?.purpose ?? '');
   const [reservationStatus, setReservationStatus] = useState(
-    initialValues.reservationStatus,
+    initialValues ? isReservableStatus(initialValues.reservationStatus) : false,
   );
   const initialSubPurposes = usePurposeStore((state) =>
-    initialValues.id === undefined
+    initialValues === undefined
       ? undefined
       : state.subPurposesByPurposeId[initialValues.id],
   );
   const [subPurposes, setSubPurposes] = useState(
     () => initialSubPurposes ?? [],
+  );
+  const [removedSubPurposeIds, setRemovedSubPurposeIds] = useState<number[]>(
+    [],
   );
   const [newSubPurpose, setNewSubPurpose] = useState(EMPTY_SUB_PURPOSE);
   const [editing, setEditing] = useState<SubPurpose | null>(null);
@@ -80,6 +78,19 @@ export const PurposeFormModal = ({
   const text = FORM_TEXT[mode];
   const trimmedPurpose = purpose.trim();
   const editingId = editing?.id;
+  const hasSubPurpose =
+    subPurposes.length > 0 ||
+    (initialValues !== undefined &&
+      isSubIncludeStatus(initialValues.reservationStatus));
+
+  const removeSubPurpose = (target: SubPurpose) => {
+    const { serverId } = target;
+
+    setSubPurposes((current) => current.filter(({ id }) => id !== target.id));
+    if (serverId !== undefined) {
+      setRemovedSubPurposeIds((current) => [...current, serverId]);
+    }
+  };
 
   const addSubPurpose = () => {
     const name = newSubPurpose.name.trim();
@@ -126,7 +137,12 @@ export const PurposeFormModal = ({
     event.preventDefault();
     if (isSubmitting || !trimmedPurpose || editing) return;
 
-    onSubmit({ purpose: trimmedPurpose, reservationStatus, subPurposes });
+    onSubmit({
+      purpose: trimmedPurpose,
+      reservationStatus,
+      subPurposes,
+      removedSubPurposeIds,
+    });
   };
 
   return (
@@ -179,17 +195,22 @@ export const PurposeFormModal = ({
           </Field>
 
           <ReservationSetting>
-            <SettingTitle id={reservationSettingId}>
-              <LuCalendarCheck aria-hidden='true' />
-              상위 방문 목적 예약 가능
-            </SettingTitle>
+            <SettingText>
+              <SettingTitle id={reservationSettingId}>
+                <LuCalendarCheck aria-hidden='true' />
+                상위 방문 목적 예약 가능
+              </SettingTitle>
+              {hasSubPurpose && (
+                <SettingHint>하위 방문 목적별 설정을 따릅니다.</SettingHint>
+              )}
+            </SettingText>
             <Switch
               type='button'
               role='switch'
-              aria-checked={reservationStatus}
+              aria-checked={!hasSubPurpose && reservationStatus}
               aria-labelledby={reservationSettingId}
-              $isOn={reservationStatus}
-              disabled={isSubmitting}
+              $isOn={!hasSubPurpose && reservationStatus}
+              disabled={isSubmitting || hasSubPurpose}
               onClick={() => setReservationStatus((current) => !current)}
             />
           </ReservationSetting>
@@ -281,11 +302,7 @@ export const PurposeFormModal = ({
                       type='button'
                       aria-label={`${item.name} 삭제`}
                       disabled={isSubmitting || editing !== null}
-                      onClick={() =>
-                        setSubPurposes((current) =>
-                          current.filter(({ id }) => id !== item.id),
-                        )
-                      }
+                      onClick={() => removeSubPurpose(item)}
                     >
                       <MdClose aria-hidden='true' />
                     </DeleteAction>
@@ -485,6 +502,18 @@ const ReservationSetting = styled.div`
   border: 1px solid ${PurposeColors.gray30};
   border-radius: 0.875rem;
   background-color: ${ColorData.colors.background};
+`;
+
+const SettingText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+`;
+
+const SettingHint = styled.span`
+  color: ${PurposeColors.gray30};
+  font-size: 0.75rem;
 `;
 
 const SettingTitle = styled.p`

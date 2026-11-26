@@ -1,6 +1,7 @@
 import { axiosInstance } from '@shared/api';
 import {
   CreatePurposeRequest,
+  CreateSubPurposeRequest,
   PurposeResponse,
   UpdatePurposeMovementRequest,
   UpdatePurposeRequest,
@@ -13,9 +14,8 @@ export const purposeList = async (): Promise<PurposeResponse[]> => {
 
 export const createPurpose = async (
   payload: CreatePurposeRequest
-): Promise<PurposeResponse> => {
-  const response = await axiosInstance.post('/purpose', payload);
-  return response.data;
+): Promise<void> => {
+  await axiosInstance.post('/purpose', payload);
 };
 
 export const updatePurpose = async (
@@ -33,6 +33,15 @@ export const updatePurposeMovement = async (
 };
 
 export const deletePurpose = async (id: number): Promise<void> => {
-  const response = await axiosInstance.delete(`/purpose/${id}`);
-  return response.data;
+  await axiosInstance.delete(`/purpose/${id}`);
+};
+
+export const createSubPurpose = async (
+  payload: CreateSubPurposeRequest
+): Promise<void> => {
+  await axiosInstance.post('/purpose/sub', payload);
+};
+
+export const deleteSubPurpose = async (id: number): Promise<void> => {
+  await axiosInstance.delete(`/purpose/sub/${id}`);
 };
