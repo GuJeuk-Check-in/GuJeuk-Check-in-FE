@@ -335,11 +335,6 @@ export const PurposeFormModal = ({
                 추가
               </InlineAction>
             </SubPurposeEntry>
-            {subPurposes.length > 0 && (
-              <DraftNote>
-                하위 방문 목적은 이 탭을 새로고침하면 사라져요.
-              </DraftNote>
-            )}
           </Field>
 
           <Actions>
@@ -664,12 +659,6 @@ const IconAction = styled.button`
 const DeleteAction = styled(IconAction)`
   color: ${PurposeColors.error};
   font-size: 1.375rem;
-`;
-
-const DraftNote = styled.p`
-  margin: 0;
-  color: ${PurposeColors.gray10};
-  font-size: 0.8125rem;
 `;
 
 const Actions = styled.div`
