@@ -41,9 +41,7 @@ export const useUpdatePurpose = () => {
         await deleteSubPurpose(removedId);
       }
 
-      const addedSubPurposes = subPurposes.filter(
-        (item) => item.serverId === undefined
-      );
+      const addedSubPurposes = subPurposes.filter((item) => !item.isSaved);
 
       for (const subPurpose of addedSubPurposes) {
         await createSubPurpose({
@@ -69,7 +67,10 @@ export const useUpdatePurpose = () => {
     },
     onSuccess: (_, variables) => {
       updateLocalPurpose(variables.id, variables.purpose);
-      setSubPurposes(variables.id, variables.subPurposes);
+      setSubPurposes(
+        variables.id,
+        variables.subPurposes.map((item) => ({ ...item, isSaved: true }))
+      );
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
       queryClient.invalidateQueries({ queryKey: reservationListKey });
     },

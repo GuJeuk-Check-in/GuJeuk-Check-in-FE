@@ -8,6 +8,7 @@ export interface CreatePurposeRequest {
 export interface SubPurpose {
   id: number;
   serverId?: number;
+  isSaved?: boolean;
   name: string;
   reservable: boolean;
 }

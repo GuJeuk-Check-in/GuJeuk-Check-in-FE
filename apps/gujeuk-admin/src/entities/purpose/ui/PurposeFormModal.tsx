@@ -72,12 +72,15 @@ export const PurposeFormModal = ({
   const editInputRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const inputId = useId();
-  const reservationSettingId = useId();
   const subPurposeInputId = useId();
   const editInputId = useId();
   const text = FORM_TEXT[mode];
   const trimmedPurpose = purpose.trim();
   const editingId = editing?.id;
+  const trimmedNewSubPurpose = newSubPurpose.name.trim();
+  const isDuplicatedSubPurpose = subPurposes.some(
+    (item) => item.name === trimmedNewSubPurpose,
+  );
   const hasSubPurpose =
     subPurposes.length > 0 ||
     (initialValues !== undefined &&
@@ -93,8 +96,8 @@ export const PurposeFormModal = ({
   };
 
   const addSubPurpose = () => {
-    const name = newSubPurpose.name.trim();
-    if (!name || isSubmitting) return;
+    const name = trimmedNewSubPurpose;
+    if (!name || isSubmitting || isDuplicatedSubPurpose) return;
 
     const item = { ...newSubPurpose, name, id: nextSubPurposeId.current++ };
     setSubPurposes((current) => [...current, item]);
@@ -106,6 +109,8 @@ export const PurposeFormModal = ({
     if (!editing || isSubmitting) return;
     const name = editing.name.trim();
     if (!name) return;
+    if (subPurposes.some((item) => item.id !== editing.id && item.name === name))
+      return;
 
     setSubPurposes((current) =>
       current.map((item) =>
@@ -192,28 +197,19 @@ export const PurposeFormModal = ({
               required
               disabled={isSubmitting}
             />
+            <ReservationCheckbox>
+              <input
+                type='checkbox'
+                checked={!hasSubPurpose && reservationStatus}
+                disabled={isSubmitting || hasSubPurpose}
+                onChange={(event) => setReservationStatus(event.target.checked)}
+              />
+              예약 가능
+            </ReservationCheckbox>
+            {hasSubPurpose && (
+              <SettingHint>하위 방문 목적별 설정을 따릅니다.</SettingHint>
+            )}
           </Field>
-
-          <ReservationSetting>
-            <SettingText>
-              <SettingTitle id={reservationSettingId}>
-                <LuCalendarCheck aria-hidden='true' />
-                상위 방문 목적 예약 가능
-              </SettingTitle>
-              {hasSubPurpose && (
-                <SettingHint>하위 방문 목적별 설정을 따릅니다.</SettingHint>
-              )}
-            </SettingText>
-            <Switch
-              type='button'
-              role='switch'
-              aria-checked={!hasSubPurpose && reservationStatus}
-              aria-labelledby={reservationSettingId}
-              $isOn={!hasSubPurpose && reservationStatus}
-              disabled={isSubmitting || hasSubPurpose}
-              onClick={() => setReservationStatus((current) => !current)}
-            />
-          </ReservationSetting>
 
           <Field>
             <Label htmlFor={subPurposeInputId}>하위 방문 목적</Label>
@@ -350,11 +346,18 @@ export const PurposeFormModal = ({
                 type='button'
                 $variant='primary'
                 onClick={addSubPurpose}
-                disabled={isSubmitting || !newSubPurpose.name.trim()}
+                disabled={
+                  isSubmitting || !trimmedNewSubPurpose || isDuplicatedSubPurpose
+                }
               >
                 추가
               </InlineAction>
             </SubPurposeEntry>
+            {isDuplicatedSubPurpose && (
+              <SettingHint role='status'>
+                이미 추가한 하위 방문 목적이에요.
+              </SettingHint>
+            )}
           </Field>
 
           <Actions>
@@ -493,83 +496,6 @@ const Input = styled.input`
   }
 `;
 
-const ReservationSetting = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.125rem;
-  border: 1px solid ${PurposeColors.gray30};
-  border-radius: 0.875rem;
-  background-color: ${ColorData.colors.background};
-`;
-
-const SettingText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-`;
-
-const SettingHint = styled.span`
-  color: ${PurposeColors.gray30};
-  font-size: 0.75rem;
-`;
-
-const SettingTitle = styled.p`
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  margin: 0;
-  color: ${PurposeColors.gray40};
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 700;
-
-  svg {
-    flex-shrink: 0;
-    width: 1.125rem;
-    height: 1.125rem;
-    color: ${PurposeColors.gray30};
-  }
-`;
-
-const Switch = styled.button<{ $isOn: boolean }>`
-  position: relative;
-  flex-shrink: 0;
-  width: 3.25rem;
-  height: 1.875rem;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background-color: ${({ $isOn }) =>
-    $isOn ? PurposeColors.blue : PurposeColors.gray10};
-  cursor: pointer;
-  transition: background-color ${ColorData.interaction.transitionNormal};
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0.1875rem;
-    left: ${({ $isOn }) => ($isOn ? '1.5625rem' : '0.1875rem')};
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background-color: ${ColorData.colors.background};
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-    transition: left ${ColorData.interaction.transitionNormal};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${PurposeColors.skyblue};
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 const SubPurposeEntry = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -613,6 +539,31 @@ const SubPurposeCheckbox = styled.label`
     margin: 0;
     accent-color: ${PurposeColors.blue};
   }
+`;
+
+const ReservationCheckbox = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  align-self: flex-start;
+  color: ${PurposeColors.gray40};
+  font-size: 0.8125rem;
+
+  input {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: ${PurposeColors.blue};
+  }
+
+  &:has(input:disabled) {
+    color: ${PurposeColors.gray30};
+  }
+`;
+
+const SettingHint = styled.span`
+  color: ${PurposeColors.gray30};
+  font-size: 0.75rem;
 `;
 
 const SubPurposeCard = styled.div`

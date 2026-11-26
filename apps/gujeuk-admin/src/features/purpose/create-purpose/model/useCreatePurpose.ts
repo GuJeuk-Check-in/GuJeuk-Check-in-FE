@@ -47,7 +47,12 @@ export const useCreatePurpose = () => {
       if (!subPurposes.length) return;
 
       const created = purposes.find((item) => item.purpose === purpose);
-      if (created) setSubPurposes(created.id, subPurposes);
+      if (created) {
+        setSubPurposes(
+          created.id,
+          subPurposes.map((item) => ({ ...item, isSaved: true }))
+        );
+      }
     },
   });
 };
