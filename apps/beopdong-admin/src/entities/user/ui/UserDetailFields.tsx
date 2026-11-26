@@ -183,6 +183,16 @@ export const UserDetailFields = ({ user, visitCount, isEditing, onChange, onScho
           icon={<IoLocationSharp />}
         />
       </Row>
+      {isEditing && user.route === 'OTHER' && (
+        <DetailInput
+          label="기타 경로"
+          value={user.routeDetail ?? ''}
+          placeholder="알게된 경로를 직접 입력해주세요"
+          icon={<IoLocationSharp />}
+          isEditable
+          onChange={(event) => onChange({ routeDetail: event.target.value })}
+        />
+      )}
     </Fields>
   );
 };
