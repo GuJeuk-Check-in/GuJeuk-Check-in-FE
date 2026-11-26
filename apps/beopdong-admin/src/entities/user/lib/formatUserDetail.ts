@@ -15,25 +15,11 @@ const ROUTE_LABEL: Record<UserRoute, string> = {
 
 export const ROUTE_OPTIONS = Object.values(ROUTE_LABEL);
 
-const SCHOOL_TYPE_LABEL: Record<SchoolType, string> = {
-  ELEMENTARY: '초등학교',
-  MIDDLE: '중학교',
-  HIGH: '고등학교',
-};
-
-export const SCHOOL_TYPE_OPTIONS = Object.values(SCHOOL_TYPE_LABEL);
-
 export const MAX_GRADE_BY_SCHOOL_TYPE: Record<SchoolType, number> = {
   ELEMENTARY: 6,
   MIDDLE: 3,
   HIGH: 3,
 };
-
-export const formatSchoolType = (schoolType: SchoolType | null) =>
-  schoolType ? SCHOOL_TYPE_LABEL[schoolType] : '';
-
-export const parseSchoolType = (label: string) =>
-  (Object.keys(SCHOOL_TYPE_LABEL) as SchoolType[]).find((schoolType) => SCHOOL_TYPE_LABEL[schoolType] === label) ?? null;
 
 export const formatRoute = (route: UserRoute) => ROUTE_LABEL[route];
 
