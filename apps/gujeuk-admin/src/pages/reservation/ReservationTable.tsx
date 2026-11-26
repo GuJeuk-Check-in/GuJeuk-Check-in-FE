@@ -68,6 +68,7 @@ export const ReservationTable = ({
     useCreateReservation();
   const toastTimerRef = useRef<number | null>(null);
   const createEditVersionRef = useRef(0);
+  const tableGridRef = useRef<HTMLDivElement>(null);
   const selectedReservation =
     reservations.find(
       (reservation) => reservation.id === selectedReservationId,
@@ -103,8 +104,11 @@ export const ReservationTable = ({
   useEffect(() => {
     if (selectedReservationId === null) return;
 
-    const handleScroll = () => {
-      closeDetail();
+    const handleScroll = (event: Event) => {
+      const tableViewport = tableGridRef.current?.parentElement;
+      if (event.target instanceof Node && tableViewport?.contains(event.target)) {
+        closeDetail();
+      }
     };
 
     window.addEventListener('scroll', handleScroll, true);
@@ -218,7 +222,7 @@ export const ReservationTable = ({
 
   return (
     <>
-      <TableGrid $placeCount={places.length}>
+      <TableGrid ref={tableGridRef} $placeCount={places.length}>
         <HeaderCell $column={1} $row={1}>
           <img src={clockIcon} alt='시간' width={32} height={32} />
         </HeaderCell>

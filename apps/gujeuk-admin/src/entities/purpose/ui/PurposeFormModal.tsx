@@ -198,7 +198,15 @@ export const PurposeFormModal = ({
             <Label htmlFor={subPurposeInputId}>하위 방문 목적</Label>
             {subPurposes.map((item) =>
               editing?.id === item.id ? (
-                <EditCard key={item.id}>
+                <EditCard
+                  key={item.id}
+                  onKeyDown={(event) => {
+                    if (event.key !== 'Escape') return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setEditing(null);
+                  }}
+                >
                   <Label htmlFor={editInputId}>하위 방문 목적 이름</Label>
                   <Input
                     ref={editInputRef}
@@ -214,11 +222,6 @@ export const PurposeFormModal = ({
                       if (event.key === 'Enter') {
                         event.preventDefault();
                         saveSubPurpose();
-                      }
-                      if (event.key === 'Escape') {
-                        event.preventDefault();
-                        event.stopPropagation(); //이벤트 버블링 방어를 위해 추가.
-                        setEditing(null);
                       }
                     }}
                   />
