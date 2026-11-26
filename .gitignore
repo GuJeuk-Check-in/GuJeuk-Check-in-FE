@@ -4,6 +4,3 @@ node_modules/
 dist/
 .yarn/install-state.gz
 
-/.memsearch/
-/.omx-state-locks.identity.json
-/.playwright-cli/
