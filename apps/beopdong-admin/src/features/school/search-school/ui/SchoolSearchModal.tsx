@@ -62,7 +62,13 @@ export const SchoolSearchModal = ({ selectedName, onSelect, onClose }: SchoolSea
           ))}
         </ResultList>
         {hasNextPage && (
-          <MoreButton type="button" onClick={() => void fetchNextPage()} disabled={isFetchingNextPage}>
+          <MoreButton
+            type="button"
+            aria-disabled={isFetchingNextPage}
+            onClick={() => {
+              if (!isFetchingNextPage) void fetchNextPage();
+            }}
+          >
             {isFetchingNextPage ? '불러오는 중' : '더 보기'}
           </MoreButton>
         )}
@@ -71,7 +77,7 @@ export const SchoolSearchModal = ({ selectedName, onSelect, onClose }: SchoolSea
   };
 
   return (
-    <Dialog onClose={onClose} aria-labelledby={titleId}>
+    <Dialog onClose={onClose} refocusKey={`${isFetching}:${hasNextPage}`} aria-labelledby={titleId}>
       <Panel>
         <Header>
           <Title id={titleId}>학교 검색</Title>
