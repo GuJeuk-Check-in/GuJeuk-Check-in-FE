@@ -5,7 +5,11 @@ import { LuCalendarCheck } from 'react-icons/lu';
 import { MdAdd, MdClose, MdOutlineEdit } from 'react-icons/md';
 import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
 import { usePurposeStore } from '../model/purposeStore';
-import type { CreatePurposeRequest, PurposeFormValues, SubPurpose } from '../model/types';
+import type {
+  CreatePurposeRequest,
+  PurposeFormValues,
+  SubPurpose,
+} from '../model/types';
 import { PurposeColors } from './purposeColors';
 
 type PurposeFormMode = 'create' | 'update';
@@ -56,10 +60,14 @@ export const PurposeFormModal = ({
       ? undefined
       : state.subPurposesByPurposeId[initialValues.id],
   );
-  const [subPurposes, setSubPurposes] = useState(() => initialSubPurposes ?? []);
+  const [subPurposes, setSubPurposes] = useState(
+    () => initialSubPurposes ?? [],
+  );
   const [newSubPurpose, setNewSubPurpose] = useState(EMPTY_SUB_PURPOSE);
   const [editing, setEditing] = useState<SubPurpose | null>(null);
-  const nextSubPurposeId = useRef((subPurposes[subPurposes.length - 1]?.id ?? -1) + 1);
+  const nextSubPurposeId = useRef(
+    subPurposes.reduce((max, item) => Math.max(max, item.id), -1) + 1,
+  ); //아이디 중복 발급 방지
   const dialogRef = useDialogFocusTrap(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const subPurposeInputRef = useRef<HTMLInputElement>(null);
@@ -89,7 +97,9 @@ export const PurposeFormModal = ({
     if (!name) return;
 
     setSubPurposes((current) =>
-      current.map((item) => item.id === editing.id ? { ...editing, name } : item),
+      current.map((item) =>
+        item.id === editing.id ? { ...editing, name } : item,
+      ),
     );
     setEditing(null);
   };
@@ -104,7 +114,8 @@ export const PurposeFormModal = ({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !event.defaultPrevented && !isSubmitting) onClose();
+      if (event.key === 'Escape' && !event.defaultPrevented && !isSubmitting)
+        onClose();
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -154,6 +165,12 @@ export const PurposeFormModal = ({
               id={inputId}
               value={purpose}
               onChange={(event) => setPurpose(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+                  event.preventDefault();
+                  subPurposeInputRef.current?.focus(); // Enter 누르면 하위 목적 입력창으로 이동하게 개선함.
+                }
+              }}
               placeholder='예: 노래방, PC, 독서'
               maxLength={30}
               required
@@ -189,7 +206,9 @@ export const PurposeFormModal = ({
                     value={editing.name}
                     maxLength={30}
                     disabled={isSubmitting}
-                    onChange={(event) => setEditing({ ...editing, name: event.target.value })}
+                    onChange={(event) =>
+                      setEditing({ ...editing, name: event.target.value })
+                    }
                     onKeyDown={(event) => {
                       if (event.nativeEvent.isComposing) return;
                       if (event.key === 'Enter') {
@@ -209,12 +228,21 @@ export const PurposeFormModal = ({
                         type='checkbox'
                         checked={editing.reservable}
                         disabled={isSubmitting}
-                        onChange={(event) => setEditing({ ...editing, reservable: event.target.checked })}
+                        onChange={(event) =>
+                          setEditing({
+                            ...editing,
+                            reservable: event.target.checked,
+                          })
+                        }
                       />
                       예약 가능
                     </SubPurposeCheckbox>
                     <InlineActions>
-                      <InlineAction type='button' $variant='secondary' onClick={() => setEditing(null)}>
+                      <InlineAction
+                        type='button'
+                        $variant='secondary'
+                        onClick={() => setEditing(null)}
+                      >
                         취소
                       </InlineAction>
                       <InlineAction
@@ -250,7 +278,11 @@ export const PurposeFormModal = ({
                       type='button'
                       aria-label={`${item.name} 삭제`}
                       disabled={isSubmitting || editing !== null}
-                      onClick={() => setSubPurposes((current) => current.filter(({ id }) => id !== item.id))}
+                      onClick={() =>
+                        setSubPurposes((current) =>
+                          current.filter(({ id }) => id !== item.id),
+                        )
+                      }
                     >
                       <MdClose aria-hidden='true' />
                     </DeleteAction>
@@ -264,7 +296,12 @@ export const PurposeFormModal = ({
                 ref={subPurposeInputRef}
                 id={subPurposeInputId}
                 value={newSubPurpose.name}
-                onChange={(event) => setNewSubPurpose({ ...newSubPurpose, name: event.target.value })}
+                onChange={(event) =>
+                  setNewSubPurpose({
+                    ...newSubPurpose,
+                    name: event.target.value,
+                  })
+                }
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
                     event.preventDefault();
@@ -280,7 +317,12 @@ export const PurposeFormModal = ({
                   type='checkbox'
                   checked={newSubPurpose.reservable}
                   disabled={isSubmitting}
-                  onChange={(event) => setNewSubPurpose({ ...newSubPurpose, reservable: event.target.checked })}
+                  onChange={(event) =>
+                    setNewSubPurpose({
+                      ...newSubPurpose,
+                      reservable: event.target.checked,
+                    })
+                  }
                 />
                 예약 가능
               </SubPurposeCheckbox>
@@ -294,7 +336,9 @@ export const PurposeFormModal = ({
               </InlineAction>
             </SubPurposeEntry>
             {subPurposes.length > 0 && (
-              <DraftNote>하위 방문 목적은 이 탭을 새로고침하면 사라져요.</DraftNote>
+              <DraftNote>
+                하위 방문 목적은 이 탭을 새로고침하면 사라져요.
+              </DraftNote>
             )}
           </Field>
 
@@ -433,7 +477,6 @@ const Input = styled.input`
     color: ${PurposeColors.gray10};
   }
 `;
-
 
 const ReservationSetting = styled.div`
   display: flex;
@@ -644,7 +687,9 @@ const ActionButton = styled.button<{ $variant: 'primary' | 'secondary' }>`
   background-color: ${({ $variant }) =>
     $variant === 'primary' ? PurposeColors.blue : ColorData.colors.background};
   color: ${({ $variant }) =>
-    $variant === 'primary' ? ColorData.colors.background : PurposeColors.gray40};
+    $variant === 'primary'
+      ? ColorData.colors.background
+      : PurposeColors.gray40};
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;

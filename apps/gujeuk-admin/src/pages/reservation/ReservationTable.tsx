@@ -99,6 +99,18 @@ export const ReservationTable = ({
     };
   }, []);
 
+  //스크롤 시 위치 어긋남 방지 로직
+  useEffect(() => {
+    if (selectedReservationId === null) return;
+
+    const handleScroll = () => {
+      closeDetail();
+    };
+
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [selectedReservationId]);
+
   const showToast = (message: string, variant: ToastVariant = 'positive') => {
     if (toastTimerRef.current !== null) {
       window.clearTimeout(toastTimerRef.current);
@@ -346,16 +358,18 @@ const TableGrid = styled.div<{ $placeCount: number }>`
   display: grid;
   height: 100%;
   grid-template-columns: minmax(5.5rem, 0.82fr) repeat(
-    ${({ $placeCount }) => $placeCount}, minmax(6rem, 1fr)
-  );
+      ${({ $placeCount }) => $placeCount},
+      minmax(6rem, 1fr)
+    );
   grid-template-rows: var(--reservation-header-height) repeat(
-    ${TimeData.length}, minmax(var(--reservation-row-min-height), 1fr)
-  );
+      ${TimeData.length},
+      minmax(var(--reservation-row-min-height), 1fr)
+    );
   min-width: ${({ $placeCount }) =>
     `calc(${5.5 + $placeCount * 6}rem + ${$placeCount}px)`};
   min-height: calc(
-    var(--reservation-header-height) +
-    ${TimeData.length} * (var(--reservation-row-min-height) + 1px)
+    var(--reservation-header-height) + ${TimeData.length} *
+      (var(--reservation-row-min-height) + 1px)
   );
   gap: 1px;
   overflow: hidden;
