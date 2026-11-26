@@ -104,12 +104,7 @@ export const ReservationTable = ({
   useEffect(() => {
     if (selectedReservationId === null) return;
 
-    const handleScroll = (event: Event) => {
-      const tableViewport = tableGridRef.current?.parentElement;
-      if (event.target instanceof Node && tableViewport?.contains(event.target)) {
-        closeDetail();
-      }
-    };
+    const handleScroll = () => closeDetail();
 
     window.addEventListener('scroll', handleScroll, true);
     return () => window.removeEventListener('scroll', handleScroll, true);
