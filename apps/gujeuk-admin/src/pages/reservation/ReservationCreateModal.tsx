@@ -14,7 +14,6 @@ import {
   formatTimeRange,
   getNextTime,
   type ReservationPeople,
-  type ReservationPlace,
   type ReservationTime,
 } from "./ReservationData";
 import { ReservationDialog } from "./ReservationDialog";
@@ -39,7 +38,7 @@ export interface ReservationCreateValues {
 }
 
 interface ReservationCreateModalProps {
-  place: ReservationPlace;
+  place: string;
   time: ReservationTime;
   onClose: () => void;
   onSubmit: (values: ReservationCreateValues) => void;

@@ -1,4 +1,7 @@
-import type { ReservationResponse } from "@entities/reservation";
+import type {
+  ReservationFacilityResponse,
+  ReservationResponse,
+} from "@entities/reservation";
 
 export const TimeData = [
   "09:30",
@@ -14,7 +17,25 @@ export const TimeData = [
 ] as const;
 
 export type ReservationTime = (typeof TimeData)[number];
-export type ReservationPlace = string;
+
+export interface ReservationPlace {
+  key: string;
+  label: string;
+  purposeId: number;
+  subPurposeId: number | null;
+}
+
+export const toPlaceKey = (purposeId: number, subPurposeId: number | null) =>
+  `${purposeId}:${subPurposeId ?? ""}`;
+
+export const toReservationPlace = (
+  facility: ReservationFacilityResponse,
+): ReservationPlace => ({
+  key: toPlaceKey(facility.purposeId, facility.subPurposeId),
+  label: facility.subPurpose ?? facility.purpose,
+  purposeId: facility.purposeId,
+  subPurposeId: facility.subPurposeId,
+});
 
 export interface ReservationPeople {
   male: number;
@@ -24,7 +45,8 @@ export interface ReservationPeople {
 export interface Reservation {
   id: number;
   userName: string;
-  place: ReservationPlace;
+  place: string;
+  placeKey: string;
   startTime: string;
   endTime: string;
   people: ReservationPeople;
@@ -41,7 +63,8 @@ export const toReservationTime = (time: string) => time.slice(0, 5);
 export const toReservation = (response: ReservationResponse): Reservation => ({
   id: response.id,
   userName: response.name,
-  place: response.purpose,
+  place: response.subPurpose ?? response.purpose,
+  placeKey: toPlaceKey(response.purposeId, response.subPurposeId),
   startTime: toReservationTime(response.startTime),
   endTime: toReservationTime(response.endTime),
   people: { male: response.maleCount, female: response.femaleCount },

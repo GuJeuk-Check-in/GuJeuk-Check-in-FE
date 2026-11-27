@@ -26,7 +26,7 @@ export const ReservationEmptyCell = ({
       type='button'
       className='reservation-add-button'
       onClick={() => onAddClick(place, time)}
-      aria-label={`${place} ${time} 예약하기`}
+      aria-label={`${place.label} ${time} 예약하기`}
       $selected={selected}
     >
       <FiPlus aria-hidden='true' />
