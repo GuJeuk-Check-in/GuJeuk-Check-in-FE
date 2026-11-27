@@ -81,7 +81,7 @@ export const useUpdatePurpose = () => {
         ),
       });
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
       queryClient.invalidateQueries({ queryKey: reservationListKey });
     },

@@ -31,7 +31,7 @@ export const useCreatePurpose = () => {
         }
       },
 
-      onSuccess: () => {
+      onSettled: () => {
         queryClient.invalidateQueries({ queryKey: ['purposeList'] });
       },
     }

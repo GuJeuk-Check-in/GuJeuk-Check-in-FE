@@ -7,7 +7,7 @@ export const useDeletePurposeList = () => {
 
   return useMutation<void, AxiosError<{ message?: string }>, number>({
     mutationFn: deletePurpose,
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
     },
   });
