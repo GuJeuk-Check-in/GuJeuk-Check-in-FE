@@ -336,11 +336,6 @@ export const PurposeFormModal = ({
                 추가
               </InlineAction>
             </SubPurposeEntry>
-            {isDuplicatedSubPurpose && (
-              <SettingHint role='status'>
-                이미 추가한 하위 방문 목적이에요.
-              </SettingHint>
-            )}
           </Field>
 
           <Actions>
@@ -544,10 +539,6 @@ const ReservationCheckbox = styled.label`
   }
 `;
 
-const SettingHint = styled.span`
-  color: ${PurposeColors.gray30};
-  font-size: 0.75rem;
-`;
 
 const SubPurposeCard = styled.div`
   display: flex;
