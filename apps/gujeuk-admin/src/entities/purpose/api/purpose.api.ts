@@ -22,7 +22,9 @@ const toPurpose = (dto: PurposeDto): Purpose => ({
 });
 
 export const purposeList = async (): Promise<Purpose[]> => {
-  const response = await axiosInstance.get<PurposeListDto>('/purpose/all');
+  const response = await axiosInstance.get<PurposeListDto>(
+    '/purpose/all/with-sub'
+  );
   return (response.data?.purposes ?? []).map(toPurpose);
 };
 
