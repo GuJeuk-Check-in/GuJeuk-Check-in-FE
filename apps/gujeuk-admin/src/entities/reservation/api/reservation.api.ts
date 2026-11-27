@@ -1,8 +1,9 @@
-import { axiosInstance } from '@shared/api';
+import { axiosInstance, publicAxiosInstance } from '@shared/api';
 import type { CreateReservationRequest, ReservationListResponse } from '../model/types';
 
 export const getReservations = async (): Promise<ReservationListResponse> => {
-  const response = await axiosInstance.get<ReservationListResponse>('/reservation');
+  const response =
+    await publicAxiosInstance.get<ReservationListResponse>('/reservation');
   return response.data;
 };
 

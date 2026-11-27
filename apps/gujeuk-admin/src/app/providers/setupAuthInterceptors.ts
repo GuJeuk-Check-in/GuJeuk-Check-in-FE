@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@entities/auth';
-import { axiosInstance } from '@shared/api';
+import { axiosInstance, publicAxiosInstance } from '@shared/api';
 
 interface FailedQueueItem {
   resolve: (token: string | null) => void;
@@ -50,15 +50,20 @@ export const setupAuthInterceptors = () => {
   }
   axiosWithSetup.__authInterceptorsInstalled = true;
 
-  axiosInstance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-      const { accessToken } = useAuthStore.getState();
-      if (accessToken && config.headers) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
+  const attachAccessToken = (config: InternalAxiosRequestConfig) => {
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  };
+
+  axiosInstance.interceptors.request.use(attachAccessToken, (error) =>
+    Promise.reject(error)
+  );
+
+  publicAxiosInstance.interceptors.request.use(attachAccessToken, (error) =>
+    Promise.reject(error)
   );
 
   axiosInstance.interceptors.response.use(
