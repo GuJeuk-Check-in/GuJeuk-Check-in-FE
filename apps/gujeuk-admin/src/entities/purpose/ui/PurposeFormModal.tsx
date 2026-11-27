@@ -192,9 +192,6 @@ export const PurposeFormModal = ({
               />
               예약 가능
             </ReservationCheckbox>
-            {hasSubPurpose && (
-              <SettingHint>하위 방문 목적별 설정을 따릅니다.</SettingHint>
-            )}
           </Field>
 
           <Field>
