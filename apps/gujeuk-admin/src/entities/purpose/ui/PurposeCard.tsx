@@ -38,7 +38,9 @@ export const PurposeCard = ({
     purpose.purpose,
     isReservable && '예약 가능',
     hasSubPurposes && '세부 항목 있음',
-  ].filter(Boolean).join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
 
   const openEdit = () => {
     if (!isDeleting) onEdit(purpose);
@@ -50,7 +52,8 @@ export const PurposeCard = ({
     if (
       event.detail > 0 &&
       start &&
-      Math.hypot(event.clientX - start.x, event.clientY - start.y) >= DRAG_DISTANCE
+      Math.hypot(event.clientX - start.x, event.clientY - start.y) >=
+        DRAG_DISTANCE
     ) {
       return;
     }
@@ -83,7 +86,7 @@ export const PurposeCard = ({
           )}
           {hasSubPurposes && (
             <Badge>
-              <img src={subItemIcon} width={14} height={14} alt='' />
+              <img src={subItemIcon} width={14} height={14} alt='세부 항목 아이콘' />
               세부 항목
             </Badge>
           )}

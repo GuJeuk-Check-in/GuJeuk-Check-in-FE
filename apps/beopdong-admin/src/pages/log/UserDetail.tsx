@@ -1,26 +1,12 @@
-import { useMemo } from 'react';
 import { LoadErrorView } from '@center/ui/feedback';
-import { getVisitPurposeOptions, usePurposeOptions } from '@entities/purpose';
+import { usePurposeOptions } from '@entities/purpose';
 import { VisitForm, VisitPageLayout } from '@widgets/log';
 
-interface UserDetailProps {
-  readonly title: string;
-  readonly variant: 'minor' | 'adult';
-}
-
-const UserDetail = ({ title, variant }: UserDetailProps) => {
+const UserDetail = () => {
   const { options, isError, refetch } = usePurposeOptions();
-  const purposeOptions = useMemo(
-    () =>
-      getVisitPurposeOptions(
-        variant,
-        options.map(({ name }) => name)
-      ),
-    [variant, options]
-  );
 
   return (
-    <VisitPageLayout title={title}>
+    <VisitPageLayout title="방명록 추가">
       {isError ? (
         <LoadErrorView
           title="이용대장 목록을 불러올 수 없습니다"
@@ -29,7 +15,7 @@ const UserDetail = ({ title, variant }: UserDetailProps) => {
           onRetry={() => void refetch()}
         />
       ) : (
-        <VisitForm key={variant} purposeOptions={purposeOptions} variant={variant} />
+        <VisitForm purposeNames={options.map(({ name }) => name)} />
       )}
     </VisitPageLayout>
   );

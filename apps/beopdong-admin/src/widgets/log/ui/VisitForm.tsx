@@ -3,20 +3,28 @@ import { useNavigate } from 'react-router-dom';
 import { Modal } from '@center/ui/modal';
 import { ActionButton, ActionButtons, CancelButton } from '@shared/ui';
 import { useCreateVisitList } from '@features/log/create-visit-list';
-import { createVisitFormData, type VisitFormData, type VisitFormVariant } from '../model/visitForm';
+import { getVisitPurposeOptions } from '@entities/purpose';
+import { getVisitFormVariant } from '../model/getVisitFormVariant';
+import { createVisitFormData, type VisitFormData } from '../model/visitForm';
 import { useVisitSubmission } from '../model/useVisitSubmission';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
 import { VisitFormFields } from './VisitFormFields';
 
 interface VisitFormProps {
-  readonly purposeOptions: readonly string[];
-  readonly variant?: VisitFormVariant;
+  readonly purposeNames: readonly string[];
 }
 
-export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps) => {
+export const VisitForm = ({ purposeNames }: VisitFormProps) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(() => createVisitFormData());
+  const variant = getVisitFormVariant(formData.age);
+  const purposeOptions = getVisitPurposeOptions(variant, purposeNames);
+
+  const handleChange = (next: VisitFormData) => {
+    const nextOptions = getVisitPurposeOptions(getVisitFormVariant(next.age), purposeNames);
+    setFormData({ ...next, purposes: next.purposes.filter((purpose) => nextOptions.includes(purpose)) });
+  };
   const [createdValue, setCreatedValue] = useState<VisitFormData | null>(null);
   const isCreated = createdValue !== null;
   const { mutateAsync: createVisit } = useCreateVisitList();
@@ -39,7 +47,7 @@ export const VisitForm = ({ purposeOptions, variant = 'minor' }: VisitFormProps)
     <>
       <VisitFormFields
         value={formData}
-        onChange={setFormData}
+        onChange={handleChange}
         purposeOptions={purposeOptions}
         variant={variant}
         disabled={modal.isSubmitting}
