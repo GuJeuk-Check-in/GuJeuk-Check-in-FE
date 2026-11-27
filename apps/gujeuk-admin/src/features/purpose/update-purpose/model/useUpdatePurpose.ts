@@ -3,25 +3,22 @@ import { AxiosError } from 'axios';
 import {
   createSubPurpose,
   deleteSubPurpose,
-  isSubIncludeStatus,
   toReservationStatus,
   updatePurpose,
-  usePurposeStore,
+  updateSubPurpose,
   type PurposeFormValues,
-  type ReservationStatus,
+  type SubPurpose,
 } from '@entities/purpose';
 import { reservationListKey } from '@entities/reservation';
 
 type UpdatePurposeVariables = PurposeFormValues & {
   id: number;
   originalPurpose: string;
-  originalReservationStatus: ReservationStatus;
+  originalSubPurposes: SubPurpose[];
 };
 
 export const useUpdatePurpose = () => {
   const queryClient = useQueryClient();
-  const updateLocalPurpose = usePurposeStore((state) => state.updatePurpose);
-  const setSubPurposes = usePurposeStore((state) => state.setSubPurposes);
 
   return useMutation<
     void,
@@ -33,44 +30,58 @@ export const useUpdatePurpose = () => {
       purpose,
       reservationStatus,
       subPurposes,
-      removedSubPurposeIds,
       originalPurpose,
-      originalReservationStatus,
+      originalSubPurposes,
     }) => {
-      for (const removedId of removedSubPurposeIds) {
-        await deleteSubPurpose(removedId);
+      const keptIds = new Set(
+        subPurposes
+          .map((item) => item.serverId)
+          .filter((serverId): serverId is number => serverId !== undefined)
+      );
+
+      for (const origin of originalSubPurposes) {
+        if (!keptIds.has(origin.id)) await deleteSubPurpose(origin.id);
       }
 
-      const addedSubPurposes = subPurposes.filter((item) => !item.isSaved);
+      for (const item of subPurposes) {
+        const { serverId } = item;
+        if (serverId === undefined) continue;
 
-      for (const subPurpose of addedSubPurposes) {
-        await createSubPurpose({
-          purpose: originalPurpose,
-          reservationStatus: 'SUB_INCLUDE',
-          subPurpose: subPurpose.name,
-          subPurposeReservation: subPurpose.reservable,
+        const origin = originalSubPurposes.find(({ id }) => id === serverId);
+        if (
+          origin &&
+          origin.name === item.name &&
+          origin.reservable === item.reservable
+        ) {
+          continue;
+        }
+
+        await updateSubPurpose(serverId, {
+          subPurpose: item.name,
+          subPurposeReservation: item.reservable,
         });
       }
 
-      const hasSubPurpose =
-        subPurposes.length > 0 ||
-        (isSubIncludeStatus(originalReservationStatus) &&
-          !removedSubPurposeIds.length);
+      for (const item of subPurposes) {
+        if (item.serverId !== undefined) continue;
+
+        await createSubPurpose({
+          purpose: originalPurpose,
+          reservationStatus: 'SUB_INCLUDE',
+          subPurpose: item.name,
+          subPurposeReservation: item.reservable,
+        });
+      }
 
       await updatePurpose(id, {
         purpose,
         reservationStatus: toReservationStatus(
-          hasSubPurpose,
+          subPurposes.length > 0,
           reservationStatus
         ),
       });
     },
-    onSuccess: (_, variables) => {
-      updateLocalPurpose(variables.id, variables.purpose);
-      setSubPurposes(
-        variables.id,
-        variables.subPurposes.map((item) => ({ ...item, isSaved: true }))
-      );
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
       queryClient.invalidateQueries({ queryKey: reservationListKey });
     },

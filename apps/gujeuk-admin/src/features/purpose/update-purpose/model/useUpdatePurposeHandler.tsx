@@ -25,7 +25,7 @@ export const useUpdatePurposeHandler = () => {
       {
         id: editingPurpose.id,
         originalPurpose: editingPurpose.purpose,
-        originalReservationStatus: editingPurpose.reservationStatus,
+        originalSubPurposes: editingPurpose.subPurposes,
         ...values,
       },
       {

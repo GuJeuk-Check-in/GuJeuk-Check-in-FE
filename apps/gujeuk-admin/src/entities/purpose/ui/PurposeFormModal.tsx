@@ -4,17 +4,17 @@ import { ColorData } from '@center/tokens';
 import { LuCalendarCheck } from 'react-icons/lu';
 import { MdAdd, MdClose, MdOutlineEdit } from 'react-icons/md';
 import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
-import { usePurposeStore } from '../model/purposeStore';
-import {
-  isReservableStatus,
-  isSubIncludeStatus,
-} from '../model/reservationStatus';
-import type { Purpose, PurposeFormValues, SubPurpose } from '../model/types';
+import { isReservableStatus } from '../model/reservationStatus';
+import type {
+  Purpose,
+  PurposeFormSubPurpose,
+  PurposeFormValues,
+} from '../model/types';
 import { PurposeColors } from './purposeColors';
 
 type PurposeFormMode = 'create' | 'update';
 
-type SubPurposeDraft = Omit<SubPurpose, 'id'>;
+type SubPurposeDraft = Pick<PurposeFormSubPurpose, 'name' | 'reservable'>;
 
 const FORM_TEXT = {
   create: {
@@ -50,22 +50,17 @@ export const PurposeFormModal = ({
   const [reservationStatus, setReservationStatus] = useState(
     initialValues ? isReservableStatus(initialValues.reservationStatus) : false,
   );
-  const initialSubPurposes = usePurposeStore((state) =>
-    initialValues === undefined
-      ? undefined
-      : state.subPurposesByPurposeId[initialValues.id],
-  );
-  const [subPurposes, setSubPurposes] = useState(
-    () => initialSubPurposes ?? [],
-  );
-  const [removedSubPurposeIds, setRemovedSubPurposeIds] = useState<number[]>(
-    [],
+  const [subPurposes, setSubPurposes] = useState<PurposeFormSubPurpose[]>(() =>
+    (initialValues?.subPurposes ?? []).map((item) => ({
+      key: `server-${item.id}`,
+      serverId: item.id,
+      name: item.name,
+      reservable: item.reservable,
+    })),
   );
   const [newSubPurpose, setNewSubPurpose] = useState(EMPTY_SUB_PURPOSE);
-  const [editing, setEditing] = useState<SubPurpose | null>(null);
-  const nextSubPurposeId = useRef(
-    subPurposes.reduce((max, item) => Math.max(max, item.id), -1) + 1,
-  ); //아이디 중복 발급 방지
+  const [editing, setEditing] = useState<PurposeFormSubPurpose | null>(null);
+  const nextKey = useRef(0);
   const dialogRef = useDialogFocusTrap(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const subPurposeInputRef = useRef<HTMLInputElement>(null);
@@ -76,30 +71,24 @@ export const PurposeFormModal = ({
   const editInputId = useId();
   const text = FORM_TEXT[mode];
   const trimmedPurpose = purpose.trim();
-  const editingId = editing?.id;
+  const editingKey = editing?.key;
   const trimmedNewSubPurpose = newSubPurpose.name.trim();
   const isDuplicatedSubPurpose = subPurposes.some(
     (item) => item.name === trimmedNewSubPurpose,
   );
-  const hasSubPurpose =
-    subPurposes.length > 0 ||
-    (initialValues !== undefined &&
-      isSubIncludeStatus(initialValues.reservationStatus));
+  const hasSubPurpose = subPurposes.length > 0;
 
-  const removeSubPurpose = (target: SubPurpose) => {
-    const { serverId } = target;
-
-    setSubPurposes((current) => current.filter(({ id }) => id !== target.id));
-    if (serverId !== undefined) {
-      setRemovedSubPurposeIds((current) => [...current, serverId]);
-    }
+  const removeSubPurpose = (target: PurposeFormSubPurpose) => {
+    setSubPurposes((current) =>
+      current.filter(({ key }) => key !== target.key),
+    );
   };
 
   const addSubPurpose = () => {
     const name = trimmedNewSubPurpose;
     if (!name || isSubmitting || isDuplicatedSubPurpose) return;
 
-    const item = { ...newSubPurpose, name, id: nextSubPurposeId.current++ };
+    const item = { ...newSubPurpose, name, key: `new-${nextKey.current++}` };
     setSubPurposes((current) => [...current, item]);
     setNewSubPurpose(EMPTY_SUB_PURPOSE);
     subPurposeInputRef.current?.focus();
@@ -109,12 +98,14 @@ export const PurposeFormModal = ({
     if (!editing || isSubmitting) return;
     const name = editing.name.trim();
     if (!name) return;
-    if (subPurposes.some((item) => item.id !== editing.id && item.name === name))
+    if (
+      subPurposes.some((item) => item.key !== editing.key && item.name === name)
+    )
       return;
 
     setSubPurposes((current) =>
       current.map((item) =>
-        item.id === editing.id ? { ...editing, name } : item,
+        item.key === editing.key ? { ...editing, name } : item,
       ),
     );
     setEditing(null);
@@ -125,8 +116,8 @@ export const PurposeFormModal = ({
   }, []);
 
   useEffect(() => {
-    if (editingId !== undefined) editInputRef.current?.focus();
-  }, [editingId]);
+    if (editingKey !== undefined) editInputRef.current?.focus();
+  }, [editingKey]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -142,12 +133,7 @@ export const PurposeFormModal = ({
     event.preventDefault();
     if (isSubmitting || !trimmedPurpose || editing) return;
 
-    onSubmit({
-      purpose: trimmedPurpose,
-      reservationStatus,
-      subPurposes,
-      removedSubPurposeIds,
-    });
+    onSubmit({ purpose: trimmedPurpose, reservationStatus, subPurposes });
   };
 
   return (
@@ -214,9 +200,9 @@ export const PurposeFormModal = ({
           <Field>
             <Label htmlFor={subPurposeInputId}>하위 방문 목적</Label>
             {subPurposes.map((item) =>
-              editing?.id === item.id ? (
+              editing?.key === item.key ? (
                 <EditCard
-                  key={item.id}
+                  key={item.key}
                   onKeyDown={(event) => {
                     if (event.key !== 'Escape') return;
                     event.preventDefault();
@@ -277,7 +263,7 @@ export const PurposeFormModal = ({
                   </EditFooter>
                 </EditCard>
               ) : (
-                <SubPurposeCard key={item.id}>
+                <SubPurposeCard key={item.key}>
                   <SubPurposeName>{item.name}</SubPurposeName>
                   {item.reservable && (
                     <ReservableBadge>

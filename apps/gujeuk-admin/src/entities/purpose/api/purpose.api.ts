@@ -2,14 +2,28 @@ import { axiosInstance } from '@shared/api';
 import {
   CreatePurposeRequest,
   CreateSubPurposeRequest,
-  PurposeResponse,
+  Purpose,
+  PurposeDto,
+  PurposeListDto,
   UpdatePurposeMovementRequest,
   UpdatePurposeRequest,
+  UpdateSubPurposeRequest,
 } from '../model/types';
 
-export const purposeList = async (): Promise<PurposeResponse[]> => {
-  const response = await axiosInstance.get<PurposeResponse[]>('/purpose/all');
-  return response.data;
+const toPurpose = (dto: PurposeDto): Purpose => ({
+  id: dto.purposeId,
+  purpose: dto.purpose,
+  reservationStatus: dto.reservationStatus,
+  subPurposes: (dto.subPurposes ?? []).map((item) => ({
+    id: item.subPurposeId,
+    name: item.subPurpose,
+    reservable: item.subPurposeReservation,
+  })),
+});
+
+export const purposeList = async (): Promise<Purpose[]> => {
+  const response = await axiosInstance.get<PurposeListDto>('/purpose/all');
+  return (response.data?.purposes ?? []).map(toPurpose);
 };
 
 export const createPurpose = async (
@@ -20,7 +34,7 @@ export const createPurpose = async (
 
 export const updatePurpose = async (
   id: number,
-  payload: Omit<UpdatePurposeRequest, 'id'>
+  payload: UpdatePurposeRequest
 ): Promise<void> => {
   await axiosInstance.patch(`/purpose/${id}`, payload);
 };
@@ -40,6 +54,13 @@ export const createSubPurpose = async (
   payload: CreateSubPurposeRequest
 ): Promise<void> => {
   await axiosInstance.post('/purpose/sub', payload);
+};
+
+export const updateSubPurpose = async (
+  id: number,
+  payload: UpdateSubPurposeRequest
+): Promise<void> => {
+  await axiosInstance.patch(`/purpose/sub/${id}`, payload);
 };
 
 export const deleteSubPurpose = async (id: number): Promise<void> => {

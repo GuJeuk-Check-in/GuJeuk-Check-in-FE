@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { LuCalendarCheck } from 'react-icons/lu';
 import { MdClose } from 'react-icons/md';
 import subItemIcon from '@shared/assets/purpose-sub-item.png';
-import { usePurposeStore } from '../model/purposeStore';
 import {
   isReservableStatus,
   isSubIncludeStatus,
@@ -28,11 +27,9 @@ export const PurposeCard = ({
   isDeleting,
 }: PurposeProps) => {
   const pressStartRef = useRef<{ x: number; y: number } | null>(null);
-  const hasLocalSubPurposes = usePurposeStore((state) =>
-    Boolean(state.subPurposesByPurposeId[purpose.id]?.length),
-  );
   const hasSubPurposes =
-    hasLocalSubPurposes || isSubIncludeStatus(purpose.reservationStatus);
+    purpose.subPurposes.length > 0 ||
+    isSubIncludeStatus(purpose.reservationStatus);
   const isReservable = isReservableStatus(purpose.reservationStatus);
   const editLabel = [
     purpose.purpose,

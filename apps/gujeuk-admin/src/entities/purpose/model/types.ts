@@ -1,27 +1,43 @@
 export type ReservationStatus = 'RESERVATION' | 'NONE' | 'SUB_INCLUDE';
 
+export interface SubPurposeDto {
+  subPurposeId: number;
+  subPurpose: string;
+  subPurposeReservation: boolean;
+}
+
+export interface PurposeDto {
+  purposeId: number;
+  purpose: string;
+  reservationStatus: ReservationStatus;
+  subPurposes: SubPurposeDto[];
+}
+
+export interface PurposeListDto {
+  purposes: PurposeDto[];
+}
+
+export interface SubPurpose {
+  id: number;
+  name: string;
+  reservable: boolean;
+}
+
+export interface Purpose {
+  id: number;
+  purpose: string;
+  reservationStatus: ReservationStatus;
+  subPurposes: SubPurpose[];
+}
+
+export type PurposeResponse = Purpose;
+
 export interface CreatePurposeRequest {
   purpose: string;
   reservationStatus: ReservationStatus;
 }
 
-export interface SubPurpose {
-  id: number;
-  serverId?: number;
-  isSaved?: boolean;
-  name: string;
-  reservable: boolean;
-}
-
-export interface PurposeFormValues {
-  purpose: string;
-  reservationStatus: boolean;
-  subPurposes: SubPurpose[];
-  removedSubPurposeIds: number[];
-}
-
 export interface UpdatePurposeRequest {
-  id: number;
   purpose: string;
   reservationStatus: ReservationStatus;
 }
@@ -33,25 +49,24 @@ export interface CreateSubPurposeRequest {
   subPurposeReservation: boolean;
 }
 
-export interface PurposeResponse {
-  id: number;
-  purpose: string;
-  reservationStatus: ReservationStatus;
+export interface UpdateSubPurposeRequest {
+  subPurpose: string;
+  subPurposeReservation: boolean;
 }
 
 export type UpdatePurposeMovementRequest = {
   purposeId: number[];
 };
 
-export interface Purpose {
-  id: number;
-  purpose: string;
-  reservationStatus: ReservationStatus;
+export interface PurposeFormSubPurpose {
+  key: string;
+  serverId?: number;
+  name: string;
+  reservable: boolean;
 }
 
-export interface PurposeStore {
-  purposes: Purpose[];
-  subPurposesByPurposeId: Partial<Record<number, SubPurpose[]>>;
-  updatePurpose: (id: number, newPurpose: string) => void;
-  setSubPurposes: (id: number, items: SubPurpose[]) => void;
+export interface PurposeFormValues {
+  purpose: string;
+  reservationStatus: boolean;
+  subPurposes: PurposeFormSubPurpose[];
 }
