@@ -3,6 +3,8 @@ import { TileContainer, TileDeleteIcon, TileLabel } from '@center/ui/card';
 import styled from '@emotion/styled';
 import { LuCalendarCheck } from 'react-icons/lu';
 import { MdClose } from 'react-icons/md';
+import subItemIcon from '@shared/assets/purpose-sub-item.png';
+import { usePurposeStore } from '../model/purposeStore';
 import type { Purpose } from '../model/types';
 import { PurposeColors } from './purposeColors';
 
@@ -22,6 +24,16 @@ export const PurposeCard = ({
   isDeleting,
 }: PurposeProps) => {
   const pressStartRef = useRef<{ x: number; y: number } | null>(null);
+  const hasSubPurposes = usePurposeStore((state) =>
+    Boolean(state.subPurposesByPurposeId[purpose.id]?.length),
+  );
+  const editLabel = [
+    purpose.purpose,
+    purpose.reservationStatus && '예약 가능',
+    hasSubPurposes && '세부 항목 있음',
+  ]
+    .filter(Boolean)
+    .join(', ');
 
   const openEdit = () => {
     if (!isDeleting) onEdit(purpose);
@@ -33,7 +45,8 @@ export const PurposeCard = ({
     if (
       event.detail > 0 &&
       start &&
-      Math.hypot(event.clientX - start.x, event.clientY - start.y) >= DRAG_DISTANCE
+      Math.hypot(event.clientX - start.x, event.clientY - start.y) >=
+        DRAG_DISTANCE
     ) {
       return;
     }
@@ -47,8 +60,8 @@ export const PurposeCard = ({
   return (
     <Card isDisabled={isDeleting} $isReservable={purpose.reservationStatus}>
       <EditButton
-        type="button"
-        aria-label={`${purpose.purpose}${purpose.reservationStatus ? ', 예약 가능' : ''} 수정`}
+        type='button'
+        aria-label={`${editLabel} 수정`}
         disabled={isDeleting}
         onMouseDown={(event) => {
           pressStartRef.current = { x: event.clientX, y: event.clientY };
@@ -56,14 +69,24 @@ export const PurposeCard = ({
         onClick={handleClick}
         onKeyDown={handleKeyDown}
       />
-      {purpose.reservationStatus && (
-        <ReservationBadge aria-hidden="true">
-          <LuCalendarCheck />
-          예약 가능
-        </ReservationBadge>
+      {(purpose.reservationStatus || hasSubPurposes) && (
+        <BadgeList aria-hidden='true'>
+          {purpose.reservationStatus && (
+            <Badge>
+              <LuCalendarCheck />
+              예약 가능
+            </Badge>
+          )}
+          {hasSubPurposes && (
+            <Badge>
+              <img src={subItemIcon} width={14} height={14} alt='세부 항목 아이콘' />
+              세부 항목
+            </Badge>
+          )}
+        </BadgeList>
       )}
       <DeleteButton
-        type="button"
+        type='button'
         onClick={() => onDelete(purpose.id)}
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
@@ -71,10 +94,10 @@ export const PurposeCard = ({
         disabled={isDeleting}
         aria-label={`${purpose.purpose} 삭제`}
       >
-        {isDeleting ? '...' : <MdClose aria-hidden="true" />}
+        {isDeleting ? '...' : <MdClose aria-hidden='true' />}
       </DeleteButton>
 
-      <Label aria-hidden="true">
+      <Label aria-hidden='true'>
         {index}. {purpose.purpose}
       </Label>
     </Card>
@@ -120,20 +143,25 @@ const EditButton = styled.button`
   }
 `;
 
-const ReservationBadge = styled.span`
+const BadgeList = styled.div`
   position: absolute;
-  top: 1.125rem;
-  left: 1.25rem;
+  top: 1.375rem;
+  left: 1.75rem;
+  right: 4.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem 1rem;
+`;
+
+const Badge = styled.span`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.625rem 0.25rem 0.5rem;
-  border-radius: 999px;
-  background-color: #ffffff;
   color: ${PurposeColors.blue};
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 700;
+  white-space: nowrap;
 
   svg {
     width: 0.875rem;

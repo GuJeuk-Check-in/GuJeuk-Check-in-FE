@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
-import type { MouseEvent } from "react";
-import { ColorData } from "@center/tokens";
-import { ReservationColors } from "./reservationColors";
+import styled from '@emotion/styled';
+import type { MouseEvent } from 'react';
+import { ColorData } from '@center/tokens';
+import { ReservationColors } from './reservationColors';
 
 interface ReservationCardProps {
   userName: string;
@@ -31,7 +31,7 @@ export const ReservationCard = ({
       $row={row}
       aria-label={`예약자 ${userName}, 장소 ${place}, 시간 ${time}`}
       aria-expanded={readOnly ? undefined : selected}
-      data-reservation-card=""
+      data-reservation-card=''
       onClick={onClick}
       type={readOnly ? undefined : 'button'}
       $readOnly={readOnly}
@@ -63,11 +63,12 @@ const Card = styled.button<{
   box-shadow: ${({ $selected }) =>
     $selected
       ? `inset 0 0 0 0.09375rem ${ReservationColors.skyblue}`
-      : `inset 0 -0.09375rem 0 ${ReservationColors.cellLine}, inset 0.09375rem 0 0 ${ReservationColors.cellLine}`};
+      : 'none'};
   color: ${ReservationColors.gray40};
   font-family: inherit;
-  font-size: 1.3125rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
   text-align: center;
   cursor: ${({ $readOnly }) => ($readOnly ? 'default' : 'pointer')};
   transition: box-shadow ${ColorData.interaction.transitionFast};

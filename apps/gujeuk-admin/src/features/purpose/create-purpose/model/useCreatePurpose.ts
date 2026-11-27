@@ -1,22 +1,29 @@
 import {
   createPurpose,
-  CreatePurposeRequest,
-  PurposeResponse,
+  usePurposeStore,
+  type PurposeFormValues,
+  type PurposeResponse,
 } from '@entities/purpose';
 import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePurpose = () => {
   const queryClient = useQueryClient();
+  const setSubPurposes = usePurposeStore((state) => state.setSubPurposes);
 
   return useMutation<
     PurposeResponse,
     AxiosError<{ message?: string }>,
-    CreatePurposeRequest
+    PurposeFormValues
   >({
-    mutationFn: createPurpose,
+    mutationFn: ({ purpose, reservationStatus }) =>
+      createPurpose({ purpose, reservationStatus }),
 
-    onSuccess: () => {
+    onSuccess: (createdPurpose, { subPurposes }) => {
+      if (typeof createdPurpose?.id === 'number') {
+        setSubPurposes(createdPurpose.id, subPurposes);
+      }
+
       queryClient.invalidateQueries({ queryKey: ['purposeList'] });
     },
   });
