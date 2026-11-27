@@ -9,6 +9,7 @@ interface FailedQueueItem {
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
+  _retryWithoutToken?: boolean;
 }
 
 interface ServerErrorResponse {
@@ -25,6 +26,7 @@ type AxiosInstanceWithSetup = typeof axiosInstance & {
 
 let isRefreshing = false;
 let failedQueue: FailedQueueItem[] = [];
+let rejectedPublicToken: string | null = null;
 
 const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
@@ -62,8 +64,35 @@ export const setupAuthInterceptors = () => {
     Promise.reject(error)
   );
 
-  publicAxiosInstance.interceptors.request.use(attachAccessToken, (error) =>
-    Promise.reject(error)
+  publicAxiosInstance.interceptors.request.use((config) => {
+    const { accessToken } = useAuthStore.getState();
+    if (accessToken && accessToken !== rejectedPublicToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  }, (error) => Promise.reject(error));
+
+  publicAxiosInstance.interceptors.response.use(
+    (response: AxiosResponse) => response,
+    (error: AxiosError<ServerErrorResponse>) => {
+      const originalRequest = error.config as
+        | CustomAxiosRequestConfig
+        | undefined;
+
+      if (
+        error.response?.status !== 401 ||
+        !originalRequest ||
+        originalRequest._retryWithoutToken
+      ) {
+        return Promise.reject(error);
+      }
+
+      originalRequest._retryWithoutToken = true;
+      rejectedPublicToken = useAuthStore.getState().accessToken;
+      delete originalRequest.headers?.Authorization;
+
+      return publicAxiosInstance(originalRequest);
+    }
   );
 
   axiosInstance.interceptors.response.use(
