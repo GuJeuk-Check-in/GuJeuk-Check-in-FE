@@ -366,20 +366,26 @@ const TableGrid = styled.div<{ $placeCount: number }>`
       ${TimeData.length},
       minmax(var(--reservation-row-min-height), 1fr)
     );
-  min-width: ${({ $placeCount }) =>
-    `calc(${5.5 + $placeCount * 6}rem + ${$placeCount}px)`};
+  min-width: ${({ $placeCount }) => `${5.5 + $placeCount * 6}rem`};
   min-height: calc(
-    var(--reservation-header-height) + ${TimeData.length} *
-      (var(--reservation-row-min-height) + 1px)
+    var(--reservation-header-height) +
+      ${TimeData.length} * var(--reservation-row-min-height)
   );
-  gap: 1px;
   overflow: hidden;
   position: relative;
   border-radius: 0.3rem;
-  background-color: ${ReservationColors.boardGridLine};
 
   > * {
+    box-sizing: border-box;
     background-color: ${ColorData.colors.background};
+  }
+
+  > :nth-child(n + ${({ $placeCount }) => $placeCount + 2}) {
+    border-block-start: 1px solid ${ReservationColors.boardGridLine};
+  }
+
+  > :not(:nth-child(${({ $placeCount }) => $placeCount + 1}n + 1)) {
+    border-inline-start: 1px solid ${ReservationColors.boardGridLine};
   }
 `;
 
