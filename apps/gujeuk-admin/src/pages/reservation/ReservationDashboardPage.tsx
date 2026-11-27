@@ -47,14 +47,10 @@ const ReservationDashboardPage = ({
 
   return (
     <Page $readOnly={readOnly}>
-      {readOnly ? (
-        <HiddenTitle>시설 예약 현황</HiddenTitle>
-      ) : (
-        <BoardHeader>
-          <HiddenTitle>오늘의 예약 · 방문 목적별 예약 현황</HiddenTitle>
-          <BoardPlaque src={titlePlaque} alt='' width={1446} height={120} />
-        </BoardHeader>
-      )}
+      <BoardHeader $readOnly={readOnly}>
+        <HiddenTitle>오늘의 예약 현황</HiddenTitle>
+        <BoardPlaque src={titlePlaque} alt='' width={1446} height={120} />
+      </BoardHeader>
 
       {isTableLoading && <p role='status'>예약 목록을 불러오는 중이에요.</p>}
       {isTableError && (
@@ -99,25 +95,29 @@ const Page = styled.div<{ $readOnly: boolean }>`
     $readOnly ? ReservationColors.gray40 : ColorData.colors.background};
   display: flex;
   flex-direction: column;
+  gap: clamp(0.5rem, 1.6dvh, 1.25rem);
   box-sizing: border-box;
 
   ${({ $readOnly }) =>
     $readOnly
       ? `
     height: 100dvh;
+    padding-inline: clamp(0.75rem, 2.5vw, 3rem);
+    padding-block-end: clamp(0.75rem, 2.5dvh, 2rem);
     overflow: hidden;
   `
       : `
     flex: 1 1 auto;
     min-height: 0;
-    gap: clamp(0.5rem, 1.6dvh, 1.25rem);
   `}
 `;
 
-const BoardHeader = styled.header`
+const BoardHeader = styled.header<{ $readOnly: boolean }>`
   position: relative;
   flex-shrink: 0;
   margin-top: 2.766%;
+  margin-bottom: ${({ $readOnly }) =>
+    $readOnly ? 'clamp(0.375rem, 0.8dvh, 0.5rem)' : 0};
 
   &::before,
   &::after {
@@ -162,14 +162,12 @@ const TableViewport = styled.div<{ $readOnly: boolean }>`
   width: 100%;
   box-sizing: border-box;
   overflow-x: auto;
+  padding: clamp(0.5rem, 1.15vw, 1rem);
+  border-radius: ${({ $readOnly }) => ($readOnly ? '1rem' : '1.75rem')};
+  background: ${ReservationColors.boardFrame};
 
   ${({ $readOnly }) =>
-    !$readOnly &&
-    `
-    padding: clamp(0.5rem, 1.15vw, 1rem);
-    border-radius: 1.75rem;
-    background: ${ReservationColors.boardFrame};
-  `}
+    $readOnly && `border: 1px solid ${ReservationColors.boardGridLine};`}
 `;
 
 const ToastSlot = styled.div`
