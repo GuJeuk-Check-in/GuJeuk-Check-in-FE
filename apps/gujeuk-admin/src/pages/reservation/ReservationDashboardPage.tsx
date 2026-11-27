@@ -49,7 +49,7 @@ const ReservationDashboardPage = ({
     <Page $readOnly={readOnly}>
       <BoardHeader $readOnly={readOnly}>
         <HiddenTitle>오늘의 예약 현황</HiddenTitle>
-        <BoardPlaque src={titlePlaque} alt='' width={1446} height={120} />
+        <BoardPlaque src={titlePlaque} alt='오늘의 예약 현황 타이틀' width={1446} height={120} />
       </BoardHeader>
 
       {isTableLoading && <p role='status'>예약 목록을 불러오는 중이에요.</p>}
