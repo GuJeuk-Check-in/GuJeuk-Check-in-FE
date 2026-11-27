@@ -265,7 +265,7 @@ export const ReservationTable = ({
                 />
               ) : readOnly ? (
                 <ReadOnlyEmptyCell
-                  key={`${time}-${place}`}
+                  key={`${time}-${place.key}`}
                   $column={placeIndex + 2}
                   $row={timeIndex + 2}
                   aria-hidden='true'
