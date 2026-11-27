@@ -1,30 +1,39 @@
 import {
   createPurpose,
-  usePurposeStore,
+  createSubPurpose,
+  toReservationStatus,
   type PurposeFormValues,
-  type PurposeResponse,
 } from '@entities/purpose';
 import { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePurpose = () => {
   const queryClient = useQueryClient();
-  const setSubPurposes = usePurposeStore((state) => state.setSubPurposes);
 
-  return useMutation<
-    PurposeResponse,
-    AxiosError<{ message?: string }>,
-    PurposeFormValues
-  >({
-    mutationFn: ({ purpose, reservationStatus }) =>
-      createPurpose({ purpose, reservationStatus }),
+  return useMutation<void, AxiosError<{ message?: string }>, PurposeFormValues>(
+    {
+      mutationFn: async ({ purpose, reservationStatus, subPurposes }) => {
+        if (!subPurposes.length) {
+          await createPurpose({
+            purpose,
+            reservationStatus: toReservationStatus(false, reservationStatus),
+          });
+          return;
+        }
 
-    onSuccess: (createdPurpose, { subPurposes }) => {
-      if (typeof createdPurpose?.id === 'number') {
-        setSubPurposes(createdPurpose.id, subPurposes);
-      }
+        for (const subPurpose of subPurposes) {
+          await createSubPurpose({
+            purpose,
+            reservationStatus: 'SUB_INCLUDE',
+            subPurpose: subPurpose.name,
+            subPurposeReservation: subPurpose.reservable,
+          });
+        }
+      },
 
-      queryClient.invalidateQueries({ queryKey: ['purposeList'] });
-    },
-  });
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey: ['purposeList'] });
+      },
+    }
+  );
 };
