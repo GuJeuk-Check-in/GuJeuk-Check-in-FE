@@ -3,14 +3,17 @@ import { useEffect, useState } from 'react';
 import { ColorData } from '@center/tokens';
 import titlePlaque from '@shared/assets/reservation-title-plaque.png';
 import titleStrap from '@shared/assets/reservation-title-strap.png';
-import { isReservableStatus, usePurposeList } from '@entities/purpose';
 import { useReservationList } from '@entities/reservation';
 import { ReservationTable } from './ReservationTable';
-import { TimeData, getActiveTimeIndex, toReservation } from './ReservationData';
+import {
+  TimeData,
+  getActiveTimeIndex,
+  toReservation,
+  toReservationPlace,
+} from './ReservationData';
 import { ReservationColors } from './reservationColors';
 
 const RESERVATION_POLL_INTERVAL_MS = 5_000;
-const ADMIN_PURPOSE_POLL_INTERVAL_MS = 30_000;
 
 const ReservationDashboardPage = ({
   readOnly = false,
@@ -19,13 +22,6 @@ const ReservationDashboardPage = ({
 }) => {
   const { data, isLoading, isError } = useReservationList(
     RESERVATION_POLL_INTERVAL_MS,
-  );
-  const {
-    data: purposes,
-    isLoading: isPurposeLoading,
-    isError: isPurposeError,
-  } = usePurposeList(
-    readOnly ? RESERVATION_POLL_INTERVAL_MS : ADMIN_PURPOSE_POLL_INTERVAL_MS,
   );
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [toastContainer, setToastContainer] = useState<HTMLDivElement | null>(
@@ -38,17 +34,16 @@ const ReservationDashboardPage = ({
   }, []);
 
   const activeTimeIndex = getActiveTimeIndex(currentTime);
-  const places = (purposes ?? [])
-    .filter((purpose) => isReservableStatus(purpose.reservationStatus))
-    .map((purpose) => purpose.purpose);
+  const places = (data?.facilities ?? []).map(toReservationPlace);
+  const placeKeys = new Set(places.map((place) => place.key));
   const reservations = (data?.reservations ?? []).map(toReservation);
   const hasUnmappedReservations = reservations.some(
     (item) =>
-      !places.includes(item.place) ||
+      !placeKeys.has(item.placeKey) ||
       !TimeData.some((time) => time === item.startTime),
   );
-  const isTableLoading = isLoading || isPurposeLoading;
-  const isTableError = isError || isPurposeError;
+  const isTableLoading = isLoading;
+  const isTableError = isError;
 
   return (
     <Page $readOnly={readOnly}>
@@ -72,7 +67,7 @@ const ReservationDashboardPage = ({
           일부 예약은 현재 표에 없는 시설 또는 시간이라 표시할 수 없어요.
         </p>
       )}
-      {data && purposes && places.length === 0 && (
+      {data && places.length === 0 && (
         <p role='status'>
           {readOnly
             ? '예약 가능한 시설이 없어요. 관리자에게 문의해 주세요.'

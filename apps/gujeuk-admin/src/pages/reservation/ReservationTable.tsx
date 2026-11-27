@@ -134,14 +134,15 @@ export const ReservationTable = ({
         phone: values.phone,
         maleCount: values.people.male,
         femaleCount: values.people.female,
-        purpose: place,
+        purposeId: place.purposeId,
+        subPurposeId: place.subPurposeId,
         startTime: time,
       },
       {
         onSuccess: () => {
           setCreateTarget(null);
           showToast(
-            `${values.userName}님의 예약이 추가됐어요 · ${place} ${formatTimeRange(time, getNextTime(time))}`,
+            `${values.userName}님의 예약이 추가됐어요 · ${place.label} ${formatTimeRange(time, getNextTime(time))}`,
           );
         },
         onError: (error) => {
@@ -223,8 +224,8 @@ export const ReservationTable = ({
         </HeaderCell>
 
         {places.map((place, index) => (
-          <HeaderCell key={place} $column={index + 2} $row={1}>
-            {place}
+          <HeaderCell key={place.key} $column={index + 2} $row={1}>
+            {place.label}
           </HeaderCell>
         ))}
 
@@ -240,14 +241,14 @@ export const ReservationTable = ({
 
             {places.map((place, placeIndex) => {
               const reservation = reservations.find(
-                (item) => item.place === place && item.startTime === time,
+                (item) => item.placeKey === place.key && item.startTime === time,
               );
 
               return reservation ? (
                 <ReservationCard
-                  key={`${time}-${place}`}
+                  key={`${time}-${place.key}`}
                   userName={reservation.userName}
-                  place={place}
+                  place={place.label}
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
@@ -271,13 +272,14 @@ export const ReservationTable = ({
                 />
               ) : (
                 <ReservationEmptyCell
-                  key={`${time}-${place}`}
+                  key={`${time}-${place.key}`}
                   place={place}
                   time={time}
                   column={placeIndex + 2}
                   row={timeIndex + 2}
                   selected={
-                    createTarget?.place === place && createTarget.time === time
+                    createTarget?.place.key === place.key &&
+                    createTarget.time === time
                   }
                   onAddClick={(selectedPlace, selectedTime) => {
                     setSelectedReservationId(null);
@@ -319,7 +321,7 @@ export const ReservationTable = ({
 
       {createTarget && (
         <ReservationCreateModal
-          place={createTarget.place}
+          place={createTarget.place.label}
           time={createTarget.time}
           onClose={() => {
             if (!isCreating) setCreateTarget(null);

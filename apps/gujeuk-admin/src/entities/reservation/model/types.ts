@@ -1,6 +1,16 @@
+export interface ReservationFacilityResponse {
+  purposeId: number;
+  purpose: string;
+  subPurposeId: number | null;
+  subPurpose: string | null;
+}
+
 export interface ReservationResponse {
   id: number;
+  purposeId: number;
   purpose: string;
+  subPurposeId: number | null;
+  subPurpose: string | null;
   name: string;
   maleCount: number;
   femaleCount: number;
@@ -12,6 +22,7 @@ export interface ReservationResponse {
 export interface ReservationListResponse {
   inUseCount: number;
   availableCount: number;
+  facilities: ReservationFacilityResponse[];
   reservations: ReservationResponse[];
 }
 
@@ -20,6 +31,7 @@ export interface CreateReservationRequest {
   phone: string;
   maleCount: number;
   femaleCount: number;
-  purpose: string;
+  purposeId: number;
+  subPurposeId: number | null;
   startTime: string;
 }
