@@ -38,8 +38,9 @@ export interface UserDetail {
   phone: string;
   birthYMD: string;
   applyDate: string;
+  visitCount?: number;
 }
 
-export interface UpdateUserRequest extends UserDetail {
+export interface UpdateUserRequest extends Omit<UserDetail, 'visitCount'> {
   schoolType: SchoolType | null;
 }

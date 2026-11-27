@@ -5,6 +5,7 @@ import { ActionButton, CancelButton, EditButton } from '@shared/ui';
 import { getApiErrorMessage } from '@entities/auth';
 import { MAX_GRADE_BY_SCHOOL_TYPE, UserDetailFields, type UpdateUserRequest, type UserDetail } from '@entities/user';
 import { useUpdateUser } from '@features/user/update-user';
+import { SchoolSearchModal } from '@features/school/search-school';
 import { useUnsavedChanges } from '@shared/lib/useUnsavedChanges';
 import { ConfirmModal } from '@shared/ui/ConfirmModal';
 
@@ -18,11 +19,13 @@ export const UserDetailView = ({ userId, user }: UserDetailViewProps) => {
   const initialDraft: UpdateUserRequest = { ...user, schoolType: null };
   const { mutate: saveUser, isPending: isSaving } = useUpdateUser(userId);
   const modal = useModal();
+  const [isSchoolSearchOpen, setSchoolSearchOpen] = useState(false);
   const { isDirty, guard } = useUnsavedChanges({
     value: draft ?? initialDraft,
     initial: initialDraft,
     enabled: draft !== null,
   });
+
   const needsGradeChange = !!draft?.schoolType && draft.grade > MAX_GRADE_BY_SCHOOL_TYPE[draft.schoolType];
 
   const handleSave = () => {
@@ -45,8 +48,10 @@ export const UserDetailView = ({ userId, user }: UserDetailViewProps) => {
         <FormFields disabled={isSaving}>
           <UserDetailFields
             user={draft ?? initialDraft}
+            visitCount={user.visitCount}
             isEditing={draft !== null}
             onChange={(patch) => setDraft((previous) => previous && { ...previous, ...patch })}
+            onSchoolClick={() => setSchoolSearchOpen(true)}
           />
         </FormFields>
         {needsGradeChange && <GradeNotice role="status">학교 유형에 맞는 학년을 다시 선택해주세요.</GradeNotice>}
@@ -65,6 +70,20 @@ export const UserDetailView = ({ userId, user }: UserDetailViewProps) => {
           )}
         </Actions>
       </Content>
+      {draft && isSchoolSearchOpen && (
+        <SchoolSearchModal
+          selectedName={draft.school}
+          onSelect={({ schoolName, schoolType }) => {
+            setDraft((previous) => previous && {
+              ...previous,
+              school: schoolName,
+              schoolType: schoolType === 'OTHER' ? null : schoolType,
+            });
+            setSchoolSearchOpen(false);
+          }}
+          onClose={() => setSchoolSearchOpen(false)}
+        />
+      )}
       <Modal isOpen={modal.isOpen} config={modal.config} onClose={modal.closeModal} />
       <ConfirmModal isOpen={guard.isOpen} config={guard.config} onClose={guard.onClose} />
     </>

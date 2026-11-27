@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  prepareUserUpdate, updateUser, userDetailQueryKey, userListQueryKey, userSearchQueryKey, type UpdateUserRequest,
+  prepareUserUpdate, updateUser, userDetailQueryKey, userListQueryKey, userSearchQueryKey, type UpdateUserRequest, type UserDetail,
 } from '@entities/user';
 
 export const useUpdateUser = (userId: string) => {
@@ -16,7 +16,7 @@ export const useUpdateUser = (userId: string) => {
     scope: { id: `update-user:${userId}` },
     onSuccess: async ({ schoolType: _schoolType, ...detail }) => {
       await queryClient.cancelQueries({ queryKey: detailQueryKey });
-      queryClient.setQueryData(detailQueryKey, detail);
+      queryClient.setQueryData<UserDetail>(detailQueryKey, (previous) => ({ ...previous, ...detail }));
       void queryClient.invalidateQueries({ queryKey: userListQueryKey });
       void queryClient.invalidateQueries({ queryKey: userSearchQueryKey });
     },

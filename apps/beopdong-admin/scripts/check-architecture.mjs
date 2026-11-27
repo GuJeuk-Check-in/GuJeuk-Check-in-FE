@@ -6,6 +6,9 @@ const rootDir = process.cwd();
 const sourceDir = path.join(rootDir, 'src');
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 
+const isAllowedSchoolEndpoint = ({ relativePath, line }) =>
+  relativePath === 'src/entities/school/api/school.api.ts' && line.includes("'/check-in/school'");
+
 const hardRules = [
   {
     name: 'unsafe-typescript-escape',
@@ -20,7 +23,7 @@ const hardRules = [
   {
     name: 'check-in-surface',
     message: 'Beopdong check-in belongs to the app project, not this web admin app.',
-    test: ({ line }) => /check-in|checkIn|체크인/.test(line),
+    test: (context) => /check-in|checkIn|체크인/.test(context.line) && !isAllowedSchoolEndpoint(context),
   },
 ];
 
