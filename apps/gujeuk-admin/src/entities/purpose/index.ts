@@ -1,6 +1,6 @@
 export * from './api/purpose.api';
 export * from './model/types';
-export * from './model/purposeStore';
+export * from './model/reservationStatus';
 export * from './model/usePurposeList';
 export * from './ui/PurposeCard';
 export * from './ui/PurposeFormModal';

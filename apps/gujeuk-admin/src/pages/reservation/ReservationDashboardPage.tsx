@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ColorData } from '@center/tokens';
 import titlePlaque from '@shared/assets/reservation-title-plaque.png';
 import titleStrap from '@shared/assets/reservation-title-strap.png';
-import { usePurposeList } from '@entities/purpose';
+import { isReservableStatus, usePurposeList } from '@entities/purpose';
 import { useReservationList } from '@entities/reservation';
 import { ReservationTable } from './ReservationTable';
 import { TimeData, getActiveTimeIndex, toReservation } from './ReservationData';
@@ -39,7 +39,7 @@ const ReservationDashboardPage = ({
 
   const activeTimeIndex = getActiveTimeIndex(currentTime);
   const places = (purposes ?? [])
-    .filter((purpose) => purpose.reservationStatus)
+    .filter((purpose) => isReservableStatus(purpose.reservationStatus))
     .map((purpose) => purpose.purpose);
   const reservations = (data?.reservations ?? []).map(toReservation);
   const hasUnmappedReservations = reservations.some(

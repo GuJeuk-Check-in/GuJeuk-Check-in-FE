@@ -4,17 +4,17 @@ import { ColorData } from '@center/tokens';
 import { LuCalendarCheck } from 'react-icons/lu';
 import { MdAdd, MdClose, MdOutlineEdit } from 'react-icons/md';
 import { useDialogFocusTrap } from '@shared/hooks/useDialogFocusTrap';
-import { usePurposeStore } from '../model/purposeStore';
+import { isReservableStatus } from '../model/reservationStatus';
 import type {
-  CreatePurposeRequest,
+  Purpose,
+  PurposeFormSubPurpose,
   PurposeFormValues,
-  SubPurpose,
 } from '../model/types';
 import { PurposeColors } from './purposeColors';
 
 type PurposeFormMode = 'create' | 'update';
 
-type SubPurposeDraft = Omit<SubPurpose, 'id'>;
+type SubPurposeDraft = Pick<PurposeFormSubPurpose, 'name' | 'reservable'>;
 
 const FORM_TEXT = {
   create: {
@@ -29,16 +29,11 @@ const FORM_TEXT = {
   },
 } as const;
 
-const EMPTY_VALUES: CreatePurposeRequest = {
-  purpose: '',
-  reservationStatus: false,
-};
-
 const EMPTY_SUB_PURPOSE: SubPurposeDraft = { name: '', reservable: false };
 
 interface PurposeFormModalProps {
   mode: PurposeFormMode;
-  initialValues?: CreatePurposeRequest & { id?: number };
+  initialValues?: Purpose;
   isSubmitting: boolean;
   onClose: () => void;
   onSubmit: (values: PurposeFormValues) => void;
@@ -46,46 +41,54 @@ interface PurposeFormModalProps {
 
 export const PurposeFormModal = ({
   mode,
-  initialValues = EMPTY_VALUES,
+  initialValues,
   isSubmitting,
   onClose,
   onSubmit,
 }: PurposeFormModalProps) => {
-  const [purpose, setPurpose] = useState(initialValues.purpose);
+  const [purpose, setPurpose] = useState(initialValues?.purpose ?? '');
   const [reservationStatus, setReservationStatus] = useState(
-    initialValues.reservationStatus,
+    initialValues ? isReservableStatus(initialValues.reservationStatus) : false,
   );
-  const initialSubPurposes = usePurposeStore((state) =>
-    initialValues.id === undefined
-      ? undefined
-      : state.subPurposesByPurposeId[initialValues.id],
-  );
-  const [subPurposes, setSubPurposes] = useState(
-    () => initialSubPurposes ?? [],
+  const [subPurposes, setSubPurposes] = useState<PurposeFormSubPurpose[]>(() =>
+    (initialValues?.subPurposes ?? []).map((item) => ({
+      key: `server-${item.id}`,
+      serverId: item.id,
+      name: item.name,
+      reservable: item.reservable,
+    })),
   );
   const [newSubPurpose, setNewSubPurpose] = useState(EMPTY_SUB_PURPOSE);
-  const [editing, setEditing] = useState<SubPurpose | null>(null);
-  const nextSubPurposeId = useRef(
-    subPurposes.reduce((max, item) => Math.max(max, item.id), -1) + 1,
-  ); //아이디 중복 발급 방지
+  const [editing, setEditing] = useState<PurposeFormSubPurpose | null>(null);
+  const nextKey = useRef(0);
   const dialogRef = useDialogFocusTrap(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const subPurposeInputRef = useRef<HTMLInputElement>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
   const titleId = useId();
   const inputId = useId();
-  const reservationSettingId = useId();
   const subPurposeInputId = useId();
   const editInputId = useId();
   const text = FORM_TEXT[mode];
   const trimmedPurpose = purpose.trim();
-  const editingId = editing?.id;
+  const editingKey = editing?.key;
+  const trimmedNewSubPurpose = newSubPurpose.name.trim();
+  const isDuplicatedSubPurpose = subPurposes.some(
+    (item) => item.name === trimmedNewSubPurpose,
+  );
+  const hasSubPurpose = subPurposes.length > 0;
+
+  const removeSubPurpose = (target: PurposeFormSubPurpose) => {
+    setSubPurposes((current) =>
+      current.filter(({ key }) => key !== target.key),
+    );
+  };
 
   const addSubPurpose = () => {
-    const name = newSubPurpose.name.trim();
-    if (!name || isSubmitting) return;
+    const name = trimmedNewSubPurpose;
+    if (!name || isSubmitting || isDuplicatedSubPurpose) return;
 
-    const item = { ...newSubPurpose, name, id: nextSubPurposeId.current++ };
+    const item = { ...newSubPurpose, name, key: `new-${nextKey.current++}` };
     setSubPurposes((current) => [...current, item]);
     setNewSubPurpose(EMPTY_SUB_PURPOSE);
     subPurposeInputRef.current?.focus();
@@ -95,10 +98,14 @@ export const PurposeFormModal = ({
     if (!editing || isSubmitting) return;
     const name = editing.name.trim();
     if (!name) return;
+    if (
+      subPurposes.some((item) => item.key !== editing.key && item.name === name)
+    )
+      return;
 
     setSubPurposes((current) =>
       current.map((item) =>
-        item.id === editing.id ? { ...editing, name } : item,
+        item.key === editing.key ? { ...editing, name } : item,
       ),
     );
     setEditing(null);
@@ -109,8 +116,8 @@ export const PurposeFormModal = ({
   }, []);
 
   useEffect(() => {
-    if (editingId !== undefined) editInputRef.current?.focus();
-  }, [editingId]);
+    if (editingKey !== undefined) editInputRef.current?.focus();
+  }, [editingKey]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -176,30 +183,23 @@ export const PurposeFormModal = ({
               required
               disabled={isSubmitting}
             />
+            <ReservationCheckbox>
+              <input
+                type='checkbox'
+                checked={!hasSubPurpose && reservationStatus}
+                disabled={isSubmitting || hasSubPurpose}
+                onChange={(event) => setReservationStatus(event.target.checked)}
+              />
+              예약 가능
+            </ReservationCheckbox>
           </Field>
-
-          <ReservationSetting>
-            <SettingTitle id={reservationSettingId}>
-              <LuCalendarCheck aria-hidden='true' />
-              상위 방문 목적 예약 가능
-            </SettingTitle>
-            <Switch
-              type='button'
-              role='switch'
-              aria-checked={reservationStatus}
-              aria-labelledby={reservationSettingId}
-              $isOn={reservationStatus}
-              disabled={isSubmitting}
-              onClick={() => setReservationStatus((current) => !current)}
-            />
-          </ReservationSetting>
 
           <Field>
             <Label htmlFor={subPurposeInputId}>하위 방문 목적</Label>
             {subPurposes.map((item) =>
-              editing?.id === item.id ? (
+              editing?.key === item.key ? (
                 <EditCard
-                  key={item.id}
+                  key={item.key}
                   onKeyDown={(event) => {
                     if (event.key !== 'Escape') return;
                     event.preventDefault();
@@ -260,7 +260,7 @@ export const PurposeFormModal = ({
                   </EditFooter>
                 </EditCard>
               ) : (
-                <SubPurposeCard key={item.id}>
+                <SubPurposeCard key={item.key}>
                   <SubPurposeName>{item.name}</SubPurposeName>
                   {item.reservable && (
                     <ReservableBadge>
@@ -281,11 +281,7 @@ export const PurposeFormModal = ({
                       type='button'
                       aria-label={`${item.name} 삭제`}
                       disabled={isSubmitting || editing !== null}
-                      onClick={() =>
-                        setSubPurposes((current) =>
-                          current.filter(({ id }) => id !== item.id),
-                        )
-                      }
+                      onClick={() => removeSubPurpose(item)}
                     >
                       <MdClose aria-hidden='true' />
                     </DeleteAction>
@@ -333,7 +329,9 @@ export const PurposeFormModal = ({
                 type='button'
                 $variant='primary'
                 onClick={addSubPurpose}
-                disabled={isSubmitting || !newSubPurpose.name.trim()}
+                disabled={
+                  isSubmitting || !trimmedNewSubPurpose || isDuplicatedSubPurpose
+                }
               >
                 추가
               </InlineAction>
@@ -476,71 +474,6 @@ const Input = styled.input`
   }
 `;
 
-const ReservationSetting = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.125rem;
-  border: 1px solid ${PurposeColors.gray30};
-  border-radius: 0.875rem;
-  background-color: ${ColorData.colors.background};
-`;
-
-const SettingTitle = styled.p`
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  margin: 0;
-  color: ${PurposeColors.gray40};
-  font-family: inherit;
-  font-size: 1rem;
-  font-weight: 700;
-
-  svg {
-    flex-shrink: 0;
-    width: 1.125rem;
-    height: 1.125rem;
-    color: ${PurposeColors.gray30};
-  }
-`;
-
-const Switch = styled.button<{ $isOn: boolean }>`
-  position: relative;
-  flex-shrink: 0;
-  width: 3.25rem;
-  height: 1.875rem;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background-color: ${({ $isOn }) =>
-    $isOn ? PurposeColors.blue : PurposeColors.gray10};
-  cursor: pointer;
-  transition: background-color ${ColorData.interaction.transitionNormal};
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0.1875rem;
-    left: ${({ $isOn }) => ($isOn ? '1.5625rem' : '0.1875rem')};
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    background-color: ${ColorData.colors.background};
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-    transition: left ${ColorData.interaction.transitionNormal};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${PurposeColors.skyblue};
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-`;
-
 const SubPurposeEntry = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -585,6 +518,27 @@ const SubPurposeCheckbox = styled.label`
     accent-color: ${PurposeColors.blue};
   }
 `;
+
+const ReservationCheckbox = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  align-self: flex-start;
+  color: ${PurposeColors.gray40};
+  font-size: 0.8125rem;
+
+  input {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: ${PurposeColors.blue};
+  }
+
+  &:has(input:disabled) {
+    color: ${PurposeColors.gray30};
+  }
+`;
+
 
 const SubPurposeCard = styled.div`
   display: flex;
